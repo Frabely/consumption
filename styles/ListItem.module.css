@@ -1,7 +1,7 @@
 .mainContainer {
     display: flex;
     flex-direction: row;
-    background: var(--color-secondary);
+    justify-content: space-between;
 }
 
 .item {

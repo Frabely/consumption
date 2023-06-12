@@ -1,5 +1,10 @@
 .mainContainer {
     height: 90vh;
     background: var(--color-tertiary);
-    padding: 5%;
+    padding: 5%
+}
+
+.list {
+    border-radius: 5px;
+    background: var(--color-secondary);
 }
