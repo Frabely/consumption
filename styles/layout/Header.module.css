@@ -1,0 +1,29 @@
+.mainContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 10vh;
+    background: var(--color-primary);
+    padding: 0 5%;
+}
+
+.menu {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.menuItem {
+    display: flex;
+    /*padding: 5% 0 5% 5%;*/
+    width: 10vw;
+    align-items: center;
+    justify-content: center;
+}
+
+.menuItem:hover {
+    cursor: pointer;
+    background: var(--color-secondary);
+}
+

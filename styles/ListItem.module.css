@@ -1,0 +1,10 @@
+.mainContainer {
+    display: flex;
+    flex-direction: row;
+    background: var(--color-secondary);
+}
+
+.item {
+    display: flex;
+    padding: 1%;
+}

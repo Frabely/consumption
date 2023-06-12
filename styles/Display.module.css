@@ -1,0 +1,5 @@
+.mainContainer {
+    height: 90vh;
+    background: var(--color-tertiary);
+    padding: 5%;
+}
