@@ -2,6 +2,9 @@ import '../styles/globals.css'
 import {Inter} from 'next/font/google'
 import {ReduxProvider} from "@/store/provider";
 import {ReactNode} from "react";
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
 
 const inter = Inter({subsets: ['latin']})
 

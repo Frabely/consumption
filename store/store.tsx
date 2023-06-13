@@ -1,7 +1,9 @@
 import {configureStore, ThunkAction, Action} from "@reduxjs/toolkit";
+import isAddingDataModalActiveSlice from "@/store/reducer/isAddingDataModalActive";
 
 export const store = configureStore({
     reducer: {
+        [isAddingDataModalActiveSlice.name]: isAddingDataModalActiveSlice.reducer
     },
     devTools: true
 })

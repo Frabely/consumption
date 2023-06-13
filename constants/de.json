@@ -1,0 +1,15 @@
+{
+  "menu": {
+    "addData": "Datensatz hinzufügen"
+  },
+  "inputLabels": {
+    "date": "Datum",
+    "kilometer": "Kilometer",
+    "power": "Power",
+    "name": "Name"
+  },
+  "buttonLabels": {
+    "addDate": "Daten hinzufügen",
+    "abort": "Abbrechen"
+  }
+}
