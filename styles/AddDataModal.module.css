@@ -14,15 +14,48 @@
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    border: white solid thick;
+    border: var(--color-text) solid thick;
 }
 
 .button {
     display: flex;
     padding: 5% 5%;
+    margin-top: 5%;
     /*width: 10vw;*/
     align-items: center;
     justify-content: center;
-    border: none;
+    border-color: var(--color-text);
+    background: var(--color-secondary);
+    border-radius: 5px;
+}
+
+.input {
+    margin-bottom: 5%;
+    padding: 5%;
+    background: var(--color-secondary);
+    border-color: var(--color-text);
+}
+
+.input[type="time"]::-webkit-calendar-picker-indicator{
+    filter: invert(30%) sepia(13%) saturate(3207%) hue-rotate(130deg)
+}
+
+.input[type="date"]::-webkit-calendar-picker-indicator{
+    filter: invert(30%) sepia(13%) saturate(3207%) hue-rotate(130deg)
+}
+
+.input:disabled {
     background: var(--color-primary);
+}
+
+.input::placeholder {
+    color: var(--color-text-placeholder);
+}
+
+.date {
+    /*background: var(--color-secondary);*/
+}
+
+.time {
+    /*background: var(--color-secondary);*/
 }

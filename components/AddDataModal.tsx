@@ -2,41 +2,100 @@
 
 import styles from "../styles/AddDataModal.module.css"
 import de from '../constants/de.json'
-import {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {addDataSetToDataList} from "@/store/reducer/currentDataSet";
+import {invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
+import {RootState} from "@/store/store";
+import {setKilometer} from "@/store/reducer/modal/kilometer";
+import {setPower} from "@/store/reducer/modal/power";
+import {addDataSetToCollection} from "@/firebase/functions";
+import {setTime} from "@/store/reducer/modal/time";
+import {setDate} from "@/store/reducer/modal/date";
 
 export default function AddDataModal({}: AddDataModalProps) {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    const date = today.getDate();
+    const dispatch = useDispatch()
+    const state: RootState = useSelector((state: RootState) => state)
+    const dateNow = new Date()
 
-    const hours = today.getHours();
-    const minutes = today.getMinutes();
+    const hours = dateNow.getHours();
+    const minutes = dateNow.getMinutes();
+    const todayTime: string = `${hours < 10 ? `0` + hours : hours}:${minutes < 10 ? `0` + minutes : minutes}`
 
-    const [dateValue, setDateValue] = useState(
-        `${year}-${month < 10 ? `0` + month : month}-${date < 10 ? `0` + date : date}`
-    );
+    const year = dateNow.getFullYear();
+    const month = dateNow.getMonth() + 1;
+    const day = dateNow.getDate();
+    const todayDate = `${year}-${month < 10 ? `0` + month : month}-${day < 10 ? `0` + day : day}`
 
-    const [timeValue, setTimeValue] = useState(
-        `${hours < 10 ? `0` + hours : hours}:${minutes < 10 ? `0` + minutes : minutes}`
-    );
+    const setModalToDefault = () => {
+        dispatch(setTime(todayTime))
+        dispatch(setDate(todayDate))
+        dispatch(setKilometer(0))
+        dispatch(setPower(0))
+    }
+
+    const onAddDataClickHandler = () => {
+        const {
+            date,
+            time,
+            power,
+            kilometer,
+        } = state
+        dispatch(addDataSetToDataList({
+            date,
+            time,
+            kilometer,
+            power,
+            name: 'Moritz'
+        }))
+        addDataSetToCollection({
+            date,
+            time,
+            kilometer,
+            power,
+            name: 'Moritz'
+        })
+        dispatch(invertIsAddingDataModalActive())
+        setModalToDefault()
+    }
+    const onAbortClickHandler = () => {
+        dispatch(invertIsAddingDataModalActive())
+        setModalToDefault()
+    }
 
     return (
         <div className={styles.mainContainer}>
-            <form className={styles.mainInnerContainer}>
-                <input onChange={(e) => {
-                    setDateValue(e.target.value)
-                }} value={dateValue} type={"date"}/>
-                <input onChange={(e) => {
-                    setTimeValue(e.target.value)
-                }} value={timeValue} type={"time"}/>
-                <input type={"number"} min={"99999"} max={"999999"} step={"1.0"}
-                       placeholder={de.inputLabels.kilometer}/>
-                <input type={"number"} min={"0.1"} max={"99.9"} step={"0.1"} placeholder={de.inputLabels.power}/>
-                <input disabled={true} type={"text"} min={"0.1"} max={"99.9"} step={"0.1"}
-                       placeholder={de.inputLabels.name}/>
-                <button className={styles.button}>{de.buttonLabels.addDate}</button>
-                <button className={styles.button}>{de.buttonLabels.abort}</button>
+            <form name={'addDataSet'} className={styles.mainInnerContainer}>
+                <input className={`${styles.input} ${styles.date}`} onChange={(e) => {
+                    dispatch(setDate(e.target.value))
+                }} value={state.date} type={"date"}/>
+                <input className={`${styles.input} ${styles.time}`} onChange={(e) => {
+                    dispatch(setTime(e.target.value))
+                }} value={state.time} type={"time"}/>
+                <input value={state.kilometer ? state.kilometer : ''}
+                       className={`${styles.input}`}
+                       type={"number"}
+                       min={99999}
+                       max={999999}
+                       step={1.0}
+                       onChange={(e) => {
+                           dispatch(setKilometer(parseInt(e.target.value)))
+                       }}
+                       placeholder={de.inputLabels.kilometer}
+                />
+                <input value={state.power ? state.power : ''}
+                       className={`${styles.input}`}
+                       type={"number"}
+                       min={0.1}
+                       max={99.9}
+                       step={0.1}
+                       placeholder={de.inputLabels.power}
+                       onChange={(e) => {
+                           dispatch(setPower(parseFloat(e.target.value)))
+                       }}
+                />
+                <input className={`${styles.input}`} disabled={true} type={"text"} placeholder={de.inputLabels.name}/>
+                <button onClick={onAddDataClickHandler} className={styles.button}>{de.buttonLabels.addData}</button>
+                <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.abort}</button>
             </form>
         </div>
     );

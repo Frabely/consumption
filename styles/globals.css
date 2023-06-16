@@ -4,16 +4,20 @@
   --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
     'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
-  --color-primary: rgb(58, 110, 33);
-  --color-secondary: rgb(73, 121, 35);
-  --color-tertiary: rgb(51, 89, 26);
-  --backgroundModal: rgba(58, 110, 33, 0.8)
+  --color-primary: rgb(98, 168, 61);
+  --color-secondary: rgb(139, 224, 76);
+  --color-tertiary: rgb(171, 231, 139);
+  --backgroundModal: rgba(58, 110, 33, 0.8);
+  --color-text: rgb(255, 255, 255);
+  /*--color-text: rgb(30, 59, 19);*/
+  --color-text-placeholder: rgb(236, 236, 236)
 }
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  color: var(--color-text);
 }
 
 html,
