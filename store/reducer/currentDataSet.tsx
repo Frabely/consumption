@@ -11,12 +11,11 @@ const CurrentDataSetSlice = createSlice({
             return action.payload
         },
         addDataSetToDataList: (state, action: PayloadAction<DataSet>) => {
-            state.push(action.payload)
+            state.unshift(action.payload)
             return state
         },
         removeDataSet: (state, action: PayloadAction<DataSet>) => {
-            return state.filter((dataset) => JSON.stringify(dataset) !== JSON.stringify(action.payload)
-            )
+            return state.filter((dataset) => JSON.stringify(dataset) !== JSON.stringify(action.payload))
         },
     },
 })

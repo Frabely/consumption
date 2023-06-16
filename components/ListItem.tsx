@@ -6,20 +6,26 @@ import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
 import {invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
 import {removeDataSet} from "@/store/reducer/currentDataSet";
+import {removingDataSetFromCollection} from "@/firebase/functions";
+import {DataSet} from "@/constants/types";
 
-export default function ListItem({kilometer, name, power, time, date}: ListItemProps) {
+export default function ListItem({kilometer, name, power, time, date, id}: ListItemProps) {
+    //TODO add touch event for mobile phone
     const dispatch = useDispatch()
     let timeOut: any
     const touchStart = () => {
         timeOut = setTimeout(() => {
-            dispatch(removeDataSet({
+            const dataSet: DataSet = {
+                id,
                 date,
                 time,
                 kilometer,
                 power,
                 name,
-            }))
-        },500)
+            }
+            removingDataSetFromCollection(dataSet)
+            dispatch(removeDataSet(dataSet))
+        }, 500)
     }
     const onListItemClickHandler = () => {
         dispatch(setTime(time))
@@ -31,10 +37,14 @@ export default function ListItem({kilometer, name, power, time, date}: ListItemP
 
     return (
         <div onTouchStart={touchStart}
-             onTouchEnd={() => {clearTimeout(timeOut)}}
+             onTouchEnd={() => {
+                 clearTimeout(timeOut)
+             }}
              onMouseDown={touchStart}
-             onMouseUp={() => {clearTimeout(timeOut)}}
-             onClick={onListItemClickHandler}
+             onMouseUp={() => {
+                 clearTimeout(timeOut)
+             }}
+             onDoubleClick={onListItemClickHandler}
              className={styles.mainContainer}>
             <div className={styles.item}>{date}</div>
             <div className={styles.item}>{time}</div>
@@ -50,5 +60,6 @@ export type ListItemProps = {
     date: string,
     kilometer: number,
     power: number,
-    name: string
+    name: string,
+    id: string
 }

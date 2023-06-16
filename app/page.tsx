@@ -23,7 +23,7 @@ export default function Home() {
             console.log(error.message)
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [state.isAddingDataModalActive])
     const db = getFirestore(firebaseApp)
 
     return (

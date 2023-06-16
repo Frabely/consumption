@@ -26,6 +26,8 @@ export default function AddDataModal({}: AddDataModalProps) {
     const day = dateNow.getDate();
     const todayDate = `${year}-${month < 10 ? `0` + month : month}-${day < 10 ? `0` + day : day}`
 
+    const defaultKilometers = state.currentDataSet[0]?.kilometer ? state.currentDataSet[0]?.kilometer : 0
+
     const setModalToDefault = () => {
         dispatch(setTime(todayTime))
         dispatch(setDate(todayDate))
@@ -71,7 +73,7 @@ export default function AddDataModal({}: AddDataModalProps) {
                 <input className={`${styles.input} ${styles.time}`} onChange={(e) => {
                     dispatch(setTime(e.target.value))
                 }} value={state.time} type={"time"}/>
-                <input value={state.kilometer ? state.kilometer : ''}
+                <input value={state.kilometer ? state.kilometer : defaultKilometers}
                        className={`${styles.input}`}
                        type={"number"}
                        min={99999}
