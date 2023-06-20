@@ -37,10 +37,10 @@ export const addDataSetToCollection = (dataSet: DataSet) => {
     })
 }
 
-export const removingDataSetFromCollection = (dataSet: DataSet) => {
-    if (dataSet.id) {
-        deleteDoc(doc(db,`${DB_DATA_SET_KEY}/${dataSet.id}`)).then().catch((error: Error) => {
-            console.log(error.message)
-        })
-    }
-}
+// export const removingDataSetFromCollection = (dataSet: DataSet) => {
+//     if (dataSet.id) {
+//         deleteDoc(doc(db,`${DB_DATA_SET_KEY}/${dataSet.id}`)).then().catch((error: Error) => {
+//             console.log(error.message)
+//         })
+//     }
+// }

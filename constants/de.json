@@ -10,6 +10,7 @@
   },
   "buttonLabels": {
     "addData": "Daten hinzufügen",
+    "changeData": "Daten ändern",
     "abort": "Abbrechen"
   }
 }

@@ -19,11 +19,8 @@ export default function Header({}: HeaderProps) {
         <div className={styles.mainContainer}>
 
             <menu className={styles.menu}>
-                <div className={styles.logo}>Logo</div>
                 <div className={styles.menuRight}>
                     <button onClick={onAddDataClickHandler} className={styles.menuItem}>{de.menu.addData}</button>
-                    <div className={styles.menuItem}>link2</div>
-                    <div className={styles.menuItem}>link3</div>
                     <div className={styles.menuItem}>
                         <FontAwesomeIcon icon={faGear}/>
                     </div>

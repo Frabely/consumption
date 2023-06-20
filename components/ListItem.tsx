@@ -5,9 +5,7 @@ import {setTime} from "@/store/reducer/modal/time";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
 import {invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
-import {removeDataSet} from "@/store/reducer/currentDataSet";
-import {removingDataSetFromCollection} from "@/firebase/functions";
-import {DataSet} from "@/constants/types";
+import {setIsChangingData} from "@/store/reducer/isChangingData";
 
 export default function ListItem({kilometer, name, power, time, date, id}: ListItemProps) {
     //TODO add touch event for mobile phone
@@ -15,24 +13,30 @@ export default function ListItem({kilometer, name, power, time, date, id}: ListI
     let timeOut: any
     const touchStart = () => {
         timeOut = setTimeout(() => {
-            const dataSet: DataSet = {
-                id,
-                date,
-                time,
-                kilometer,
-                power,
-                name,
+            const millisecondsToMinutes = 60000
+            const timeParts: string[] = time.split(':')
+            const dateParts: string[] = date.split('-')
+            const currDate = new Date()
+            const selectedDate = new Date(
+                parseInt(dateParts[0]),
+                parseInt(dateParts[1])-1,
+                parseInt(dateParts[2]),
+                parseInt(timeParts[0]),
+                parseInt(timeParts[1])
+            )
+            const diffMinutes: number =
+                Math.floor(currDate.getTime()/millisecondsToMinutes) -
+                Math.floor(selectedDate.getTime()/millisecondsToMinutes)
+            if (diffMinutes < 5 )
+            {
+                dispatch(invertIsAddingDataModalActive())
+                dispatch(setTime(time))
+                dispatch(setDate(date))
+                dispatch(setKilometer(kilometer))
+                dispatch(setPower(power))
+                dispatch(setIsChangingData(true))
             }
-            removingDataSetFromCollection(dataSet)
-            dispatch(removeDataSet(dataSet))
         }, 500)
-    }
-    const onListItemClickHandler = () => {
-        dispatch(setTime(time))
-        dispatch(setDate(date))
-        dispatch(setKilometer(kilometer))
-        dispatch(setPower(power))
-        dispatch(invertIsAddingDataModalActive())
     }
 
     return (
@@ -44,7 +48,6 @@ export default function ListItem({kilometer, name, power, time, date, id}: ListI
              onMouseUp={() => {
                  clearTimeout(timeOut)
              }}
-             onDoubleClick={onListItemClickHandler}
              className={styles.mainContainer}>
             <div className={styles.item}>{date}</div>
             <div className={styles.item}>{time}</div>

@@ -14,11 +14,8 @@ const CurrentDataSetSlice = createSlice({
             state.unshift(action.payload)
             return state
         },
-        removeDataSet: (state, action: PayloadAction<DataSet>) => {
-            return state.filter((dataset) => JSON.stringify(dataset) !== JSON.stringify(action.payload))
-        },
     },
 })
-export const {addDataSetToDataList, removeDataSet, setDataSetArray} = CurrentDataSetSlice.actions
+export const {addDataSetToDataList, setDataSetArray} = CurrentDataSetSlice.actions
 
 export default CurrentDataSetSlice;

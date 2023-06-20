@@ -11,6 +11,7 @@ import {setPower} from "@/store/reducer/modal/power";
 import {addDataSetToCollection} from "@/firebase/functions";
 import {setTime} from "@/store/reducer/modal/time";
 import {setDate} from "@/store/reducer/modal/date";
+import {setIsChangingData} from "@/store/reducer/isChangingData";
 
 export default function AddDataModal({}: AddDataModalProps) {
     const dispatch = useDispatch()
@@ -57,10 +58,12 @@ export default function AddDataModal({}: AddDataModalProps) {
             name: 'Moritz'
         })
         dispatch(invertIsAddingDataModalActive())
+        dispatch(setIsChangingData(false))
         setModalToDefault()
     }
     const onAbortClickHandler = () => {
         dispatch(invertIsAddingDataModalActive())
+        dispatch(setIsChangingData(false))
         setModalToDefault()
     }
 
@@ -96,11 +99,16 @@ export default function AddDataModal({}: AddDataModalProps) {
                        }}
                 />
                 <input className={`${styles.input}`} disabled={true} type={"text"} placeholder={de.inputLabels.name}/>
-                <button onClick={onAddDataClickHandler} className={styles.button}>{de.buttonLabels.addData}</button>
+                <button onClick={onAddDataClickHandler} className={styles.button}>{
+                    state.isChangingData ?
+                        de.buttonLabels.changeData :
+                        de.buttonLabels.addData
+                }</button>
                 <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.abort}</button>
             </form>
         </div>
     );
 }
 
-export type AddDataModalProps = {}
+export type AddDataModalProps = {
+}
