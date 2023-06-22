@@ -11,13 +11,20 @@ import AddDataModal from "@/components/AddDataModal";
 import {getFullDataSet} from "@/firebase/functions";
 import {setDataSetArray} from "@/store/reducer/currentDataSet";
 import {useEffect} from "react";
+import {setHighestKilometer} from "@/store/reducer/highestKilometer";
+import {setKilometer} from "@/store/reducer/modal/kilometer";
+import Login from "@/components/Login";
 
 export default function Home() {
     const dispatch = useDispatch()
     const state: RootState = useSelector((state: RootState) => state)
     useEffect(() => {
         getFullDataSet().then((dataSet) => {
-                dispatch(setDataSetArray(dataSet ? dataSet : []))
+                if (dataSet) {
+                    dispatch(setDataSetArray(dataSet))
+                    dispatch(setHighestKilometer(dataSet[0]?.kilometer ? dataSet[0]?.kilometer : 0))
+                    dispatch(setKilometer(state.highestKilometer.toString()))
+                }
             }
         ).catch((error) => {
             console.log(error.message)
@@ -28,11 +35,17 @@ export default function Home() {
 
     return (
         <div>
-            <Header/>
-            {state.isAddingDataModalActive ? (
-                <AddDataModal/>
-            ) : null}
-            <Display/>
+            {state.currentUser.key ?
+                <>
+                    <Header/>
+                    {state.isAddingDataModalActive ? (
+                        <AddDataModal/>
+                    ) : null}
+                    <Display/>
+                </>
+                :
+                <Login/>
+            }
         </div>
     )
 }

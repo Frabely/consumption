@@ -10,8 +10,11 @@ const isAddingDataModalActiveSlice = createSlice({
         invertIsAddingDataModalActive: (state) => {
             return !state
         },
+        closeIsAddingDataModalActive: (state) => {
+            return false
+        },
     },
 })
-export const { invertIsAddingDataModalActive } = isAddingDataModalActiveSlice.actions
+export const { invertIsAddingDataModalActive, closeIsAddingDataModalActive } = isAddingDataModalActiveSlice.actions
 
 export default isAddingDataModalActiveSlice;

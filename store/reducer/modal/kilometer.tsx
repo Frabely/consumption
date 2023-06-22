@@ -1,17 +1,18 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
+const initialState: string = ''
+
 const KilometerSlice = createSlice({
     name: 'kilometer',
-    initialState: 0,
+    initialState: initialState,
     reducers: {
-        setKilometer: (state, action: PayloadAction<number>) => {
+        setKilometer: (state, action: PayloadAction<string>) => {
             return action.payload
         },
     },
 })
 
 
-
-export const { setKilometer } = KilometerSlice.actions
+export const {setKilometer} = KilometerSlice.actions
 
 export default KilometerSlice;

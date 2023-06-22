@@ -6,7 +6,8 @@
     "date": "Datum",
     "kilometer": "Kilometer",
     "power": "Power",
-    "name": "Name"
+    "name": "Name",
+    "userID": "NutzerKürzel"
   },
   "buttonLabels": {
     "addData": "Daten hinzufügen",

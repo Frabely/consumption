@@ -6,6 +6,9 @@ import PowerSlice from "@/store/reducer/modal/power";
 import TimeSlice from "@/store/reducer/modal/time";
 import DateSlice from "@/store/reducer/modal/date";
 import isChangingDataSlice from "@/store/reducer/isChangingData";
+import HighestKilometer from "@/store/reducer/highestKilometer";
+import IdSlice from "@/store/reducer/modal/id";
+import CurrentUserSlice from "@/store/reducer/currentUser";
 
 export const store = configureStore({
     reducer: {
@@ -15,7 +18,10 @@ export const store = configureStore({
         [PowerSlice.name]: PowerSlice.reducer,
         [TimeSlice.name]: TimeSlice.reducer,
         [DateSlice.name]: DateSlice.reducer,
-        [isChangingDataSlice.name]: isChangingDataSlice.reducer
+        [isChangingDataSlice.name]: isChangingDataSlice.reducer,
+        [HighestKilometer.name]: HighestKilometer.reducer,
+        [IdSlice.name]: IdSlice.reducer,
+        [CurrentUserSlice.name]: CurrentUserSlice.reducer
     },
     devTools: true
 })

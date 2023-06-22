@@ -6,13 +6,14 @@ import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
 import {invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
+import {setId} from "@/store/reducer/modal/id";
 
 export default function ListItem({kilometer, name, power, time, date, id}: ListItemProps) {
-    //TODO add touch event for mobile phone
     const dispatch = useDispatch()
     let timeOut: any
     const touchStart = () => {
         timeOut = setTimeout(() => {
+            dispatch(setIsChangingData(true))
             const millisecondsToMinutes = 60000
             const timeParts: string[] = time.split(':')
             const dateParts: string[] = date.split('-')
@@ -32,9 +33,9 @@ export default function ListItem({kilometer, name, power, time, date, id}: ListI
                 dispatch(invertIsAddingDataModalActive())
                 dispatch(setTime(time))
                 dispatch(setDate(date))
-                dispatch(setKilometer(kilometer))
+                dispatch(setKilometer(kilometer.toString()))
                 dispatch(setPower(power))
-                dispatch(setIsChangingData(true))
+                dispatch(setId(id))
             }
         }, 500)
     }

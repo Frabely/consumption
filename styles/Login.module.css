@@ -1,0 +1,18 @@
+.mainContainer {
+    display: flex;
+    height: 100vh;
+    background: var(--color-tertiary);
+    justify-content: center;
+    align-items: center;
+}
+
+.input {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: var(--color-secondary);
+    border-color: var(--color-text);
+}
+
+.input::placeholder {
+    color: var(--color-text-placeholder);
+}

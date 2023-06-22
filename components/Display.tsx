@@ -17,7 +17,7 @@ export default function Display({}: DisplayProps) {
                               time={dataSet.time}
                               name={dataSet.name}
                               power={dataSet.power}
-                              id={dataSet.id ? dataSet.id : index.toString()}
+                              id={dataSet.id}
                     />
                 ))}
             </div>
