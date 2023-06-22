@@ -6,6 +6,8 @@
     height: 10vh;
     background: var(--color-primary);
     padding: 0 5%;
+    position: fixed;
+    width: 100%;
 }
 
 .menu {
@@ -31,7 +33,7 @@
 
 .menuItem {
     display: flex;
-    padding: 5% 5%;
+    padding: 0% 5%;
     /*width: 10vw;*/
     align-items: center;
     justify-content: center;

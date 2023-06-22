@@ -8,8 +8,8 @@
   --color-secondary: rgb(139, 224, 76);
   --color-tertiary: rgb(171, 231, 139);
   --backgroundModal: rgba(58, 110, 33, 0.8);
-  --color-text: rgb(255, 255, 255);
-  /*--color-text: rgb(30, 59, 19);*/
+  /*--color-text: rgb(255, 255, 255);*/
+  --color-text: rgb(30, 59, 19);
   --color-text-placeholder: rgb(236, 236, 236)
 }
 

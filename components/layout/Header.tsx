@@ -2,8 +2,7 @@
 
 import styles from '../../styles/layout/Header.module.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faGear, faPowerOff, faAdd} from '@fortawesome/free-solid-svg-icons'
-import de from '../../constants/de.json'
+import {faPowerOff, faAdd} from '@fortawesome/free-solid-svg-icons'
 import {useDispatch} from "react-redux";
 import {closeIsAddingDataModalActive, invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
@@ -25,7 +24,6 @@ export default function Header({}: HeaderProps) {
 
     return (
         <div className={styles.mainContainer}>
-
             <menu className={styles.menu}>
                 {/*<button onClick={onAddDataClickHandler} className={styles.menuItem}>{de.menu.addData}</button>*/}
                 <div onClick={onAddDataClickHandler} className={styles.menuItem}>

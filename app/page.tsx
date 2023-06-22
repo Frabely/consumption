@@ -14,6 +14,8 @@ import {useEffect} from "react";
 import {setHighestKilometer} from "@/store/reducer/highestKilometer";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import Login from "@/components/Login";
+import img from "@/public/electric-car-2783573.jpg";
+import Image from "next/image";
 
 export default function Home() {
     const dispatch = useDispatch()
@@ -34,7 +36,8 @@ export default function Home() {
     const db = getFirestore(firebaseApp)
 
     return (
-        <div>
+        <div className={styles.mainContainer}>
+            <Image className={styles.image} src={img} alt={''}></Image>
             {state.currentUser.key ?
                 <>
                     <Header/>
