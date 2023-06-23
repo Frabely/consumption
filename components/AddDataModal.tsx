@@ -12,11 +12,22 @@ import {setTime} from "@/store/reducer/modal/time";
 import {setDate} from "@/store/reducer/modal/date";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setHighestKilometer} from "@/store/reducer/highestKilometer";
-import {ChangeEvent} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 
 export default function AddDataModal({}: AddDataModalProps) {
     const dispatch = useDispatch()
     const state: RootState = useSelector((state: RootState) => state)
+    const [isInputValid, setIsInputValid] = useState({
+        kilometer: false,
+        power: false
+    })
+    const [disabled, setDisabled] = useState(true);
+    useEffect(() => {
+        if (isInputValid.power && isInputValid.kilometer){
+            setDisabled(false);
+        }
+        else setDisabled(true);
+    }, [isInputValid])
 
     const getCurrentDate = () => {
         const dateNow = new Date()
@@ -84,12 +95,47 @@ export default function AddDataModal({}: AddDataModalProps) {
         setModalToDefault()
     }
 
+    function isKilometerValid(kilometer: string) {
+        const kilometerNumber: undefined | number = parseInt(kilometer)
+        return kilometerNumber && kilometerNumber > state.highestKilometer && kilometerNumber < 1000000
+    }
     const onKilometerChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const currentKilometerValue = parseInt(e.target.value)
+        const currentKilometerValue: number | undefined = parseInt(e.target.value)
         if (currentKilometerValue && currentKilometerValue > 0)
             dispatch(setKilometer(currentKilometerValue.toString()))
         else
             dispatch(setKilometer(''))
+        if (isKilometerValid(currentKilometerValue.toString())) {
+            setIsInputValid({
+                ...isInputValid,
+                kilometer: true
+            });
+        } else {
+            setIsInputValid({
+                ...isInputValid,
+                kilometer: false
+            });
+        }
+    }
+
+    function isPowerValid(power: number | undefined) {
+        return power && power < 99.9 && power > 0.0;
+    }
+
+    function powerOnChangeHandler(event: ChangeEvent<HTMLInputElement>) {
+        const power: number | undefined = parseFloat(event.target.value);
+        dispatch(setPower(power ? power : 0.0))
+        if (isPowerValid(power)) {
+            setIsInputValid({
+                ...isInputValid,
+                power: true
+            });
+        } else {
+            setIsInputValid({
+                ...isInputValid,
+                power: false
+            });
+        }
     }
 
     return (
@@ -102,7 +148,7 @@ export default function AddDataModal({}: AddDataModalProps) {
                 {/*    dispatch(setTime(e.target.value))*/}
                 {/*}} value={state.time} type={"time"}/>*/}
                 <input value={state.kilometer}
-                       className={`${styles.input}`}
+                       className={`${styles.input} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}
                        type={"number"}
                        min={state.highestKilometer}
                        max={999999}
@@ -113,18 +159,18 @@ export default function AddDataModal({}: AddDataModalProps) {
                        placeholder={de.inputLabels.kilometer}
                 />
                 <input value={state.power ? state.power : ''}
-                       className={`${styles.input}`}
+                       className={`${styles.input} ${isInputValid.power ? styles.inputValid : styles.inputInvalid}`}
                        type={"number"}
                        min={0.1}
                        max={99.9}
                        step={0.1}
                        placeholder={de.inputLabels.power}
                        onChange={(e) => {
-                           dispatch(setPower(parseFloat(e.target.value)))
+                           powerOnChangeHandler(e)
                        }}
                 />
                 {/*<input className={`${styles.input}`} disabled={true} type={"text"} placeholder={de.inputLabels.name}/>*/}
-                <button onClick={onAddDataClickHandler} className={styles.button}>{
+                <button disabled={disabled} onClick={onAddDataClickHandler} className={styles.button}>{
                     state.isChangingData ?
                         de.buttonLabels.changeData :
                         de.buttonLabels.addData

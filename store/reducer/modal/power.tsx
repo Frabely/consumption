@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 const PowerSlice = createSlice({
     name: 'power',
-    initialState: 0,
+    initialState: 0.0,
     reducers: {
         setPower: (state, action: PayloadAction<number>) => {
             return action.payload
