@@ -2,12 +2,17 @@
   "menu": {
     "addData": "Datensatz hinzufügen"
   },
+  "measureUnits": {
+    "kilometer": "km",
+    "power": "kW/h",
+    "time": "Uhr"
+  },
   "inputLabels": {
     "date": "Datum",
     "kilometer": "Kilometer",
-    "power": "Power",
+    "power": "Menge kW/h",
     "name": "Name",
-    "userID": "NutzerKürzel"
+    "userID": "Nutzerkürzel"
   },
   "buttonLabels": {
     "addData": "Daten hinzufügen",

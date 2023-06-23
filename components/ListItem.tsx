@@ -1,4 +1,5 @@
 import styles from '../styles/ListItem.module.css'
+import de from '../constants/de.json'
 import {useDispatch} from "react-redux";
 import {setDate} from "@/store/reducer/modal/date";
 import {setTime} from "@/store/reducer/modal/time";
@@ -8,7 +9,7 @@ import {invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalAc
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setId} from "@/store/reducer/modal/id";
 
-export default function ListItem({kilometer, name, power, time, date, id}: ListItemProps) {
+export default function ListItem({kilometer, name, power, time, date, id, isLight}: ListItemProps) {
     const dispatch = useDispatch()
     let timeOut: any
     const touchStart = () => {
@@ -20,16 +21,15 @@ export default function ListItem({kilometer, name, power, time, date, id}: ListI
             const currDate = new Date()
             const selectedDate = new Date(
                 parseInt(dateParts[0]),
-                parseInt(dateParts[1])-1,
+                parseInt(dateParts[1]) - 1,
                 parseInt(dateParts[2]),
                 parseInt(timeParts[0]),
                 parseInt(timeParts[1])
             )
             const diffMinutes: number =
-                Math.floor(currDate.getTime()/millisecondsToMinutes) -
-                Math.floor(selectedDate.getTime()/millisecondsToMinutes)
-            if (diffMinutes < 5 )
-            {
+                Math.floor(currDate.getTime() / millisecondsToMinutes) -
+                Math.floor(selectedDate.getTime() / millisecondsToMinutes)
+            if (diffMinutes < 5) {
                 dispatch(invertIsAddingDataModalActive())
                 dispatch(setTime(time))
                 dispatch(setDate(date))
@@ -49,17 +49,24 @@ export default function ListItem({kilometer, name, power, time, date, id}: ListI
              onMouseUp={() => {
                  clearTimeout(timeOut)
              }}
-             className={styles.mainContainer}>
-            <div className={styles.item}>{date}</div>
-            <div className={styles.item}>{time}</div>
-            <div className={styles.item}>{kilometer}</div>
-            <div className={styles.item}>{power}</div>
-            <div className={styles.item}>{name}</div>
+             className={isLight ? styles.mainContainerLight : styles.mainContainerDark}>
+            <div className={styles.statsContainer}>
+                <div>
+                    <div className={styles.item}>{date}</div>
+                    <div className={styles.item}>{time} {de.measureUnits.time}</div>
+                </div>
+                <div>
+                    <div className={styles.item}>{kilometer} {de.measureUnits.kilometer}</div>
+                    <div className={styles.item}>{power} {de.measureUnits.power}</div>
+                </div>
+            </div>
+            <div className={styles.itemName}>{name}</div>
         </div>
     )
 }
 
 export type ListItemProps = {
+    isLight: boolean
     time: string,
     date: string,
     kilometer: number,

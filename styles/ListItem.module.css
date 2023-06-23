@@ -1,11 +1,37 @@
-.mainContainer {
+.mainContainerLight {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background: rgba(139, 224, 76, 0.7);
+    flex-wrap: wrap;
+}
+
+.mainContainerDark {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background: rgba(80, 124, 41, 0.7);
+    flex-wrap: wrap;
+}
+
+.statsContainer {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 0.5rem;
 }
+
 
 .item {
     display: flex;
     padding: 0.5rem 0.2rem;
+    color: white;
+}
+
+.itemName {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0.2rem;
+    color: white;
 }

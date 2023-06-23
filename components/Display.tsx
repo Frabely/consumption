@@ -3,8 +3,6 @@ import ListItem from "@/components/ListItem";
 import {useSelector} from "react-redux";
 import {RootState} from "@/store/store";
 import {DataSet} from "@/constants/types";
-import Image from "next/image";
-import img from "../public/electric-car-2783573.jpg"
 
 export default function Display({}: DisplayProps) {
     const state: RootState = useSelector((state: RootState) => state)
@@ -13,16 +11,33 @@ export default function Display({}: DisplayProps) {
         <>
             <div className={styles.mainContainer}>
                 <div className={styles.list}>
-                    {state.currentDataSet.map((dataSet: DataSet, index: number) => (
-                        <ListItem key={index}
-                                  kilometer={dataSet.kilometer}
-                                  date={dataSet.date}
-                                  time={dataSet.time}
-                                  name={dataSet.name}
-                                  power={dataSet.power}
-                                  id={dataSet.id}
-                        />
-                    ))}
+                    {state.currentDataSet.map((dataSet: DataSet, index: number) =>
+                    {
+                        if (index%2 === 0) {
+                            return (
+                                <ListItem key={index}
+                                          kilometer={dataSet.kilometer}
+                                          date={dataSet.date}
+                                          time={dataSet.time}
+                                          name={dataSet.name}
+                                          power={dataSet.power}
+                                          id={dataSet.id}
+                                          isLight={true}
+                                />
+                            )
+                        }
+                        else return (
+                            <ListItem key={index}
+                                      kilometer={dataSet.kilometer}
+                                      date={dataSet.date}
+                                      time={dataSet.time}
+                                      name={dataSet.name}
+                                      power={dataSet.power}
+                                      id={dataSet.id}
+                                      isLight={false}
+                            />
+                        )
+                    })}
                 </div>
             </div>
         </>
