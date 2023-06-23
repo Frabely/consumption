@@ -1,4 +1,7 @@
 {
+  "head": {
+    "title": "Verbrauch"
+  },
   "menu": {
     "addData": "Datensatz hinzufügen"
   },

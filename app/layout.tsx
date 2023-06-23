@@ -4,6 +4,7 @@ import {ReduxProvider} from "@/store/provider";
 import {ReactNode} from "react";
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
+import de from "@/constants/de.json";
 config.autoAddCss = false
 
 const inter = Inter({subsets: ['latin']})
@@ -16,6 +17,9 @@ export const metadata = {
 export default function RootLayout({children}: { children: ReactNode }) {
   return (
       <html lang="en">
+      <head>
+          <title>{de.head.title}</title>
+      </head>
       <body className={inter.className}>
       <ReduxProvider>{children}</ReduxProvider>
       </body>
