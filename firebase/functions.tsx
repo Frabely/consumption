@@ -11,18 +11,22 @@ import {
     orderBy,
     updateDoc, getDoc, where
 } from "@firebase/firestore";
-import {DataSet, DataSetNoId, User} from "@/constants/types";
+import {DataSet, DataSetNoId, User, YearMonth} from "@/constants/types";
 
 const db = getFirestore(firebaseApp)
 
-export const getFullDataSet = async () => {
+export const getFullDataSet = async (passedDate?: YearMonth) => {
     const dateNow = new Date()
     const year = dateNow.getFullYear().toString();
     const month = dateNow.getMonth() + 1;
     const monthString = (month < 10 ? `0` + month : month).toString()
 
     const fullDataSet: DataSet[] = []
-    const consumptionDataRef = collection(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${monthString}`);
+    const consumptionDataRef = collection(db,
+        `${DB_DATA_SET_COLLECTION_KEY}` +
+        `/${passedDate ? passedDate.year : year}` +
+        `/${passedDate ? passedDate.month : monthString}`
+    );
 
     const queryKilometersDesc = query(consumptionDataRef, orderBy("kilometer", "desc"));
     const querySnapshot = await getDocs(queryKilometersDesc).catch(error => {
@@ -43,6 +47,8 @@ export const getFullDataSet = async () => {
         return fullDataSet
     }
 }
+
+// export const getFullDataSet
 
 export const addDataSetToCollection = (dataSet: DataSetNoId) => {
     const {date, time, kilometer, power, name} = dataSet

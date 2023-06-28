@@ -1,7 +1,7 @@
 'use client'
 
-import styles from "../styles/AddDataModal.module.css"
-import de from '../constants/de.json'
+import styles from "../../styles/modals/AddData.module.css"
+import de from '../../constants/de.json'
 import {useDispatch, useSelector} from "react-redux";
 import {invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
 import {RootState} from "@/store/store";
@@ -13,8 +13,9 @@ import {setDate} from "@/store/reducer/modal/date";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setHighestKilometer} from "@/store/reducer/highestKilometer";
 import {ChangeEvent, useEffect, useState} from "react";
+import Modal from "@/components/layout/Modal";
 
-export default function AddDataModal({}: AddDataModalProps) {
+export default function AddData({}: AddDataModalProps) {
     const dispatch = useDispatch()
     const state: RootState = useSelector((state: RootState) => state)
     const [isInputValid, setIsInputValid] = useState({
@@ -23,10 +24,9 @@ export default function AddDataModal({}: AddDataModalProps) {
     })
     const [disabled, setDisabled] = useState(true);
     useEffect(() => {
-        if (isInputValid.power && isInputValid.kilometer){
+        if (isInputValid.power && isInputValid.kilometer) {
             setDisabled(false);
-        }
-        else setDisabled(true);
+        } else setDisabled(true);
     }, [isInputValid])
 
     const getCurrentDate = () => {
@@ -62,13 +62,6 @@ export default function AddDataModal({}: AddDataModalProps) {
             power,
             kilometer,
         } = state
-        // dispatch(addDataSetToDataList({
-        //     date: todayDate,
-        //     time: todayTime,
-        //     kilometer,
-        //     power,
-        //     name: 'Moritz'
-        // }))
         if (state.isChangingData) {
             changeDataSetInCollection({
                 id,
@@ -99,6 +92,7 @@ export default function AddDataModal({}: AddDataModalProps) {
         const kilometerNumber: undefined | number = parseInt(kilometer)
         return kilometerNumber && kilometerNumber > state.highestKilometer && kilometerNumber < 1000000
     }
+
     const onKilometerChange = (e: ChangeEvent<HTMLInputElement>) => {
         const currentKilometerValue: number | undefined = parseInt(e.target.value)
         if (currentKilometerValue && currentKilometerValue > 0)
@@ -139,45 +133,36 @@ export default function AddDataModal({}: AddDataModalProps) {
     }
 
     return (
-        <div className={styles.mainContainer}>
-            <form name={'addDataSet'} className={styles.mainInnerContainer}>
-                {/*<input className={`${styles.input} ${styles.date}`} onChange={(e) => {*/}
-                {/*    dispatch(setDate(e.target.value))*/}
-                {/*}} value={state.date} type={"date"}/>*/}
-                {/*<input className={`${styles.input} ${styles.time}`} onChange={(e) => {*/}
-                {/*    dispatch(setTime(e.target.value))*/}
-                {/*}} value={state.time} type={"time"}/>*/}
-                <input value={state.kilometer}
-                       className={`${styles.input} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}
-                       type={"number"}
-                       min={state.highestKilometer}
-                       max={999999}
-                       step={1.0}
-                       onChange={(e) => {
-                           onKilometerChange(e)
-                       }}
-                       placeholder={de.inputLabels.kilometer}
-                />
-                <input value={state.power ? state.power : ''}
-                       className={`${styles.input} ${isInputValid.power ? styles.inputValid : styles.inputInvalid}`}
-                       type={"number"}
-                       min={0.1}
-                       max={99.9}
-                       step={0.1}
-                       placeholder={de.inputLabels.power}
-                       onChange={(e) => {
-                           powerOnChangeHandler(e)
-                       }}
-                />
-                {/*<input className={`${styles.input}`} disabled={true} type={"text"} placeholder={de.inputLabels.name}/>*/}
-                <button disabled={disabled} onClick={onAddDataClickHandler} className={styles.button}>{
-                    state.isChangingData ?
-                        de.buttonLabels.changeData :
-                        de.buttonLabels.addData
-                }</button>
-                <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.abort}</button>
-            </form>
-        </div>
+        <Modal formName={'addData'}>
+            <input value={state.kilometer}
+                   className={`${styles.input} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}
+                   type={"number"}
+                   min={state.highestKilometer}
+                   max={999999}
+                   step={1.0}
+                   onChange={(e) => {
+                       onKilometerChange(e)
+                   }}
+                   placeholder={de.inputLabels.kilometer}
+            />
+            <input value={state.power ? state.power : ''}
+                   className={`${styles.input} ${isInputValid.power ? styles.inputValid : styles.inputInvalid}`}
+                   type={"number"}
+                   min={0.1}
+                   max={99.9}
+                   step={0.1}
+                   placeholder={de.inputLabels.power}
+                   onChange={(e) => {
+                       powerOnChangeHandler(e)
+                   }}
+            />
+            <button disabled={disabled} onClick={onAddDataClickHandler} className={styles.button}>{
+                state.isChangingData ?
+                    de.buttonLabels.changeData :
+                    de.buttonLabels.addData
+            }</button>
+            <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.abort}</button>
+        </Modal>
     );
 }
 

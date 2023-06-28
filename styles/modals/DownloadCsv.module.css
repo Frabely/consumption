@@ -1,0 +1,22 @@
+.input {
+    margin-bottom: 5%;
+    padding: 5%;
+    background: var(--color-secondary);
+    border-color: var(--color-text);
+}
+
+.button {
+    display: flex;
+    padding: 5% 5%;
+    margin-top: 5%;
+    /*width: 10vw;*/
+    align-items: center;
+    justify-content: center;
+    border-color: var(--color-text);
+    background: var(--color-secondary);
+    border-radius: 5px;
+}
+
+.button:disabled {
+    background: var(--color-primary);
+}

@@ -19,3 +19,8 @@ export type User = {
     name?: string
     key?: string
 }
+
+export type YearMonth = {
+    year: string,
+    month: string
+}

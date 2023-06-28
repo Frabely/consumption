@@ -7,7 +7,7 @@ import Header from "@/components/layout/Header";
 import Display from "@/components/Display";
 import {RootState} from "@/store/store";
 import {useDispatch, useSelector} from "react-redux";
-import AddDataModal from "@/components/AddDataModal";
+import AddData from "@/components/modals/AddData";
 import {getFullDataSet} from "@/firebase/functions";
 import {setDataSetArray} from "@/store/reducer/currentDataSet";
 import {useEffect} from "react";
@@ -16,6 +16,7 @@ import {setKilometer} from "@/store/reducer/modal/kilometer";
 import Login from "@/components/Login";
 import img from "@/public/electric-car-2783573.jpg";
 import Image from "next/image";
+import DownloadCsv from "@/components/modals/DownloadCsv";
 
 export default function Home() {
     const dispatch = useDispatch()
@@ -42,7 +43,10 @@ export default function Home() {
                 <>
                     <Header/>
                     {state.isAddingDataModalActive ? (
-                        <AddDataModal/>
+                        <AddData/>
+                    ) : null}
+                    {state.isDownloadCsvModalActive ? (
+                        <DownloadCsv/>
                     ) : null}
                     <Display/>
                 </>

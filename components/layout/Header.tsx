@@ -2,17 +2,21 @@
 
 import styles from '../../styles/layout/Header.module.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faPowerOff, faAdd} from '@fortawesome/free-solid-svg-icons'
+import {faPowerOff, faAdd, faFileCsv} from '@fortawesome/free-solid-svg-icons'
 import {useDispatch} from "react-redux";
 import {closeIsAddingDataModalActive, invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setCurrentUser} from "@/store/reducer/currentUser";
 import {EMPTY_USER} from "@/constants/constantData";
+import {useState} from "react";
+import {closeIsDownloadCsvModalActive, invertIsDownloadCsvModalActive} from "@/store/reducer/isDownloadCsvModalActive";
 
 export default function Header({}: HeaderProps) {
+    const [isDownloadCsv, setIsDownloadCsv] = useState(false)
     const dispatch = useDispatch()
 
     const onAddDataClickHandler = () => {
+        dispatch(closeIsDownloadCsvModalActive())
         dispatch(setIsChangingData(false))
         dispatch(invertIsAddingDataModalActive())
     }
@@ -20,14 +24,23 @@ export default function Header({}: HeaderProps) {
     const onLogoutHandler = () => {
         dispatch(setCurrentUser(EMPTY_USER))
         dispatch(closeIsAddingDataModalActive())
+        dispatch(closeIsDownloadCsvModalActive())
+    }
+
+
+    const onExportAsCsvClickHandler = () => {
+        dispatch(closeIsAddingDataModalActive())
+        dispatch(invertIsDownloadCsvModalActive())
     }
 
     return (
         <div className={styles.mainContainer}>
             <menu className={styles.menu}>
-                {/*<button onClick={onAddDataClickHandler} className={styles.menuItem}>{de.menu.addData}</button>*/}
                 <div onClick={onAddDataClickHandler} className={styles.menuItem}>
                     <FontAwesomeIcon icon={faAdd}/>
+                </div>
+                <div onClick={onExportAsCsvClickHandler} className={styles.menuItem}>
+                    <FontAwesomeIcon icon={faFileCsv}/>
                 </div>
                 <div onClick={onLogoutHandler} className={styles.menuItem}>
                     <FontAwesomeIcon icon={faPowerOff}/>

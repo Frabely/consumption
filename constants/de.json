@@ -20,6 +20,17 @@
   "buttonLabels": {
     "addData": "Daten hinzufügen",
     "changeData": "Daten ändern",
-    "abort": "Abbrechen"
+    "abort": "Abbrechen",
+    "downloadCsv" : "Csv herunterladen"
+  },
+  "dataSet": {
+    "date": "Datum",
+    "time": "Zeit",
+    "kilometer": "km",
+    "power": "kW/h",
+    "name": "Name"
+  },
+  "messages": {
+    "noDataForFollowMonthAndYearAvailable": "Keine Daten für den folgendes Jahr und Monat verfügbar"
   }
 }
