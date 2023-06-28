@@ -18,10 +18,8 @@ export default function DownloadCsv({}: DownloadCsvProps) {
         year: year.toString(),
         month: monthString
     })
-    const [disabled, setDisabled] = useState(false);
 
     const onDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-        setDisabled(event.target.value === '')
         if (event.target.value !== '') {
             const arrayDate: string[] = event.target.value.split('-')
             setCurrentDateValue({
@@ -29,7 +27,6 @@ export default function DownloadCsv({}: DownloadCsvProps) {
                 month: arrayDate[1]
             })
         }
-
     }
 
     const dataSetArrayToTxt = (dataSetArray: DataSet[]): string => {
@@ -59,7 +56,7 @@ export default function DownloadCsv({}: DownloadCsvProps) {
     return (
         <Modal formName={'DownloadCsv'}>
             <input onChange={onDateInputChangeHandler} value={`${currentDateValue.year}-${currentDateValue.month}`} className={styles.input} type={"month"}/>
-            <button disabled={disabled} onClick={onDownloadCsvClickHandler} className={styles.button}>{de.buttonLabels.downloadCsv}</button>
+            <button onClick={onDownloadCsvClickHandler} className={styles.button}>{de.buttonLabels.downloadCsv}</button>
         </Modal>
     )
 }
