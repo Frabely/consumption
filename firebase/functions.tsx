@@ -16,8 +16,13 @@ import {DataSet, DataSetNoId, User} from "@/constants/types";
 const db = getFirestore(firebaseApp)
 
 export const getFullDataSet = async () => {
+    const dateNow = new Date()
+    const year = dateNow.getFullYear().toString();
+    const month = dateNow.getMonth() + 1;
+    const monthString = (month < 10 ? `0` + month : month).toString()
+
     const fullDataSet: DataSet[] = []
-    const consumptionDataRef = collection(db, DB_DATA_SET_COLLECTION_KEY);
+    const consumptionDataRef = collection(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${monthString}`);
 
     const queryKilometersDesc = query(consumptionDataRef, orderBy("kilometer", "desc"));
     const querySnapshot = await getDocs(queryKilometersDesc).catch(error => {
@@ -41,14 +46,18 @@ export const getFullDataSet = async () => {
 
 export const addDataSetToCollection = (dataSet: DataSetNoId) => {
     const {date, time, kilometer, power, name} = dataSet
-    const consumptionDataRef = collection(db, DB_DATA_SET_COLLECTION_KEY);
+    const year: string = date.split('-')[0]
+    const month: string = date.split('-')[1]
+    const consumptionDataRef = collection(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}`);
     addDoc(consumptionDataRef, {date, time, kilometer, power, name}).then().catch((error: Error) => {
         console.log(error.message)
     })
 }
 
 export const changeDataSetInCollection = (dataSet: DataSet) => {
-    const consumptionDataRef = doc(db, `${DB_DATA_SET_COLLECTION_KEY}/${dataSet.id}`);
+    const year: string = dataSet.date.split('-')[0]
+    const month: string = dataSet.date.split('-')[1]
+    const consumptionDataRef = doc(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}/${dataSet.id}`);
     updateDoc(consumptionDataRef, {
         date: dataSet.date,
         kilometer: dataSet.kilometer,
