@@ -18,10 +18,13 @@ export default function Login({}: LoginProps) {
         }
     }
     return (
-        <div className={styles.mainContainer}>
-            <input onChange={onInputChangeHandler} type={"password"} className={styles.input}
-                   placeholder={de.inputLabels.userID}/>
-        </div>
+        <form className={styles.mainContainer}>
+            <input onChange={onInputChangeHandler}
+                   type={"password"}
+                   className={styles.input}
+                   placeholder={de.inputLabels.userID}
+            />
+        </form>
     )
 }
 
