@@ -55,7 +55,8 @@ export const addDataSetToCollection = (dataSet: DataSetNoId) => {
     const year: string = date.split('-')[0]
     const month: string = date.split('-')[1]
     const consumptionDataRef = collection(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}`);
-    addDoc(consumptionDataRef, {date, time, kilometer, power, name}).then().catch((error: Error) => {
+    const decimalPower = (Math.round(dataSet.power * 100) / 100).toFixed(1)
+    addDoc(consumptionDataRef, {date, time, kilometer, power: decimalPower, name}).then().catch((error: Error) => {
         console.log(error.message)
     })
 }
@@ -64,11 +65,12 @@ export const changeDataSetInCollection = (dataSet: DataSet) => {
     const year: string = dataSet.date.split('-')[0]
     const month: string = dataSet.date.split('-')[1]
     const consumptionDataRef = doc(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}/${dataSet.id}`);
+    const decimalPower = (Math.round(dataSet.power * 100) / 100).toFixed(1)
     updateDoc(consumptionDataRef, {
         date: dataSet.date,
         kilometer: dataSet.kilometer,
         name: dataSet.name,
-        power: dataSet.power,
+        power: decimalPower,
         time: dataSet.time
     }).then().catch((error: Error) => {
         console.log(error.message)
