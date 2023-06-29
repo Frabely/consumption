@@ -6,6 +6,7 @@ import {useDispatch} from "react-redux";
 import {closeIsDownloadCsvModalActive} from "@/store/reducer/isDownloadCsvModalActive";
 import {getFullDataSet} from "@/firebase/functions";
 import {DataSet} from "@/constants/types";
+import {invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
     const dispatch = useDispatch()
@@ -18,6 +19,10 @@ export default function DownloadCsv({}: DownloadCsvProps) {
         year: year.toString(),
         month: monthString
     })
+
+    const onAbortClickHandler = () => {
+        dispatch(closeIsDownloadCsvModalActive())
+    }
 
     const onDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.value !== '') {
@@ -58,6 +63,7 @@ export default function DownloadCsv({}: DownloadCsvProps) {
         <Modal formName={'DownloadCsv'}>
             <input onChange={onDateInputChangeHandler} value={`${currentDateValue.year}-${currentDateValue.month}`} className={styles.input} type={"month"}/>
             <button onClick={onDownloadCsvClickHandler} className={styles.button}>{de.buttonLabels.downloadCsv}</button>
+            <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.abort}</button>
         </Modal>
     )
 }

@@ -34,7 +34,7 @@ export default function ListItem({kilometer, name, power, time, date, id, isLigh
                 dispatch(setTime(time))
                 dispatch(setDate(date))
                 dispatch(setKilometer(kilometer.toString()))
-                dispatch(setPower(power))
+                dispatch(setPower(power.toString()))
                 dispatch(setId(id))
             }
         }, 500)

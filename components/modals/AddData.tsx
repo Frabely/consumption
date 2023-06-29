@@ -3,7 +3,7 @@
 import styles from "../../styles/modals/AddData.module.css"
 import de from '../../constants/de.json'
 import {useDispatch, useSelector} from "react-redux";
-import {invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
+import {closeIsAddingDataModalActive, invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
 import {RootState} from "@/store/store";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
@@ -19,8 +19,8 @@ export default function AddData({}: AddDataModalProps) {
     const dispatch = useDispatch()
     const state: RootState = useSelector((state: RootState) => state)
     const [isInputValid, setIsInputValid] = useState({
-        kilometer: false,
-        power: false
+        kilometer: isKilometerValid(state.kilometer),
+        power: isPowerValid(state.power)
     })
     const [disabled, setDisabled] = useState(true);
     useEffect(() => {
@@ -46,7 +46,7 @@ export default function AddData({}: AddDataModalProps) {
     // const defaultKilometers = state.currentDataSet[0]?.kilometer ? state.currentDataSet[0]?.kilometer : 0
 
     const setModalToDefault = () => {
-        dispatch(setPower(0))
+        dispatch(setPower(''))
         dispatch(setKilometer(state.highestKilometer.toString()))
         dispatch(setIsChangingData(false))
     }
@@ -68,7 +68,7 @@ export default function AddData({}: AddDataModalProps) {
                 date: todayDate,
                 time: todayTime,
                 kilometer: parseInt(kilometer),
-                power,
+                power: parseFloat(power),
                 name: state.currentUser.name ? state.currentUser.name : ''
             })
         } else {
@@ -76,7 +76,7 @@ export default function AddData({}: AddDataModalProps) {
                 date: todayDate,
                 time: todayTime,
                 kilometer: parseInt(kilometer),
-                power,
+                power: parseFloat(power),
                 name: state.currentUser.name ? state.currentUser.name : ''
             })
         }
@@ -84,13 +84,16 @@ export default function AddData({}: AddDataModalProps) {
         setModalToDefault()
     }
     const onAbortClickHandler = () => {
-        dispatch(invertIsAddingDataModalActive())
+        dispatch(closeIsAddingDataModalActive())
         setModalToDefault()
     }
 
     function isKilometerValid(kilometer: string) {
         const kilometerNumber: undefined | number = parseInt(kilometer)
-        return kilometerNumber && kilometerNumber > state.highestKilometer && kilometerNumber < 1000000
+        if (state.isChangingData)
+            return kilometerNumber && kilometerNumber >= state.highestKilometer && kilometerNumber < 1000000
+        else
+            return kilometerNumber && kilometerNumber > state.highestKilometer && kilometerNumber < 1000000
     }
 
     const onKilometerChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -112,14 +115,17 @@ export default function AddData({}: AddDataModalProps) {
         }
     }
 
-    function isPowerValid(power: number | undefined) {
-        return power && power < 99.9 && power > 0.0;
+    function isPowerValid(power: string) {
+        const powerNumber = parseFloat(power)
+        if (powerNumber !== undefined && !Number.isNaN(powerNumber)) {
+            return powerNumber < 99.9 && powerNumber > 0.0;
+        }
     }
 
     function powerOnChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        const power: number | undefined = parseFloat(event.target.value);
-        dispatch(setPower(power ? power : 0.0))
-        if (isPowerValid(power)) {
+        const powerString: string = event.target.value
+        dispatch(setPower(powerString))
+        if (isPowerValid(powerString)) {
             setIsInputValid({
                 ...isInputValid,
                 power: true
@@ -145,7 +151,7 @@ export default function AddData({}: AddDataModalProps) {
                    }}
                    placeholder={de.inputLabels.kilometer}
             />
-            <input value={state.power ? state.power : ''}
+            <input value={state.power}
                    className={`${styles.input} ${isInputValid.power ? styles.inputValid : styles.inputInvalid}`}
                    type={"number"}
                    min={0.1}
