@@ -30,10 +30,11 @@ export default function DownloadCsv({}: DownloadCsvProps) {
     }
 
     const dataSetArrayToTxt = (dataSetArray: DataSet[]): string => {
-        let txtContent = `${de.dataSet.date},${de.dataSet.time},${de.dataSet.kilometer},${de.dataSet.power},${de.dataSet.name}\n`
+        let txtContent = `${de.dataSet.date};${de.dataSet.time};${de.dataSet.kilometer};${de.dataSet.power};${de.dataSet.name}\n`
         dataSetArray.forEach((dataSet: DataSet) => {
-            txtContent += `${dataSet.date},${dataSet.time},${dataSet.kilometer},${dataSet.power},${dataSet.name} \n`
+            txtContent += `${dataSet.date};${dataSet.time};${dataSet.kilometer};${dataSet.power};${dataSet.name} \n`
         })
+        txtContent = txtContent.replaceAll(".", ",")
         return txtContent
     }
 
