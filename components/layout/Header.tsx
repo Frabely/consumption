@@ -8,11 +8,9 @@ import {closeIsAddingDataModalActive, invertIsAddingDataModalActive} from "@/sto
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setCurrentUser} from "@/store/reducer/currentUser";
 import {EMPTY_USER} from "@/constants/constantData";
-import {useState} from "react";
 import {closeIsDownloadCsvModalActive, invertIsDownloadCsvModalActive} from "@/store/reducer/isDownloadCsvModalActive";
 
 export default function Header({}: HeaderProps) {
-    const [isDownloadCsv, setIsDownloadCsv] = useState(false)
     const dispatch = useDispatch()
 
     const onAddDataClickHandler = () => {
@@ -39,6 +37,11 @@ export default function Header({}: HeaderProps) {
                 <div onClick={onAddDataClickHandler} className={styles.menuItem}>
                     <FontAwesomeIcon icon={faAdd}/>
                 </div>
+                {/*<div onClick={onExportAsCsvClickHandler} className={styles.menuItem}>*/}
+                {/*    <select>*/}
+                {/*        <option>Zoe</option>*/}
+                {/*    </select>*/}
+                {/*</div>*/}
                 <div onClick={onExportAsCsvClickHandler} className={styles.menuItem}>
                     <FontAwesomeIcon icon={faFileCsv}/>
                 </div>

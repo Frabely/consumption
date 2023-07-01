@@ -16,8 +16,10 @@ import {ChangeEvent, useEffect, useState} from "react";
 import Modal from "@/components/layout/Modal";
 import {DEFAULT_LOADING_STATION, loadingStations} from "@/constants/constantData";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
+import {Language} from "@/constants/types";
 
 export default function AddData({prevKilometers}: AddDataModalProps) {
+    const language: Language = de
     const dispatch = useDispatch()
     const state: RootState = useSelector((state: RootState) => state)
     const [isInputValid, setIsInputValid] = useState({
@@ -151,14 +153,16 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         dispatch(setLoadingStation({id, name}))
     }
 
+
     return (
         <Modal formName={'addData'}>
             <select onChange={onLoadingStationChangeHandler} className={styles.select}
-                    defaultValue={state.isChangingData ? state.loadingStation.name : DEFAULT_LOADING_STATION.name}>
+                    defaultValue={state.isChangingData ? language.loadingStation[`${state.loadingStation.name}`] : DEFAULT_LOADING_STATION.name}>
                 {loadingStations.map((loadingStation) => {
+
                         return (
                             <option id={loadingStation.id} key={loadingStation.id}>
-                                {loadingStation.name}
+                                {language.loadingStation[`${loadingStation.name}`]}
                             </option>
                         )
                     }
