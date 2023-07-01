@@ -1,4 +1,9 @@
-import {DB_DATA_SET_COLLECTION_KEY, DB_LOADING_STATIONS, DB_USER_COLLECTION_KEY} from "@/constants/constantData";
+import {
+    DB_CARS,
+    DB_DATA_SET_COLLECTION_KEY,
+    DB_LOADING_STATIONS,
+    DB_USER_COLLECTION_KEY
+} from "@/constants/constantData";
 import firebaseApp from "@/firebase/firebase";
 import {
     addDoc,
@@ -10,7 +15,7 @@ import {
     orderBy,
     updateDoc, where
 } from "@firebase/firestore";
-import {DataSet, DataSetNoId, LoadingStation, User, YearMonth} from "@/constants/types";
+import {Car, DataSet, DataSetNoId, LoadingStation, User, YearMonth} from "@/constants/types";
 
 const db = getFirestore(firebaseApp)
 
@@ -117,13 +122,32 @@ export const getLoadingStations = async () => {
     })
     if (qsDocs && !qsDocs.empty) {
         qsDocs.docs.map((loadingStation) => {
-            const oneDataSet: LoadingStation = {
+            const newLoadingStation: LoadingStation = {
                 id: loadingStation.id,
                 name: loadingStation.get('name')
             }
-            loadingStations.push(oneDataSet)
+            loadingStations.push(newLoadingStation)
         })
         return loadingStations
+    }
+}
+
+export const getCars = async () => {
+    const cars: Car[] = []
+    const carsRef = collection(db, `${DB_CARS}`);
+    const qsDocs = await getDocs(carsRef).catch(error => {
+        console.log(error.message)
+    })
+    if (qsDocs && !qsDocs.empty) {
+        qsDocs.docs.map((car) => {
+            const newCar: Car = {
+                name: car.id,
+                kilometer: car.get('kilometer'),
+                prevKilometer: car.get('prevKilometer')
+            }
+            cars.push(newCar)
+        })
+        return cars
     }
 }
 

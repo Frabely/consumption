@@ -11,6 +11,7 @@ import IdSlice from "@/store/reducer/modal/id";
 import CurrentUserSlice from "@/store/reducer/currentUser";
 import isDownloadCsvModalActiveSlice from "@/store/reducer/isDownloadCsvModalActive";
 import LoadingStationSlice from "@/store/reducer/modal/loadingStationId";
+import CurrentCar from "@/store/reducer/currentCar";
 
 export const store = configureStore({
     reducer: {
@@ -25,7 +26,8 @@ export const store = configureStore({
         [IdSlice.name]: IdSlice.reducer,
         [CurrentUserSlice.name]: CurrentUserSlice.reducer,
         [isDownloadCsvModalActiveSlice.name]: isDownloadCsvModalActiveSlice.reducer,
-        [LoadingStationSlice.name]: LoadingStationSlice.reducer
+        [LoadingStationSlice.name]: LoadingStationSlice.reducer,
+        [CurrentCar.name]: CurrentCar.reducer
     },
     devTools: true
 })

@@ -84,5 +84,10 @@ export type Language = {
         "frontDoor": string,
         "official": string
     }
+}
 
+export type Car = {
+    name: string,
+    kilometer?: number,
+    prevKilometer?: number
 }
