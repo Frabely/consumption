@@ -1,4 +1,4 @@
-import {configureStore, ThunkAction, Action} from "@reduxjs/toolkit";
+import {configureStore} from "@reduxjs/toolkit";
 import isAddingDataModalActiveSlice from "@/store/reducer/isAddingDataModalActive";
 import currentDataSetSlice from "@/store/reducer/currentDataSet";
 import KilometerSlice from "@/store/reducer/modal/kilometer";
@@ -10,6 +10,7 @@ import HighestKilometerSlice from "@/store/reducer/highestKilometer";
 import IdSlice from "@/store/reducer/modal/id";
 import CurrentUserSlice from "@/store/reducer/currentUser";
 import isDownloadCsvModalActiveSlice from "@/store/reducer/isDownloadCsvModalActive";
+import LoadingStationSlice from "@/store/reducer/modal/loadingStationId";
 
 export const store = configureStore({
     reducer: {
@@ -23,7 +24,8 @@ export const store = configureStore({
         [HighestKilometerSlice.name]: HighestKilometerSlice.reducer,
         [IdSlice.name]: IdSlice.reducer,
         [CurrentUserSlice.name]: CurrentUserSlice.reducer,
-        [isDownloadCsvModalActiveSlice.name]: isDownloadCsvModalActiveSlice.reducer
+        [isDownloadCsvModalActiveSlice.name]: isDownloadCsvModalActiveSlice.reducer,
+        [LoadingStationSlice.name]: LoadingStationSlice.reducer
     },
     devTools: true
 })

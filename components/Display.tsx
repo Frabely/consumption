@@ -23,6 +23,7 @@ export default function Display({}: DisplayProps) {
                                           power={dataSet.power}
                                           id={dataSet.id}
                                           isLight={true}
+                                          loadingStation={dataSet.loadingStation}
                                 />
                             )
                         }
@@ -35,6 +36,7 @@ export default function Display({}: DisplayProps) {
                                       power={dataSet.power}
                                       id={dataSet.id}
                                       isLight={false}
+                                      loadingStation={dataSet.loadingStation}
                             />
                         )
                     })}

@@ -4,7 +4,8 @@ export type DataSet = {
     power: number,
     name: string,
     time: string,
-    date: string
+    date: string,
+    loadingStation: LoadingStation
 }
 
 export type DataSetNoId = {
@@ -12,7 +13,8 @@ export type DataSetNoId = {
     power: number,
     name: string,
     time: string,
-    date: string
+    date: string,
+    loadingStation: LoadingStation
 }
 
 export type User = {
@@ -21,6 +23,12 @@ export type User = {
 }
 
 export type YearMonth = {
+    [index: string]: string
     year: string,
     month: string
+}
+
+export type LoadingStation = {
+    id: string,
+    name: string
 }

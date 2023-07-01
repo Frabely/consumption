@@ -19,6 +19,7 @@
     padding: 5%;
     background: var(--color-secondary);
     border-color: var(--color-text);
+    border-width: 2px;
 }
 
 .inputInvalid {
@@ -31,4 +32,12 @@
 
 .input::placeholder {
     color: var(--color-text-placeholder);
+}
+
+.select {
+    margin-bottom: 5%;
+    padding: 5%;
+    background: var(--color-secondary);
+    border-color: var(--color-text);
+    border-width: 2px;
 }

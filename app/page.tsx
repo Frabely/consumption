@@ -1,8 +1,6 @@
 'use client'
 
 import styles from '../styles/page.module.css'
-import firebaseApp from "@/firebase/firebase";
-import {getFirestore} from "@firebase/firestore";
 import Header from "@/components/layout/Header";
 import Display from "@/components/Display";
 import {RootState} from "@/store/store";
@@ -34,7 +32,6 @@ export default function Home() {
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.isAddingDataModalActive])
-    const db = getFirestore(firebaseApp)
 
     return (
         <div className={styles.mainContainer}>
@@ -43,7 +40,7 @@ export default function Home() {
                 <>
                     <Header/>
                     {state.isAddingDataModalActive ? (
-                        <AddData/>
+                        <AddData prevKilometers={state.currentDataSet[1]?.kilometer ? state.currentDataSet[1]?.kilometer : 0}/>
                     ) : null}
                     {state.isDownloadCsvModalActive ? (
                         <DownloadCsv/>

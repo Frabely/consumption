@@ -1,17 +1,16 @@
-import {DB_DATA_SET_COLLECTION_KEY, DB_USER_COLLECTION_KEY} from "@/constants/constantData";
+import {DB_DATA_SET_COLLECTION_KEY, DB_LOADING_STATIONS, DB_USER_COLLECTION_KEY} from "@/constants/constantData";
 import firebaseApp from "@/firebase/firebase";
 import {
     addDoc,
     collection,
     getDocs,
     getFirestore,
-    deleteDoc,
     doc,
     query,
     orderBy,
-    updateDoc, getDoc, where
+    updateDoc, where
 } from "@firebase/firestore";
-import {DataSet, DataSetNoId, User, YearMonth} from "@/constants/types";
+import {DataSet, DataSetNoId, LoadingStation, User, YearMonth} from "@/constants/types";
 
 const db = getFirestore(firebaseApp)
 
@@ -28,35 +27,49 @@ export const getFullDataSet = async (passedDate?: YearMonth) => {
         `/${passedDate ? passedDate.month : monthString}`
     );
 
+    const loadingStations = await getLoadingStations()
+
     const queryKilometersDesc = query(consumptionDataRef, orderBy("kilometer", "desc"));
     const querySnapshot = await getDocs(queryKilometersDesc).catch(error => {
         console.log(error.message)
     })
     if (querySnapshot && !querySnapshot.empty) {
         querySnapshot.docs.map((docResult) => {
-            const oneDataSet: DataSet = {
-                id: docResult.id,
-                date: docResult.get('date'),
-                time: docResult.get('time'),
-                kilometer: docResult.get('kilometer'),
-                power: docResult.get('power'),
-                name: docResult.get('name')
+            if (loadingStations) {
+                loadingStations.map((ls) => {
+                    if (ls.id === docResult.get('loadingStationId')) {
+                        const oneDataSet: DataSet = {
+                            id: docResult.id,
+                            date: docResult.get('date'),
+                            time: docResult.get('time'),
+                            kilometer: docResult.get('kilometer'),
+                            power: docResult.get('power'),
+                            name: docResult.get('name'),
+                            loadingStation: ls,
+                        }
+                        fullDataSet.push(oneDataSet)
+                    }
+                })
             }
-            fullDataSet.push(oneDataSet)
         })
         return fullDataSet
     }
 }
 
-// export const getFullDataSet
-
 export const addDataSetToCollection = (dataSet: DataSetNoId) => {
-    const {date, time, kilometer, power, name} = dataSet
+    const {date, time, kilometer, power, name, loadingStation} = dataSet
     const year: string = date.split('-')[0]
     const month: string = date.split('-')[1]
     const consumptionDataRef = collection(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}`);
-    const decimalPower = (Math.round(dataSet.power * 100) / 100).toFixed(1)
-    addDoc(consumptionDataRef, {date, time, kilometer, power: decimalPower, name}).then().catch((error: Error) => {
+    const decimalPower = (Math.round(power * 100) / 100).toFixed(1)
+    addDoc(consumptionDataRef, {
+        date,
+        time,
+        kilometer,
+        power: decimalPower,
+        name,
+        loadingStationId: loadingStation.id
+    }).then().catch((error: Error) => {
         console.log(error.message)
     })
 }
@@ -67,11 +80,12 @@ export const changeDataSetInCollection = (dataSet: DataSet) => {
     const consumptionDataRef = doc(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}/${dataSet.id}`);
     const decimalPower = (Math.round(dataSet.power * 100) / 100).toFixed(1)
     updateDoc(consumptionDataRef, {
-        date: dataSet.date,
+        // date: dataSet.date,
         kilometer: dataSet.kilometer,
-        name: dataSet.name,
+        // name: dataSet.name,
         power: decimalPower,
-        time: dataSet.time
+        loadingStationId: dataSet.loadingStation.id
+        // time: dataSet.time
     }).then().catch((error: Error) => {
         console.log(error.message)
     })
@@ -93,6 +107,24 @@ export const checkUserId = async (id: string): Promise<User | undefined> => {
         console.log(error.message)
         return undefined
     })
+}
+
+export const getLoadingStations = async () => {
+    const loadingStations: LoadingStation[] = []
+    const consumptionDataRef = collection(db, `${DB_LOADING_STATIONS}`);
+    const qsDocs = await getDocs(consumptionDataRef).catch(error => {
+        console.log(error.message)
+    })
+    if (qsDocs && !qsDocs.empty) {
+        qsDocs.docs.map((loadingStation) => {
+            const oneDataSet: LoadingStation = {
+                id: loadingStation.id,
+                name: loadingStation.get('name')
+            }
+            loadingStations.push(oneDataSet)
+        })
+        return loadingStations
+    }
 }
 
 // export const removingDataSetFromCollection = (dataSet: DataSet) => {

@@ -14,8 +14,10 @@ import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setHighestKilometer} from "@/store/reducer/highestKilometer";
 import {ChangeEvent, useEffect, useState} from "react";
 import Modal from "@/components/layout/Modal";
+import {DEFAULT_LOADING_STATION, loadingStations} from "@/constants/constantData";
+import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 
-export default function AddData({}: AddDataModalProps) {
+export default function AddData({prevKilometers}: AddDataModalProps) {
     const dispatch = useDispatch()
     const state: RootState = useSelector((state: RootState) => state)
     const [isInputValid, setIsInputValid] = useState({
@@ -49,6 +51,7 @@ export default function AddData({}: AddDataModalProps) {
         dispatch(setPower(''))
         dispatch(setKilometer(state.highestKilometer.toString()))
         dispatch(setIsChangingData(false))
+        dispatch(setLoadingStation(DEFAULT_LOADING_STATION))
     }
 
     const onAddDataClickHandler = () => {
@@ -61,6 +64,7 @@ export default function AddData({}: AddDataModalProps) {
             id,
             power,
             kilometer,
+            loadingStation
         } = state
         if (state.isChangingData) {
             changeDataSetInCollection({
@@ -69,7 +73,8 @@ export default function AddData({}: AddDataModalProps) {
                 time: todayTime,
                 kilometer: parseInt(kilometer),
                 power: parseFloat(power),
-                name: state.currentUser.name ? state.currentUser.name : ''
+                name: state.currentUser.name ? state.currentUser.name : '',
+                loadingStation: loadingStation
             })
         } else {
             addDataSetToCollection({
@@ -77,7 +82,8 @@ export default function AddData({}: AddDataModalProps) {
                 time: todayTime,
                 kilometer: parseInt(kilometer),
                 power: parseFloat(power),
-                name: state.currentUser.name ? state.currentUser.name : ''
+                name: state.currentUser.name ? state.currentUser.name : '',
+                loadingStation: loadingStation
             })
         }
         dispatch(invertIsAddingDataModalActive())
@@ -91,7 +97,7 @@ export default function AddData({}: AddDataModalProps) {
     function isKilometerValid(kilometer: string) {
         const kilometerNumber: undefined | number = parseInt(kilometer)
         if (state.isChangingData)
-            return kilometerNumber && kilometerNumber >= state.highestKilometer && kilometerNumber < 1000000
+            return kilometerNumber && kilometerNumber > prevKilometers && kilometerNumber < 1000000
         else
             return kilometerNumber && kilometerNumber > state.highestKilometer && kilometerNumber < 1000000
     }
@@ -138,12 +144,30 @@ export default function AddData({}: AddDataModalProps) {
         }
     }
 
+    const onLoadingStationChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
+        const selected = event.target.options.selectedIndex
+        const id: string = event.target.options[selected].id
+        const name: string = event.target.value
+        dispatch(setLoadingStation({id, name}))
+    }
+
     return (
         <Modal formName={'addData'}>
+            <select onChange={onLoadingStationChangeHandler} className={styles.select}
+                    defaultValue={state.isChangingData ? state.loadingStation.name : DEFAULT_LOADING_STATION.name}>
+                {loadingStations.map((loadingStation) => {
+                        return (
+                            <option id={loadingStation.id} key={loadingStation.id}>
+                                {loadingStation.name}
+                            </option>
+                        )
+                    }
+                )}
+            </select>
             <input value={state.kilometer}
                    className={`${styles.input} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}
                    type={"number"}
-                   min={state.highestKilometer}
+                   min={state.isChangingData ? prevKilometers+1 : state.highestKilometer}
                    max={999999}
                    step={1.0}
                    onChange={(e) => {
@@ -172,4 +196,6 @@ export default function AddData({}: AddDataModalProps) {
     );
 }
 
-export type AddDataModalProps = {}
+export type AddDataModalProps = {
+    prevKilometers: number
+}

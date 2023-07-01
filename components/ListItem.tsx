@@ -8,8 +8,10 @@ import {setPower} from "@/store/reducer/modal/power";
 import {invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setId} from "@/store/reducer/modal/id";
+import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
+import {LoadingStation} from "@/constants/types";
 
-export default function ListItem({kilometer, name, power, time, date, id, isLight}: ListItemProps) {
+export default function ListItem({kilometer, name, power, time, date, id, isLight, loadingStation}: ListItemProps) {
     const dispatch = useDispatch()
     let timeOut: any
     const touchStart = () => {
@@ -36,6 +38,7 @@ export default function ListItem({kilometer, name, power, time, date, id, isLigh
                 dispatch(setKilometer(kilometer.toString()))
                 dispatch(setPower(power.toString()))
                 dispatch(setId(id))
+                dispatch(setLoadingStation(loadingStation))
             }
         }, 500)
     }
@@ -53,11 +56,13 @@ export default function ListItem({kilometer, name, power, time, date, id, isLigh
             <div className={styles.statsContainer}>
                 <div>
                     <div className={styles.item}>{date}</div>
-                    <div className={styles.item}>{time} {de.measureUnits.time}</div>
+                    <div className={styles.item}>{de.measureUnits.local} {time} {de.measureUnits.time}</div>
+                    {/*<div className={styles.item}>{de.measureUnits.UTC} {time} {de.measureUnits.time}</div>*/}
                 </div>
                 <div>
                     <div className={styles.item}>{kilometer} {de.measureUnits.kilometer}</div>
                     <div className={styles.item}>{power} {de.measureUnits.power}</div>
+                    <div className={styles.item}>{loadingStation.name}</div>
                 </div>
             </div>
             <div className={styles.itemName}>{name}</div>
@@ -72,5 +77,6 @@ export type ListItemProps = {
     kilometer: number,
     power: number,
     name: string,
-    id: string
+    id: string,
+    loadingStation: LoadingStation
 }
