@@ -10,14 +10,9 @@ const CurrentDataSetSlice = createSlice({
         setDataSetArray: (state, action: PayloadAction<DataSet[]>) => {
             return action.payload
         },
-        // addDataSetToDataList: (state, action: PayloadAction<DataSet>) => {
-        //     state.unshift(action.payload)
-        //     return state
-        // },
     },
 })
 export const {
-    // addDataSetToDataList,
     setDataSetArray} = CurrentDataSetSlice.actions
 
 export default CurrentDataSetSlice;
