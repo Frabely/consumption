@@ -79,17 +79,17 @@ export const addDataSetToCollection = (dataSet: DataSetNoId) => {
     })
 }
 
-export const changeDataSetInCollection = (dataSet: DataSet) => {
-    const year: string = dataSet.date.split('-')[0]
-    const month: string = dataSet.date.split('-')[1]
-    const consumptionDataRef = doc(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}/${dataSet.id}`);
-    const decimalPower = (Math.round(dataSet.power * 100) / 100).toFixed(1)
+export const changeDataSetInCollection = (date: string, power: number, kilometer: number, loadingStation: LoadingStation, id: string) => {
+    const year: string = date.split('-')[0]
+    const month: string = date.split('-')[1]
+    const consumptionDataRef = doc(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}/${id}`);
+    const decimalPower = (Math.round(power * 100) / 100).toFixed(1)
     updateDoc(consumptionDataRef, {
         // date: dataSet.date,
-        kilometer: dataSet.kilometer,
+        kilometer: kilometer,
         // name: dataSet.name,
         power: decimalPower,
-        loadingStationId: dataSet.loadingStation.id
+        loadingStationId: loadingStation.id
         // time: dataSet.time
     }).then().catch((error: Error) => {
         console.log(error.message)
@@ -149,6 +149,18 @@ export const getCars = async () => {
         })
         return cars
     }
+}
+
+export const updateCarKilometer = async (carName: string, kilometer: number, prevKilometer?: number) => {
+    const carsRef = doc(db, `${DB_CARS}/${carName}`);
+    updateDoc(carsRef, prevKilometer ? {
+        kilometer: kilometer,
+        prevKilometer: prevKilometer
+    } : {
+        kilometer: kilometer
+    }).then().catch((error: Error) => {
+        console.log(error.message)
+    })
 }
 
 // export const removingDataSetFromCollection = (dataSet: DataSet) => {

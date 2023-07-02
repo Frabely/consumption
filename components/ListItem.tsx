@@ -11,7 +11,7 @@ import {setId} from "@/store/reducer/modal/id";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {Language, LoadingStation} from "@/constants/types";
 
-export default function ListItem({kilometer, name, power, time, date, id, isLight, loadingStation}: ListItemProps) {
+export default function ListItem({kilometer, name, power, time, date, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
     const language: Language = de
     const dispatch = useDispatch()
     let timeOut: any
@@ -32,7 +32,7 @@ export default function ListItem({kilometer, name, power, time, date, id, isLigh
             const diffMinutes: number =
                 Math.floor(currDate.getTime() / millisecondsToMinutes) -
                 Math.floor(selectedDate.getTime() / millisecondsToMinutes)
-            if (diffMinutes < 5) {
+            if (isFirstElement && diffMinutes < 5) {
                 dispatch(invertIsAddingDataModalActive())
                 dispatch(setTime(time))
                 dispatch(setDate(date))
@@ -79,5 +79,6 @@ export type ListItemProps = {
     power: number,
     name: string,
     id: string,
-    loadingStation: LoadingStation
+    loadingStation: LoadingStation,
+    isFirstElement: boolean
 }

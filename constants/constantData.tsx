@@ -1,14 +1,8 @@
 import {Car, DataSet, LoadingStation, User} from "@/constants/types";
 import {getCars, getLoadingStations} from "@/firebase/functions";
-import {log} from "util";
-
 export const DEFAULT_LOADING_STATION: LoadingStation = {
     id: '17498904',
     name: 'carport'
-}
-
-export const DEFAULT_CAR: Car = {
-    name: 'Zoe'
 }
 export const EMPTY_DATA_SET: DataSet = {
     id: '',
@@ -18,6 +12,10 @@ export const EMPTY_DATA_SET: DataSet = {
     power: 0,
     name: '',
     loadingStation: DEFAULT_LOADING_STATION
+}
+
+export let DEFAULT_CAR: Car = {
+    name: 'Zoe'
 }
 
 export const EMPTY_USER: User = {}
@@ -42,8 +40,15 @@ export let cars: Car[]
 getCars().then((result) => {
     if (result) {
         cars = result
+        DEFAULT_CAR = {
+            name: cars[0].name,
+            kilometer: cars[0].kilometer,
+            prevKilometer: cars[0].prevKilometer,
+        }
     }
 }).catch((error: Error) => {
     console.log(error.message)
 })
+
+
 

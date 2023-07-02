@@ -24,6 +24,7 @@ export default function Display({}: DisplayProps) {
                                           id={dataSet.id}
                                           isLight={true}
                                           loadingStation={dataSet.loadingStation}
+                                          isFirstElement={index === 0}
                                 />
                             )
                         }
@@ -37,6 +38,7 @@ export default function Display({}: DisplayProps) {
                                       id={dataSet.id}
                                       isLight={false}
                                       loadingStation={dataSet.loadingStation}
+                                      isFirstElement={false}
                             />
                         )
                     })}

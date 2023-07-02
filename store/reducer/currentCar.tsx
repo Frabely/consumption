@@ -9,12 +9,15 @@ const CurrentCarSlice = createSlice({
         setCurrentCar: (state, action: PayloadAction<Car>) => {
             return action.payload
         },
-        updateKilometers: (state, action: PayloadAction<number>) => {
-            const newPrev = state.kilometer
-            return {...state, prevKilometer: newPrev, kilometer: action.payload}
+        updateCarKilometers: (state, action: PayloadAction<number>) => {
+
+            return {...state, kilometer: action.payload}
+        },
+        updateCarPrevKilometers: (state, action: PayloadAction<number>) => {
+            return {...state, prevKilometer: action.payload}
         },
     },
 })
-export const {setCurrentCar} = CurrentCarSlice.actions
+export const {updateCarKilometers, setCurrentCar, updateCarPrevKilometers} = CurrentCarSlice.actions
 
 export default CurrentCarSlice;

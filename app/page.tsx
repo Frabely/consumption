@@ -9,7 +9,6 @@ import AddData from "@/components/modals/AddData";
 import {getFullDataSet} from "@/firebase/functions";
 import {setDataSetArray} from "@/store/reducer/currentDataSet";
 import {useEffect} from "react";
-import {setHighestKilometer} from "@/store/reducer/highestKilometer";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import Login from "@/components/Login";
 import img from "@/public/electric-car-2783573.jpg";
@@ -20,17 +19,17 @@ export default function Home() {
     const dispatch = useDispatch()
     const state: RootState = useSelector((state: RootState) => state)
     useEffect(() => {
-        getFullDataSet().then((dataSet) => {
-                if (dataSet) {
-                    dispatch(setDataSetArray(dataSet))
-                    dispatch(setHighestKilometer(dataSet[0]?.kilometer ? dataSet[0]?.kilometer : 0))
-                    dispatch(setKilometer(state.highestKilometer.toString()))
+        if (!state.isAddingDataModalActive)
+            getFullDataSet().then((dataSet) => {
+                    if (dataSet) {
+                        dispatch(setDataSetArray(dataSet))
+                    }
                 }
-            }
-        ).catch((error) => {
-            console.log(error.message)
-        })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+            ).catch((error) => {
+                console.log(error.message)
+            })
+        else if (state.currentCar.kilometer)
+            dispatch(setKilometer(state.currentCar.kilometer.toString()))
     }, [state.isAddingDataModalActive])
 
     return (
@@ -40,7 +39,7 @@ export default function Home() {
                 <>
                     <Header/>
                     {state.isAddingDataModalActive ? (
-                        <AddData prevKilometers={state.currentDataSet[1]?.kilometer ? state.currentDataSet[1]?.kilometer : 0}/>
+                        <AddData prevKilometers={state.currentCar.prevKilometer ? state.currentCar.prevKilometer : 0}/>
                     ) : null}
                     {state.isDownloadCsvModalActive ? (
                         <DownloadCsv/>

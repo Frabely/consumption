@@ -7,16 +7,16 @@ import {closeIsAddingDataModalActive, invertIsAddingDataModalActive} from "@/sto
 import {RootState} from "@/store/store";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
-import {addDataSetToCollection, changeDataSetInCollection} from "@/firebase/functions";
+import {addDataSetToCollection, changeDataSetInCollection, updateCarKilometer} from "@/firebase/functions";
 import {setTime} from "@/store/reducer/modal/time";
 import {setDate} from "@/store/reducer/modal/date";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
-import {setHighestKilometer} from "@/store/reducer/highestKilometer";
 import {ChangeEvent, useEffect, useState} from "react";
 import Modal from "@/components/layout/Modal";
 import {DEFAULT_LOADING_STATION, loadingStations} from "@/constants/constantData";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {Language} from "@/constants/types";
+import {updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
 
 export default function AddData({prevKilometers}: AddDataModalProps) {
     const language: Language = de
@@ -27,6 +27,12 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         power: isPowerValid(state.power)
     })
     const [disabled, setDisabled] = useState(true);
+
+    useEffect(() => {
+        if (state.currentCar.kilometer)
+            dispatch(setKilometer(state.currentCar.kilometer.toString()))
+    }, [])
+
     useEffect(() => {
         if (isInputValid.power && isInputValid.kilometer) {
             setDisabled(false);
@@ -47,38 +53,28 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         return [todayTime, todayDate]
     }
 
-    // const defaultKilometers = state.currentDataSet[0]?.kilometer ? state.currentDataSet[0]?.kilometer : 0
-
     const setModalToDefault = () => {
         dispatch(setPower(''))
-        dispatch(setKilometer(state.highestKilometer.toString()))
+        if (state.currentCar.kilometer)
+            dispatch(setKilometer(state.currentCar.kilometer.toString()))
         dispatch(setIsChangingData(false))
         dispatch(setLoadingStation(DEFAULT_LOADING_STATION))
     }
 
     const onAddDataClickHandler = () => {
-        const [todayTime, todayDate] = getCurrentDate()
-        dispatch(setTime(todayTime))
-        dispatch(setDate(todayDate))
-        if (state.highestKilometer < parseInt(state.kilometer))
-            dispatch(setHighestKilometer(parseInt(state.kilometer)))
-        const {
-            id,
-            power,
-            kilometer,
-            loadingStation
-        } = state
-        if (state.isChangingData) {
-            changeDataSetInCollection({
-                id,
-                date: todayDate,
-                time: todayTime,
-                kilometer: parseInt(kilometer),
-                power: parseFloat(power),
-                name: state.currentUser.name ? state.currentUser.name : '',
-                loadingStation: loadingStation
-            })
-        } else {
+        if (state.currentCar.kilometer && state.currentCar.kilometer < parseInt(state.kilometer)) {
+            const [todayTime, todayDate] = getCurrentDate()
+            dispatch(setTime(todayTime))
+            dispatch(setDate(todayDate))
+            const carKilometersPreUpdate = state.currentCar.kilometer
+            dispatch(updateCarPrevKilometers(carKilometersPreUpdate))
+            dispatch(updateCarKilometers(parseInt(state.kilometer)))
+            const {
+                power,
+                kilometer,
+                loadingStation
+            } = state
+
             addDataSetToCollection({
                 date: todayDate,
                 time: todayTime,
@@ -87,9 +83,43 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 name: state.currentUser.name ? state.currentUser.name : '',
                 loadingStation: loadingStation
             })
-        }
-        dispatch(invertIsAddingDataModalActive())
-        setModalToDefault()
+            console.log()
+            updateCarKilometer(state.currentCar.name, parseInt(state.kilometer), carKilometersPreUpdate)
+                .catch((error: Error) => {
+                    console.log(error.message)
+                })
+
+            dispatch(invertIsAddingDataModalActive())
+            setModalToDefault()
+        } else
+            alert('Invalid Data')
+    }
+
+    const onChangeDataClickHandler = () => {
+        if (state.currentCar.kilometer && state.currentCar.prevKilometer && state.currentCar.prevKilometer < parseInt(state.kilometer)) {
+            dispatch(updateCarKilometers(parseInt(state.kilometer)))
+            const {
+                id,
+                power,
+                kilometer,
+                loadingStation,
+                date
+            } = state
+            changeDataSetInCollection(
+                date,
+                parseFloat(power),
+                parseInt(kilometer),
+                loadingStation,
+                id
+            )
+            updateCarKilometer(state.currentCar.name, parseInt(state.kilometer))
+                .catch((error: Error) => {
+                    console.log(error.message)
+                })
+            dispatch(invertIsAddingDataModalActive())
+            setModalToDefault()
+        } else
+            alert('Invalid Data')
     }
     const onAbortClickHandler = () => {
         dispatch(closeIsAddingDataModalActive())
@@ -101,7 +131,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         if (state.isChangingData)
             return kilometerNumber && kilometerNumber > prevKilometers && kilometerNumber < 1000000
         else
-            return kilometerNumber && kilometerNumber > state.highestKilometer && kilometerNumber < 1000000
+            return kilometerNumber && state.currentCar.kilometer && kilometerNumber > state.currentCar.kilometer && kilometerNumber < 1000000
     }
 
     const onKilometerChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -171,7 +201,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             <input value={state.kilometer}
                    className={`${styles.input} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}
                    type={"number"}
-                   min={state.isChangingData ? prevKilometers+1 : state.highestKilometer}
+                   min={state.currentCar.kilometer ? state.isChangingData ? prevKilometers + 1 : state.currentCar.kilometer : state.currentCar.kilometer}
                    max={999999}
                    step={1.0}
                    onChange={(e) => {
@@ -190,7 +220,9 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                        powerOnChangeHandler(e)
                    }}
             />
-            <button disabled={disabled} onClick={onAddDataClickHandler} className={styles.button}>{
+            <button disabled={disabled}
+                    onClick={state.isChangingData ? onChangeDataClickHandler : onAddDataClickHandler}
+                    className={styles.button}>{
                 state.isChangingData ?
                     de.buttonLabels.changeData :
                     de.buttonLabels.addData
