@@ -46,15 +46,15 @@ export default function Header({}: HeaderProps) {
     return (
         <div className={styles.mainContainer}>
             <menu className={styles.menu}>
-                <div onClick={onAddDataClickHandler} className={styles.menuItem}>
-                    <FontAwesomeIcon icon={faAdd}/>
-                </div>
                 <div className={styles.menuItem}>
                     <select onChange={onCarChangeHandler} defaultValue={state.currentCar.name} className={styles.select}>
                         {cars.map((car) => {
                             return (<option key={car.name}>{car.name}</option>)
                         })}
                     </select>
+                </div>
+                <div onClick={onAddDataClickHandler} className={styles.menuItem}>
+                    <FontAwesomeIcon icon={faAdd}/>
                 </div>
                 <div onClick={onExportAsCsvClickHandler} className={styles.menuItem}>
                     <FontAwesomeIcon icon={faFileCsv}/>
