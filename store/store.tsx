@@ -8,7 +8,7 @@ import IdSlice from "@/store/reducer/modal/id";
 import CurrentUserSlice from "@/store/reducer/currentUser";
 import isDownloadCsvModalActiveSlice from "@/store/reducer/isDownloadCsvModalActive";
 import LoadingStationSlice from "@/store/reducer/modal/loadingStationId";
-import CurrentCar from "@/store/reducer/currentCar";
+import CurrentCarSlice from "@/store/reducer/currentCar";
 import DateSlice from "@/store/reducer/modal/date";
 
 export const store = configureStore({
@@ -23,7 +23,7 @@ export const store = configureStore({
         [CurrentUserSlice.name]: CurrentUserSlice.reducer,
         [isDownloadCsvModalActiveSlice.name]: isDownloadCsvModalActiveSlice.reducer,
         [LoadingStationSlice.name]: LoadingStationSlice.reducer,
-        [CurrentCar.name]: CurrentCar.reducer
+        [CurrentCarSlice.name]: CurrentCarSlice.reducer
     },
     devTools: true,
     middleware: getDefaultMiddleware => getDefaultMiddleware({
