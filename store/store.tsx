@@ -25,7 +25,10 @@ export const store = configureStore({
         [LoadingStationSlice.name]: LoadingStationSlice.reducer,
         [CurrentCar.name]: CurrentCar.reducer
     },
-    devTools: true
+    devTools: true,
+    middleware: getDefaultMiddleware => getDefaultMiddleware({
+        serializableCheck: false
+    })
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
