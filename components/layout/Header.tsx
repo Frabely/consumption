@@ -19,7 +19,7 @@ export default function Header({}: HeaderProps) {
 
     useEffect(() => {
         dispatch(setCurrentCar(cars.filter(car => car.name === 'Zoe')[0]))
-    }, [])
+    }, [dispatch])
 
     const onAddDataClickHandler = () => {
         dispatch(closeIsDownloadCsvModalActive())
