@@ -3,14 +3,13 @@ import isAddingDataModalActiveSlice from "@/store/reducer/isAddingDataModalActiv
 import currentDataSetSlice from "@/store/reducer/currentDataSet";
 import KilometerSlice from "@/store/reducer/modal/kilometer";
 import PowerSlice from "@/store/reducer/modal/power";
-import TimeSlice from "@/store/reducer/modal/time";
-import DateSlice from "@/store/reducer/modal/date";
 import isChangingDataSlice from "@/store/reducer/isChangingData";
 import IdSlice from "@/store/reducer/modal/id";
 import CurrentUserSlice from "@/store/reducer/currentUser";
 import isDownloadCsvModalActiveSlice from "@/store/reducer/isDownloadCsvModalActive";
 import LoadingStationSlice from "@/store/reducer/modal/loadingStationId";
 import CurrentCar from "@/store/reducer/currentCar";
+import DateSlice from "@/store/reducer/modal/date";
 
 export const store = configureStore({
     reducer: {
@@ -18,7 +17,6 @@ export const store = configureStore({
         [currentDataSetSlice.name]: currentDataSetSlice.reducer,
         [KilometerSlice.name]: KilometerSlice.reducer,
         [PowerSlice.name]: PowerSlice.reducer,
-        [TimeSlice.name]: TimeSlice.reducer,
         [DateSlice.name]: DateSlice.reducer,
         [isChangingDataSlice.name]: isChangingDataSlice.reducer,
         [IdSlice.name]: IdSlice.reducer,

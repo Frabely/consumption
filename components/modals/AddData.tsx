@@ -8,8 +8,6 @@ import {RootState} from "@/store/store";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
 import {addDataSetToCollection, changeDataSetInCollection, updateCarKilometer} from "@/firebase/functions";
-import {setTime} from "@/store/reducer/modal/time";
-import {setDate} from "@/store/reducer/modal/date";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {ChangeEvent, useEffect, useState} from "react";
 import Modal from "@/components/layout/Modal";
@@ -17,6 +15,7 @@ import {DEFAULT_LOADING_STATION, loadingStations} from "@/constants/constantData
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {Language} from "@/constants/types";
 import {updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
+import {setDate} from "@/store/reducer/modal/date";
 
 export default function AddData({prevKilometers}: AddDataModalProps) {
     const language: Language = de
@@ -39,20 +38,6 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         } else setDisabled(true);
     }, [isInputValid])
 
-    const getCurrentDate = () => {
-        const dateNow = new Date()
-
-        const hours = dateNow.getHours();
-        const minutes = dateNow.getMinutes();
-        const todayTime: string = `${hours < 10 ? `0` + hours : hours}:${minutes < 10 ? `0` + minutes : minutes}`
-
-        const year = dateNow.getFullYear();
-        const month = dateNow.getMonth() + 1;
-        const day = dateNow.getDate();
-        const todayDate = `${year}-${month < 10 ? `0` + month : month}-${day < 10 ? `0` + day : day}`
-        return [todayTime, todayDate]
-    }
-
     const setModalToDefault = () => {
         dispatch(setPower(''))
         if (state.currentCar.kilometer)
@@ -63,9 +48,8 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 
     const onAddDataClickHandler = () => {
         if (state.currentCar.kilometer && state.currentCar.name && state.currentCar.kilometer < parseInt(state.kilometer)) {
-            const [todayTime, todayDate] = getCurrentDate()
-            dispatch(setTime(todayTime))
-            dispatch(setDate(todayDate))
+            const dateNow = new Date()
+            dispatch(setDate(dateNow))
             const carKilometersPreUpdate = state.currentCar.kilometer
             dispatch(updateCarPrevKilometers(carKilometersPreUpdate))
             dispatch(updateCarKilometers(parseInt(state.kilometer)))
@@ -76,8 +60,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             } = state
 
             addDataSetToCollection(state.currentCar.name, {
-                date: todayDate,
-                time: todayTime,
+                date: dateNow,
                 kilometer: parseInt(kilometer),
                 power: parseFloat(power),
                 name: state.currentUser.name ? state.currentUser.name : '',

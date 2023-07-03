@@ -6,8 +6,7 @@ export const DEFAULT_LOADING_STATION: LoadingStation = {
 }
 export const EMPTY_DATA_SET: DataSet = {
     id: '',
-    date: '',
-    time: '',
+    date: new Date(),
     kilometer: 0,
     power: 0,
     name: '',

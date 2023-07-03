@@ -13,7 +13,7 @@ import {
     doc,
     query,
     orderBy,
-    updateDoc, where
+    updateDoc, where, Timestamp
 } from "@firebase/firestore";
 import {Car, DataSet, DataSetNoId, LoadingStation, User, YearMonth} from "@/constants/types";
 
@@ -40,13 +40,13 @@ export const getFullDataSet = async (carName: string, passedDate?: YearMonth) =>
     })
     if (querySnapshot && !querySnapshot.empty) {
         querySnapshot.docs.map((docResult) => {
+            const ts: Timestamp = docResult.get('date')
             if (loadingStations) {
                 loadingStations.map((ls) => {
                     if (ls.id === docResult.get('loadingStationId')) {
                         const oneDataSet: DataSet = {
                             id: docResult.id,
-                            date: docResult.get('date'),
-                            time: docResult.get('time'),
+                            date: ts.toDate(),
                             kilometer: docResult.get('kilometer'),
                             power: docResult.get('power'),
                             name: docResult.get('name'),
@@ -62,14 +62,15 @@ export const getFullDataSet = async (carName: string, passedDate?: YearMonth) =>
 }
 
 export const addDataSetToCollection = (carName: string, dataSet: DataSetNoId) => {
-    const {date, time, kilometer, power, name, loadingStation} = dataSet
-    const year: string = date.split('-')[0]
-    const month: string = date.split('-')[1]
-    const consumptionDataRef = collection(db, `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}`);
+    const {date, kilometer, power, name, loadingStation} = dataSet
+    const month = date.getMonth() + 1;
+    const monthString = (month < 10 ? `0` + month : month).toString()
+    const consumptionDataRef = collection(db,
+        `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}/${date.getFullYear().toString()}/${monthString}`
+    );
     const decimalPower = (Math.round(power * 100) / 100).toFixed(1)
     addDoc(consumptionDataRef, {
         date,
-        time,
         kilometer,
         power: decimalPower,
         name,
@@ -79,18 +80,17 @@ export const addDataSetToCollection = (carName: string, dataSet: DataSetNoId) =>
     })
 }
 
-export const changeDataSetInCollection = (carName: string, date: string, power: number, kilometer: number, loadingStation: LoadingStation, id: string) => {
-    const year: string = date.split('-')[0]
-    const month: string = date.split('-')[1]
-    const consumptionDataRef = doc(db, `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}/${id}`);
+export const changeDataSetInCollection = (carName: string, date: Date, power: number, kilometer: number, loadingStation: LoadingStation, id: string) => {
+    const month = date.getMonth() + 1;
+    const monthString = (month < 10 ? `0` + month : month).toString()
+    const consumptionDataRef = doc(db,
+        `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}/${date.getFullYear().toString()}/${monthString}/${id}`
+    );
     const decimalPower = (Math.round(power * 100) / 100).toFixed(1)
     updateDoc(consumptionDataRef, {
-        // date: dataSet.date,
         kilometer: kilometer,
-        // name: dataSet.name,
         power: decimalPower,
         loadingStationId: loadingStation.id
-        // time: dataSet.time
     }).then().catch((error: Error) => {
         console.log(error.message)
     })
@@ -162,11 +162,3 @@ export const updateCarKilometer = async (carName: string, kilometer: number, pre
         console.log(error.message)
     })
 }
-
-// export const removingDataSetFromCollection = (dataSet: DataSet) => {
-//     if (dataSet.id) {
-//         deleteDoc(doc(db,`${DB_DATA_SET_KEY}/${dataSet.id}`)).then().catch((error: Error) => {
-//             console.log(error.message)
-//         })
-//     }
-// }

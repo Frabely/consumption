@@ -3,8 +3,7 @@ export type DataSet = {
     kilometer: number,
     power: number,
     name: string,
-    time: string,
-    date: string,
+    date: Date,
     loadingStation: LoadingStation
 }
 
@@ -12,8 +11,7 @@ export type DataSetNoId = {
     kilometer: number,
     power: number,
     name: string,
-    time: string,
-    date: string,
+    date: Date,
     loadingStation: LoadingStation
 }
 
@@ -43,13 +41,16 @@ export type Language = {
         [index: string]: any
         "addData": string
     },
-    "measureUnits": {
+    "displayLabels": {
         [index: string]: any
         "local": string,
         "UTC": string,
         "kilometer": string,
+        "kilometerShort": string,
         "power": string,
-        "time": string
+        "powerShort": string,
+        "loadingStation": string,
+        "name": string,
     },
     "inputLabels": {
         [index: string]: any
@@ -70,6 +71,8 @@ export type Language = {
         [index: string]: any
         "date": string,
         "time": string,
+        "utcDate": string,
+        "utcTime": string,
         "kilometer": string,
         "power": string,
         "name": string,

@@ -1,20 +1,16 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
-const today = new Date();
-const year = today.getFullYear();
-const month = today.getMonth() + 1;
-const date = today.getDate();
-const dateToday: string = `${year}-${month < 10 ? `0` + month : month}-${date < 10 ? `0` + date : date}`
+const today: Date = new Date();
 
 const DateSlice = createSlice({
     name: 'date',
-    initialState: dateToday,
+    initialState: today,
     reducers: {
-        setDate: (state, action: PayloadAction<string>) => {
+        setDate: (state, action: PayloadAction<Date>) => {
             return action.payload
         },
-        setDateNow: (state) => {
-            return dateToday
+        setDateNow: () => {
+            return new Date()
         },
     },
 })

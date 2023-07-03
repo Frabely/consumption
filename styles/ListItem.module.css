@@ -18,20 +18,18 @@
 
 .statsContainer {
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.innerContainer {
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
 
-
 .item {
     display: flex;
-    padding: 0.5rem 0.2rem;
-    color: white;
-}
-
-.itemName {
-    display: flex;
-    justify-content: center;
     padding: 0.5rem 0.2rem;
     color: white;
 }

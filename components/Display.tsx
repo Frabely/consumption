@@ -38,7 +38,7 @@ export default function Display({}: DisplayProps) {
                                 <ListItem key={index}
                                           kilometer={dataSet.kilometer}
                                           date={dataSet.date}
-                                          time={dataSet.time}
+                                          // time={dataSet.time}
                                           name={dataSet.name}
                                           power={dataSet.power}
                                           id={dataSet.id}
@@ -52,7 +52,7 @@ export default function Display({}: DisplayProps) {
                             <ListItem key={index}
                                       kilometer={dataSet.kilometer}
                                       date={dataSet.date}
-                                      time={dataSet.time}
+                                      // time={dataSet.time}
                                       name={dataSet.name}
                                       power={dataSet.power}
                                       id={dataSet.id}

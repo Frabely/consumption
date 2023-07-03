@@ -5,12 +5,15 @@
   "menu": {
     "addData": "Datensatz hinzufügen"
   },
-  "measureUnits": {
+  "displayLabels": {
     "local": "Lokal",
     "UTC": "UTC",
-    "kilometer": "km",
-    "power": "kW/h",
-    "time": "Uhr"
+    "kilometer": "Kilometer",
+    "kilometerShort": "km",
+    "power": "Lademenge",
+    "powerShort": "kW/h",
+    "loadingStation": "Ladestation",
+    "name": "Name"
   },
   "inputLabels": {
     "date": "Datum",
@@ -26,8 +29,12 @@
     "downloadCsv" : "Csv herunterladen"
   },
   "dataSet": {
+    "loadingStationName": "Ladestation",
+    "loadingStationId": "Ladestation (ID)",
     "date": "Datum",
-    "time": "Zeit",
+    "time": "Uhrzeit",
+    "utcDate": "UTC Datum",
+    "utcTime": "UTC Uhrzeit",
     "kilometer": "km",
     "power": "kW/h",
     "name": "Name"

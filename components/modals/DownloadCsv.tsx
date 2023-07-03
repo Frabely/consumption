@@ -1,16 +1,18 @@
 import styles from '../../styles/modals/DownloadCsv.module.css'
 import Modal from "@/components/layout/Modal";
 import {ChangeEvent, useState} from "react";
-import de from '../../constants/de.json'
+import deJson from '../../constants/de.json'
 import {useDispatch, useSelector} from "react-redux";
 import {closeIsDownloadCsvModalActive} from "@/store/reducer/isDownloadCsvModalActive";
 import {getFullDataSet} from "@/firebase/functions";
-import {DataSet} from "@/constants/types";
+import {DataSet, Language} from "@/constants/types";
 import {RootState} from "@/store/store";
+import {getDateString} from "@/constants/globalFunctions";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useDispatch()
+    const de: Language = deJson
     const date = new Date()
     const year = date.getFullYear()
     const month = date.getMonth()+1
@@ -36,9 +38,19 @@ export default function DownloadCsv({}: DownloadCsvProps) {
     }
 
     const dataSetArrayToTxt = (dataSetArray: DataSet[]): string => {
-        let txtContent = `${de.dataSet.date};${de.dataSet.time};${de.dataSet.kilometer};${de.dataSet.power};${de.dataSet.name}\n`
+        let txtContent: string =
+            `${de.dataSet.loadingStationId};${de.dataSet.date};` +
+            `${de.dataSet.time};${de.dataSet.utcDate};${de.dataSet.utcTime};${de.dataSet.kilometer};` +
+            `${de.dataSet.power};${de.dataSet.name}\n`
         dataSetArray.forEach((dataSet: DataSet) => {
-            txtContent += `${dataSet.date};${dataSet.time};${dataSet.kilometer};${dataSet.power};${dataSet.name} \n`
+            const yearMonthDay: string = getDateString(dataSet.date).split(' ')[0]
+            const hoursMinutes: string = getDateString(dataSet.date).split(' ')[1]
+            const utcYearMonthDay: string = getDateString(dataSet.date).split(' ')[0]
+            const utcHoursMinutes: string = getDateString(dataSet.date).split(' ')[1]
+            txtContent +=
+                `${dataSet.loadingStation.id};${yearMonthDay};` +
+                `${hoursMinutes};${utcYearMonthDay};${utcHoursMinutes};${dataSet.kilometer};` +
+                `${dataSet.power};${dataSet.name} \n`
         })
         txtContent = txtContent.replaceAll(".", ",")
         return txtContent
