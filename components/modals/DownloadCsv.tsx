@@ -2,13 +2,14 @@ import styles from '../../styles/modals/DownloadCsv.module.css'
 import Modal from "@/components/layout/Modal";
 import {ChangeEvent, useState} from "react";
 import de from '../../constants/de.json'
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {closeIsDownloadCsvModalActive} from "@/store/reducer/isDownloadCsvModalActive";
 import {getFullDataSet} from "@/firebase/functions";
 import {DataSet} from "@/constants/types";
-import {invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
+import {RootState} from "@/store/store";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
+    const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useDispatch()
     const date = new Date()
     const year = date.getFullYear()
@@ -45,7 +46,8 @@ export default function DownloadCsv({}: DownloadCsvProps) {
 
     const onDownloadCsvClickHandler = () => {
         dispatch(closeIsDownloadCsvModalActive())
-        getFullDataSet({year: currentDateValue.year, month: currentDateValue.month}).then((dataSetArray) => {
+        if (state.currentCar.name) {
+        getFullDataSet(state.currentCar.name,{year: currentDateValue.year, month: currentDateValue.month}).then((dataSetArray) => {
             if (dataSetArray) {
                 const blob = new Blob([dataSetArrayToTxt(dataSetArray)], { type: "text/plain" });
                 const url = URL.createObjectURL(blob);
@@ -58,6 +60,7 @@ export default function DownloadCsv({}: DownloadCsvProps) {
                 alert(`${de.messages.noDataForFollowMonthAndYearAvailable}: ${currentDateValue.year} ${currentDateValue.month}`)
             }
         })
+        }
     }
     return (
         <Modal formName={'DownloadCsv'}>

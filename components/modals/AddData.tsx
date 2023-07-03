@@ -31,7 +31,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     useEffect(() => {
         if (state.currentCar.kilometer)
             dispatch(setKilometer(state.currentCar.kilometer.toString()))
-    }, [])
+    }, [dispatch, state.currentCar.kilometer])
 
     useEffect(() => {
         if (isInputValid.power && isInputValid.kilometer) {
@@ -62,7 +62,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     }
 
     const onAddDataClickHandler = () => {
-        if (state.currentCar.kilometer && state.currentCar.kilometer < parseInt(state.kilometer)) {
+        if (state.currentCar.kilometer && state.currentCar.name && state.currentCar.kilometer < parseInt(state.kilometer)) {
             const [todayTime, todayDate] = getCurrentDate()
             dispatch(setTime(todayTime))
             dispatch(setDate(todayDate))
@@ -75,7 +75,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 loadingStation
             } = state
 
-            addDataSetToCollection({
+            addDataSetToCollection(state.currentCar.name, {
                 date: todayDate,
                 time: todayTime,
                 kilometer: parseInt(kilometer),
@@ -96,7 +96,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     }
 
     const onChangeDataClickHandler = () => {
-        if (state.currentCar.kilometer && state.currentCar.prevKilometer && state.currentCar.prevKilometer < parseInt(state.kilometer)) {
+        if (state.currentCar.kilometer && state.currentCar.name && state.currentCar.prevKilometer && state.currentCar.prevKilometer < parseInt(state.kilometer)) {
             dispatch(updateCarKilometers(parseInt(state.kilometer)))
             const {
                 id,
@@ -105,7 +105,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 loadingStation,
                 date
             } = state
-            changeDataSetInCollection(
+            changeDataSetInCollection(state.currentCar.name,
                 date,
                 parseFloat(power),
                 parseInt(kilometer),

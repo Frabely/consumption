@@ -1,12 +1,32 @@
 import styles from '../styles/Display.module.css'
 import ListItem from "@/components/ListItem";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/store/store";
 import {DataSet} from "@/constants/types";
+import {useEffect} from "react";
+import {getFullDataSet} from "@/firebase/functions";
+import {setDataSetArray} from "@/store/reducer/currentDataSet";
+import {setKilometer} from "@/store/reducer/modal/kilometer";
 
 export default function Display({}: DisplayProps) {
     const state: RootState = useSelector((state: RootState) => state)
-    // const array = state.currentDataSet.slice().reverse()
+    const dispatch = useDispatch()
+    useEffect(() => {
+        if (!state.isAddingDataModalActive && state.currentCar.name)
+            getFullDataSet(state.currentCar.name).then((dataSet) => {
+                    if (dataSet) {
+                        dispatch(setDataSetArray(dataSet))
+                    }
+                    else
+                        dispatch(setDataSetArray([]))
+                }
+            ).catch((error) => {
+                console.log(error.message)
+            })
+        else if (state.currentCar.kilometer)
+            dispatch(setKilometer(state.currentCar.kilometer.toString()))
+    }, [dispatch, state.isAddingDataModalActive, state.currentCar])
+
     return (
         <>
             <div className={styles.mainContainer}>

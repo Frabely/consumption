@@ -19,7 +19,7 @@ import {Car, DataSet, DataSetNoId, LoadingStation, User, YearMonth} from "@/cons
 
 const db = getFirestore(firebaseApp)
 
-export const getFullDataSet = async (passedDate?: YearMonth) => {
+export const getFullDataSet = async (carName: string, passedDate?: YearMonth) => {
     const dateNow = new Date()
     const year = dateNow.getFullYear().toString();
     const month = dateNow.getMonth() + 1;
@@ -27,7 +27,7 @@ export const getFullDataSet = async (passedDate?: YearMonth) => {
 
     const fullDataSet: DataSet[] = []
     const consumptionDataRef = collection(db,
-        `${DB_DATA_SET_COLLECTION_KEY}` +
+        `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}` +
         `/${passedDate ? passedDate.year : year}` +
         `/${passedDate ? passedDate.month : monthString}`
     );
@@ -61,11 +61,11 @@ export const getFullDataSet = async (passedDate?: YearMonth) => {
     }
 }
 
-export const addDataSetToCollection = (dataSet: DataSetNoId) => {
+export const addDataSetToCollection = (carName: string, dataSet: DataSetNoId) => {
     const {date, time, kilometer, power, name, loadingStation} = dataSet
     const year: string = date.split('-')[0]
     const month: string = date.split('-')[1]
-    const consumptionDataRef = collection(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}`);
+    const consumptionDataRef = collection(db, `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}`);
     const decimalPower = (Math.round(power * 100) / 100).toFixed(1)
     addDoc(consumptionDataRef, {
         date,
@@ -79,10 +79,10 @@ export const addDataSetToCollection = (dataSet: DataSetNoId) => {
     })
 }
 
-export const changeDataSetInCollection = (date: string, power: number, kilometer: number, loadingStation: LoadingStation, id: string) => {
+export const changeDataSetInCollection = (carName: string, date: string, power: number, kilometer: number, loadingStation: LoadingStation, id: string) => {
     const year: string = date.split('-')[0]
     const month: string = date.split('-')[1]
-    const consumptionDataRef = doc(db, `${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}/${id}`);
+    const consumptionDataRef = doc(db, `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}/${year}/${month}/${id}`);
     const decimalPower = (Math.round(power * 100) / 100).toFixed(1)
     updateDoc(consumptionDataRef, {
         // date: dataSet.date,
