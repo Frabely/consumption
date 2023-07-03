@@ -12,6 +12,7 @@ import {closeIsDownloadCsvModalActive, invertIsDownloadCsvModalActive} from "@/s
 import {RootState} from "@/store/store";
 import {ChangeEvent, useEffect} from "react";
 import {setCurrentCar} from "@/store/reducer/currentCar";
+import {getCars} from "@/firebase/functions";
 
 export default function Header({}: HeaderProps) {
     const dispatch = useDispatch()
@@ -40,7 +41,13 @@ export default function Header({}: HeaderProps) {
     }
 
     const onCarChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
-        dispatch(setCurrentCar(cars.filter(car => car.name === event.target.value)[0]))
+        getCars().then((result) => {
+            if (result) {
+                dispatch(setCurrentCar(result.filter(car => car.name === event.target.value)[0]))
+            }
+        }).catch((error: Error) => {
+            console.log(error.message)
+        })
     }
 
     return (
