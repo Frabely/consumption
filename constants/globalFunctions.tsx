@@ -1,12 +1,17 @@
 export const getDateString = (date: Date) => {
-    const dayString = (date.getDay() < 10 ? `0` + date.getDay() : date.getDay()).toString()
-    const monthString = (date.getMonth() < 10 ? `0` + date.getMonth() : date.getMonth()).toString()
+    const day = date.getDate()
+    const dayString = (day < 10 ? `0` + day : day).toString()
+    console.log(date.getMonth())
+    const month = date.getMonth()+1
+    const monthString = (month < 10 ? `0` + month : month).toString()
     return `${dayString}.${monthString}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`
 }
 
 export const getUTCDateString = (date: Date) => {
-    const utcDayString = (date.getUTCDay() < 10 ? `0` + date.getUTCDay() : date.getUTCDay()).toString()
-    const utcMonthString = (date.getUTCMonth() < 10 ? `0` + date.getUTCMonth() : date.getUTCMonth()).toString()
+    const utcDay = date.getUTCDate()
+    const utcDayString = (utcDay < 10 ? `0` + utcDay : utcDay).toString()
+    const utcMonth = date.getUTCMonth()+1
+    const utcMonthString = (utcMonth < 10 ? `0` + utcMonth : utcMonth).toString()
     return`${utcDayString}.${utcMonthString}.${date.getUTCFullYear()} ${date.getUTCHours()}:${date.getUTCMinutes()}`
 }
 
