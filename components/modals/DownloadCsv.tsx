@@ -7,7 +7,7 @@ import {closeIsDownloadCsvModalActive} from "@/store/reducer/isDownloadCsvModalA
 import {getFullDataSet} from "@/firebase/functions";
 import {DataSet, Language} from "@/constants/types";
 import {RootState} from "@/store/store";
-import {getDateString} from "@/constants/globalFunctions";
+import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
     const state: RootState = useSelector((state: RootState) => state)
@@ -45,8 +45,8 @@ export default function DownloadCsv({}: DownloadCsvProps) {
         dataSetArray.forEach((dataSet: DataSet) => {
             const yearMonthDay: string = getDateString(dataSet.date).split(' ')[0]
             const hoursMinutes: string = getDateString(dataSet.date).split(' ')[1]
-            const utcYearMonthDay: string = getDateString(dataSet.date).split(' ')[0]
-            const utcHoursMinutes: string = getDateString(dataSet.date).split(' ')[1]
+            const utcYearMonthDay: string = getUTCDateString(dataSet.date).split(' ')[0]
+            const utcHoursMinutes: string = getUTCDateString(dataSet.date).split(' ')[1]
             txtContent +=
                 `${dataSet.loadingStation.id};${yearMonthDay};` +
                 `${hoursMinutes};${utcYearMonthDay};${utcHoursMinutes};${dataSet.kilometer};` +
