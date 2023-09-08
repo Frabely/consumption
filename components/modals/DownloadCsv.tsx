@@ -50,9 +50,8 @@ export default function DownloadCsv({}: DownloadCsvProps) {
             txtContent +=
                 `${dataSet.loadingStation.id};${yearMonthDay};` +
                 `${hoursMinutes};${utcYearMonthDay};${utcHoursMinutes};${dataSet.kilometer};` +
-                `${dataSet.power};${dataSet.name} \n`
+                `${dataSet.power.toString().replace('.', ',')};${dataSet.name} \n`
         })
-        txtContent = txtContent.replaceAll(".", ",")
         return txtContent
     }
 
