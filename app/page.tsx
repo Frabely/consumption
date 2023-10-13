@@ -7,7 +7,7 @@ import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
 import AddData from "@/components/modals/AddData";
 import Login from "@/components/Login";
-import img from "@/public/electric-car-2783573.jpg";
+import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
 import DownloadCsv from "@/components/modals/DownloadCsv";
 export default function Home() {

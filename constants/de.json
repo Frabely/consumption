@@ -1,6 +1,7 @@
 {
   "head": {
-    "title": "Verbrauch"
+    "title": "Verbrauch",
+    "description": "Anwendungen zum Trachen von Verbrauchsdaten eines Elektrofahrzeuges."
   },
   "menu": {
     "addData": "Datensatz hinzufügen"
