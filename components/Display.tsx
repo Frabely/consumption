@@ -29,7 +29,7 @@ export default function Display({}: DisplayProps) {
 
     return (
         <>
-            <div className={styles.mainContainer} style={state.dimension.isHorizontal ? {paddingTop: '5vh', height: '87%'}: {}}>
+            <div className={styles.mainContainer} style={state.dimension.isHorizontal ? {paddingTop: '5dvh', height: '87%'}: {}}>
                 <div className={styles.list}>
                     {state.currentDataSet.map((dataSet: DataSet, index: number) =>
                     {

@@ -1,6 +1,6 @@
 .mainContainer {
     display: flex;
-    height: 100vh;
+    height: 100dvh;
     /*background: var(--color-tertiary);*/
     justify-content: center;
     align-items: center;
@@ -11,7 +11,7 @@
     padding: 1rem;
     background: var(--color-secondary);
     border-color: var(--border);
-    max-width: 80vw;
+    max-width: 80dvw;
 }
 
 .input::placeholder {

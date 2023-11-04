@@ -1,7 +1,7 @@
 .mainContainerVert {
     display: flex;
     flex-direction: row;
-    height: 10vh;
+    height: 10dvh;
     background: var(--color-primary);
     padding: 0 5%;
     position: fixed;
@@ -9,8 +9,8 @@
 }
 
 .mainContainerHor {
-    top: 90vh;
-    height: 10vh;
+    top: 90dvh;
+    height: 10dvh;
     display: flex;
     flex-direction: row;
     padding: 2.5% 5%;
@@ -24,15 +24,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 7vh;
-    width: 7vh;
+    height: 7dvh;
+    width: 7dvh;
     border: none;
     border-radius: 100px;
     background: var(--color-secondary);
 }
 
 .selectHor {
-    height: 7vh;
+    height: 7dvh;
     background: var(--color-secondary);
     border-color: var(--border);
     border-radius: 10px;
