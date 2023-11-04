@@ -64,6 +64,12 @@ export default function Menu({}: HeaderProps) {
                             <button onClick={onExportAsCsvClickHandler} className={styles.button}>
                                 <FontAwesomeIcon icon={faFileCsv}/>
                             </button>
+                            <select onChange={onCarChangeHandler} defaultValue={state.currentCar.name}
+                                    className={styles.selectHor}>
+                                {cars.map((car) => {
+                                    return (<option key={car.name}>{car.name}</option>)
+                                })}
+                            </select>
                         </>
                     ) : null}
                     <button className={styles.button} onClick={() => setMenuOpen(!menuOpen)}>

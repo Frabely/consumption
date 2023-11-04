@@ -10,6 +10,7 @@
   --backgroundModal: rgba(255, 255, 255, 0.8);
   --color-primary-tans: rgba(255, 255, 255, 0.7);
   --color-secondary-tans: rgba(148, 148, 148, 0.7);
+  --border: black;
   --color-invalid: rgb(255, 209, 209);
   --color-valid: rgb(234, 255, 223);
   /*--color-text: rgb(255, 255, 255);*/
