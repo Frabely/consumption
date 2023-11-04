@@ -56,6 +56,9 @@ export default function Menu({}: HeaderProps) {
         <>
             {state.dimension.isHorizontal ?
                 <div className={styles.mainContainerHor}>
+                    <button className={styles.button} onClick={() => setMenuOpen(!menuOpen)}>
+                        <FontAwesomeIcon icon={menuOpen ? faXmark : faEllipsis}/>
+                    </button>
                     {menuOpen ? (
                         <>
                             <button onClick={onLogoutHandler} className={styles.button}>
@@ -72,9 +75,6 @@ export default function Menu({}: HeaderProps) {
                             </select>
                         </>
                     ) : null}
-                    <button className={styles.button} onClick={() => setMenuOpen(!menuOpen)}>
-                        <FontAwesomeIcon icon={menuOpen ? faXmark : faEllipsis}/>
-                    </button>
                     <button className={styles.button} onClick={onAddDataClickHandler}>
                         <FontAwesomeIcon icon={faAdd}/>
                     </button>
