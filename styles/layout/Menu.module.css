@@ -17,6 +17,7 @@
     position: fixed;
     width: 100%;
     justify-content: flex-end;
+    align-items: center;
     gap: 0.5rem;
 }
 
@@ -24,15 +25,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 7dvh;
-    width: 7dvh;
+    height: 6dvh;
+    width: 6dvh;
     border: none;
     border-radius: 100px;
     background: var(--color-secondary);
 }
 
 .selectHor {
-    height: 7dvh;
+    height: 6dvh;
     background: var(--color-secondary);
     border-color: var(--border);
     border-radius: 10px;

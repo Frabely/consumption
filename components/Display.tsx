@@ -29,7 +29,7 @@ export default function Display({}: DisplayProps) {
 
     return (
         <>
-            <div className={styles.mainContainer} style={state.dimension.isHorizontal ? {paddingTop: '5dvh', height: '87%'}: {}}>
+            <div className={styles.mainContainer} style={state.dimension.isHorizontal ? {paddingTop: '5dvh', paddingBottom: '0', height: '90%'}: {}}>
                 <div className={styles.list}>
                     {state.currentDataSet.map((dataSet: DataSet, index: number) =>
                     {
@@ -38,7 +38,6 @@ export default function Display({}: DisplayProps) {
                                 <ListItem key={index}
                                           kilometer={dataSet.kilometer}
                                           date={dataSet.date}
-                                          // time={dataSet.time}
                                           name={dataSet.name}
                                           power={dataSet.power}
                                           id={dataSet.id}
@@ -52,7 +51,6 @@ export default function Display({}: DisplayProps) {
                             <ListItem key={index}
                                       kilometer={dataSet.kilometer}
                                       date={dataSet.date}
-                                      // time={dataSet.time}
                                       name={dataSet.name}
                                       power={dataSet.power}
                                       id={dataSet.id}
