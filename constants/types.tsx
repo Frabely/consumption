@@ -88,6 +88,12 @@ export type Language = {
         "official": string
     }
 }
+export type Dimension = {
+    height: number,
+    width: number,
+    isHorizontal: boolean
+}
+
 
 export type Car = {
     name: string,

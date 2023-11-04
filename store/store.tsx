@@ -10,6 +10,7 @@ import isDownloadCsvModalActiveSlice from "@/store/reducer/isDownloadCsvModalAct
 import LoadingStationSlice from "@/store/reducer/modal/loadingStationId";
 import CurrentCarSlice from "@/store/reducer/currentCar";
 import DateSlice from "@/store/reducer/modal/date";
+import dimensionSlice from "@/store/reducer/dismension";
 
 export const store = configureStore({
     reducer: {
@@ -23,7 +24,8 @@ export const store = configureStore({
         [CurrentUserSlice.name]: CurrentUserSlice.reducer,
         [isDownloadCsvModalActiveSlice.name]: isDownloadCsvModalActiveSlice.reducer,
         [LoadingStationSlice.name]: LoadingStationSlice.reducer,
-        [CurrentCarSlice.name]: CurrentCarSlice.reducer
+        [CurrentCarSlice.name]: CurrentCarSlice.reducer,
+        [dimensionSlice.name]: dimensionSlice.reducer
     },
     devTools: true,
     middleware: getDefaultMiddleware => getDefaultMiddleware({

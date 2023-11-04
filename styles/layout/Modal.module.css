@@ -15,6 +15,6 @@
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    border: var(--color-text) solid thick;
+    border: var(--color-primary) solid thick;
     z-index: 1;
 }
