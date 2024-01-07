@@ -4,11 +4,15 @@ import styles from '@/styles/buildingConsuption/page.module.css'
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
 import {setDimension} from "@/store/reducer/dismension";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
 import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
-export default function Home() {
+import Login from "@/components/Login";
+import Menu from "@/components/layout/Menu";
+import SpeechToTextDemo from "@/components/SpeechToTextDemo";
+
+export default function BuildingConsumption() {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useAppDispatch()
     const dimension = useWindowDimensions()
@@ -19,9 +23,22 @@ export default function Home() {
     })
 
 
+
+
     return (
         <div className={styles.mainContainer}>
             <Image className={styles.image} src={img} alt={''}></Image>
+            {
+                state.currentUser.key ?
+                    (
+                        <>
+                            <Menu/>
+                            <SpeechToTextDemo/>
+                        </>
+                    )
+                    :
+                    <Login/>
+            }
         </div>
     )
 }

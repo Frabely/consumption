@@ -4,6 +4,12 @@ export const DEFAULT_LOADING_STATION: LoadingStation = {
     id: '17498904',
     name: 'carport'
 }
+
+export const PATH_STRINGS = {
+    mainPage: '/',
+    buildingConsumption: '/buildingConsumption'
+}
+
 export const EMPTY_DATA_SET: DataSet = {
     id: '',
     date: new Date(),

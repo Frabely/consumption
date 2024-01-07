@@ -2,17 +2,18 @@
 
 import styles from '../../styles/layout/Menu.module.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faPowerOff, faAdd, faFileCsv, faEllipsis, faXmark} from '@fortawesome/free-solid-svg-icons'
+import {faPowerOff, faAdd, faFileCsv, faEllipsis, faXmark, faHouseFire} from '@fortawesome/free-solid-svg-icons'
 import {useDispatch, useSelector} from "react-redux";
 import {closeIsAddingDataModalActive, invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setCurrentUser} from "@/store/reducer/currentUser";
-import {cars, EMPTY_USER} from "@/constants/constantData";
+import {cars, EMPTY_USER, PATH_STRINGS} from "@/constants/constantData";
 import {closeIsDownloadCsvModalActive, invertIsDownloadCsvModalActive} from "@/store/reducer/isDownloadCsvModalActive";
 import {RootState} from "@/store/store";
 import {ChangeEvent, useEffect, useState} from "react";
 import {setCurrentCar} from "@/store/reducer/currentCar";
 import {getCars} from "@/firebase/functions";
+import Link from "next/link";
 
 export default function Menu({}: HeaderProps) {
     const dispatch = useDispatch()
@@ -96,6 +97,9 @@ export default function Menu({}: HeaderProps) {
                         <div onClick={onExportAsCsvClickHandler} className={styles.menuItem}>
                             <FontAwesomeIcon icon={faFileCsv}/>
                         </div>
+                        <Link href={PATH_STRINGS.buildingConsumption} className={styles.menuItem}>
+                            <FontAwesomeIcon icon={faHouseFire}/>
+                        </Link>
                         <div onClick={onLogoutHandler} className={styles.menuItem}>
                             <FontAwesomeIcon icon={faPowerOff}/>
                         </div>

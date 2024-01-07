@@ -1,3 +1,5 @@
+import {PATH_STRINGS} from "@/constants/constantData";
+
 export type DataSet = {
     id: string,
     kilometer: number,
