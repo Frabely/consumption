@@ -2,7 +2,7 @@
 
 import styles from '../../styles/layout/Header.module.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faPowerOff, faAdd, faFileCsv} from '@fortawesome/free-solid-svg-icons'
+import {faPowerOff, faAdd, faFileCsv, faHouseFire} from '@fortawesome/free-solid-svg-icons'
 import {useDispatch, useSelector} from "react-redux";
 import {closeIsAddingDataModalActive, invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
@@ -13,6 +13,7 @@ import {RootState} from "@/store/store";
 import {ChangeEvent, useEffect} from "react";
 import {setCurrentCar} from "@/store/reducer/currentCar";
 import {getCars} from "@/firebase/functions";
+import Link from "next/link";
 
 export default function Header({}: HeaderProps) {
     const dispatch = useDispatch()
@@ -54,7 +55,8 @@ export default function Header({}: HeaderProps) {
         <div className={styles.mainContainer}>
             <menu className={styles.menu}>
                 <div className={styles.menuItem}>
-                    <select onChange={onCarChangeHandler} defaultValue={state.currentCar.name} className={styles.select}>
+                    <select onChange={onCarChangeHandler} defaultValue={state.currentCar.name}
+                            className={styles.select}>
                         {cars.map((car) => {
                             return (<option key={car.name}>{car.name}</option>)
                         })}
@@ -66,6 +68,9 @@ export default function Header({}: HeaderProps) {
                 <div onClick={onExportAsCsvClickHandler} className={styles.menuItem}>
                     <FontAwesomeIcon icon={faFileCsv}/>
                 </div>
+                <Link href={'/buildingConsumption'} className={styles.menuItem}>
+                    <FontAwesomeIcon icon={faHouseFire}/>
+                </Link>
                 <div onClick={onLogoutHandler} className={styles.menuItem}>
                     <FontAwesomeIcon icon={faPowerOff}/>
                 </div>
