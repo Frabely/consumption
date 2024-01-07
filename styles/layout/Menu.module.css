@@ -1,0 +1,76 @@
+.mainContainerVert {
+    display: flex;
+    flex-direction: row;
+    height: 10dvh;
+    background: var(--color-primary);
+    padding: 0 5%;
+    position: fixed;
+    width: 100%;
+}
+
+.mainContainerHor {
+    top: 90dvh;
+    height: 10dvh;
+    display: flex;
+    flex-direction: row;
+    padding: 2.5% 5%;
+    position: fixed;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    /*gap: 0.5rem;*/
+}
+
+.button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 6dvh;
+    width: 6dvh;
+    border: none;
+    border-radius: 100px;
+    background: var(--color-secondary);
+}
+
+.selectHor {
+    height: 6dvh;
+    background: var(--color-secondary);
+    border-color: var(--border);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /*border-width: 2px;*/
+}
+
+.menu {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.menuItem {
+    display: flex;
+    padding: 0 5%;
+    /*width: 10vw;*/
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: var(--color-primary);
+}
+
+.menuItem:hover {
+    cursor: pointer;
+    background: var(--color-secondary);
+}
+
+.selectVert {
+    margin-bottom: 5%;
+    padding: 5%;
+    background: var(--color-secondary);
+    border-color: var(--border);
+    border-width: 2px;
+}
+

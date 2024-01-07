@@ -1,6 +1,6 @@
 .mainContainer {
     height: 100%;
-    padding: 15vh 5% 5vh 5%;
+    padding: 15dvh 5% 5dvh 5%;
     overflow: hidden;
     overflow-y: scroll;
 }

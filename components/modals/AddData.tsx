@@ -66,7 +66,6 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 name: state.currentUser.name ? state.currentUser.name : '',
                 loadingStation: loadingStation
             })
-            console.log()
             updateCarKilometer(state.currentCar.name, parseInt(state.kilometer), carKilometersPreUpdate)
                 .catch((error: Error) => {
                     console.log(error.message)
