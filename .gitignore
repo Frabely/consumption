@@ -12,6 +12,7 @@
 /.next/
 /out/
 /_static
+/.idea
 
 # production
 /build
