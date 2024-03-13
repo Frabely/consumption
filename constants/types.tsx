@@ -1,5 +1,3 @@
-import {PATH_STRINGS} from "@/constants/constantData";
-
 export type DataSet = {
     id: string,
     kilometer: number,
@@ -68,6 +66,15 @@ export type Language = {
         "changeData": string,
         "abort": string,
         "downloadCsv": string
+    },
+    "floorLabels": {
+        [index: string]: any
+        "groundFloorLeft": string,
+        "groundFloorRight": string,
+        "firstFloorLeft": string,
+        "firstFloorRight": string,
+        "SecondFloorLeft": string,
+        "SecondFloorRight": string
     },
     "dataSet": {
         [index: string]: any

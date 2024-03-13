@@ -1,7 +1,7 @@
 {
   "head": {
     "title": "Verbrauch",
-    "description": "Anwendungen zum Trachen von Verbrauchsdaten eines Elektrofahrzeuges."
+    "description": "Anwendungen zum Tracken von Verbrauchsdaten eines Elektrofahrzeuges."
   },
   "menu": {
     "addData": "Datensatz hinzufügen"
@@ -28,6 +28,14 @@
     "changeData": "Daten ändern",
     "abort": "Abbrechen",
     "downloadCsv" : "Csv herunterladen"
+  },
+  "floorLabels": {
+    "groundFloorLeft": "Erdgeschoss links",
+    "groundFloorRight": "Erdgeschoss rechts",
+    "firstFloorLeft": "1. Stock links",
+    "firstFloorRight": "1. Stock rechts",
+    "SecondFloorLeft": "2. Stock links",
+    "SecondFloorRight": "2. Stock rechts"
   },
   "dataSet": {
     "loadingStationName": "Ladestation",
