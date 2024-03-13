@@ -8,3 +8,23 @@
     background: var(--color-secondary);
     border-radius: 5px;
 }
+
+.input {
+    margin-bottom: 5%;
+    padding: 5%;
+    background: var(--color-secondary);
+    border-color: var(--border);
+    border-width: 2px;
+}
+
+.inputInvalid {
+    background-color: var(--color-invalid);
+}
+
+.inputValid {
+    background: var(--color-valid);
+}
+
+.input::placeholder {
+    color: var(--color-text-placeholder);
+}
