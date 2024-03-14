@@ -20,6 +20,7 @@ export default function BuildingConsumption() {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useAppDispatch()
     const dimension = useWindowDimensions()
+    state.currentHouse.flats
 
     useEffect(() => {
         if (window)
@@ -46,12 +47,10 @@ export default function BuildingConsumption() {
                                 state.dimension.isHorizontal ?
                                     styles.contentContainerHor :
                                     styles.contentContainerVert}>
-                                <div onClick={onFloorClickHandler} className={styles.roomsItem}>{language.floorLabels.SecondFloorLeft}</div>
-                                <div onClick={onFloorClickHandler} className={styles.roomsItem}>{language.floorLabels.SecondFloorRight}</div>
-                                <div onClick={onFloorClickHandler} className={styles.roomsItem}>{language.floorLabels.firstFloorLeft}</div>
-                                <div onClick={onFloorClickHandler} className={styles.roomsItem}>{language.floorLabels.firstFloorRight}</div>
-                                <div onClick={onFloorClickHandler} className={styles.roomsItem}>{language.floorLabels.groundFloorLeft}</div>
-                                <div onClick={onFloorClickHandler} className={styles.roomsItem}>{language.floorLabels.groundFloorRight}</div>
+                                {state.currentHouse.flats.map((flat) =>
+                                    <div onClick={onFloorClickHandler} key={flat.name}
+                                         className={styles.roomsItem}>{flat.name}</div>
+                                )}
                             </div>
                         </>
                     )

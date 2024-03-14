@@ -1,13 +1,15 @@
 import styles from '../styles/Login.module.css'
 import de from '../constants/de.json'
-import {ChangeEvent} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import {checkUserId} from "@/firebase/functions";
 import {User} from "@/constants/types";
 import {useDispatch} from "react-redux";
 import {setCurrentUser} from "@/store/reducer/currentUser";
+import {loadAllData} from "@/constants/constantData";
 
 export default function Login({}: LoginProps) {
     const dispatch = useDispatch()
+
     const onInputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value.length === 4) {
             checkUserId(e.target.value).then((user: User | undefined) => {
@@ -17,6 +19,7 @@ export default function Login({}: LoginProps) {
             })
         }
     }
+
     return (
         <form className={styles.mainContainer}>
             <input onChange={onInputChangeHandler}

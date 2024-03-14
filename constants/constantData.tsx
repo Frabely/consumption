@@ -1,4 +1,4 @@
-import {Car, DataSet, House, LoadingStation, User} from "@/constants/types";
+import {Car, House, LoadingStation, User} from "@/constants/types";
 import {getCars, getHouses, getLoadingStations} from "@/firebase/functions";
 
 export const DEFAULT_LOADING_STATION: LoadingStation = {
@@ -9,15 +9,6 @@ export const DEFAULT_LOADING_STATION: LoadingStation = {
 export const PATH_STRINGS = {
     mainPage: '/',
     buildingConsumption: '/buildingConsumption'
-}
-
-export const EMPTY_DATA_SET: DataSet = {
-    id: '',
-    date: new Date(),
-    kilometer: 0,
-    power: 0,
-    name: '',
-    loadingStation: DEFAULT_LOADING_STATION
 }
 
 export let DEFAULT_CAR: Car = {
@@ -37,46 +28,45 @@ export const DB_DATA_ROOMS_KEY: string = 'rooms'
 export const DB_USER_COLLECTION_KEY: string = 'users'
 export const DB_CARS: string = 'cars'
 export const DB_HOUSES: string = 'houses'
-
 export const DB_LOADING_STATIONS: string = 'loadingStations'
 
-export let loadingStations: LoadingStation[]
-getLoadingStations().then((result) => {
-    if (result) {
-        loadingStations = result
-    }
-}).catch((error: Error) => {
-    console.log(error.message)
-})
+export let loadingStations: LoadingStation[] = []
+export let cars: Car[] = []
+export let houses: House[] = []
 
-export let cars: Car[]
+export const loadAllData = async () => {
+    const resultStations = await getLoadingStations().catch((error: Error) => {
+        console.log(error.message)
+    })
+    if (resultStations)
+        loadingStations = resultStations
 
-getCars().then((result) => {
-    cars = result
-    if (cars.length > 0) {
-        DEFAULT_CAR = {
-            name: cars[0].name,
-            kilometer: cars[0].kilometer,
-            prevKilometer: cars[0].prevKilometer,
+    const resultCars = await getCars().catch((error: Error) => {
+        console.log(error.message)
+    })
+    if (resultCars) {
+        cars = resultCars
+        if (cars.length > 0) {
+            DEFAULT_CAR = {
+                name: cars[0].name,
+                kilometer: cars[0].kilometer,
+                prevKilometer: cars[0].prevKilometer,
+            }
         }
     }
-}).catch((error: Error) => {
-    console.log(error.message)
-})
-
-export let houses: House[]
-
-getHouses().then((result) => {
-    houses = result
-    if (houses.length > 0) {
-        DEFAULT_HOUSE = {
-            name: houses[0].name,
-            flats: houses[0].flats
+    const resultHouses = await getHouses().catch((error: Error) => {
+        console.log(error.message)
+    })
+    if (resultHouses) {
+        houses = resultHouses
+        if (houses.length > 0) {
+            DEFAULT_HOUSE = {
+                name: houses[0].name,
+                flats: houses[0].flats
+            }
         }
     }
-}).catch((error: Error) => {
-    console.log(error.message)
-})
+}
 
 
 
