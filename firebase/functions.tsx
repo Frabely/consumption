@@ -1,6 +1,6 @@
 import {
     DB_CARS,
-    DB_DATA_SET_COLLECTION_KEY,
+    DB_DATA_SET_COLLECTION_KEY, DB_HOUSES,
     DB_LOADING_STATIONS,
     DB_USER_COLLECTION_KEY
 } from "@/constants/constantData";
@@ -15,7 +15,7 @@ import {
     orderBy,
     updateDoc, where, Timestamp
 } from "@firebase/firestore";
-import {Car, DataSet, DataSetNoId, LoadingStation, User, YearMonth} from "@/constants/types";
+import {Car, DataSet, DataSetNoId, House, LoadingStation, User, YearMonth} from "@/constants/types";
 
 const db = getFirestore(firebaseApp)
 
@@ -148,6 +148,25 @@ export const getCars = async () => {
             cars.push(newCar)
         })
         return cars
+    }
+}
+
+export const getHouses = async () => {
+    const houses: House[] = []
+    const housesRef = collection(db, `${DB_HOUSES}`);
+    const qsDocs = await getDocs(housesRef).catch(error => {
+        console.log(error.message)
+    })
+
+    if (qsDocs && !qsDocs.empty) {
+        qsDocs.docs.map((house) => {
+            const newHouse: House = {
+                name: house.id,
+                flats: house.get('flats')
+            }
+            houses.push(newHouse)
+        })
+        return houses
     }
 }
 

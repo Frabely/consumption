@@ -7,13 +7,14 @@ import {useDispatch, useSelector} from "react-redux";
 import {closeIsAddingDataModalActive, invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setCurrentUser} from "@/store/reducer/currentUser";
-import {cars, EMPTY_USER, PATH_STRINGS} from "@/constants/constantData";
+import {cars, EMPTY_USER, houses, PATH_STRINGS} from "@/constants/constantData";
 import {closeIsDownloadCsvModalActive, invertIsDownloadCsvModalActive} from "@/store/reducer/isDownloadCsvModalActive";
 import {RootState} from "@/store/store";
 import {ChangeEvent, useEffect, useState} from "react";
 import {setCurrentCar} from "@/store/reducer/currentCar";
 import {getCars} from "@/firebase/functions";
 import Link from "next/link";
+import {setCurrentHouse} from "@/store/reducer/currentHouse";
 
 export default function Menu({}: HeaderProps) {
     const dispatch = useDispatch()
@@ -53,6 +54,10 @@ export default function Menu({}: HeaderProps) {
         })
     }
 
+    const onHouseChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
+        dispatch(setCurrentHouse(houses.filter(house => house.name === event.target.value)[0]))
+    }
+
     return (
         <>
             {state.dimension.isHorizontal ?
@@ -88,6 +93,14 @@ export default function Menu({}: HeaderProps) {
                                     className={styles.select}>
                                 {cars.map((car) => {
                                     return (<option key={car.name}>{car.name}</option>)
+                                })}
+                            </select>
+                        </div>
+                        <div className={styles.menuItem}>
+                            <select onChange={onHouseChangeHandler} defaultValue={state.currentHouse.name}
+                                    className={styles.select}>
+                                {houses.map((house) => {
+                                    return (<option key={house.name}>{house.name}</option>)
                                 })}
                             </select>
                         </div>

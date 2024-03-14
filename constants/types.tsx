@@ -109,3 +109,12 @@ export type Car = {
     kilometer?: number,
     prevKilometer?: number
 }
+
+export type House = {
+    name: string,
+    flats: Flat[]
+}
+
+export type Flat = {
+    name: string
+}
