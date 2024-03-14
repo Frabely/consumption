@@ -1,5 +1,6 @@
 import {Car, DataSet, House, LoadingStation, User} from "@/constants/types";
 import {getCars, getHouses, getLoadingStations} from "@/firebase/functions";
+
 export const DEFAULT_LOADING_STATION: LoadingStation = {
     id: '17498904',
     name: 'carport'
@@ -31,6 +32,8 @@ export let DEFAULT_HOUSE: House = {
 export const EMPTY_USER: User = {}
 
 export const DB_DATA_SET_COLLECTION_KEY: string = 'consumptionData'
+export const DB_DATA_FLATS_KEY: string = 'flats'
+export const DB_DATA_ROOMS_KEY: string = 'rooms'
 export const DB_USER_COLLECTION_KEY: string = 'users'
 export const DB_CARS: string = 'cars'
 export const DB_HOUSES: string = 'houses'
@@ -49,8 +52,8 @@ getLoadingStations().then((result) => {
 export let cars: Car[]
 
 getCars().then((result) => {
-    if (result) {
-        cars = result
+    cars = result
+    if (cars.length > 0) {
         DEFAULT_CAR = {
             name: cars[0].name,
             kilometer: cars[0].kilometer,
@@ -64,10 +67,10 @@ getCars().then((result) => {
 export let houses: House[]
 
 getHouses().then((result) => {
-    if (result) {
-        houses = result
+    houses = result
+    if (houses.length > 0) {
         DEFAULT_HOUSE = {
-            name: cars[0].name,
+            name: houses[0].name,
             flats: houses[0].flats
         }
     }

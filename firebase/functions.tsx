@@ -1,5 +1,5 @@
 import {
-    DB_CARS,
+    DB_CARS, DB_DATA_FLATS_KEY, DB_DATA_ROOMS_KEY,
     DB_DATA_SET_COLLECTION_KEY, DB_HOUSES,
     DB_LOADING_STATIONS,
     DB_USER_COLLECTION_KEY
@@ -13,9 +13,9 @@ import {
     doc,
     query,
     orderBy,
-    updateDoc, where, Timestamp
+    updateDoc, where, Timestamp, getDoc
 } from "@firebase/firestore";
-import {Car, DataSet, DataSetNoId, House, LoadingStation, User, YearMonth} from "@/constants/types";
+import {Car, DataSet, DataSetNoId, Flat, House, LoadingStation, Room, User, YearMonth} from "@/constants/types";
 
 const db = getFirestore(firebaseApp)
 
@@ -139,7 +139,7 @@ export const getCars = async () => {
         console.log(error.message)
     })
     if (qsDocs && !qsDocs.empty) {
-        qsDocs.docs.map((car) => {
+        qsDocs.docs.forEach((car) => {
             const newCar: Car = {
                 name: car.id,
                 kilometer: car.get('kilometer'),
@@ -147,8 +147,47 @@ export const getCars = async () => {
             }
             cars.push(newCar)
         })
-        return cars
     }
+    return cars
+}
+
+export const getRooms = async (houseId: string, flatId: string) => {
+    const rooms: Room[] = []
+    const roomsRef = collection(
+        db,
+        `${DB_HOUSES}/${houseId}/${DB_DATA_FLATS_KEY}/${flatId}/${DB_DATA_ROOMS_KEY}`
+    );
+    const qsRoomsDocs = await getDocs(roomsRef).catch(error => {
+        console.log(error.message)
+    })
+    if (qsRoomsDocs && !qsRoomsDocs.empty) {
+        for (const room of qsRoomsDocs.docs) {
+            const newRoom: Room = {
+                name: room.id,
+                fields: room.data()
+            }
+            rooms.push(newRoom)
+        }
+    }
+    return rooms
+}
+
+export const getFlats = async (houseId: string) => {
+    const flats: Flat[] = []
+    const flatsRef = collection(db, `${DB_HOUSES}/${houseId}/${DB_DATA_FLATS_KEY}`);
+    const qsFlatDocs = await getDocs(flatsRef).catch(error => {
+        console.log(error.message)
+    })
+    if (qsFlatDocs && !qsFlatDocs.empty) {
+        for (const flat of qsFlatDocs.docs) {
+            const newFlat: Flat = {
+                name: flat.id,
+                rooms: await getRooms(houseId, flat.id)
+            }
+            flats.push(newFlat)
+        }
+    }
+    return flats
 }
 
 export const getHouses = async () => {
@@ -159,15 +198,16 @@ export const getHouses = async () => {
     })
 
     if (qsDocs && !qsDocs.empty) {
-        qsDocs.docs.map((house) => {
+        for (const house of qsDocs.docs) {
+            const flats = await getFlats(house.id)
             const newHouse: House = {
                 name: house.id,
-                flats: house.get('flats')
+                flats: flats
             }
             houses.push(newHouse)
-        })
-        return houses
+        }
     }
+    return houses
 }
 
 export const updateCarKilometer = async (carName: string, kilometer: number, prevKilometer?: number) => {

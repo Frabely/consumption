@@ -116,5 +116,15 @@ export type House = {
 }
 
 export type Flat = {
-    name: string
+    name: string,
+    rooms: Room[]
+}
+interface NumberDictionary {
+    [index: string]: number;
+}
+
+
+export type Room = {
+    name: string,
+    fields: NumberDictionary
 }
