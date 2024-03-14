@@ -13,7 +13,9 @@ import DownloadCsv from "@/components/modals/DownloadCsv";
 import {setDimension} from "@/store/reducer/dismension";
 import {useEffect, useState} from "react";
 import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
-import {loadAllData} from "@/constants/constantData";
+import {cars, DEFAULT_CAR, DEFAULT_HOUSE, houses, loadAllData} from "@/constants/constantData";
+import {setCurrentCar} from "@/store/reducer/currentCar";
+import {setCurrentHouse} from "@/store/reducer/currentHouse";
 
 export default function Home() {
     const state: RootState = useSelector((state: RootState) => state)
@@ -28,11 +30,13 @@ export default function Home() {
 
     useEffect(() => {
         loadAllData().then(() => {
+            dispatch(setCurrentCar(cars.filter(car => car.name === DEFAULT_CAR.name)[0]))
+            dispatch(setCurrentHouse(houses.filter(house => house.name === DEFAULT_HOUSE.name)[0]))
             setIsLoading(false)
         }).catch((error: Error) => {
             console.log(error.message)
         })
-    }, []);
+    }, [dispatch]);
 
 
     return (

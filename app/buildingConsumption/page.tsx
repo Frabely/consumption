@@ -14,13 +14,14 @@ import de from '../../constants/de.json'
 import {Language} from "@/constants/types";
 import AddFloorData from "@/components/modals/AddFloorData";
 import {invertIsAddingFloorDataModalActive} from "@/store/reducer/isAddingFloorDataModalActive";
+import {faAdd} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export default function BuildingConsumption() {
     const language: Language = de
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useAppDispatch()
     const dimension = useWindowDimensions()
-    state.currentHouse.flats
 
     useEffect(() => {
         if (window)
@@ -29,6 +30,10 @@ export default function BuildingConsumption() {
 
     const onFloorClickHandler = () => {
         dispatch(invertIsAddingFloorDataModalActive())
+    }
+
+    const onAddNewClickHandler = () => {
+        alert("addnew")
     }
 
 
@@ -47,6 +52,10 @@ export default function BuildingConsumption() {
                                 state.dimension.isHorizontal ?
                                     styles.contentContainerHor :
                                     styles.contentContainerVert}>
+                                <div onClick={onAddNewClickHandler}
+                                     className={styles.roomsItem}>
+                                    <FontAwesomeIcon icon={faAdd}/>
+                                </div>
                                 {state.currentHouse.flats.map((flat) =>
                                     <div onClick={onFloorClickHandler} key={flat.name}
                                          className={styles.roomsItem}>{flat.name}</div>

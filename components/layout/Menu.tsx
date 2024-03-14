@@ -22,10 +22,6 @@ export default function Menu({}: HeaderProps) {
 
     const [menuOpen, setMenuOpen] = useState(false)
 
-    useEffect(() => {
-        dispatch(setCurrentCar(cars.filter(car => car.name === 'Zoe')[0]))
-    }, [dispatch])
-
     const onAddDataClickHandler = () => {
         dispatch(closeIsDownloadCsvModalActive())
         dispatch(setIsChangingData(false))
