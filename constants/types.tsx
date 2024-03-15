@@ -119,7 +119,7 @@ export type Flat = {
     name: string,
     rooms: Room[]
 }
-interface NumberDictionary {
+export type NumberDictionary = {
     [index: string]: number;
 }
 

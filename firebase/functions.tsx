@@ -13,7 +13,7 @@ import {
     doc,
     query,
     orderBy,
-    updateDoc, where, Timestamp, getDoc
+    updateDoc, where, Timestamp
 } from "@firebase/firestore";
 import {Car, DataSet, DataSetNoId, Flat, House, LoadingStation, Room, User, YearMonth} from "@/constants/types";
 

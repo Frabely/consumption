@@ -1,4 +1,4 @@
-import {Car, House, LoadingStation, User} from "@/constants/types";
+import {Car, House, LoadingStation, Room, User} from "@/constants/types";
 import {getCars, getHouses, getLoadingStations} from "@/firebase/functions";
 
 export const DEFAULT_LOADING_STATION: LoadingStation = {
@@ -18,6 +18,11 @@ export let DEFAULT_CAR: Car = {
 export let DEFAULT_HOUSE: House = {
     name: 'F233',
     flats: []
+}
+
+export let EMPTY_ROOM: Room = {
+    name: '-',
+    fields: {}
 }
 
 export const EMPTY_USER: User = {}
