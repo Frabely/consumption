@@ -6,10 +6,11 @@
     justify-content: center;
     border-color: var(--border);
     background: var(--color-secondary);
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .input {
+    border-radius: 10px;
     margin-bottom: 5%;
     padding: 5%;
     background: var(--color-secondary);
@@ -27,4 +28,15 @@
 
 .input::placeholder {
     color: var(--color-text-placeholder);
+}
+
+.select {
+    height: 6dvh;
+    background: var(--color-secondary);
+    border-color: var(--border);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1dvh;
 }

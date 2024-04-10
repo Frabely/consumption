@@ -74,7 +74,7 @@ export default function AddFloorData({isAddingFloorItem, floorNameParam, rooms}:
                 /> :
                 <div className={styles.input}>{floorName}</div>}
             <select onChange={onRoomChangeHandler} defaultValue={currentRoom.name}
-                    className={styles.selectHor}>
+                    className={styles.select}>
                 {dynamicRooms.map((room) => {
                     return (<option key={room.name}>{room.name}</option>)
                 })}
