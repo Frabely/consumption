@@ -8,21 +8,23 @@ import {useEffect, useState} from "react";
 import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
 import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
-import Login from "@/components/Login";
 import Menu from "@/components/layout/Menu";
-import de from '../../constants/de.json'
-import {Language, Room} from "@/constants/types";
+import {Room} from "@/constants/types";
 import AddFloorData from "@/components/modals/AddFloorData";
 import {invertIsAddingFloorDataModalActive} from "@/store/reducer/isAddingFloorDataModalActive";
 import {faAdd} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import AddFloor from "@/components/modals/AddFloor";
+import Link from "next/link";
+import {cars, DEFAULT_CAR, DEFAULT_HOUSE, houses, loadAllData} from "@/constants/constantData";
+import {setCurrentCar} from "@/store/reducer/currentCar";
+import {setCurrentHouse} from "@/store/reducer/currentHouse";
+
 
 export default function BuildingConsumption() {
-    const language: Language = de
-    const initRooms: Room[] = []
     const [isAddingFloorItem, setIsAddingFloorItem] = useState(false)
     const [flatName, setFlatName] = useState("")
-    const [currentRooms, setCurrentRooms] = useState(initRooms)
+    const [currentRooms, setCurrentRooms] = useState<Room[]>([])
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useAppDispatch()
     const dimension = useWindowDimensions()
@@ -30,6 +32,12 @@ export default function BuildingConsumption() {
     useEffect(() => {
         if (window)
             dispatch(setDimension(dimension))
+        loadAllData().then(() => {
+            dispatch(setCurrentCar(cars.filter(car => car.name === DEFAULT_CAR.name)[0]))
+            dispatch(setCurrentHouse(houses.filter(house => house.name === DEFAULT_HOUSE.name)[0]))
+        }).catch((error: Error) => {
+            console.log(error.message)
+        })
     })
 
     const onFloorClickHandler = (isAddingItem: boolean = false, flatName: string = "", rooms: Room[] = []) => {
@@ -46,8 +54,11 @@ export default function BuildingConsumption() {
                 state.currentUser.key ?
                     (<>
                         <Menu/>
-                        {state.isAddingFloorDataModalActive ? (
+                        {state.isAddingFloorDataModalActive && !isAddingFloorItem ? (
                             <AddFloorData isAddingFloorItem={isAddingFloorItem} floorNameParam={flatName} rooms={currentRooms}/>
+                        ) : null}
+                        {state.isAddingFloorDataModalActive && isAddingFloorItem ? (
+                            <AddFloor/>
                         ) : null}
                         <div className={
                             state.dimension.isHorizontal ?
@@ -70,7 +81,7 @@ export default function BuildingConsumption() {
                         </div>
                     </>)
                     :
-                    <Login/>
+                    <Link href={"/"}>login</Link>
             }
         </div>
     )

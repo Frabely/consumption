@@ -1,23 +1,21 @@
 'use client'
 
 import de from '../../constants/de.json'
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "@/store/store";
+import {useDispatch} from "react-redux";
 import Modal from "@/components/layout/Modal";
-import {Language, NumberDictionary, Room} from "@/constants/types";
+import {NumberDictionary, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
 import {closeIsAddingFloorDataModalActive} from "@/store/reducer/isAddingFloorDataModalActive";
 import {ChangeEvent, useState} from "react";
 import {EMPTY_ROOM} from "@/constants/constantData";
 
 export default function AddFloorData({isAddingFloorItem, floorNameParam, rooms}: AddFloorDataModalProps) {
-    const language: Language = de
-    const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useDispatch()
     const [floorName, setFloorName] = useState(floorNameParam ? floorNameParam : "")
     const [dynamicRooms, setDynamicRooms] = useState(rooms.length > 0 ? rooms : [EMPTY_ROOM])
     const [currentRoom, setCurrentRoom] = useState(dynamicRooms[0])
     const [currentFieldPairs, setCurrentFieldPairs] = useState(Object.entries(currentRoom.fields))
+
 
     const onFieldPairValueChange = (event: ChangeEvent<HTMLInputElement>, key: string) => {
         const currentFieldValue: number = parseInt(event.target.value)

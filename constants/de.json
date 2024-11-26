@@ -14,17 +14,24 @@
     "power": "Lademenge",
     "powerShort": "kW/h",
     "loadingStation": "Ladestation",
-    "name": "Name"
+    "name": "Name",
+    "rooms": "Räume",
+    "fields": "Zähler"
   },
   "inputLabels": {
     "date": "Datum",
     "kilometer": "Kilometer",
     "power": "Menge kW/h",
     "name": "Name",
-    "userID": "Nutzerkürzel"
+    "userID": "Nutzerkürzel",
+    "flatName": "Wohnungsname",
+    "roomName": "Raumname",
+    "fieldName": "Zählername"
   },
   "buttonLabels": {
     "addData": "Daten hinzufügen",
+    "add": "Hinzufügen",
+    "addRoom": "Raum hinzufügen",
     "changeData": "Daten ändern",
     "abort": "Abbrechen",
     "downloadCsv" : "Csv herunterladen"

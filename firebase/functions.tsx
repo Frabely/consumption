@@ -13,7 +13,7 @@ import {
     doc,
     query,
     orderBy,
-    updateDoc, where, Timestamp
+    updateDoc, where, Timestamp, setDoc
 } from "@firebase/firestore";
 import {Car, DataSet, DataSetNoId, Flat, House, LoadingStation, Room, User, YearMonth} from "@/constants/types";
 
@@ -208,6 +208,20 @@ export const getHouses = async () => {
         }
     }
     return houses
+}
+
+export const createFlat = async (flat: Flat, houseName: string)  => {
+    try {
+        const flatDocRef = doc(db, `houses/${houseName}/flats/${flat.name}`);
+        await setDoc(flatDocRef, { name: flat.name });
+        const roomsCollectionRef = collection(flatDocRef, "rooms");
+        for (const room of flat.rooms) {
+            const roomDocRef = doc(roomsCollectionRef, room.name);
+            await setDoc(roomDocRef, room.fields);
+        }
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 export const updateCarKilometer = async (carName: string, kilometer: number, prevKilometer?: number) => {

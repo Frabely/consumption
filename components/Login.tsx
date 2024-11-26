@@ -1,11 +1,10 @@
 import styles from '../styles/Login.module.css'
 import de from '../constants/de.json'
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent} from "react";
 import {checkUserId} from "@/firebase/functions";
 import {User} from "@/constants/types";
 import {useDispatch} from "react-redux";
 import {setCurrentUser} from "@/store/reducer/currentUser";
-import {loadAllData} from "@/constants/constantData";
 
 export default function Login({}: LoginProps) {
     const dispatch = useDispatch()

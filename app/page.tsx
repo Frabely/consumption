@@ -46,7 +46,6 @@ export default function Home() {
                 <div className={styles.isLoadingContainer}>
                     <div className={styles.isLoading}>isLoading</div>
                 </div> :
-
                 <>
                     {state.currentUser.key ?
                         <>

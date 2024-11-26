@@ -90,7 +90,7 @@ export default function Menu({}: HeaderProps) {
                 :
                 <div className={styles.mainContainerVert}>
                     <menu className={styles.menu}>
-                    <div className={styles.menuItem}>
+                        <div className={styles.menuItem}>
                             <select onChange={onCarChangeHandler} defaultValue={state.currentCar.name}
                                     className={styles.select}>
                                 {cars.map((car) => {

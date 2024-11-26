@@ -1,0 +1,84 @@
+.button {
+    display: flex;
+    padding: 5% 5%;
+    margin-top: 5%;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: var(--color-secondary);
+    border-radius: 10px;
+}
+
+.button:disabled {
+    color: var(--color-secondary-tans);
+    background: var(--color-primary);
+}
+
+.input {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 5%;
+    padding: 5%;
+    background: var(--color-secondary);
+    border: none;
+}
+
+.inputRooms {
+    margin-top: 2dvh;
+}
+
+.inputInvalid {
+    background-color: var(--color-invalid);
+}
+
+.inputValid {
+    background: var(--color-valid);
+}
+
+.input::placeholder {
+    color: var(--color-text-placeholder);
+}
+
+.select {
+    height: 6dvh;
+    background: var(--color-secondary);
+    border-color: var(--border);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1dvh;
+}
+
+.roomsContainer {
+    padding: 1dvh;
+    border: black 1px solid;
+}
+
+.fieldsContainer {
+    padding: 1dvh;
+    border: black 1px solid;
+}
+
+.fieldsList {
+    max-height: 20dvh;
+    overflow: auto;
+}
+
+.fieldsLabel {
+    margin-bottom: 1dvh;
+}
+
+.roomsList {
+    max-height: 20dvh;
+    overflow: auto;
+}
+
+.roomField {
+    margin-left: 5dvw;
+    font-size: 80%;
+}
+
+.roomyLabel {
+    margin-bottom: 1dvh;
+}

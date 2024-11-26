@@ -31,7 +31,8 @@ export type LoadingStation = {
     name: string
 }
 
-export type Language = {
+export type Language =
+    {
     [index: string]:any
     "head": {
         [index: string]: any
@@ -119,12 +120,12 @@ export type Flat = {
     name: string,
     rooms: Room[]
 }
-export type NumberDictionary = {
-    [index: string]: number;
-}
-
 
 export type Room = {
     name: string,
     fields: NumberDictionary
+}
+
+export type NumberDictionary = {
+    [index: string]: number | null;
 }
