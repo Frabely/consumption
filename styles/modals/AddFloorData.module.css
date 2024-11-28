@@ -11,9 +11,10 @@
 
 .input {
     border-radius: 10px;
-    margin-bottom: 5%;
     padding: 5%;
-    background: var(--color-secondary);
+    margin: 1dvh 0;
+    border: none;
+    background: grey;
     border-color: var(--border);
     border-width: 2px;
 }
@@ -28,6 +29,25 @@
 
 .input::placeholder {
     color: var(--color-text-placeholder);
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1dvw;
+}
+
+.microphoneContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px black solid;
+    border-radius: 100%;
+    padding: 5%;
+    width: 5dvh;
+    height: 5dvh;
 }
 
 .select {

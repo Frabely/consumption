@@ -32,12 +32,12 @@ export default function BuildingConsumption() {
     useEffect(() => {
         if (window)
             dispatch(setDimension(dimension))
-        loadAllData().then(() => {
-            dispatch(setCurrentCar(cars.filter(car => car.name === DEFAULT_CAR.name)[0]))
-            dispatch(setCurrentHouse(houses.filter(house => house.name === DEFAULT_HOUSE.name)[0]))
-        }).catch((error: Error) => {
-            console.log(error.message)
-        })
+        // loadAllData().then(() => {
+        //     dispatch(setCurrentCar(cars.filter(car => car.name === DEFAULT_CAR.name)[0]))
+        //     dispatch(setCurrentHouse(houses.filter(house => house.name === DEFAULT_HOUSE.name)[0]))
+        // }).catch((error: Error) => {
+        //     console.log(error.message)
+        // })
     })
 
     const onFloorClickHandler = (isAddingItem: boolean = false, flatName: string = "", rooms: Room[] = []) => {
@@ -55,7 +55,7 @@ export default function BuildingConsumption() {
                     (<>
                         <Menu/>
                         {state.isAddingFloorDataModalActive && !isAddingFloorItem ? (
-                            <AddFloorData isAddingFloorItem={isAddingFloorItem} floorNameParam={flatName} rooms={currentRooms}/>
+                            <AddFloorData floorNameParam={flatName} rooms={currentRooms}/>
                         ) : null}
                         {state.isAddingFloorDataModalActive && isAddingFloorItem ? (
                             <AddFloor/>

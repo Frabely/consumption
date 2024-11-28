@@ -1,4 +1,5 @@
 import styles from '../../styles/modals/DownloadCsv.module.css'
+import globalStyles from "@/styles/GlobalStyles.module.css";
 import Modal from "@/components/layout/Modal";
 import {ChangeEvent, useState} from "react";
 import deJson from '../../constants/de.json'
@@ -75,7 +76,11 @@ export default function DownloadCsv({}: DownloadCsvProps) {
     }
     return (
         <Modal formName={'DownloadCsv'}>
-            <input onChange={onDateInputChangeHandler} value={`${currentDateValue.year}-${currentDateValue.month}`} className={styles.input} type={"month"}/>
+            <input
+                onChange={onDateInputChangeHandler}
+                value={`${currentDateValue.year}-${currentDateValue.month}`}
+                className={globalStyles.monthPicker}
+                type={"month"}/>
             <button onClick={onDownloadCsvClickHandler} className={styles.button}>{de.buttonLabels.downloadCsv}</button>
             <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.abort}</button>
         </Modal>
