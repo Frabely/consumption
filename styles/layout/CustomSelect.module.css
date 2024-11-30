@@ -1,0 +1,12 @@
+.mainSelectContainer {
+
+}
+
+.optionsContainer {
+    position: fixed;
+}
+
+.optionContainer:hover {
+    color: white;
+    background: black;
+}

@@ -1,0 +1,37 @@
+.inputContainer {
+    display: flex;
+    flex-direction: column; /* Label über dem Input */
+    background-color: #333; /* Dunkler Hintergrund */
+    padding: 10px; /* Innenabstand */
+    border-radius: 8px; /* Abgerundete Ecken */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Weicher Schatten */
+    width: 250px; /* Breite des Containers */
+}
+
+.inputLabel {
+    font-size: 14px;
+    font-weight: normal; /* Normale Schrift für das Label */
+    color: #fff; /* Weiße Farbe für das Label */
+    margin-bottom: 5px; /* Abstand zum Eingabefeld */
+}
+
+.inputField {
+    width: 100%;
+    padding: 8px 0; /* Innenabstand */
+    font-size: 14px;
+    color: #ccc; /* Helle Schrift für den Text */
+    background-color: transparent; /* Durchsichtiger Hintergrund */
+    border: none; /* Keine Umrandung */
+    border-bottom: 1px solid #555; /* Unterstrich */
+    outline: none; /* Kein Standard-Fokus */
+    transition: border-color 0.3s ease; /* Weiche Übergänge bei Fokus */
+}
+
+.inputField::placeholder {
+    color: #888; /* Farbe des Platzhalters */
+}
+
+.inputField:focus {
+    border-bottom: 1px solid #fff; /* Unterstrich wird bei Fokus weiß */
+    color: #fff; /* Text wird bei Fokus weiß */
+}

@@ -1,4 +1,5 @@
 import {
+    DB_BUILDING_CONSUMPTION,
     DB_CARS, DB_DATA_FLATS_KEY, DB_DATA_ROOMS_KEY,
     DB_DATA_SET_COLLECTION_KEY, DB_HOUSES,
     DB_LOADING_STATIONS,
@@ -13,9 +14,20 @@ import {
     doc,
     query,
     orderBy,
-    updateDoc, where, Timestamp, setDoc
+    updateDoc, where, Timestamp, setDoc, getDoc
 } from "@firebase/firestore";
-import {Car, DataSet, DataSetNoId, Flat, House, LoadingStation, Room, User, YearMonth} from "@/constants/types";
+import {
+    Car,
+    DataSet,
+    DataSetNoId,
+    Flat,
+    House,
+    LoadingStation,
+    NumberDictionary,
+    Room,
+    User,
+    YearMonth
+} from "@/constants/types";
 
 const db = getFirestore(firebaseApp)
 
@@ -221,6 +233,67 @@ export const createFlat = async (flat: Flat, houseName: string)  => {
         }
     } catch (error) {
         console.error(error);
+    }
+}
+
+export const setFieldValue = async (
+    houseName: string,
+    flatName: string,
+    roomName: string,
+    fieldName: string,
+    year: string,
+    month: string,
+    fieldValueToSet: number | null)  => {
+    try {
+        const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
+        const key: string = `${houseName}#${flatName}#${roomName}#${fieldName}`
+        await setDoc(dateCollectionRef, { [`${key}`]: fieldValueToSet}, { merge: true });
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const getFieldValues = async (
+    year: string,
+    month: string,
+    houseName?: string,
+    flatName?: string,
+    roomName?: string,
+    fieldName?: string)  => {
+    try {
+        const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
+        const allFields = await getDoc(dateCollectionRef);
+        const fields = allFields.data()
+        if (!fields)
+            return
+
+        const parts: string[]= []
+        if (houseName) parts.push(houseName)
+        if (flatName) parts.push(flatName)
+        if (roomName) parts.push(roomName)
+        if (fieldName) parts.push(fieldName)
+
+        const result: NumberDictionary = {}
+
+        for (const [key, value] of Object.entries(fields)) {
+            const keyParts = key.split("#");
+            let isMatch = true;
+            for (let i = 0; i < parts.length; i++) {
+                if (keyParts[i] !== parts[i]) {
+                    isMatch = false;
+                    break;
+                }
+            }
+            if (isMatch) {
+                result[key] = !isNaN(parseInt(value)) ? parseInt(value) : null;
+            }
+
+        }
+
+        return result
+    } catch (error) {
+        console.error(error);
+        return
     }
 }
 

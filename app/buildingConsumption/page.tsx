@@ -16,9 +16,6 @@ import {faAdd} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import AddFloor from "@/components/modals/AddFloor";
 import Link from "next/link";
-import {cars, DEFAULT_CAR, DEFAULT_HOUSE, houses, loadAllData} from "@/constants/constantData";
-import {setCurrentCar} from "@/store/reducer/currentCar";
-import {setCurrentHouse} from "@/store/reducer/currentHouse";
 
 
 export default function BuildingConsumption() {
@@ -55,7 +52,7 @@ export default function BuildingConsumption() {
                     (<>
                         <Menu/>
                         {state.isAddingFloorDataModalActive && !isAddingFloorItem ? (
-                            <AddFloorData floorNameParam={flatName} rooms={currentRooms}/>
+                            <AddFloorData flatName={flatName} rooms={currentRooms}/>
                         ) : null}
                         {state.isAddingFloorDataModalActive && isAddingFloorItem ? (
                             <AddFloor/>

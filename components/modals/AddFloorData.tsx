@@ -1,61 +1,74 @@
 'use client'
 
 import de from '../../constants/de.json'
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Modal from "@/components/layout/Modal";
 import {NumberDictionary, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {closeIsAddingFloorDataModalActive} from "@/store/reducer/isAddingFloorDataModalActive";
-import {ChangeEvent, useState} from "react";
-import {EMPTY_ROOM} from "@/constants/constantData";
+import {ChangeEvent, CSSProperties, useEffect, useState} from "react";
 import {faSave} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FieldInput from "@/components/layout/FieldInput";
+import {getFieldValues, setFieldValue} from "@/firebase/functions";
+import {RootState} from "@/store/store";
 
-export default function AddFloorData({floorNameParam, rooms}: AddFloorDataModalProps) {
+export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) {
     const dispatch = useDispatch()
+    const state: RootState = useSelector((state: RootState) => state)
     const date = new Date()
     const year = date.getFullYear()
     const month = date.getMonth()+1
     const monthString : string = month < 10 ? `0` + month : month.toString()
-
-    const [floorName, setFloorName] = useState(floorNameParam ? floorNameParam : "")
-    const [dynamicRooms, setDynamicRooms] = useState(rooms.length > 0 ? rooms : [EMPTY_ROOM])
-    const [currentRoom, setCurrentRoom] = useState(dynamicRooms[0])
-    const [currentFieldPairs, setCurrentFieldPairs] = useState(Object.entries(currentRoom.fields))
-
+    const [currentRoom, setCurrentRoom] = useState<Room>(rooms[0])
     const [currentDateValue, setCurrentDateValue] = useState({
         year: year.toString(),
         month: monthString
     })
 
+    useEffect(() => {
+        getFieldValues(
+            currentDateValue.year,
+            currentDateValue.month,
+            state.currentHouse.name,
+            flatName,
+            currentRoom.name).then((result) => {
 
-    const onFieldPairValueChange = (event: ChangeEvent<HTMLInputElement>, key: string) => {
-        const currentFieldValue: number = parseInt(event.target.value)
-        let fieldPairs: NumberDictionary = {...currentRoom.fields}
-        let currentDynamicRooms = [...dynamicRooms]
-        let newDynRooms = currentDynamicRooms.filter((room) => room.name !== currentRoom.name)
-        fieldPairs[`${key}`] = 0
-        let newRoom: Room = {
-            name: currentRoom.name,
-            fields: fieldPairs
-        }
-        if (currentFieldValue && currentFieldValue > 0) {
-            fieldPairs[`${key}`] = currentFieldValue
-            newRoom.fields = fieldPairs
-            newDynRooms.push(newRoom)
-            setDynamicRooms(newDynRooms)
-            setCurrentRoom(newRoom)
-            setCurrentFieldPairs(Object.entries(newRoom.fields))
-        } else {
-            // setCurrentRoom(newRoom)
-            // setDynamicRooms(newDynRooms)
-            // setCurrentFieldPairs(Object.entries(newRoom.fields))
-        }
+                if (result) {
+                    const fields: NumberDictionary = {...currentRoom.fields}
+                    Object.entries(result).map(([key, value]) => {
+                        const newKey = key.split("#").pop();
+                        fields[`${newKey}`] = value
+                    })
+                    const newRoom: Room = {name: currentRoom.name, fields: fields}
+                    setCurrentRoom(newRoom)
+                }
+            })
+    }, [currentDateValue.month, currentDateValue.year, currentRoom.name, flatName, state.currentHouse.name]);
+
+
+    const onFieldPairValueChange = (value: string, key: string) => {
+        const currentFieldValue: number = parseInt(value.replace(/\D/g, ''))
+        const fields: NumberDictionary = {...currentRoom.fields}
+        fields[`${key}`] = currentFieldValue
+        const newRoom: Room = {name: currentRoom.name, fields: fields}
+        setCurrentRoom(newRoom)
     }
 
-    const onSaveFieldClickHandler = (key: string) => {
+    const onSaveFieldClickHandler = async (key: string) => {
+
+        setFieldValue(
+            state.currentHouse.name,
+            flatName,
+            currentRoom.name,
+            key,
+            currentDateValue.year,
+            currentDateValue.month,
+            currentRoom.fields[`${key}`])
+            .then(() => {
+                alert("saved")
+            })
     }
 
     const onAbortClickHandler = () => {
@@ -63,52 +76,58 @@ export default function AddFloorData({floorNameParam, rooms}: AddFloorDataModalP
     }
 
     const onRoomChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
-        const selectedRoom = dynamicRooms.filter(room => room.name === event.target.value)[0]
-        const fieldPairs = Object.entries(selectedRoom.fields)
+        const selectedRoom = rooms.filter(room => room.name === event.target.value)[0]
         setCurrentRoom(selectedRoom)
-        setCurrentFieldPairs(fieldPairs)
     }
 
-    const onAddDataClickHandler = (event: any) => {
+    const onDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
-    }
-
-    const onDateInputChangeHandler = (event: any) => {
-
+        setCurrentDateValue({
+            year: event.target.value.split("-")[0],
+            month: event.target.value.split("-")[1]
+        })
     }
 
     return (
         <Modal formName={'addFloorData'}>
-            <div>{floorName}</div>
+            <div>{flatName}</div>
             <input onChange={onDateInputChangeHandler} value={`${currentDateValue.year}-${currentDateValue.month}`}
                    className={globalStyles.monthPicker} type={"month"}/>
             <select onChange={onRoomChangeHandler} defaultValue={currentRoom.name}
                     className={styles.select}>
-                {dynamicRooms.map((room) => {
+                {rooms.map((room) => {
                     return (<option key={room.name}>{room.name}</option>)
                 })}
             </select>
-            {currentFieldPairs.map(([key, value]: [string, number | null], index: number) =>
-                <div key={index}>
-                    <p>{key}:</p>
-                    <div className={styles.inputContainer}>
-                        <FieldInput/>
-                        <div onClick={() => {
-                            onSaveFieldClickHandler(key)
-                        }}>
-                            <FontAwesomeIcon icon={faSave}/>
+            {Object.entries(currentRoom.fields).map(([key, value]: [string, number | null], index: number) => {
+                return <div key={index}>
+                        <p>{key}:</p>
+                        <div className={styles.inputContainer}>
+                            <FieldInput
+                                value={value?.toString()}
+                                onChange={(event) => {
+                                    onFieldPairValueChange(event.target.value, key)
+                                }}
+                                placeholder={de.inputLabels.placeholderValue}
+                            />
+                            <div onClick={() => {
+                                if (value && value > 0)
+                                    onSaveFieldClickHandler(key).catch(error => console.log(error))
+                            }}>
+                                <FontAwesomeIcon
+                                    style={{'--color-text': value && value > 0 ? "black" : "grey" } as CSSProperties}
+                                    icon={faSave}/>
+                            </div>
                         </div>
                     </div>
-
-                </div>
+                }
             )}
-            <button onClick={onAddDataClickHandler} className={styles.button}>{de.buttonLabels.addData}</button>
-            <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.abort}</button>
+            <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.close}</button>
         </Modal>
     );
 }
 
 export type AddFloorDataModalProps = {
     rooms: Room[],
-    floorNameParam?: string
+    flatName: string
 }

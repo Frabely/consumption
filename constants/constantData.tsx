@@ -34,6 +34,8 @@ export const DB_USER_COLLECTION_KEY: string = 'users'
 export const DB_CARS: string = 'cars'
 export const DB_HOUSES: string = 'houses'
 export const DB_FLATS: string = 'flats'
+export const DB_ROOMS: string = 'rooms'
+export const DB_BUILDING_CONSUMPTION: string = 'buildingConsumption'
 export const DB_LOADING_STATIONS: string = 'loadingStations'
 
 export let loadingStations: LoadingStation[] = []

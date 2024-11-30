@@ -26,7 +26,8 @@
     "userID": "Nutzerkürzel",
     "flatName": "Wohnungsname",
     "roomName": "Raumname",
-    "fieldName": "Zählername"
+    "fieldName": "Zählername",
+    "placeholderValue": "Wert"
   },
   "buttonLabels": {
     "addData": "Daten hinzufügen",
@@ -34,7 +35,8 @@
     "addRoom": "Raum hinzufügen",
     "changeData": "Daten ändern",
     "abort": "Abbrechen",
-    "downloadCsv" : "Csv herunterladen"
+    "downloadCsv" : "Csv herunterladen",
+    "close": "Schließen"
   },
   "floorLabels": {
     "groundFloorLeft": "Erdgeschoss links",

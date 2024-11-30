@@ -3,11 +3,10 @@ import styles from "@/styles/layout/FieldInput.module.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMicrophone} from "@fortawesome/free-solid-svg-icons";
 
-function FieldInput({}: FieldInputProps) {
+function FieldInput({value, onChange, placeholder}: FieldInputProps) {
     const [isFocus, setIsFocus] = useState(false)
     const [isRecording, setIsRecording] = useState(false);
     const [isMicTouched, setIsMicTouched] = useState(false)
-    const [micValue, setMicValue] = useState<string>("")
 
     useEffect(() => {
         if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
@@ -17,12 +16,19 @@ function FieldInput({}: FieldInputProps) {
             recognition.interimResults = true;
             recognition.lang = 'de-DE';
             recognition.onresult = (event: SpeechRecognitionEvent) => {
-                let currentTranscript = micValue;
+                let currentTranscript = value ? value : ""
                 // @ts-ignore
                 for (const result of event.results) {
                     currentTranscript += result[0].transcript;
                 }
-                setMicValue(currentTranscript.replace(/\D/g, ''));
+                const simulatedEvent = {
+                    target: {
+                        value: currentTranscript.replace(/\D/g, ''),
+                    },
+                } as ChangeEvent<HTMLInputElement>;
+
+                onChange(simulatedEvent);
+
             };
             recognition.onstart = () => {
                 setIsRecording(true);
@@ -44,20 +50,18 @@ function FieldInput({}: FieldInputProps) {
     return (
         <div
             className={`${styles.inputContainer} ${
-                (micValue.length > 0) ? 
+                (value && value.length > 0) ? 
                     styles.inputValid : 
                     styles.inputInvalid}`}
             style={isFocus ? {borderStyle: "solid", borderWidth: "3px", borderColor: "black"} : {}}>
-            <input value={!isNaN(parseInt(micValue.replace(/\D/g, ''))) ? parseInt(micValue.replace(/\D/g, '')) : ""}
+            <input value={value && !isNaN(parseInt(value.replace(/\D/g, ''))) ? parseInt(value.replace(/\D/g, '')) : ""}
                    className={styles.input}
                    type={"number"}
                    min={0}
                    max={999999}
                    step={1.0}
-                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                       setMicValue(event.target.value.replace(/\D/g, ''))
-                   }}
-                   placeholder={`Wert`}
+                   onChange={onChange}
+                   placeholder={`${placeholder ? placeholder : ""}`}
                    onFocus={(event) => {
                        setIsFocus(true)
                        event.target.select()
@@ -85,6 +89,9 @@ function FieldInput({}: FieldInputProps) {
 }
 
 export type FieldInputProps = {
+    value?: string
+    placeholder?: string,
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
 export default FieldInput;

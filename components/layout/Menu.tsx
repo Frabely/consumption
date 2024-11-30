@@ -10,11 +10,12 @@ import {setCurrentUser} from "@/store/reducer/currentUser";
 import {cars, EMPTY_USER, houses, PATH_STRINGS} from "@/constants/constantData";
 import {closeIsDownloadCsvModalActive, invertIsDownloadCsvModalActive} from "@/store/reducer/isDownloadCsvModalActive";
 import {RootState} from "@/store/store";
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useState} from "react";
 import {setCurrentCar} from "@/store/reducer/currentCar";
 import {getCars} from "@/firebase/functions";
 import Link from "next/link";
 import {setCurrentHouse} from "@/store/reducer/currentHouse";
+import CustomSelect from "@/components/layout/CustomSelect";
 
 export default function Menu({}: HeaderProps) {
     const dispatch = useDispatch()
@@ -99,12 +100,21 @@ export default function Menu({}: HeaderProps) {
                             </select>
                         </div>
                         <div className={styles.menuItem}>
-                            <select onChange={onHouseChangeHandler} defaultValue={state.currentHouse.name}
+                            <select onChange={onHouseChangeHandler}
+                                    defaultValue={state.currentHouse.name}
                                     className={styles.select}>
                                 {houses.map((house) => {
                                     return (<option key={house.name}>{house.name}</option>)
                                 })}
                             </select>
+                        </div>
+                        <div className={styles.menuItem}>
+                            <CustomSelect
+                                onChange={onHouseChangeHandler}
+                                defaultValue={state.currentHouse.name}
+                                classname={""}
+                                options={houses.map((house) => house.name)}
+                            />
                         </div>
                         <div onClick={onAddDataClickHandler} className={styles.menuItem}>
                             <FontAwesomeIcon icon={faAdd}/>
