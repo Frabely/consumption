@@ -15,10 +15,9 @@
 }
 
 .input {
-    width: 100%;
+    width: 90%;
     border-radius: 10px;
-    margin-bottom: 5%;
-    padding: 5%;
+    padding: 0.75rem;
     background: var(--color-secondary);
     border: none;
 }
@@ -77,8 +76,32 @@
 .roomField {
     margin-left: 5dvw;
     font-size: 80%;
+    border: none;
+    outline: none;
 }
 
 .roomyLabel {
     margin-bottom: 1dvh;
+}
+
+.addingFieldForRoom:focus {
+    background: var(--color-secondary);
+}
+
+.roomInput {
+    border: none;
+    outline: none;
+}
+
+.roomFieldContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputSaveContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
 }
