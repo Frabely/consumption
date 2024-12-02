@@ -5,10 +5,10 @@ import Modal from "@/components/layout/Modal";
 import styles from "@/styles/modals/AddFloor.module.css";
 import de from "@/constants/de.json";
 import {closeIsAddingFloorDataModalActive} from "@/store/reducer/isAddingFloorDataModalActive";
-import {Flat, NumberDictionary, Room} from "@/constants/types";
+import {Flat, Room} from "@/constants/types";
 import {createFlat} from "@/firebase/functions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSave} from "@fortawesome/free-solid-svg-icons";
+import {faSave, faMinus} from "@fortawesome/free-solid-svg-icons";
 
 export default function AddFloor({}: AddFloorModalProps) {
     const state: RootState = useSelector((state: RootState) => state)
@@ -16,9 +16,8 @@ export default function AddFloor({}: AddFloorModalProps) {
     const [flatName, setFlatName] = useState("")
     const [roomNameInput, setRoomNameInput] = useState("")
     const [rooms, setRooms] = useState(new Array<Room>())
-    const [fields, setFields] = useState<NumberDictionary>({})
     const [fieldNameInput, setFieldNameInput] = useState("")
-    const [addFieldForRoom, setAddFieldForRoom] = useState<Room | undefined>()
+    const [currentSelectedRoom, setCurrentSelectedRoom] = useState<Room | undefined>()
 
     const onAddDataClickHandler = (event: any) => {
         event.preventDefault()
@@ -35,19 +34,37 @@ export default function AddFloor({}: AddFloorModalProps) {
 
     const onAddRoomClickHandler = (event: any) => {
         event.preventDefault()
+        if (roomNameInput.length === 0) {
+            alert(de.messages.fieldNameEmpty)
+            return
+        }
         const newRoom: Room = {
             name: roomNameInput,
-            fields: fields
+            fields: {}
         }
         setRooms([...rooms, newRoom])
-        setFields({})
-        setAddFieldForRoom(newRoom)
+        setCurrentSelectedRoom(newRoom)
         setRoomNameInput("")
     }
 
     const onAddFieldClickHandler = (event: any) => {
         event.preventDefault()
-        setFields((prefFields) => ({...prefFields, [`${fieldNameInput}`]: null}))
+        if (!currentSelectedRoom) {
+            alert(de.messages.selectARoom)
+            return
+        }
+        if (fieldNameInput.length === 0) {
+            alert(de.messages.fieldNameEmpty)
+            return
+        }
+
+        const newFields = currentSelectedRoom.fields
+        newFields[`${fieldNameInput}`] = null
+        const newRooms = rooms.filter((room) => room.name !== currentSelectedRoom.name)
+        const newRoom: Room = {name: currentSelectedRoom.name, fields: newFields}
+        newRooms.push(newRoom)
+        setCurrentSelectedRoom(newRoom)
+        setRooms(newRooms)
         setFieldNameInput("")
     }
 
@@ -56,7 +73,20 @@ export default function AddFloor({}: AddFloorModalProps) {
     }
 
     const handleRoomChange = (room: Room) => {
-        setAddFieldForRoom(room)
+        setCurrentSelectedRoom(room)
+    }
+
+    const onRemoveRoomClickHandler = (room: Room) => {
+        setRooms(rooms.filter((currentRoom) => currentRoom.name !== room.name))
+        setCurrentSelectedRoom(undefined)
+    }
+
+    const onRemoveFieldClickHandler = (room: Room, key: string) => {
+        const newFields = room.fields
+        delete newFields[`${key}`]
+        const newRooms = rooms.filter((currentRoom) => currentRoom.name !== room.name)
+        newRooms.push({name: room.name, fields: newFields})
+        setRooms(newRooms)
     }
 
     return (
@@ -76,35 +106,69 @@ export default function AddFloor({}: AddFloorModalProps) {
                     {rooms.map((room, index) => {
                         return (
                             <div className={styles.roomFieldContainer} key={index}>
-                                <input
-                                    value={room.name}
-                                    onChange={(event) => {
-                                        const updateRooms = [...rooms]
-                                        updateRooms[index] = {name: event.target.value, fields: room.fields}
-                                        setRooms(updateRooms)
-                                    }}
-                                    onClick={() => {
-                                        handleRoomChange(room)
-                                    }}
+                                <div
                                     key={index}
-                                    className={`${styles.roomInput} ${room.name === addFieldForRoom?.name ? styles.addingFieldForRoom : ''}`}
-                                />
+                                    className={styles.roomItemContainer}
+                                    style={{
+                                        background: room.name === currentSelectedRoom?.name ?
+                                            "var(--color-secondary)" :
+                                            "none"
+                                    }}
+                                >
+                                    <input
+                                        value={room.name}
+                                        onChange={(event) => {
+                                            const updateRooms = [...rooms]
+                                            updateRooms[index] = {name: event.target.value, fields: room.fields}
+                                            setRooms(updateRooms)
+                                        }}
+                                        onClick={() => {
+                                            handleRoomChange(room)
+                                        }}
+                                        className={styles.roomInput}
+
+                                    />
+                                    <FontAwesomeIcon
+                                        onClick={() => {
+                                            onRemoveRoomClickHandler(room)
+                                        }}
+                                        className={styles.deleteButton}
+                                        style={{background: "red"} as CSSProperties}
+                                        icon={faMinus}/>
+                                </div>
                                 {Object.entries(room.fields).map(([key], indexFields) =>
                                     (
-                                        <input
-                                            value={key}
-                                            onChange={(event) => {
-                                                const updateRooms = [...rooms]
-                                                const fields = updateRooms[index].fields
-                                                const fieldValue = fields[key]
-                                                delete fields[key]
-                                                fields[`${event.target.value}`] = fieldValue
-                                                updateRooms[index] = {name: room.name, fields: fields}
-                                                setRooms(updateRooms)
+                                        <div
+                                            key={index + indexFields}
+                                            className={styles.roomItemContainer}
+                                            style={{
+                                                background: room.name === currentSelectedRoom?.name ?
+                                                    "var(--color-secondary)" :
+                                                    "none"
                                             }}
-                                            key={"_" + indexFields}
-                                            className={`${styles.roomField}`}
-                                        />
+                                        >
+                                            <input
+                                                value={key}
+                                                onChange={(event) => {
+                                                    const updateRooms = [...rooms]
+                                                    const fields = updateRooms[index].fields
+                                                    const fieldValue = fields[key]
+                                                    delete fields[key]
+                                                    fields[`${event.target.value}`] = fieldValue
+                                                    updateRooms[index] = {name: room.name, fields: fields}
+                                                    setRooms(updateRooms)
+                                                }}
+                                                key={"_" + indexFields}
+                                                className={styles.roomField}
+                                            />
+                                            <FontAwesomeIcon
+                                                onClick={() => {
+                                                    onRemoveFieldClickHandler(room, key)
+                                                }}
+                                                className={styles.deleteButton}
+                                                style={{background: "red"} as CSSProperties}
+                                                icon={faMinus}/>
+                                        </div>
                                     ))}
                             </div>
                         )
@@ -123,64 +187,44 @@ export default function AddFloor({}: AddFloorModalProps) {
                            }}
                            placeholder={de.inputLabels.roomName}
                     />
-                    <div onClick={() => {
-                        // if (roomNameInput && roomNameInput.length > 0)
-                        // onSaveFieldClickHandler(key).catch(error => console.log(error))
+                    <div onClick={(event) => {
+                        if (roomNameInput && roomNameInput.length > 0)
+                            onAddRoomClickHandler(event)
                     }}>
                         <FontAwesomeIcon
                             style={{'--color-text': roomNameInput && roomNameInput.length > 0 ? "black" : "grey"} as CSSProperties}
                             icon={faSave}/>
                     </div>
                 </div>
-                {/*<div className={styles.fieldsContainer}>*/}
-                {/*    <p className={styles.fieldsLabel}>{de.displayLabels.fields}:</p>*/}
-                {/*    <div className={styles.roomsList}>*/}
-                {/*        {Object.entries(fields).map(([key], index) => {*/}
-                {/*            return (*/}
-                {/*                <p key={index}>{key}</p>*/}
-                {/*            )*/}
-                {/*        })}*/}
-                {/*    </div>*/}
-                {/*    */}
-                {/*    <button*/}
-                {/*        onClick={onAddFieldClickHandler}*/}
-                {/*        disabled={fieldNameInput.length === 0 ||*/}
-                {/*            Object.entries(fields).filter(([key]) => key === fieldNameInput).length > 0}*/}
-                {/*        className={styles.button}>{de.buttonLabels.add}*/}
-                {/*    </button>*/}
-                {/*</div>*/}
                 <div className={styles.inputSaveContainer}>
                     <input value={fieldNameInput}
                            className={`${styles.input} ${
-                               fieldNameInput.length !== 0 &&
-                               Object.entries(fields)
-                                   .filter(([key]) => key === fieldNameInput).length === 0 ?
+                               fieldNameInput.length > 0 ?
                                    styles.inputValid : styles.inputInvalid}`}
                            type={"text"}
                            onChange={(e) => {
                                setFieldNameInput(e.target.value)
                            }}
-                           placeholder={de.inputLabels.fieldName}
+                           disabled={!currentSelectedRoom || !currentSelectedRoom.name}
+                           placeholder={`${de.inputLabels.fieldName} ${
+                               !currentSelectedRoom?.name ? 
+                                   '' :
+                                   `${de.displayLabels.for} ${currentSelectedRoom?.name}` }`}
                     />
-                    <div onClick={() => {
-                        // if (roomNameInput && roomNameInput.length > 0)
-                        // onSaveFieldClickHandler(key).catch(error => console.log(error))
+                    <div onClick={(event) => {
+                        if (fieldNameInput && fieldNameInput.length > 0)
+                            onAddFieldClickHandler(event)
                     }}>
                         <FontAwesomeIcon
-                            style={{'--color-text': roomNameInput && roomNameInput.length > 0 ? "black" : "grey"} as CSSProperties}
+                            style={{'--color-text': fieldNameInput && fieldNameInput.length > 0 ? "black" : "grey"} as CSSProperties}
                             icon={faSave}/>
                     </div>
                 </div>
-                {/*<button*/}
-                {/*    onClick={onAddRoomClickHandler}*/}
-                {/*    disabled={*/}
-                {/*        roomNameInput.length === 0 ||*/}
-                {/*        rooms.filter(room => room.name === roomNameInput).length > 0}*/}
-                {/*    className={styles.button}>{de.buttonLabels.add}*/}
-                {/*</button>*/}
             </div>
-            <button onClick={onAddDataClickHandler} disabled={rooms.length === 0}
-                    className={styles.button}>{de.buttonLabels.add}</button>
+            {/*<button onClick={onAddDataClickHandler} */}
+            {/*        disabled={rooms.length === 0}*/}
+            {/*        className={styles.button}>{de.buttonLabels.add}*/}
+            {/*</button>*/}
             <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.abort}</button>
         </Modal>
     );

@@ -16,7 +16,8 @@
     "loadingStation": "Ladestation",
     "name": "Name",
     "rooms": "Räume",
-    "fields": "Zähler"
+    "fields": "Zähler",
+    "for": "für"
   },
   "inputLabels": {
     "date": "Datum",
@@ -58,7 +59,10 @@
     "name": "Name"
   },
   "messages": {
-    "noDataForFollowMonthAndYearAvailable": "Keine Daten für den folgendes Jahr und Monat verfügbar"
+    "noDataForFollowMonthAndYearAvailable": "Keine Daten für den folgendes Jahr und Monat verfügbar",
+    "selectARoom": "Raum auswählen!",
+    "fieldNameEmpty": "Zählername leer!",
+    "roomNameEmpty": "Raumname leer!"
   },
   "loadingStation": {
     "carport": "Carport",
