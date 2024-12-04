@@ -11,15 +11,15 @@ import Image from "next/image";
 import Menu from "@/components/layout/Menu";
 import {Room} from "@/constants/types";
 import AddFloorData from "@/components/modals/AddFloorData";
-import {invertIsAddingFloorDataModalActive} from "@/store/reducer/isAddingFloorDataModalActive";
 import {faAdd} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import AddFloor from "@/components/modals/AddFloor";
 import Link from "next/link";
+import {setModalState} from "@/store/reducer/isModalActive";
+import {ModalState} from "@/constants/enums";
 
 
 export default function BuildingConsumption() {
-    const [isAddingFloorItem, setIsAddingFloorItem] = useState(false)
     const [flatName, setFlatName] = useState("")
     const [currentRooms, setCurrentRooms] = useState<Room[]>([])
     const state: RootState = useSelector((state: RootState) => state)
@@ -38,10 +38,9 @@ export default function BuildingConsumption() {
     })
 
     const onFloorClickHandler = (isAddingItem: boolean = false, flatName: string = "", rooms: Room[] = []) => {
-        setIsAddingFloorItem(isAddingItem)
         setFlatName(flatName)
         setCurrentRooms(rooms)
-        dispatch(invertIsAddingFloorDataModalActive())
+        dispatch(setModalState(ModalState.AddFloor))
     }
 
     return (
@@ -51,10 +50,10 @@ export default function BuildingConsumption() {
                 state.currentUser.key ?
                     (<>
                         <Menu/>
-                        {state.isAddingFloorDataModalActive && !isAddingFloorItem ? (
+                        {state.modalState === ModalState.AddFloorData ? (
                             <AddFloorData flatName={flatName} rooms={currentRooms}/>
                         ) : null}
-                        {state.isAddingFloorDataModalActive && isAddingFloorItem ? (
+                        {state.modalState === ModalState.AddFloor ? (
                             <AddFloor/>
                         ) : null}
                         <div className={

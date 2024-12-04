@@ -2,13 +2,12 @@
 
 import styles from '../../styles/layout/Menu.module.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faPowerOff, faAdd, faFileCsv, faEllipsis, faXmark, faHouseFire} from '@fortawesome/free-solid-svg-icons'
+import {faAdd, faEllipsis, faFileCsv, faHouseFire, faPowerOff, faXmark} from '@fortawesome/free-solid-svg-icons'
 import {useDispatch, useSelector} from "react-redux";
-import {closeIsAddingDataModalActive, invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
+import {setModalStateNone, setModalState} from "@/store/reducer/isModalActive";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setCurrentUser} from "@/store/reducer/currentUser";
 import {cars, EMPTY_USER, houses, PATH_STRINGS} from "@/constants/constantData";
-import {closeIsDownloadCsvModalActive, invertIsDownloadCsvModalActive} from "@/store/reducer/isDownloadCsvModalActive";
 import {RootState} from "@/store/store";
 import {ChangeEvent, useState} from "react";
 import {setCurrentCar} from "@/store/reducer/currentCar";
@@ -16,6 +15,7 @@ import {getCars} from "@/firebase/functions";
 import Link from "next/link";
 import {setCurrentHouse} from "@/store/reducer/currentHouse";
 import CustomSelect from "@/components/layout/CustomSelect";
+import {ModalState} from "@/constants/enums";
 
 export default function Menu({}: HeaderProps) {
     const dispatch = useDispatch()
@@ -24,21 +24,20 @@ export default function Menu({}: HeaderProps) {
     const [menuOpen, setMenuOpen] = useState(false)
 
     const onAddDataClickHandler = () => {
-        dispatch(closeIsDownloadCsvModalActive())
+        dispatch(setModalStateNone())
         dispatch(setIsChangingData(false))
-        dispatch(invertIsAddingDataModalActive())
+        dispatch(setModalState(ModalState.AddCarData))
     }
 
     const onLogoutHandler = () => {
         dispatch(setCurrentUser(EMPTY_USER))
-        dispatch(closeIsAddingDataModalActive())
-        dispatch(closeIsDownloadCsvModalActive())
+        dispatch(setModalStateNone())
     }
 
 
     const onExportAsCsvClickHandler = () => {
-        dispatch(closeIsAddingDataModalActive())
-        dispatch(invertIsDownloadCsvModalActive())
+        dispatch(setModalStateNone())
+        dispatch(setModalState(ModalState.DownloadCsv))
     }
 
     const onCarChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {

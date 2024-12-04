@@ -4,17 +4,35 @@
     height: 90%;
     margin-top: 10dvh;
     position: fixed;
-    /*padding: 7.5%;*/
     justify-content: center;
     align-items: center;
 }
 
 .mainInnerContainer {
+    padding: 0.5rem;
     background: var(--backgroundModal);
-    padding: 5%;
+    /*border: var(--border) solid thick;*/
+    z-index: 1;
+}
+
+.header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.icon {
+    font-size: 150%;
+}
+
+.childPropsContainer {
+
+    padding: 2rem;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    border: var(--border) solid thick;
+}
+
+.menu {
     z-index: 1;
 }

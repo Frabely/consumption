@@ -3,7 +3,7 @@
 import styles from "../../styles/modals/AddData.module.css"
 import de from '../../constants/de.json'
 import {useDispatch, useSelector} from "react-redux";
-import {closeIsAddingDataModalActive, invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
+import {setModalStateNone} from "@/store/reducer/isModalActive";
 import {RootState} from "@/store/store";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
@@ -16,6 +16,7 @@ import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {Language} from "@/constants/types";
 import {updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
 import {setDate} from "@/store/reducer/modal/date";
+import {ModalState} from "@/constants/enums";
 
 export default function AddData({prevKilometers}: AddDataModalProps) {
     const language: Language = de
@@ -26,6 +27,11 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         power: isPowerValid(state.power)
     })
     const [disabled, setDisabled] = useState(true);
+
+    useEffect(() => {
+        if (state.modalState === ModalState.AddCarData)
+            setModalToDefault()
+    }, []);
 
     useEffect(() => {
         if (state.currentCar.kilometer)
@@ -71,7 +77,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     console.log(error.message)
                 })
 
-            dispatch(invertIsAddingDataModalActive())
+            dispatch(setModalStateNone())
             setModalToDefault()
         } else
             alert('Invalid Data')
@@ -98,14 +104,10 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 .catch((error: Error) => {
                     console.log(error.message)
                 })
-            dispatch(invertIsAddingDataModalActive())
+            dispatch(setModalStateNone())
             setModalToDefault()
         } else
             alert('Invalid Data')
-    }
-    const onAbortClickHandler = () => {
-        dispatch(closeIsAddingDataModalActive())
-        setModalToDefault()
     }
 
     function isKilometerValid(kilometer: string) {
@@ -209,7 +211,6 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     de.buttonLabels.changeData :
                     de.buttonLabels.addData
             }</button>
-            <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.abort}</button>
         </Modal>
     );
 }

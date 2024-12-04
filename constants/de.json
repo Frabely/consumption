@@ -33,6 +33,7 @@
   "buttonLabels": {
     "addData": "Daten hinzufügen",
     "add": "Hinzufügen",
+    "save": "Speichern",
     "addRoom": "Raum hinzufügen",
     "changeData": "Daten ändern",
     "abort": "Abbrechen",

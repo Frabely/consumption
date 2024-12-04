@@ -4,11 +4,11 @@ import Modal from "@/components/layout/Modal";
 import {ChangeEvent, useState} from "react";
 import deJson from '../../constants/de.json'
 import {useDispatch, useSelector} from "react-redux";
-import {closeIsDownloadCsvModalActive} from "@/store/reducer/isDownloadCsvModalActive";
 import {getFullDataSet} from "@/firebase/functions";
 import {DataSet, Language} from "@/constants/types";
 import {RootState} from "@/store/store";
 import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
+import {setModalStateNone} from "@/store/reducer/isModalActive";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
     const state: RootState = useSelector((state: RootState) => state)
@@ -25,7 +25,7 @@ export default function DownloadCsv({}: DownloadCsvProps) {
     })
 
     const onAbortClickHandler = () => {
-        dispatch(closeIsDownloadCsvModalActive())
+        dispatch(setModalStateNone())
     }
 
     const onDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +57,7 @@ export default function DownloadCsv({}: DownloadCsvProps) {
     }
 
     const onDownloadCsvClickHandler = () => {
-        dispatch(closeIsDownloadCsvModalActive())
+        dispatch(setModalStateNone())
         if (state.currentCar.name) {
         getFullDataSet(state.currentCar.name,{year: currentDateValue.year, month: currentDateValue.month}).then((dataSetArray) => {
             if (dataSetArray) {

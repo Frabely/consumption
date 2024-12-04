@@ -16,6 +16,7 @@ import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
 import {cars, DEFAULT_CAR, DEFAULT_HOUSE, houses, loadAllData} from "@/constants/constantData";
 import {setCurrentCar} from "@/store/reducer/currentCar";
 import {setCurrentHouse} from "@/store/reducer/currentHouse";
+import {ModalState} from "@/constants/enums";
 
 export default function Home() {
     const state: RootState = useSelector((state: RootState) => state)
@@ -50,11 +51,11 @@ export default function Home() {
                     {state.currentUser.key ?
                         <>
                             <Menu/>
-                            {state.isAddingDataModalActive ? (
+                            {state.modalState === ModalState.AddCarData || state.modalState === ModalState.ChangeCarData ? (
                                 <AddData
                                     prevKilometers={state.currentCar.prevKilometer ? state.currentCar.prevKilometer : 0}/>
                             ) : null}
-                            {state.isDownloadCsvModalActive ? (
+                            {state.modalState === ModalState.DownloadCsv ? (
                                 <DownloadCsv/>
                             ) : null}
                             <Display/>

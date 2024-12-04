@@ -4,12 +4,13 @@ import {useDispatch} from "react-redux";
 import {setDate} from "@/store/reducer/modal/date";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
-import {invertIsAddingDataModalActive} from "@/store/reducer/isAddingDataModalActive";
+import {setModalState} from "@/store/reducer/isModalActive";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setId} from "@/store/reducer/modal/id";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {Language, LoadingStation} from "@/constants/types";
 import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
+import {ModalState} from "@/constants/enums";
 
 export default function ListItem({kilometer, name, power, date, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
     const language: Language = de
@@ -26,8 +27,7 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
                 Math.floor(currDate.getTime() / millisecondsToMinutes) -
                 Math.floor(date.getTime() / millisecondsToMinutes)
             if (isFirstElement && diffMinutes < 5) {
-                dispatch(invertIsAddingDataModalActive())
-                // dispatch(setTime(time))
+                dispatch(setModalState(ModalState.ChangeCarData))
                 dispatch(setDate(date))
                 dispatch(setKilometer(kilometer.toString()))
                 dispatch(setPower(power.toString()))

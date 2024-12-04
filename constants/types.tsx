@@ -129,3 +129,8 @@ export type Room = {
 export type NumberDictionary = {
     [index: string]: number | null;
 }
+
+export type ChangingFloor = {
+    flatName: string
+    rooms: Room[],
+}

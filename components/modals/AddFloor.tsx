@@ -4,18 +4,18 @@ import {useDispatch, useSelector} from "react-redux";
 import Modal from "@/components/layout/Modal";
 import styles from "@/styles/modals/AddFloor.module.css";
 import de from "@/constants/de.json";
-import {closeIsAddingFloorDataModalActive} from "@/store/reducer/isAddingFloorDataModalActive";
-import {Flat, Room} from "@/constants/types";
+import {ChangingFloor, Flat, Room} from "@/constants/types";
 import {createFlat} from "@/firebase/functions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSave, faMinus} from "@fortawesome/free-solid-svg-icons";
+import {setModalStateNone} from "@/store/reducer/isModalActive";
 
-export default function AddFloor({}: AddFloorModalProps) {
+export default function AddFloor({changingFloorData}: AddFloorModalProps) {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useDispatch()
     const [flatName, setFlatName] = useState("")
     const [roomNameInput, setRoomNameInput] = useState("")
-    const [rooms, setRooms] = useState(new Array<Room>())
+    const [rooms, setRooms] = useState<Room[]>(changingFloorData && changingFloorData?.rooms ? changingFloorData.rooms : [])
     const [fieldNameInput, setFieldNameInput] = useState("")
     const [currentSelectedRoom, setCurrentSelectedRoom] = useState<Room | undefined>()
 
@@ -26,7 +26,7 @@ export default function AddFloor({}: AddFloorModalProps) {
             rooms: rooms
         }
         createFlat(flat, state.currentHouse.name).then(() => {
-            dispatch(closeIsAddingFloorDataModalActive())
+            dispatch(setModalStateNone())
         }).catch(error => {
             console.log(error)
         })
@@ -68,10 +68,6 @@ export default function AddFloor({}: AddFloorModalProps) {
         setFieldNameInput("")
     }
 
-    const onAbortClickHandler = () => {
-        dispatch(closeIsAddingFloorDataModalActive())
-    }
-
     const handleRoomChange = (room: Room) => {
         setCurrentSelectedRoom(room)
     }
@@ -90,16 +86,20 @@ export default function AddFloor({}: AddFloorModalProps) {
     }
 
     return (
-        <Modal formName={'addFloor'}>
-            <input value={flatName}
-                   className={`${styles.input} ${flatName.length !== 0 ? styles.inputValid : styles.inputInvalid}`}
-                   type={"text"}
-                   onChange={(e) => {
-                       setFlatName(e.target.value)
-                   }}
-                   placeholder={de.inputLabels.flatName}
-                   style={{marginBottom: '1rem'}}
-            />
+        <Modal formName={changingFloorData ? 'addFloor' : 'changeFloor'}>
+            {changingFloorData ?
+                <p style={{marginBottom: '1rem'}}>{changingFloorData.flatName}</p>
+                :
+                <input value={flatName}
+                       className={`${styles.input} ${flatName.length !== 0 ? styles.inputValid : styles.inputInvalid}`}
+                       type={"text"}
+                       onChange={(e) => {
+                           setFlatName(e.target.value)
+                       }}
+                       placeholder={de.inputLabels.flatName}
+                       style={{marginBottom: '1rem'}}
+                />
+            }
             <div className={styles.roomsContainer}>
                 <p className={styles.roomyLabel}>{de.displayLabels.rooms}:</p>
                 <div className={styles.roomsList}>
@@ -207,9 +207,9 @@ export default function AddFloor({}: AddFloorModalProps) {
                            }}
                            disabled={!currentSelectedRoom || !currentSelectedRoom.name}
                            placeholder={`${de.inputLabels.fieldName} ${
-                               !currentSelectedRoom?.name ? 
+                               !currentSelectedRoom?.name ?
                                    '' :
-                                   `${de.displayLabels.for} ${currentSelectedRoom?.name}` }`}
+                                   `${de.displayLabels.for} ${currentSelectedRoom?.name}`}`}
                     />
                     <div onClick={(event) => {
                         if (fieldNameInput && fieldNameInput.length > 0)
@@ -221,12 +221,13 @@ export default function AddFloor({}: AddFloorModalProps) {
                     </div>
                 </div>
             </div>
-            {/*<button onClick={onAddDataClickHandler} */}
-            {/*        disabled={rooms.length === 0}*/}
-            {/*        className={styles.button}>{de.buttonLabels.add}*/}
-            {/*</button>*/}
-            <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.abort}</button>
+            <button onClick={onAddDataClickHandler}
+                    disabled={rooms.length === 0}
+                    className={styles.button}>{de.buttonLabels.save}
+            </button>
         </Modal>
     );
 }
-export type AddFloorModalProps = {}
+export type AddFloorModalProps = {
+    changingFloorData?: ChangingFloor
+}

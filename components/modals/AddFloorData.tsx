@@ -1,12 +1,11 @@
 'use client'
 
 import de from '../../constants/de.json'
-import {useDispatch, useSelector} from "react-redux";
+import { useSelector} from "react-redux";
 import Modal from "@/components/layout/Modal";
 import {NumberDictionary, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
-import {closeIsAddingFloorDataModalActive} from "@/store/reducer/isAddingFloorDataModalActive";
 import {ChangeEvent, CSSProperties, useEffect, useState} from "react";
 import {faSave} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -15,7 +14,6 @@ import {getFieldValues, setFieldValue} from "@/firebase/functions";
 import {RootState} from "@/store/store";
 
 export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) {
-    const dispatch = useDispatch()
     const state: RootState = useSelector((state: RootState) => state)
     const date = new Date()
     const year = date.getFullYear()
@@ -71,10 +69,6 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
             })
     }
 
-    const onAbortClickHandler = () => {
-        dispatch(closeIsAddingFloorDataModalActive())
-    }
-
     const onRoomChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
         const selectedRoom = rooms.filter(room => room.name === event.target.value)[0]
         setCurrentRoom(selectedRoom)
@@ -122,7 +116,6 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
                     </div>
                 }
             )}
-            <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.close}</button>
         </Modal>
     );
 }

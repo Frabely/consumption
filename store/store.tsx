@@ -1,22 +1,20 @@
 import {configureStore} from "@reduxjs/toolkit";
-import isAddingDataModalActiveSlice from "@/store/reducer/isAddingDataModalActive";
+import modalStateSlice from "@/store/reducer/isModalActive";
 import currentDataSetSlice from "@/store/reducer/currentDataSet";
 import KilometerSlice from "@/store/reducer/modal/kilometer";
 import PowerSlice from "@/store/reducer/modal/power";
 import isChangingDataSlice from "@/store/reducer/isChangingData";
 import IdSlice from "@/store/reducer/modal/id";
 import CurrentUserSlice from "@/store/reducer/currentUser";
-import isDownloadCsvModalActiveSlice from "@/store/reducer/isDownloadCsvModalActive";
 import LoadingStationSlice from "@/store/reducer/modal/loadingStationId";
 import CurrentCarSlice from "@/store/reducer/currentCar";
 import DateSlice from "@/store/reducer/modal/date";
 import dimensionSlice from "@/store/reducer/dismension";
-import isAddingFloorDataModalActiveSlice from "@/store/reducer/isAddingFloorDataModalActive";
 import CurrentHouseSlice from "@/store/reducer/currentHouse";
 
 export const store = configureStore({
     reducer: {
-        [isAddingDataModalActiveSlice.name]: isAddingDataModalActiveSlice.reducer,
+        [modalStateSlice.name]: modalStateSlice.reducer,
         [currentDataSetSlice.name]: currentDataSetSlice.reducer,
         [KilometerSlice.name]: KilometerSlice.reducer,
         [PowerSlice.name]: PowerSlice.reducer,
@@ -24,12 +22,10 @@ export const store = configureStore({
         [isChangingDataSlice.name]: isChangingDataSlice.reducer,
         [IdSlice.name]: IdSlice.reducer,
         [CurrentUserSlice.name]: CurrentUserSlice.reducer,
-        [isDownloadCsvModalActiveSlice.name]: isDownloadCsvModalActiveSlice.reducer,
         [LoadingStationSlice.name]: LoadingStationSlice.reducer,
         [CurrentCarSlice.name]: CurrentCarSlice.reducer,
         [CurrentHouseSlice.name]: CurrentHouseSlice.reducer,
         [dimensionSlice.name]: dimensionSlice.reducer,
-        [isAddingFloorDataModalActiveSlice.name]: isAddingFloorDataModalActiveSlice.reducer,
     },
     devTools: true,
     middleware: getDefaultMiddleware => getDefaultMiddleware({
