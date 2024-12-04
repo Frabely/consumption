@@ -1,5 +1,5 @@
 import {configureStore} from "@reduxjs/toolkit";
-import modalStateSlice from "@/store/reducer/isModalActive";
+import modalStateSlice from "@/store/reducer/modalState";
 import currentDataSetSlice from "@/store/reducer/currentDataSet";
 import KilometerSlice from "@/store/reducer/modal/kilometer";
 import PowerSlice from "@/store/reducer/modal/power";

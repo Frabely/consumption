@@ -5,7 +5,7 @@ import {RootState} from "@/store/store";
 import {useDispatch, useSelector} from "react-redux";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClose} from "@fortawesome/free-solid-svg-icons";
-import {setModalStateNone} from "@/store/reducer/isModalActive";
+import {setModalStateNone} from "@/store/reducer/modalState";
 
 export default function Modal(props: any, {formName}: ModalProps) {
     const state: RootState = useSelector((state: RootState) => state)

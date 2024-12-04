@@ -8,7 +8,7 @@ import {getFullDataSet} from "@/firebase/functions";
 import {DataSet, Language} from "@/constants/types";
 import {RootState} from "@/store/store";
 import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
-import {setModalStateNone} from "@/store/reducer/isModalActive";
+import {setModalStateNone} from "@/store/reducer/modalState";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
     const state: RootState = useSelector((state: RootState) => state)

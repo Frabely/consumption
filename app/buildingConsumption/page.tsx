@@ -4,18 +4,18 @@ import styles from '@/styles/buildingConsuption/page.module.css'
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
 import {setDimension} from "@/store/reducer/dismension";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
 import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
 import Menu from "@/components/layout/Menu";
-import {Room} from "@/constants/types";
+import {Flat, Room} from "@/constants/types";
 import AddFloorData from "@/components/modals/AddFloorData";
 import {faAdd} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import AddFloor from "@/components/modals/AddFloor";
 import Link from "next/link";
-import {setModalState} from "@/store/reducer/isModalActive";
+import {setModalState} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
 
 
@@ -25,6 +25,25 @@ export default function BuildingConsumption() {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useAppDispatch()
     const dimension = useWindowDimensions()
+    const touchTimer = useRef<NodeJS.Timeout | undefined>(undefined);
+    const [isLongTouchTriggered, setIsLongTouchTriggered] = useState(false)
+
+    const onTouchStartHandler = (flat: Flat) => {
+        touchTimer.current = setTimeout(() => {
+            setIsLongTouchTriggered(true)
+            onFloorClickHandler(true, flat.name, flat.rooms);
+        }, 500);
+    };
+
+    const onTouchEndHandler = (flat: Flat) => {
+        if (touchTimer.current) {
+            clearTimeout(touchTimer.current);
+            touchTimer.current = undefined;
+            if (!isLongTouchTriggered)
+                onFloorClickHandler(false, flat.name, flat.rooms)
+            setIsLongTouchTriggered(false)
+        }
+    };
 
     useEffect(() => {
         if (window)
@@ -37,10 +56,16 @@ export default function BuildingConsumption() {
         // })
     })
 
-    const onFloorClickHandler = (isAddingItem: boolean = false, flatName: string = "", rooms: Room[] = []) => {
+    const onAddFloorClickHandler = () => {
+        dispatch(setModalState(ModalState.AddFloor))
+    }
+
+    const onFloorClickHandler = (isFloorFliedChange: boolean, flatName: string, rooms: Room[]) => {
         setFlatName(flatName)
         setCurrentRooms(rooms)
-        dispatch(setModalState(ModalState.AddFloor))
+        isFloorFliedChange ?
+            dispatch(setModalState(ModalState.ChangeFloorFields)) :
+            dispatch(setModalState(ModalState.AddFloorData))
     }
 
     return (
@@ -56,23 +81,33 @@ export default function BuildingConsumption() {
                         {state.modalState === ModalState.AddFloor ? (
                             <AddFloor/>
                         ) : null}
+                        {state.modalState === ModalState.ChangeFloorFields ? (
+                            <AddFloor changingFloorData={{flatName,rooms: currentRooms}}/>
+                        ) : null}
                         <div className={
                             state.dimension.isHorizontal ?
                                 styles.contentContainerHor :
                                 styles.contentContainerVert}>
                             <div onClick={
                                 () => {
-                                    onFloorClickHandler(true)
+                                    onAddFloorClickHandler()
                                 }}
                                  className={styles.roomsItem}>
                                 <FontAwesomeIcon icon={faAdd}/>
                             </div>
                             {state.currentHouse.flats.map((flat) =>
-                                <div onClick={
-                                    () => {
-                                        onFloorClickHandler(false, flat.name, flat.rooms)
-                                    }} key={flat.name}
-                                     className={styles.roomsItem}>{flat.name}</div>
+                                <div
+                                    // onClick={
+                                    // () => {
+                                    //     onFloorClickHandler(false, flat.name, flat.rooms)
+                                    // }}
+                                    onTouchStart={() => {onTouchStartHandler(flat)}}
+                                    onTouchEnd={() => {onTouchEndHandler(flat)}}
+                                    key={flat.name}
+                                    className={styles.roomsItem}
+                                >
+                                    {flat.name}
+                                </div>
                             )}
                         </div>
                     </>)

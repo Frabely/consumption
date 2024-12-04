@@ -4,5 +4,6 @@ export enum ModalState {
     ChangeCarData,
     DownloadCsv,
     AddFloor,
+    ChangeFloorFields,
     AddFloorData
 }

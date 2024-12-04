@@ -7,8 +7,9 @@ import de from "@/constants/de.json";
 import {ChangingFloor, Flat, Room} from "@/constants/types";
 import {createFlat} from "@/firebase/functions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSave, faMinus} from "@fortawesome/free-solid-svg-icons";
-import {setModalStateNone} from "@/store/reducer/isModalActive";
+import {faMinus, faSave} from "@fortawesome/free-solid-svg-icons";
+import {setModalStateNone} from "@/store/reducer/modalState";
+import {ModalState} from "@/constants/enums";
 
 export default function AddFloor({changingFloorData}: AddFloorModalProps) {
     const state: RootState = useSelector((state: RootState) => state)
@@ -60,10 +61,15 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
 
         const newFields = currentSelectedRoom.fields
         newFields[`${fieldNameInput}`] = null
-        const newRooms = rooms.filter((room) => room.name !== currentSelectedRoom.name)
-        const newRoom: Room = {name: currentSelectedRoom.name, fields: newFields}
-        newRooms.push(newRoom)
-        setCurrentSelectedRoom(newRoom)
+        const newRooms = rooms.map((currentRoom) =>
+        {
+            if (currentRoom.name !== currentSelectedRoom.name)
+            {
+                return currentRoom
+            }
+            return {name: currentSelectedRoom.name, fields: newFields}
+        })
+        setCurrentSelectedRoom({name: currentSelectedRoom.name, fields: newFields})
         setRooms(newRooms)
         setFieldNameInput("")
     }
@@ -73,21 +79,31 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
     }
 
     const onRemoveRoomClickHandler = (room: Room) => {
-        setRooms(rooms.filter((currentRoom) => currentRoom.name !== room.name))
-        setCurrentSelectedRoom(undefined)
+        if (window.confirm(de.messages.deleteRoomConfirmation.replace("{0}", room.name))) {
+            setRooms(rooms.filter((currentRoom) => currentRoom.name !== room.name))
+            setCurrentSelectedRoom(undefined)
+        }
     }
 
     const onRemoveFieldClickHandler = (room: Room, key: string) => {
-        const newFields = room.fields
-        delete newFields[`${key}`]
-        const newRooms = rooms.filter((currentRoom) => currentRoom.name !== room.name)
-        newRooms.push({name: room.name, fields: newFields})
-        setRooms(newRooms)
+        if (window.confirm(de.messages.deleteFieldConfirmation.replace("{0}", key))) {
+            const newFields = {...room.fields}
+            delete newFields[`${key}`]
+            const newRooms = rooms.map((currentRoom) =>
+            {
+                if (currentRoom.name !== room.name)
+                {
+                    return currentRoom
+                }
+                return {name: room.name, fields: newFields}
+            })
+            setRooms(newRooms)
+        }
     }
 
     return (
         <Modal formName={changingFloorData ? 'addFloor' : 'changeFloor'}>
-            {changingFloorData ?
+            {state.modalState === ModalState.ChangeFloorFields && changingFloorData ?
                 <p style={{marginBottom: '1rem'}}>{changingFloorData.flatName}</p>
                 :
                 <input value={flatName}

@@ -3,7 +3,7 @@
 import styles from "../../styles/modals/AddData.module.css"
 import de from '../../constants/de.json'
 import {useDispatch, useSelector} from "react-redux";
-import {setModalStateNone} from "@/store/reducer/isModalActive";
+import {setModalStateNone} from "@/store/reducer/modalState";
 import {RootState} from "@/store/store";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
@@ -31,6 +31,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     useEffect(() => {
         if (state.modalState === ModalState.AddCarData)
             setModalToDefault()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {

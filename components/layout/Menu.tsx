@@ -4,7 +4,7 @@ import styles from '../../styles/layout/Menu.module.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faAdd, faEllipsis, faFileCsv, faHouseFire, faPowerOff, faXmark} from '@fortawesome/free-solid-svg-icons'
 import {useDispatch, useSelector} from "react-redux";
-import {setModalStateNone, setModalState} from "@/store/reducer/isModalActive";
+import {setModalStateNone, setModalState} from "@/store/reducer/modalState";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setCurrentUser} from "@/store/reducer/currentUser";
 import {cars, EMPTY_USER, houses, PATH_STRINGS} from "@/constants/constantData";

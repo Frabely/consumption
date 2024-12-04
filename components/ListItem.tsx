@@ -4,7 +4,7 @@ import {useDispatch} from "react-redux";
 import {setDate} from "@/store/reducer/modal/date";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
-import {setModalState} from "@/store/reducer/isModalActive";
+import {setModalState} from "@/store/reducer/modalState";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setId} from "@/store/reducer/modal/id";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
