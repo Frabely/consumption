@@ -134,3 +134,9 @@ export type ChangingFloor = {
     flatName: string
     rooms: Room[],
 }
+
+export type ReloadNeeded = {
+    isReloadHousesNeeded: boolean,
+    isReloadCarsNeeded: boolean,
+    isReloadFieldsNeeded: boolean,
+}

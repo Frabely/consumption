@@ -1,12 +1,81 @@
 .mainSelectContainer {
+    position: relative;
+    width: 100px;
+    font-family: Arial, sans-serif;
+    user-select: none;
+    cursor: pointer;
+}
 
+.selectedValue {
+    background: var(--color-primary);
+    padding: 10px;
+    height: 6dvh;
+    border: 1px solid var(--color-tertiary);
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s ease;
+}
+
+.selectedValue:hover {
+    background: var(--color-secondary);
 }
 
 .optionsContainer {
-    position: fixed;
+    position: absolute;
+    min-width: 100%;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    z-index: 1000;
+    border-radius: 5px;
+    overflow: hidden;
+    animation: fadeIn 0.3s ease;
+}
+
+.optionsContainer.down {
+    top: 100%;
+    left: 0;
+}
+
+.optionsContainer.up {
+    bottom: 100%;
+    left: 0;
+}
+
+.optionsContainer.right {
+    top: 0;
+    left: 100%;
+}
+
+.optionsContainer.left {
+    top: 0;
+    right: 100%;
+}
+
+.optionContainer {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.optionContainer:last-child {
+    border-bottom: none;
 }
 
 .optionContainer:hover {
-    color: white;
-    background: black;
+    background: var(--color-primary);
+    color: var(--color-tertiary);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

@@ -11,6 +11,7 @@ import CurrentCarSlice from "@/store/reducer/currentCar";
 import DateSlice from "@/store/reducer/modal/date";
 import dimensionSlice from "@/store/reducer/dismension";
 import CurrentHouseSlice from "@/store/reducer/currentHouse";
+import isReloadDataNeededSlice from "@/store/reducer/isReloadDataNeeded";
 
 export const store = configureStore({
     reducer: {
@@ -26,6 +27,7 @@ export const store = configureStore({
         [CurrentCarSlice.name]: CurrentCarSlice.reducer,
         [CurrentHouseSlice.name]: CurrentHouseSlice.reducer,
         [dimensionSlice.name]: dimensionSlice.reducer,
+        [isReloadDataNeededSlice.name]: isReloadDataNeededSlice.reducer,
     },
     devTools: true,
     middleware: getDefaultMiddleware => getDefaultMiddleware({

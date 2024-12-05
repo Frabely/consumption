@@ -62,7 +62,8 @@ export const loadAllData = async () => {
             }
         }
     }
-    const resultHouses = await getHouses().catch((error: Error) => {
+    const resultHouses = await getHouses()
+        .catch((error: Error) => {
         console.log(error.message)
     })
     if (resultHouses) {

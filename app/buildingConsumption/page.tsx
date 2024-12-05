@@ -8,7 +8,6 @@ import {useEffect, useRef, useState} from "react";
 import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
 import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
-import Menu from "@/components/layout/Menu";
 import {Flat, Room} from "@/constants/types";
 import AddFloorData from "@/components/modals/AddFloorData";
 import {faAdd} from "@fortawesome/free-solid-svg-icons";
@@ -17,6 +16,7 @@ import AddFloor from "@/components/modals/AddFloor";
 import Link from "next/link";
 import {setModalState} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
+import MenuBuilding from "@/components/layout/menus/MenuBuilding";
 
 export default function BuildingConsumption() {
     const [flatName, setFlatName] = useState("")
@@ -26,6 +26,13 @@ export default function BuildingConsumption() {
     const dimension = useWindowDimensions()
     const touchTimer = useRef<NodeJS.Timeout | undefined>(undefined);
     const [isLongTouchTriggered, setIsLongTouchTriggered] = useState(false)
+
+    useEffect(() => {
+        if (state.isReloadDataNeeded.isReloadHousesNeeded)
+        {
+
+        }
+    }, []);
 
     const onTouchStartHandler = (flat: Flat) => {
         touchTimer.current = setTimeout(() => {
@@ -67,7 +74,7 @@ export default function BuildingConsumption() {
             {
                 state.currentUser.key ?
                     (<>
-                        <Menu/>
+                        <MenuBuilding/>
                         {state.modalState === ModalState.AddFloorData ? (
                             <AddFloorData flatName={flatName} rooms={currentRooms}/>
                         ) : null}

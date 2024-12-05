@@ -1,7 +1,7 @@
 'use client'
 
 import styles from '../styles/page.module.css'
-import Menu from "@/components/layout/Menu";
+import Menu from "@/components/layout/menus/Menu";
 import Display from "@/components/Display";
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
@@ -13,9 +13,8 @@ import DownloadCsv from "@/components/modals/DownloadCsv";
 import {setDimension} from "@/store/reducer/dismension";
 import {useEffect, useState} from "react";
 import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
-import {cars, DEFAULT_CAR, DEFAULT_HOUSE, houses, loadAllData} from "@/constants/constantData";
+import {cars, DEFAULT_CAR, loadAllData} from "@/constants/constantData";
 import {setCurrentCar} from "@/store/reducer/currentCar";
-import {setCurrentHouse} from "@/store/reducer/currentHouse";
 import {ModalState} from "@/constants/enums";
 
 export default function Home() {
@@ -32,7 +31,7 @@ export default function Home() {
     useEffect(() => {
         loadAllData().then(() => {
             dispatch(setCurrentCar(cars.filter(car => car.name === DEFAULT_CAR.name)[0]))
-            dispatch(setCurrentHouse(houses.filter(house => house.name === DEFAULT_HOUSE.name)[0]))
+            // dispatch(setCurrentHouse(houses.filter(house => house.name === DEFAULT_HOUSE.name)[0]))
             setIsLoading(false)
         }).catch((error: Error) => {
             console.log(error.message)

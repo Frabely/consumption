@@ -171,7 +171,9 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 
     return (
         <Modal formName={'addData'}>
-            <select onChange={onLoadingStationChangeHandler} className={styles.select}
+            <select
+                onChange={onLoadingStationChangeHandler}
+                className={styles.select}
                     defaultValue={state.isChangingData ? language.loadingStation[`${state.loadingStation.name}`] : DEFAULT_LOADING_STATION.name}>
                 {loadingStations.map((loadingStation) => {
 

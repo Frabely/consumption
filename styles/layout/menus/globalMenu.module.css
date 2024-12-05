@@ -18,10 +18,9 @@
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    /*gap: 0.5rem;*/
 }
 
-.button{
+.button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -40,12 +39,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /*border-width: 2px;*/
 }
 
 .menu {
     display: flex;
     flex-direction: row;
+    align-items: center;
     height: 100%;
     width: 100%;
     justify-content: space-between;
@@ -53,8 +52,8 @@
 
 .menuItem {
     display: flex;
+    height: 100%;
     padding: 0 5%;
-    /*width: 10vw;*/
     align-items: center;
     justify-content: center;
     border: none;
