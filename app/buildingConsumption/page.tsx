@@ -18,7 +18,6 @@ import Link from "next/link";
 import {setModalState} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
 
-
 export default function BuildingConsumption() {
     const [flatName, setFlatName] = useState("")
     const [currentRooms, setCurrentRooms] = useState<Room[]>([])
@@ -48,12 +47,6 @@ export default function BuildingConsumption() {
     useEffect(() => {
         if (window)
             dispatch(setDimension(dimension))
-        // loadAllData().then(() => {
-        //     dispatch(setCurrentCar(cars.filter(car => car.name === DEFAULT_CAR.name)[0]))
-        //     dispatch(setCurrentHouse(houses.filter(house => house.name === DEFAULT_HOUSE.name)[0]))
-        // }).catch((error: Error) => {
-        //     console.log(error.message)
-        // })
     })
 
     const onAddFloorClickHandler = () => {

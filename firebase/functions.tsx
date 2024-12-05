@@ -222,14 +222,14 @@ export const getHouses = async () => {
     return houses
 }
 
-export const createFlat = async (flat: Flat, houseName: string)  => {
+export const createOrUpdateFlat = async (flat: Flat, houseName: string)  => {
     try {
         const flatDocRef = doc(db, `houses/${houseName}/flats/${flat.name}`);
-        await setDoc(flatDocRef, { name: flat.name });
+        await setDoc(flatDocRef, { name: flat.name }, { merge: true });
         const roomsCollectionRef = collection(flatDocRef, "rooms");
         for (const room of flat.rooms) {
             const roomDocRef = doc(roomsCollectionRef, room.name);
-            await setDoc(roomDocRef, room.fields);
+            await setDoc(roomDocRef, room.fields, { merge: true });
         }
     } catch (error) {
         console.error(error);

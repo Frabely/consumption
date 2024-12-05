@@ -11,7 +11,7 @@ export default function Modal(props: any, {formName}: ModalProps) {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useDispatch()
 
-    const onCloseClickHandler = () => {
+    const onCloseClickHandler = async () => {
         dispatch(setModalStateNone())
     }
 

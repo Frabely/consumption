@@ -5,7 +5,7 @@ import Modal from "@/components/layout/Modal";
 import styles from "@/styles/modals/AddFloor.module.css";
 import de from "@/constants/de.json";
 import {ChangingFloor, Flat, Room} from "@/constants/types";
-import {createFlat} from "@/firebase/functions";
+import {createOrUpdateFlat} from "@/firebase/functions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMinus, faSave} from "@fortawesome/free-solid-svg-icons";
 import {setModalStateNone} from "@/store/reducer/modalState";
@@ -26,7 +26,7 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
             name: flatName,
             rooms: rooms
         }
-        createFlat(flat, state.currentHouse.name).then(() => {
+        createOrUpdateFlat(flat, state.currentHouse.name).then(() => {
             dispatch(setModalStateNone())
         }).catch(error => {
             console.log(error)
@@ -212,6 +212,10 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                             icon={faSave}/>
                     </div>
                 </div>
+                <p className={styles.roomyLabel}>{de.displayLabels.selectedRoom}: {
+                    currentSelectedRoom ?
+                        currentSelectedRoom.name : de.displayLabels.none
+                }</p>
                 <div className={styles.inputSaveContainer}>
                     <input value={fieldNameInput}
                            className={`${styles.input} ${
@@ -225,7 +229,7 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                            placeholder={`${de.inputLabels.fieldName} ${
                                !currentSelectedRoom?.name ?
                                    '' :
-                                   `${de.displayLabels.for} ${currentSelectedRoom?.name}`}`}
+                                   `${currentSelectedRoom?.name}`}`}
                     />
                     <div onClick={(event) => {
                         if (fieldNameInput && fieldNameInput.length > 0)
