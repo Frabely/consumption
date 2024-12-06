@@ -1,5 +1,6 @@
-import {Car, House, LoadingStation, Room, User} from "@/constants/types";
-import {getCars, getHouses, getLoadingStations} from "@/firebase/functions";
+import {Car, DataSet, House, LoadingStation, Room, User} from "@/constants/types";
+import {getCars, getFullDataSet, getHouses, getLoadingStations} from "@/firebase/functions";
+import {Simulate} from "react-dom/test-utils";
 
 export const DEFAULT_LOADING_STATION: LoadingStation = {
     id: '17498904',
@@ -41,8 +42,9 @@ export const DB_LOADING_STATIONS: string = 'loadingStations'
 export let loadingStations: LoadingStation[] = []
 export let cars: Car[] = []
 export let houses: House[] = []
+export let dataSet: DataSet[] = []
 
-export const loadAllData = async () => {
+export const loadMainPageData = async () => {
     const resultStations = await getLoadingStations().catch((error: Error) => {
         console.log(error.message)
     })
@@ -60,22 +62,20 @@ export const loadAllData = async () => {
                 kilometer: cars[0].kilometer,
                 prevKilometer: cars[0].prevKilometer,
             }
-        }
-    }
-    const resultHouses = await getHouses()
-        .catch((error: Error) => {
-        console.log(error.message)
-    })
-    if (resultHouses) {
-        houses = resultHouses
-        if (houses.length > 0) {
-            DEFAULT_HOUSE = {
-                name: houses[0].name,
-                flats: houses[0].flats
-            }
+            const resultDataSet = await getFullDataSet(DEFAULT_CAR.name)
+                .catch((error: Error) => console.log(error.message))
+            if (resultDataSet)
+                dataSet = resultDataSet
         }
     }
 }
+
+export const loadHouses = async () => {
+    return getHouses().then((housesResult) => {
+        return housesResult
+    })
+}
+
 
 
 

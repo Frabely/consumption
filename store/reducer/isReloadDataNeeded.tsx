@@ -2,9 +2,11 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {ReloadNeeded} from "@/constants/types";
 
 const initialState: ReloadNeeded = {
-    isReloadCarsNeeded: false,
-    isReloadHousesNeeded: false,
-    isReloadFieldsNeeded: false
+    isReloadCarsNeeded: true,
+    isReloadHousesNeeded: true,
+    isReloadFieldsNeeded: true,
+    isReloadDataSetNeeded: true,
+    isReloadLoadingStationsNeeded: true
 }
 
 const isReloadDataNeededSlice = createSlice({
@@ -20,11 +22,23 @@ const isReloadDataNeededSlice = createSlice({
         setIsReloadFieldsNeeded: (state, action: PayloadAction<boolean>) => {
             return {...state, isReloadFieldsNeeded: action.payload}
         },
+        setIsReloadDataSetNeeded: (state, action: PayloadAction<boolean>) => {
+            return {...state, isReloadDataSetNeeded: action.payload}
+        },
+        setIsReloadLoadingStationsNeeded: (state, action: PayloadAction<boolean>) => {
+            return {...state, isReloadLoadingStationsNeeded: action.payload}
+        },
         setIsReloadNeeded: (_state, action: PayloadAction<ReloadNeeded>) => {
             return action.payload
         }
     },
 })
-export const { setIsReloadCarsNeeded, setIsReloadHousesNeeded, setIsReloadFieldsNeeded, setIsReloadNeeded } = isReloadDataNeededSlice.actions
+export const {
+    setIsReloadCarsNeeded,
+    setIsReloadHousesNeeded,
+    setIsReloadFieldsNeeded,
+    setIsReloadDataSetNeeded,
+    setIsReloadLoadingStationsNeeded,
+    setIsReloadNeeded } = isReloadDataNeededSlice.actions
 
 export default isReloadDataNeededSlice;

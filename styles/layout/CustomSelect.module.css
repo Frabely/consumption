@@ -7,10 +7,10 @@
 }
 
 .selectedValue {
-    background: var(--color-primary);
+    background: var(--secondary-color);
     padding: 10px;
     height: 6dvh;
-    border: 1px solid var(--color-tertiary);
+    border: 1px solid var(--tertiary-color);
     border-radius: 5px;
     display: flex;
     justify-content: space-between;
@@ -19,7 +19,7 @@
 }
 
 .selectedValue:hover {
-    background: var(--color-secondary);
+    background: var(--secondary-color);
 }
 
 .optionsContainer {
@@ -65,8 +65,8 @@
 }
 
 .optionContainer:hover {
-    background: var(--color-primary);
-    color: var(--color-tertiary);
+    background: var(--tertiary-color);
+    color: var(--text-color);
 }
 
 @keyframes fadeIn {

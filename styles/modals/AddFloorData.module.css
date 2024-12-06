@@ -4,8 +4,8 @@
     margin-top: 5%;
     align-items: center;
     justify-content: center;
-    border-color: var(--border);
-    background: var(--color-secondary);
+    border-color: var(--border-color);
+    background: var(--secondary-color);
     border-radius: 10px;
 }
 
@@ -15,20 +15,20 @@
     margin: 1dvh 0;
     border: none;
     background: grey;
-    border-color: var(--border);
+    border-color: var(--border-color);
     border-width: 2px;
 }
 
 .inputInvalid {
-    background-color: var(--color-invalid);
+    background-color: var(--input-invalid-background);
 }
 
 .inputValid {
-    background: var(--color-valid);
+    background: var(--input-valid-background);
 }
 
 .input::placeholder {
-    color: var(--color-text-placeholder);
+    color: var(--text-color-muted);
 }
 
 .inputContainer {
@@ -52,8 +52,8 @@
 
 .select {
     height: 6dvh;
-    background: var(--color-secondary);
-    border-color: var(--border);
+    background: var(--secondary-color);
+    border-color: var(--border-color);
     border-radius: 10px;
     display: flex;
     justify-content: center;

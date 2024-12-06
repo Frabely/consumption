@@ -12,6 +12,7 @@ import DateSlice from "@/store/reducer/modal/date";
 import dimensionSlice from "@/store/reducer/dismension";
 import CurrentHouseSlice from "@/store/reducer/currentHouse";
 import isReloadDataNeededSlice from "@/store/reducer/isReloadDataNeeded";
+import isLoadingSlice from "@/store/reducer/isLoading";
 
 export const store = configureStore({
     reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
         [CurrentHouseSlice.name]: CurrentHouseSlice.reducer,
         [dimensionSlice.name]: dimensionSlice.reducer,
         [isReloadDataNeededSlice.name]: isReloadDataNeededSlice.reducer,
+        [isLoadingSlice.name]: isLoadingSlice.reducer,
     },
     devTools: true,
     middleware: getDefaultMiddleware => getDefaultMiddleware({

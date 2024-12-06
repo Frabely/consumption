@@ -4,26 +4,57 @@
   --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
     'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
-  --color-tertiary: rgb(255, 255, 255);
-  --color-secondary: rgb(218, 218, 218);
-  --color-primary: rgb(183, 183, 183);
-  --color-disabled-button: rgb(106, 106, 106);
-  --backgroundModal: rgba(255, 255, 255, 0.8);
-  --color-primary-tans: rgba(255, 255, 255, 0.7);
-  --color-secondary-tans: rgba(148, 148, 148, 0.7);
-  --border: black;
-  --color-invalid: rgb(255, 209, 209);
-  --color-valid: rgb(234, 255, 223);
-  /*--color-text: rgb(255, 255, 255);*/
-  --color-text: rgb(14, 47, 1);
-  --color-text-placeholder: rgb(114, 136, 81)
+    /* Hauptfarben */
+    --primary-color: #8ddd8f; /* Hauptfarbe: Grün */
+    --primary-color-hover: #45A049; /* Hauptfarbe: Dunkleres Grün für Hover */
+    --secondary-color: #F5F5F5; /* Sekundärfarbe: Helles Grau für Hintergrundbereiche */
+    --secondary-color-light: #FFFFFF; /* Sekundärfarbe: Reines Weiß */
+    --secondary-color-muted: #C0C0C0; /* Sekundärfarbe: Gedämpftes Grau für inaktive Elemente */
+
+    /* Tertiäre Farben */
+    --tertiary-color: #E8E8E8; /* Tertiärfarbe: Panels, helles Grau */
+    --tertiary-color-light: #FAFAFA; /* Tertiärfarbe: Noch helleres Grau */
+
+    /* Fehlerfarben */
+    --error-color: #FF5252; /* Fehlerfarbe: Rot */
+    --error-color-hover: #FF1744; /* Fehlerfarbe: Dunkleres Rot für Hover */
+    --success-color: #4CAF50; /* Erfolgsfarbe: Grün (gleiche wie Primärfarbe für Konsistenz) */
+    --valid-color: #E9F7EF; /* Valid-Farbe: Weiches Grün für Validierungsindikatoren */
+
+    /* Textfarben */
+    --text-color: #333333; /* Primäre Textfarbe: Dunkelgrau */
+    --text-color-muted: #9E9E9E; /* Gedämpfter Text für Platzhalter */
+    --text-color-light: #FFFFFF; /* Helle Textfarbe (z. B. auf dunklen Hintergründen) */
+
+    /* Schattierungen */
+    --box-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1); /* Leichter Schatten für Container */
+    --box-shadow-medium: 0 6px 12px rgba(0, 0, 0, 0.15); /* Mittlerer Schatten für Hervorhebungen */
+
+    /* Rahmenfarben */
+    --border-color: #DDDDDD; /* Standardrahmen: Helles Grau */
+    --border-color-muted: #BBBBBB; /* Gedämpfter Rahmen für inaktive Bereiche */
+
+    /* Scrollbar */
+    --scrollbar-thumb-color: #4CAF50; /* Scrollbar: Grün passend zur Primärfarbe */
+    --scrollbar-track-color: #E8E8E8; /* Scrollbar: Heller Hintergrund */
+
+    /* Modalfarben */
+    --modal-background: rgba(255, 255, 255, 0.9); /* Modal-Hintergrund: Helles Weiß mit Transparenz */
+
+    /* Disabled-Farben */
+    --disabled-button-background: #A1A1A1; /* Hintergrundfarbe für deaktivierte Buttons */
+    --disabled-button-text: #FFFFFF; /* Textfarbe für deaktivierte Buttons */
+
+    /* Validierungsfarben */
+    --input-invalid-background: #FFE6E6; /* Fehlerhintergrund: Leichtes Rot */
+    --input-valid-background: #E6FFE6; /* Gültigkeitshintergrund: Leichtes Grün */
 }
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  color: var(--color-text);
+  color: var(--text-color);
   font-size: 1.2rem;
   font-weight: bold;
   font-family: "Gill Sans", sans-serif;

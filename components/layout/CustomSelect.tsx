@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {CSSProperties, useState} from 'react';
 import styles from "@/styles/layout/CustomSelect.module.css";
 
 export default function CustomSelect({
@@ -7,6 +7,7 @@ export default function CustomSelect({
                                          className,
                                          options,
                                          direction = 'down',
+                                         style
                                      }: CustomSelectProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedValue, setSelectedValue] = useState(defaultValue);
@@ -26,6 +27,7 @@ export default function CustomSelect({
         <div
             className={`${styles.mainSelectContainer} ${className}`}
             data-direction={direction}
+            style={style}
         >
             <div
                 className={`${styles.selectedValue} ${isExpanded ? styles.active : ''}`}
@@ -56,4 +58,5 @@ export type CustomSelectProps = {
     className?: string;
     options: string[];
     direction?: 'down' | 'up' | 'left' | 'right';
+    style?: CSSProperties
 };

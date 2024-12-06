@@ -1,7 +1,7 @@
 .monthPicker {
     margin-bottom: 5%;
     padding: 5%;
-    background: var(--color-secondary);
-    border-color: var(--border);
+    background: var(--secondary-color);
+    border-color: var(--border-color);
     border-radius: 10px;
 }

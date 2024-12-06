@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: row;
     height: 10dvh;
-    background: var(--color-primary);
+    background: var(--primary-color);
     padding: 0 5%;
     position: fixed;
     width: 100%;
@@ -28,13 +28,13 @@
     width: 6dvh;
     border: none;
     border-radius: 100px;
-    background: var(--color-secondary);
+    background: var(--secondary-color);
 }
 
 .selectHor {
     height: 6dvh;
-    background: var(--color-secondary);
-    border-color: var(--border);
+    background: var(--secondary-color);
+    border-color: var(--border-color);
     border-radius: 10px;
     display: flex;
     justify-content: center;
@@ -57,19 +57,19 @@
     align-items: center;
     justify-content: center;
     border: none;
-    background: var(--color-primary);
+    background: var(--primary-color);
 }
 
 .menuItem:hover {
     cursor: pointer;
-    background: var(--color-secondary);
+    background: var(--secondary-color);
 }
 
 .selectVert {
     margin-bottom: 5%;
     padding: 5%;
-    background: var(--color-secondary);
-    border-color: var(--border);
+    background: var(--secondary-color);
+    border-color: var(--border-color);
     border-width: 2px;
 }
 

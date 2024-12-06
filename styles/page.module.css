@@ -19,7 +19,7 @@
 
 .isLoading {
     border-radius: var(--border-radius);
-    background-color: var(--backgroundModal);
+    background-color: var(--modal-background);
     display: flex;
     align-items: center;
     justify-content: center;

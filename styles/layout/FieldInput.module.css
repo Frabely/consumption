@@ -7,16 +7,16 @@
     padding: 5%;
     border-radius: 15px;
     gap: 1dvw;
-    background: var(--color-secondary);
+    background: var(--secondary-color);
     border: 3px solid transparent;
 }
 
 .inputInvalid {
-    background-color: var(--color-invalid);
+    background-color: var(--input-invalid-background);
 }
 
 .inputValid {
-    background: var(--color-valid);
+    background: var(--input-valid-background);
 }
 
 .inputContainerFocus {

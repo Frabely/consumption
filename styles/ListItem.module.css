@@ -3,7 +3,7 @@
     flex-direction: column;
     justify-content: space-between;
     padding: 0.5rem;
-    background: var(--color-primary-tans);
+    background: var(--primary-color);
     flex-wrap: wrap;
 }
 
@@ -12,7 +12,7 @@
     flex-direction: column;
     justify-content: space-between;
     padding: 0.5rem;
-    background: var(--color-secondary-tans);
+    background: var(--secondary-color);
     flex-wrap: wrap;
 }
 
@@ -31,5 +31,5 @@
 .item {
     display: flex;
     padding: 0.5rem 0.2rem;
-    color: var(--color-text);
+    color: var(--text-color);
 }

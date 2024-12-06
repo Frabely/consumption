@@ -18,7 +18,8 @@
     "rooms": "Räume",
     "fields": "Zähler",
     "selectedRoom": "Ausgewählter Raum",
-    "none": "-"
+    "none": "-",
+    "loading": "Lädt"
   },
   "inputLabels": {
     "date": "Datum",

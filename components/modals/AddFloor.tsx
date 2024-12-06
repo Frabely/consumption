@@ -118,7 +118,9 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
             }
             <div className={styles.roomsContainer}>
                 <p className={styles.roomyLabel}>{de.displayLabels.rooms}:</p>
-                <div className={styles.roomsList}>
+                <div
+                    className={styles.roomsList}
+                >
                     {rooms.map((room, index) => {
                         return (
                             <div className={styles.roomFieldContainer} key={index}>
@@ -127,7 +129,7 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                                     className={styles.roomItemContainer}
                                     style={{
                                         background: room.name === currentSelectedRoom?.name ?
-                                            "var(--color-secondary)" :
+                                            "var(--secondary-color)" :
                                             "none"
                                     }}
                                 >
@@ -159,9 +161,11 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                                             className={styles.roomItemContainer}
                                             style={{
                                                 background: room.name === currentSelectedRoom?.name ?
-                                                    "var(--color-secondary)" :
-                                                    "none"
+                                                    "var(--secondary-color)" :
+                                                    "none",
+                                                marginLeft: '1rem'
                                             }}
+                                            onClick={() => {setCurrentSelectedRoom(room)}}
                                         >
                                             <input
                                                 value={key}

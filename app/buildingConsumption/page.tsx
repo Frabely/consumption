@@ -8,7 +8,7 @@ import {useEffect, useRef, useState} from "react";
 import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
 import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
-import {Flat, Room} from "@/constants/types";
+import {Flat, House, Room} from "@/constants/types";
 import AddFloorData from "@/components/modals/AddFloorData";
 import {faAdd} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -17,6 +17,11 @@ import Link from "next/link";
 import {setModalState} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
 import MenuBuilding from "@/components/layout/menus/MenuBuilding";
+import {setIsLoading} from "@/store/reducer/isLoading";
+import Loading from "@/components/Loading";
+import {loadHouses} from "@/constants/constantData";
+import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
+import {setCurrentHouse} from "@/store/reducer/currentHouse";
 
 export default function BuildingConsumption() {
     const [flatName, setFlatName] = useState("")
@@ -26,13 +31,23 @@ export default function BuildingConsumption() {
     const dimension = useWindowDimensions()
     const touchTimer = useRef<NodeJS.Timeout | undefined>(undefined);
     const [isLongTouchTriggered, setIsLongTouchTriggered] = useState(false)
+    const [houseNames, setHouseNames] = useState<House[]>([])
 
     useEffect(() => {
-        if (state.isReloadDataNeeded.isReloadHousesNeeded)
-        {
-
+        if (window)
+            dispatch(setDimension(dimension))
+        if (state.isReloadDataNeeded.isReloadHousesNeeded) {
+            dispatch(setIsLoading(true))
+            loadHouses()
+                .then((houses) => {
+                    dispatch(setIsReloadHousesNeeded(false))
+                    dispatch(setCurrentHouse(houses[0]))
+                    setHouseNames(houses)
+                    dispatch(setIsLoading(false))
+                })
+                .catch((error) => console.log(error.messages))
         }
-    }, []);
+    });
 
     const onTouchStartHandler = (flat: Flat) => {
         touchTimer.current = setTimeout(() => {
@@ -51,10 +66,6 @@ export default function BuildingConsumption() {
         }
     };
 
-    useEffect(() => {
-        if (window)
-            dispatch(setDimension(dimension))
-    })
 
     const onAddFloorClickHandler = () => {
         dispatch(setModalState(ModalState.AddFloor))
@@ -73,44 +84,48 @@ export default function BuildingConsumption() {
             <Image className={styles.image} src={img} alt={''}></Image>
             {
                 state.currentUser.key ?
-                    (<>
-                        <MenuBuilding/>
-                        {state.modalState === ModalState.AddFloorData ? (
-                            <AddFloorData flatName={flatName} rooms={currentRooms}/>
-                        ) : null}
-                        {state.modalState === ModalState.AddFloor ? (
-                            <AddFloor/>
-                        ) : null}
-                        {state.modalState === ModalState.ChangeFloorFields ? (
-                            <AddFloor changingFloorData={{flatName,rooms: currentRooms}}/>
-                        ) : null}
-                        <div className={
-                            state.dimension.isHorizontal ?
-                                styles.contentContainerHor :
-                                styles.contentContainerVert}>
-                            <div onClick={
-                                () => {
-                                    onAddFloorClickHandler()
-                                }}
-                                 className={styles.roomsItem}>
-                                <FontAwesomeIcon icon={faAdd}/>
-                            </div>
-                            {state.currentHouse.flats.map((flat) =>
-                                <div
-                                    // onClick={
-                                    // () => {
-                                    //     onFloorClickHandler(false, flat.name, flat.rooms)
-                                    // }}
-                                    onTouchStart={() => {onTouchStartHandler(flat)}}
-                                    onTouchEnd={() => {onTouchEndHandler(flat)}}
-                                    key={flat.name}
-                                    className={styles.roomsItem}
-                                >
-                                    {flat.name}
-                                </div>
-                            )}
-                        </div>
-                    </>)
+                    (
+                        <>
+                            {state.isLoading ?
+                                <Loading/> :
+                                <>
+                                    <MenuBuilding houses={houseNames}/>
+                                    {state.modalState === ModalState.AddFloorData ? (
+                                        <AddFloorData flatName={flatName} rooms={currentRooms}/>
+                                    ) : null}
+                                    {state.modalState === ModalState.AddFloor ? (
+                                        <AddFloor/>
+                                    ) : null}
+                                    {state.modalState === ModalState.ChangeFloorFields ? (
+                                        <AddFloor changingFloorData={{flatName, rooms: currentRooms}}/>
+                                    ) : null}
+                                    <div className={
+                                        state.dimension.isHorizontal ?
+                                            styles.contentContainerHor :
+                                            styles.contentContainerVert}>
+                                        <div onClick={
+                                            () => {
+                                                onAddFloorClickHandler()
+                                            }}
+                                             className={styles.roomsItem}>
+                                            <FontAwesomeIcon icon={faAdd}/>
+                                        </div>
+                                        {state.currentHouse.flats.map((flat) =>
+                                            <div
+                                                onTouchStart={() => onTouchStartHandler(flat)}
+                                                onTouchEnd={() => onTouchEndHandler(flat)}
+                                                onMouseDown={() => onTouchStartHandler(flat)}
+                                                onMouseUp={() => onTouchEndHandler(flat)}
+                                                key={flat.name}
+                                                className={styles.roomsItem}
+                                            >
+                                                <h3>{flat.name}</h3>
+                                            </div>
+                                        )}
+                                    </div>
+                                </>}
+                        </>
+                    )
                     :
                     <Link href={"/"}>login</Link>
             }

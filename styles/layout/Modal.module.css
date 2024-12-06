@@ -10,7 +10,7 @@
 
 .mainInnerContainer {
     padding: 0.5rem;
-    background: var(--backgroundModal);
+    background: var(--modal-background);
     /*border: var(--border) solid thick;*/
     z-index: 1;
 }

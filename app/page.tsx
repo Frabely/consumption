@@ -11,41 +11,47 @@ import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
 import DownloadCsv from "@/components/modals/DownloadCsv";
 import {setDimension} from "@/store/reducer/dismension";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
-import {cars, DEFAULT_CAR, loadAllData} from "@/constants/constantData";
+import {cars, DEFAULT_CAR, loadMainPageData} from "@/constants/constantData";
 import {setCurrentCar} from "@/store/reducer/currentCar";
 import {ModalState} from "@/constants/enums";
+import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
+import Loading from "@/components/Loading";
+import {setIsLoading} from "@/store/reducer/isLoading";
 
 export default function Home() {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useAppDispatch()
     const dimension = useWindowDimensions()
-    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        loadMainPageData().then(() => {
+            dispatch(setCurrentCar(cars.filter(car => car.name === DEFAULT_CAR.name)[0]))
+            dispatch(setIsReloadNeeded({
+                isReloadHousesNeeded: true,
+                isReloadCarsNeeded: false,
+                isReloadFieldsNeeded: true,
+                isReloadDataSetNeeded: false,
+                isReloadLoadingStationsNeeded: false,
+            }))
+            dispatch(setIsLoading(false))
+        }).catch((error: Error) => {
+            console.log(error.message)
+        })
+    }, [dispatch]);
 
     useEffect(() => {
         if (window)
             dispatch(setDimension(dimension))
     })
 
-    useEffect(() => {
-        loadAllData().then(() => {
-            dispatch(setCurrentCar(cars.filter(car => car.name === DEFAULT_CAR.name)[0]))
-            // dispatch(setCurrentHouse(houses.filter(house => house.name === DEFAULT_HOUSE.name)[0]))
-            setIsLoading(false)
-        }).catch((error: Error) => {
-            console.log(error.message)
-        })
-    }, [dispatch]);
-
 
     return (
         <div className={styles.mainContainer}>
             <Image className={styles.image} src={img} alt={''}></Image>
-            {isLoading ?
-                <div className={styles.isLoadingContainer}>
-                    <div className={styles.isLoading}>isLoading</div>
-                </div> :
+            {state.isLoading ?
+                <Loading/> :
                 <>
                     {state.currentUser.key ?
                         <>

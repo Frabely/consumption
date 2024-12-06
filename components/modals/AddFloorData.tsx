@@ -12,6 +12,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FieldInput from "@/components/layout/FieldInput";
 import {getFieldValues, setFieldValue} from "@/firebase/functions";
 import {RootState} from "@/store/store";
+import CustomSelect from "@/components/layout/CustomSelect";
 
 export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) {
     const state: RootState = useSelector((state: RootState) => state)
@@ -69,8 +70,8 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
             })
     }
 
-    const onRoomChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
-        const selectedRoom = rooms.filter(room => room.name === event.target.value)[0]
+    const onRoomChangeHandler = (value: string) => {
+        const selectedRoom = rooms.filter(room => room.name === value)[0]
         setCurrentRoom(selectedRoom)
     }
 
@@ -87,12 +88,12 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
             <div>{flatName}</div>
             <input onChange={onDateInputChangeHandler} value={`${currentDateValue.year}-${currentDateValue.month}`}
                    className={globalStyles.monthPicker} type={"month"}/>
-            <select onChange={onRoomChangeHandler} defaultValue={currentRoom.name}
-                    className={styles.select}>
-                {rooms.map((room) => {
-                    return (<option key={room.name}>{room.name}</option>)
-                })}
-            </select>
+            <CustomSelect
+                onChange={onRoomChangeHandler}
+                defaultValue={currentRoom.name}
+                options={rooms.map((room) => room.name)}
+                style={{width: "100%"}}
+            />
             {Object.entries(currentRoom.fields).map(([key, value]: [string, number | null], index: number) => {
                 return <div key={index}>
                         <p>{key}:</p>

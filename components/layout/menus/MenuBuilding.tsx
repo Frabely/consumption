@@ -1,19 +1,19 @@
 import React, {useState} from 'react';
-import styles from '../../../styles/layout/menus/MenuBuilding.module.css'
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/store/store";
 import globalMenuStyles from "@/styles/layout/menus/globalMenu.module.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEllipsis, faPowerOff, faXmark, faHouse} from "@fortawesome/free-solid-svg-icons";
-import {EMPTY_USER, houses} from "@/constants/constantData";
-
 import {setCurrentUser} from "@/store/reducer/currentUser";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import Link from "next/link";
 import {setCurrentHouse} from "@/store/reducer/currentHouse";
 import CustomSelect from "@/components/layout/CustomSelect";
+import {setIsLoading} from "@/store/reducer/isLoading";
+import {EMPTY_USER} from "@/constants/constantData";
+import {House} from "@/constants/types";
 
-export default function MenuBuilding({}: MenuBuildingProps) {
+export default function MenuBuilding({houses}: MenuBuildingProps) {
     const dispatch = useDispatch()
     const state: RootState = useSelector((state: RootState) => state)
     const [menuOpen, setMenuOpen] = useState(false)
@@ -25,6 +25,7 @@ export default function MenuBuilding({}: MenuBuildingProps) {
 
     const onHomePageClickHandler = () => {
         dispatch(setModalStateNone())
+        dispatch(setIsLoading(true))
     }
 
     const onHouseChangeHandler = (value: string) => {
@@ -75,4 +76,6 @@ export default function MenuBuilding({}: MenuBuildingProps) {
     );
 }
 
-export type MenuBuildingProps = {}
+export type MenuBuildingProps = {
+    houses: House[]
+}

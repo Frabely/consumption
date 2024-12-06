@@ -1,94 +1,144 @@
 .button {
     display: flex;
-    padding: 5% 5%;
-    margin-top: 5%;
+    padding: 10px 15px;
+    margin-top: 10px;
     align-items: center;
     justify-content: center;
     border: none;
-    background: var(--color-primary);
-    border-radius: 10px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button:hover {
+    background: var(--primary-color-hover); /* Dunklere Variante der Hauptfarbe */
+    transform: scale(1.05); /* Leichtes Hervorheben */
 }
 
 .button:disabled {
-    color: var(--color-secondary-tans);
-    background: var(--color-secondary);
+    color: var(--secondary-color-muted);
+    background: var(--secondary-color);
+    cursor: not-allowed;
 }
 
 .input {
-    width: 90%;
-    border-radius: 10px;
+    width: 100%;
+    border-radius: 8px;
     padding: 0.75rem;
-    background: var(--color-secondary);
-    border: none;
+    background: var(--secondary-color);
+    border: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--text-color);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
+    outline: none;
 }
 
 .inputInvalid {
-    background-color: var(--color-invalid);
+    background-color: var(--input-invalid-background);
+    border-color: var(--input-invalid-background);
 }
 
 .inputValid {
-    background: var(--color-valid);
+    background: var(--input-valid-background);
+    border-color: var(--input-valid-background);
 }
 
 .input::placeholder {
-    color: var(--color-text-placeholder);
+    color: var(--text-color-muted);
+    font-style: italic;
 }
 
-.select {
-    height: 6dvh;
-    background: var(--color-secondary);
-    border-color: var(--border);
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+/*.select {*/
+/*    height: 40px;*/
+/*    background: var(--secondary-color);*/
+/*    border: 1px solid var(--border-color);*/
+/*    border-radius: 8px;*/
+/*    padding: 0.5rem;*/
+/*    font-size: 0.9rem;*/
+/*    color: var(--text-color);*/
+/*    cursor: pointer;*/
+/*    transition: border-color 0.2s ease, box-shadow 0.2s ease;*/
+/*}*/
+
+/*.select:focus {*/
+/*    border-color: var(--primary-color);*/
+/*    box-shadow: 0 0 5px var(--primary-color);*/
+/*}*/
 
 .roomsContainer {
     display: flex;
     flex-direction: column;
-    padding: 1dvh;
-    border: black 1px solid;
-    background: var(--color-tertiary);
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    background: var(--tertiary-color);
+    border-radius: 10px;
     gap: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sanfter Schatten */
 }
 
 .fieldsContainer {
-    padding: 1dvh;
-    border: black 1px solid;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--tertiary-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sanfter Schatten */
+    margin-left: 5rem;
 }
 
-.fieldsList {
-    max-height: 20dvh;
-    overflow: auto;
-}
-
+.fieldsList,
 .roomsList {
-    max-height: 20dvh;
-    overflow: auto;
+    max-height: 30vh; /* Mehr Platz für längere Listen */
+    overflow-y: auto;
+    padding-right: 10px; /* Platz für Scrollbar */
+    scrollbar-width: thin; /* Moderne, dünne Scrollbar */
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+.fieldsList::-webkit-scrollbar,
+.roomsList::-webkit-scrollbar {
+    width: 8px;
+}
+
+.fieldsList::-webkit-scrollbar-thumb,
+.roomsList::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 10px;
 }
 
 .roomField {
-    margin-left: 5dvw;
-    font-size: 80%;
+    font-size: 0.9rem;
     border: none;
     outline: none;
     background: transparent;
+    padding: 0.5rem;
+    color: var(--text-color);
 }
 
 .addingFieldForRoom:focus {
-    background: var(--color-secondary);
+    background: var(--secondary-color);
+    outline: none;
 }
 
 .roomInput {
     border: none;
     outline: none;
     background: transparent;
+    color: var(--text-color);
+    font-size: 0.9rem;
 }
 
 .roomFieldContainer {
     display: flex;
     flex-direction: column;
+    gap: 5px;
 }
 
 .inputSaveContainer {
@@ -96,17 +146,35 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
 }
 
 .deleteButton {
     border-radius: 100%;
-    padding: 0.2rem;
-    font-size: 65%;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    background: var(--input-invalid-background);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.deleteButton:hover {
+    background: var(--input-invalid-background); /* Dunklere Variante der Warnfarbe */
+    transform: scale(1.1); /* Leichtes Hervorheben */
 }
 
 .roomItemContainer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.1rem 0.5rem;
+    padding: 0.5rem 0.8rem;
+    background: var(--secondary-color-light);
+    border-radius: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.roomItemContainer:hover {
+    background: var(--secondary-color);
 }

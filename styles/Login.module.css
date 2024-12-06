@@ -9,13 +9,13 @@
 .input {
     margin-bottom: 1rem;
     padding: 1rem;
-    background: var(--color-secondary);
-    border-color: var(--border);
+    background: var(--secondary-color);
+    border-color: var(--border-color);
     max-width: 80dvw;
 }
 
 .input::placeholder {
-    color: var(--color-text-placeholder);
+    color: var(--text-color-muted);
 }
 
 .image {

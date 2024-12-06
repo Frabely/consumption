@@ -5,41 +5,41 @@
     /*width: 10vw;*/
     align-items: center;
     justify-content: center;
-    border-color: var(--border);
-    background: var(--color-secondary);
+    border-color: var(--border-color);
+    background: var(--secondary-color);
     border-radius: 10px;
 }
 
 .button:disabled {
-    background: var(--color-primary);
+    background: var(--primary-color);
 }
 
 .input {
     border-radius: 10px;
     margin-bottom: 5%;
     padding: 5%;
-    background: var(--color-secondary);
-    border-color: var(--border);
+    background: var(--secondary-color);
+    border-color: var(--border-color);
     border-width: 2px;
 }
 
 .inputInvalid {
-    background-color: var(--color-invalid);
+    background-color: var(--input-invalid-background);
 }
 
 .inputValid {
-    background: var(--color-valid);
+    background: var(--input-valid-background);
 }
 
 .input::placeholder {
-    color: var(--color-text-placeholder);
+    color: var(--text-color-muted);
 }
 
 .select {
     margin-bottom: 5%;
     padding: 5%;
     border-radius: 10px;
-    background: var(--color-secondary);
-    border-color: var(--border);
+    background: var(--secondary-color);
+    border-color: var(--border-color);
     border-width: 2px;
 }
