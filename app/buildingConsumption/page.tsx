@@ -50,18 +50,20 @@ export default function BuildingConsumption() {
     });
 
     const onTouchStartHandler = (flat: Flat) => {
+        setCurrentRooms(flat.rooms)
+        setFlatName(flat.name)
         touchTimer.current = setTimeout(() => {
             setIsLongTouchTriggered(true)
-            onFloorClickHandler(true, flat.name, flat.rooms);
+            onFloorClickHandler(true);
         }, 500);
     };
 
-    const onTouchEndHandler = (flat: Flat) => {
+    const onTouchEndHandler = () => {
         if (touchTimer.current) {
             clearTimeout(touchTimer.current);
             touchTimer.current = undefined;
             if (!isLongTouchTriggered)
-                onFloorClickHandler(false, flat.name, flat.rooms)
+                onFloorClickHandler(false)
             setIsLongTouchTriggered(false)
         }
     };
@@ -71,9 +73,7 @@ export default function BuildingConsumption() {
         dispatch(setModalState(ModalState.AddFloor))
     }
 
-    const onFloorClickHandler = (isFloorFliedChange: boolean, flatName: string, rooms: Room[]) => {
-        setFlatName(flatName)
-        setCurrentRooms(rooms)
+    const onFloorClickHandler = (isFloorFliedChange: boolean) => {
         isFloorFliedChange ?
             dispatch(setModalState(ModalState.ChangeFloorFields)) :
             dispatch(setModalState(ModalState.AddFloorData))
@@ -113,9 +113,9 @@ export default function BuildingConsumption() {
                                         {state.currentHouse.flats.map((flat) =>
                                             <div
                                                 onTouchStart={() => onTouchStartHandler(flat)}
-                                                onTouchEnd={() => onTouchEndHandler(flat)}
+                                                onTouchEnd={() => onTouchEndHandler()}
                                                 onMouseDown={() => onTouchStartHandler(flat)}
-                                                onMouseUp={() => onTouchEndHandler(flat)}
+                                                onMouseUp={() => onTouchEndHandler()}
                                                 key={flat.name}
                                                 className={styles.roomsItem}
                                             >

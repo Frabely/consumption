@@ -14,7 +14,11 @@ import {
     doc,
     query,
     orderBy,
-    updateDoc, where, Timestamp, setDoc, getDoc
+    updateDoc,
+    where,
+    Timestamp,
+    setDoc,
+    getDoc, deleteDoc,
 } from "@firebase/firestore";
 import {
     Car,
@@ -222,15 +226,24 @@ export const getHouses = async () => {
     return houses
 }
 
-export const createOrUpdateFlat = async (flat: Flat, houseName: string)  => {
+export const createOrUpdateFlat = async (flat: Flat, houseName: string) => {
     try {
         const flatDocRef = doc(db, `houses/${houseName}/flats/${flat.name}`);
-        await setDoc(flatDocRef, { name: flat.name }, { merge: true });
+        await setDoc(flatDocRef, {name: flat.name});
         const roomsCollectionRef = collection(flatDocRef, "rooms");
         for (const room of flat.rooms) {
             const roomDocRef = doc(roomsCollectionRef, room.name);
-            await setDoc(roomDocRef, room.fields, { merge: true });
+            await setDoc(roomDocRef, room.fields);
         }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const deleteFlat = async (houseName: string, flatName: string) => {
+    try {
+        const flatDocRef = doc(db, `houses/${houseName}/flats/${flatName}`);
+        await deleteDoc(flatDocRef)
     } catch (error) {
         console.error(error);
     }
@@ -243,11 +256,11 @@ export const setFieldValue = async (
     fieldName: string,
     year: string,
     month: string,
-    fieldValueToSet: number | null)  => {
+    fieldValueToSet: number | null) => {
     try {
         const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
         const key: string = `${houseName}#${flatName}#${roomName}#${fieldName}`
-        await setDoc(dateCollectionRef, { [`${key}`]: fieldValueToSet}, { merge: true });
+        await setDoc(dateCollectionRef, {[`${key}`]: fieldValueToSet}, {merge: true});
     } catch (error) {
         console.error(error);
     }
@@ -259,7 +272,7 @@ export const getFieldValues = async (
     houseName?: string,
     flatName?: string,
     roomName?: string,
-    fieldName?: string)  => {
+    fieldName?: string) => {
     try {
         const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
         const allFields = await getDoc(dateCollectionRef);
@@ -267,7 +280,7 @@ export const getFieldValues = async (
         if (!fields)
             return
 
-        const parts: string[]= []
+        const parts: string[] = []
         if (houseName) parts.push(houseName)
         if (flatName) parts.push(flatName)
         if (roomName) parts.push(roomName)

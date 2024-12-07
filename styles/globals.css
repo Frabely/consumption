@@ -5,7 +5,7 @@
     'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
     /* Hauptfarben */
-    --primary-color: #8ddd8f; /* Hauptfarbe: Grün */
+    --primary-color: #e8fdda; /* Hauptfarbe: Grün */
     --primary-color-hover: #45A049; /* Hauptfarbe: Dunkleres Grün für Hover */
     --secondary-color: #F5F5F5; /* Sekundärfarbe: Helles Grau für Hintergrundbereiche */
     --secondary-color-light: #FFFFFF; /* Sekundärfarbe: Reines Weiß */

@@ -62,7 +62,7 @@
 
 .menuItem:hover {
     cursor: pointer;
-    background: var(--secondary-color);
+    background: var(--primary-color-hover);
 }
 
 .selectVert {

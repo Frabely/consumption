@@ -5,32 +5,44 @@ import Modal from "@/components/layout/Modal";
 import styles from "@/styles/modals/AddFloor.module.css";
 import de from "@/constants/de.json";
 import {ChangingFloor, Flat, Room} from "@/constants/types";
-import {createOrUpdateFlat} from "@/firebase/functions";
+import {createOrUpdateFlat, deleteFlat} from "@/firebase/functions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMinus, faSave} from "@fortawesome/free-solid-svg-icons";
+import {faAdd, faMinus} from "@fortawesome/free-solid-svg-icons";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
+import {setIsLoading} from "@/store/reducer/isLoading";
+import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
 
 export default function AddFloor({changingFloorData}: AddFloorModalProps) {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useDispatch()
-    const [flatName, setFlatName] = useState("")
+    const [flatName, setFlatName] = useState(changingFloorData && changingFloorData?.rooms ? changingFloorData.flatName : "")
     const [roomNameInput, setRoomNameInput] = useState("")
     const [rooms, setRooms] = useState<Room[]>(changingFloorData && changingFloorData?.rooms ? changingFloorData.rooms : [])
     const [fieldNameInput, setFieldNameInput] = useState("")
-    const [currentSelectedRoom, setCurrentSelectedRoom] = useState<Room | undefined>()
+    const [currentSelectedRoom, setCurrentSelectedRoom] = useState<Room | undefined>(changingFloorData?.rooms[0])
 
-    const onAddDataClickHandler = (event: any) => {
+    const onAddDataClickHandler = async (event: any) => {
+        dispatch(setIsLoading(true))
         event.preventDefault()
         const flat: Flat = {
             name: flatName,
             rooms: rooms
         }
-        createOrUpdateFlat(flat, state.currentHouse.name).then(() => {
+
+        try {
+            if (state.modalState === ModalState.ChangeFloorFields && changingFloorData) {
+                await deleteFlat(state.currentHouse.name, flat.name)
+            }
+            await createOrUpdateFlat(flat, state.currentHouse.name)
             dispatch(setModalStateNone())
-        }).catch(error => {
+            dispatch(setIsReloadHousesNeeded(true))
+            dispatch(setIsLoading(false))
+        } catch (error) {
             console.log(error)
-        })
+            alert(de.messages.databaseError)
+            dispatch(setIsLoading(false))
+        }
     }
 
     const onAddRoomClickHandler = (event: any) => {
@@ -59,12 +71,10 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
             return
         }
 
-        const newFields = currentSelectedRoom.fields
+        const newFields = {...currentSelectedRoom.fields}
         newFields[`${fieldNameInput}`] = null
-        const newRooms = rooms.map((currentRoom) =>
-        {
-            if (currentRoom.name !== currentSelectedRoom.name)
-            {
+        const newRooms = rooms.map((currentRoom) => {
+            if (currentRoom.name !== currentSelectedRoom.name) {
                 return currentRoom
             }
             return {name: currentSelectedRoom.name, fields: newFields}
@@ -89,10 +99,8 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
         if (window.confirm(de.messages.deleteFieldConfirmation.replace("{0}", key))) {
             const newFields = {...room.fields}
             delete newFields[`${key}`]
-            const newRooms = rooms.map((currentRoom) =>
-            {
-                if (currentRoom.name !== room.name)
-                {
+            const newRooms = rooms.map((currentRoom) => {
+                if (currentRoom.name !== room.name) {
                     return currentRoom
                 }
                 return {name: room.name, fields: newFields}
@@ -102,20 +110,17 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
     }
 
     return (
-        <Modal formName={changingFloorData ? 'addFloor' : 'changeFloor'}>
-            {state.modalState === ModalState.ChangeFloorFields && changingFloorData ?
-                <p style={{marginBottom: '1rem'}}>{changingFloorData.flatName}</p>
-                :
-                <input value={flatName}
-                       className={`${styles.input} ${flatName.length !== 0 ? styles.inputValid : styles.inputInvalid}`}
-                       type={"text"}
-                       onChange={(e) => {
-                           setFlatName(e.target.value)
-                       }}
-                       placeholder={de.inputLabels.flatName}
-                       style={{marginBottom: '1rem'}}
-                />
-            }
+        <Modal formName={changingFloorData ? `${ModalState.AddFloor}` : `${ModalState.ChangeFloorFields}`}>
+            <input value={flatName}
+                   className={`${styles.input} ${flatName.length !== 0 ? styles.inputValid : styles.inputInvalid}`}
+                   type={"text"}
+                   onChange={(e) => {
+                       setFlatName(e.target.value)
+                   }}
+                   placeholder={de.inputLabels.flatName}
+                   style={{marginBottom: '1rem'}}
+            />
+            {/*}*/}
             <div className={styles.roomsContainer}>
                 <p className={styles.roomyLabel}>{de.displayLabels.rooms}:</p>
                 <div
@@ -151,7 +156,6 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                                             onRemoveRoomClickHandler(room)
                                         }}
                                         className={styles.deleteButton}
-                                        style={{background: "red"} as CSSProperties}
                                         icon={faMinus}/>
                                 </div>
                                 {Object.entries(room.fields).map(([key], indexFields) =>
@@ -165,7 +169,9 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                                                     "none",
                                                 marginLeft: '1rem'
                                             }}
-                                            onClick={() => {setCurrentSelectedRoom(room)}}
+                                            onClick={() => {
+                                                setCurrentSelectedRoom(room)
+                                            }}
                                         >
                                             <input
                                                 value={key}
@@ -186,7 +192,6 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                                                     onRemoveFieldClickHandler(room, key)
                                                 }}
                                                 className={styles.deleteButton}
-                                                style={{background: "red"} as CSSProperties}
                                                 icon={faMinus}/>
                                         </div>
                                     ))}
@@ -212,8 +217,8 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                             onAddRoomClickHandler(event)
                     }}>
                         <FontAwesomeIcon
-                            style={{'--color-text': roomNameInput && roomNameInput.length > 0 ? "black" : "grey"} as CSSProperties}
-                            icon={faSave}/>
+                            style={{'--text-color': roomNameInput && roomNameInput.length > 0 ? "black" : "grey"} as CSSProperties}
+                            icon={faAdd}/>
                     </div>
                 </div>
                 <p className={styles.roomyLabel}>{de.displayLabels.selectedRoom}: {
@@ -240,12 +245,14 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                             onAddFieldClickHandler(event)
                     }}>
                         <FontAwesomeIcon
-                            style={{'--color-text': fieldNameInput && fieldNameInput.length > 0 ? "black" : "grey"} as CSSProperties}
-                            icon={faSave}/>
+                            style={{'--text-color': fieldNameInput && fieldNameInput.length > 0 ? "black" : "grey"} as CSSProperties}
+                            icon={faAdd}/>
                     </div>
                 </div>
             </div>
-            <button onClick={onAddDataClickHandler}
+            <button onClick={async (event) => {
+                await onAddDataClickHandler(event)
+            }}
                     disabled={rooms.length === 0}
                     className={styles.button}>{de.buttonLabels.save}
             </button>

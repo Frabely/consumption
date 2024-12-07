@@ -6,7 +6,7 @@
     justify-content: center;
     border: none;
     background: var(--primary-color);
-    color: white;
+    color: var(--text-color);
     border-radius: 12px;
     font-size: 1rem;
     cursor: pointer;
@@ -151,9 +151,9 @@
 
 .deleteButton {
     border-radius: 100%;
-    padding: 0.5rem;
+    padding: 0.2rem;
     font-size: 0.8rem;
-    background: var(--input-invalid-background);
+    background: var(--error-color);
     color: white;
     border: none;
     cursor: pointer;
@@ -161,7 +161,7 @@
 }
 
 .deleteButton:hover {
-    background: var(--input-invalid-background); /* Dunklere Variante der Warnfarbe */
+    background: var(--error-color-hover); /* Dunklere Variante der Warnfarbe */
     transform: scale(1.1); /* Leichtes Hervorheben */
 }
 
