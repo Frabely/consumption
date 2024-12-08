@@ -5,7 +5,7 @@ import Modal from "@/components/layout/Modal";
 import styles from "@/styles/modals/AddFloor.module.css";
 import de from "@/constants/de.json";
 import {ChangingFloor, Flat, Room} from "@/constants/types";
-import {createOrUpdateFlat, deleteFlat} from "@/firebase/functions";
+import {createOrUpdateFlat, updateFlatStructure} from "@/firebase/functions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAdd, faMinus} from "@fortawesome/free-solid-svg-icons";
 import {setModalStateNone} from "@/store/reducer/modalState";
@@ -32,7 +32,7 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
 
         try {
             if (state.modalState === ModalState.ChangeFloorFields && changingFloorData) {
-                await deleteFlat(state.currentHouse.name, flat.name)
+                await updateFlatStructure(state.currentHouse.name, flat)
             }
             await createOrUpdateFlat(flat, state.currentHouse.name)
             dispatch(setModalStateNone())

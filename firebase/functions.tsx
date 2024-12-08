@@ -1,8 +1,8 @@
 import {
     DB_BUILDING_CONSUMPTION,
     DB_CARS, DB_DATA_FLATS_KEY, DB_DATA_ROOMS_KEY,
-    DB_DATA_SET_COLLECTION_KEY, DB_HOUSES,
-    DB_LOADING_STATIONS,
+    DB_DATA_SET_COLLECTION_KEY, DB_FLATS, DB_HOUSES,
+    DB_LOADING_STATIONS, DB_ROOMS,
     DB_USER_COLLECTION_KEY
 } from "@/constants/constantData";
 import firebaseApp from "@/firebase/firebase";
@@ -18,7 +18,10 @@ import {
     where,
     Timestamp,
     setDoc,
-    getDoc, deleteDoc,
+    getDoc,
+    deleteDoc,
+    deleteField,
+    FieldValue,
 } from "@firebase/firestore";
 import {
     Car,
@@ -229,21 +232,48 @@ export const getHouses = async () => {
 export const createOrUpdateFlat = async (flat: Flat, houseName: string) => {
     try {
         const flatDocRef = doc(db, `houses/${houseName}/flats/${flat.name}`);
-        await setDoc(flatDocRef, {name: flat.name});
+        await setDoc(flatDocRef, {name: flat.name}, {merge: true});
         const roomsCollectionRef = collection(flatDocRef, "rooms");
         for (const room of flat.rooms) {
             const roomDocRef = doc(roomsCollectionRef, room.name);
-            await setDoc(roomDocRef, room.fields);
+            await setDoc(roomDocRef, room.fields, {merge: true});
         }
     } catch (error) {
         console.error(error);
     }
 }
 
-export const deleteFlat = async (houseName: string, flatName: string) => {
+export const updateFlatStructure = async (houseName: string, flat: Flat) => {
     try {
-        const flatDocRef = doc(db, `houses/${houseName}/flats/${flatName}`);
-        await deleteDoc(flatDocRef)
+        const roomNames = flat.rooms.map((room) => room.name)
+        const roomsString = `${DB_HOUSES}/${houseName}/${DB_FLATS}/${flat.name}/${DB_ROOMS}`
+        const roomsRef = collection(db, roomsString);
+        const roomsSnapshot = await getDocs(roomsRef)
+        const roomsToDelete = roomsSnapshot.docs
+            .filter((room) => !roomNames.includes(room.id))
+        const rooms = roomsSnapshot.docs
+            .filter((room) => roomNames.includes(room.id))
+        for (let i = 0; i < roomsToDelete.length; i++) {
+            await deleteDoc(doc(db, `${roomsString}/${roomsToDelete[i].id}`)).catch((error) => console.log(error.message))
+        }
+
+        await Promise.all(
+            flat.rooms.map(async (room) => {
+                const flatRoomFields = Object.keys(room.fields)
+                for (let i = 0; i < rooms.length; i++) {
+                    const fieldNames = Object.keys(rooms[i].data())
+                    const fieldsToDelete = fieldNames.filter(item => !flatRoomFields.includes(item));
+                    if (fieldsToDelete.length > 0) {
+                        const deleteObject = fieldsToDelete.reduce((record: Record<string, FieldValue>, field) => {
+                            record[field] = deleteField();
+                            return record;
+                        }, {});
+
+                        const roomDocRef = doc(db, `${roomsString}/${rooms[i].id}`);
+                        await updateDoc(roomDocRef, deleteObject)
+                    }
+                }
+            }))
     } catch (error) {
         console.error(error);
     }
