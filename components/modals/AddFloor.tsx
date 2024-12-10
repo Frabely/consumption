@@ -110,7 +110,9 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
     }
 
     return (
-        <Modal formName={changingFloorData ? `${ModalState.AddFloor}` : `${ModalState.ChangeFloorFields}`}>
+        <Modal
+            formName={changingFloorData ? `${ModalState.AddFloor}` : `${ModalState.ChangeFloorFields}`}
+        >
             <input value={flatName}
                    className={`${styles.input} ${flatName.length !== 0 ? styles.inputValid : styles.inputInvalid}`}
                    type={"text"}
@@ -118,9 +120,11 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                        setFlatName(e.target.value)
                    }}
                    placeholder={de.inputLabels.flatName}
-                   style={{marginBottom: '1rem'}}
+                   style={{
+                       marginBottom: '1rem',
+                       marginTop: '0.5rem'
+            }}
             />
-            {/*}*/}
             <div className={styles.roomsContainer}>
                 <p className={styles.roomyLabel}>{de.displayLabels.rooms}:</p>
                 <div
@@ -168,6 +172,7 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                                                     "var(--secondary-color)" :
                                                     "none",
                                                 marginLeft: '1rem'
+
                                             }}
                                             onClick={() => {
                                                 setCurrentSelectedRoom(room)
@@ -217,14 +222,16 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                             onAddRoomClickHandler(event)
                     }}>
                         <FontAwesomeIcon
-                            style={{'--text-color': roomNameInput && roomNameInput.length > 0 ? "black" : "grey"} as CSSProperties}
+                            style={
+                                {
+                                    '--text-color': roomNameInput && roomNameInput.length > 0 ?
+                                        "var(--text-color)" :
+                                        "var(--text-color-muted)"
+                                } as CSSProperties
+                            }
                             icon={faAdd}/>
                     </div>
                 </div>
-                <p className={styles.roomyLabel}>{de.displayLabels.selectedRoom}: {
-                    currentSelectedRoom ?
-                        currentSelectedRoom.name : de.displayLabels.none
-                }</p>
                 <div className={styles.inputSaveContainer}>
                     <input value={fieldNameInput}
                            className={`${styles.input} ${
@@ -245,7 +252,13 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                             onAddFieldClickHandler(event)
                     }}>
                         <FontAwesomeIcon
-                            style={{'--text-color': fieldNameInput && fieldNameInput.length > 0 ? "black" : "grey"} as CSSProperties}
+                            style={
+                                {
+                                    '--text-color': fieldNameInput && fieldNameInput.length > 0 ?
+                                        "var(--text-color)" :
+                                        "var(--text-color-muted)"
+                                } as CSSProperties
+                            }
                             icon={faAdd}/>
                     </div>
                 </div>

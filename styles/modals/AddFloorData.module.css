@@ -1,34 +1,21 @@
-.button {
+.mainContainer {
     display: flex;
-    padding: 5% 5%;
-    margin-top: 5%;
-    align-items: center;
-    justify-content: center;
-    border-color: var(--border-color);
-    background: var(--secondary-color);
-    border-radius: 10px;
+    gap: 1rem;
+    flex-direction: column;
 }
 
-.input {
-    border-radius: 10px;
-    padding: 5%;
-    margin: 1dvh 0;
-    border: none;
-    background: grey;
-    border-color: var(--border-color);
-    border-width: 2px;
+.flatName {
+    margin-left: 0.5rem;
 }
 
-.inputInvalid {
-    background-color: var(--input-invalid-background);
+.fieldLabel {
+    margin-left: 0.5rem;
 }
 
-.inputValid {
-    background: var(--input-valid-background);
-}
-
-.input::placeholder {
-    color: var(--text-color-muted);
+.fieldsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .inputContainer {
@@ -36,7 +23,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    gap: 1dvw;
+    gap: 2dvw;
 }
 
 .microphoneContainer {
@@ -45,7 +32,7 @@
     align-items: center;
     border: 1px black solid;
     border-radius: 100%;
-    padding: 5%;
+    padding: 1rem;
     width: 5dvh;
     height: 5dvh;
 }

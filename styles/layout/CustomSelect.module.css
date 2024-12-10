@@ -8,7 +8,7 @@
 
 .selectedValue {
     background: var(--secondary-color);
-    padding: 10px;
+    padding: 1rem;
     height: 6dvh;
     border: 1px solid var(--tertiary-color);
     border-radius: 5px;
@@ -25,7 +25,7 @@
 .optionsContainer {
     position: absolute;
     min-width: 100%;
-    background: white;
+    background: var(--tertiary-color);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: 1px solid #ccc;
     z-index: 1000;

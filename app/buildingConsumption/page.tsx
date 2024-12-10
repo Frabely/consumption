@@ -22,6 +22,7 @@ import Loading from "@/components/Loading";
 import {loadHouses} from "@/constants/constantData";
 import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setCurrentHouse} from "@/store/reducer/currentHouse";
+import de from '../../constants/de.json'
 
 export default function BuildingConsumption() {
     const [flatName, setFlatName] = useState("")
@@ -82,6 +83,7 @@ export default function BuildingConsumption() {
     return (
         <div className={styles.mainContainer}>
             <Image className={styles.image} src={img} alt={''}></Image>
+            <div className={styles.imageFilter}/>
             {
                 state.currentUser.key ?
                     (
@@ -107,7 +109,8 @@ export default function BuildingConsumption() {
                                             () => {
                                                 onAddFloorClickHandler()
                                             }}
-                                             className={styles.roomsItem}>
+                                             className={styles.flatsItem}
+                                             style={state.currentHouse.flats.length < 4 ? {height: '50%'} : {}}>
                                             <FontAwesomeIcon icon={faAdd}/>
                                         </div>
                                         {state.currentHouse.flats.map((flat) =>
@@ -117,9 +120,10 @@ export default function BuildingConsumption() {
                                                 onMouseDown={() => onTouchStartHandler(flat)}
                                                 onMouseUp={() => onTouchEndHandler()}
                                                 key={flat.name}
-                                                className={styles.roomsItem}
+                                                className={styles.flatsItem}
+                                                style={state.currentHouse.flats.length < 4 ? {height: '50%'} : {}}
                                             >
-                                                <h3>{flat.name}</h3>
+                                                <h3 className={styles.flatsItemTitle}>{flat.name}</h3>
                                             </div>
                                         )}
                                     </div>
@@ -127,7 +131,7 @@ export default function BuildingConsumption() {
                         </>
                     )
                     :
-                    <Link href={"/"}>login</Link>
+                    <Link className={styles.backToLoginButton} href={"/"}>{de.displayLabels.backToLogin}</Link>
             }
         </div>
     )

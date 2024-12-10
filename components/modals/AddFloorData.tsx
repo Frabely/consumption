@@ -1,7 +1,7 @@
 'use client'
 
 import de from '../../constants/de.json'
-import { useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import Modal from "@/components/layout/Modal";
 import {NumberDictionary, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
@@ -18,8 +18,8 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
     const state: RootState = useSelector((state: RootState) => state)
     const date = new Date()
     const year = date.getFullYear()
-    const month = date.getMonth()+1
-    const monthString : string = month < 10 ? `0` + month : month.toString()
+    const month = date.getMonth() + 1
+    const monthString: string = month < 10 ? `0` + month : month.toString()
     const [currentRoom, setCurrentRoom] = useState<Room>(rooms[0])
     const [currentDateValue, setCurrentDateValue] = useState({
         year: year.toString(),
@@ -34,16 +34,16 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
             flatName,
             currentRoom.name).then((result) => {
 
-                if (result) {
-                    const fields: NumberDictionary = {...currentRoom.fields}
-                    Object.entries(result).map(([key, value]) => {
-                        const newKey = key.split("#").pop();
-                        fields[`${newKey}`] = value
-                    })
-                    const newRoom: Room = {name: currentRoom.name, fields: fields}
-                    setCurrentRoom(newRoom)
-                }
-            })
+            if (result) {
+                const fields: NumberDictionary = {...currentRoom.fields}
+                Object.entries(result).map(([key, value]) => {
+                    const newKey = key.split("#").pop();
+                    fields[`${newKey}`] = value
+                })
+                const newRoom: Room = {name: currentRoom.name, fields: fields}
+                setCurrentRoom(newRoom)
+            }
+        })
     }, [currentDateValue.month, currentDateValue.year, currentRoom.name, flatName, state.currentHouse.name]);
 
 
@@ -85,19 +85,19 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
 
     return (
         <Modal formName={'addFloorData'}>
-            <div>{flatName}</div>
-            <input onChange={onDateInputChangeHandler} value={`${currentDateValue.year}-${currentDateValue.month}`}
-                   className={globalStyles.monthPicker} type={"month"}/>
-            <CustomSelect
-                onChange={onRoomChangeHandler}
-                defaultValue={currentRoom.name}
-                options={rooms.map((room) => room.name)}
-                style={{width: "100%"}}
-            />
-            {Object.entries(currentRoom.fields).map(([key, value]: [string, number | null], index: number) => {
-                return <div key={index}>
-                        <p>{key}:</p>
-                        <div className={styles.inputContainer}>
+            <div className={styles.mainContainer}>
+                <h1 className={styles.flatName}>{flatName}</h1>
+                <input onChange={onDateInputChangeHandler} value={`${currentDateValue.year}-${currentDateValue.month}`}
+                       className={globalStyles.monthPicker} type={"month"}/>
+                <CustomSelect
+                    onChange={onRoomChangeHandler}
+                    defaultValue={currentRoom.name}
+                    options={rooms.map((room) => room.name)}
+                    style={{width: "100%"}}
+                />
+                {Object.entries(currentRoom.fields).map(([key, value]: [string, number | null], index: number) => {
+                        return <div className={styles.inputContainer} key={index}>
+                            <p className={styles.fieldLabel}>{key}:</p>
                             <FieldInput
                                 value={value?.toString()}
                                 onChange={(event) => {
@@ -110,13 +110,19 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
                                     onSaveFieldClickHandler(key).catch(error => console.log(error))
                             }}>
                                 <FontAwesomeIcon
-                                    style={{'--color-text': value && value > 0 ? "black" : "grey" } as CSSProperties}
+                                    style={
+                                        {
+                                            '--text-color': value && value > 0 ?
+                                                "var(--text-color)" :
+                                                "var(--text-color-muted)"
+                                        } as CSSProperties
+                                    }
                                     icon={faSave}/>
                             </div>
                         </div>
-                    </div>
-                }
-            )}
+                    }
+                )}
+            </div>
         </Modal>
     );
 }

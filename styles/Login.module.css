@@ -1,7 +1,6 @@
 .mainContainer {
     display: flex;
     height: 100dvh;
-    /*background: var(--color-tertiary);*/
     justify-content: center;
     align-items: center;
 }
@@ -10,7 +9,8 @@
     margin-bottom: 1rem;
     padding: 1rem;
     background: var(--secondary-color);
-    border-color: var(--border-color);
+    border: none;
+    outline: none;
     max-width: 80dvw;
 }
 

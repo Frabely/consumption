@@ -49,7 +49,8 @@ export default function Home() {
 
     return (
         <div className={styles.mainContainer}>
-            <Image className={styles.image} src={img} alt={''}></Image>
+            <Image className={styles.image} src={img} alt={''}/>
+            <div className={styles.imageFilter}/>
             {state.isLoading ?
                 <Loading/> :
                 <>

@@ -14,8 +14,7 @@
 }
 
 .button:hover {
-    background: var(--primary-color-hover); /* Dunklere Variante der Hauptfarbe */
-    transform: scale(1.05); /* Leichtes Hervorheben */
+    background: var(--secondary-color);
 }
 
 .button:disabled {
@@ -24,20 +23,19 @@
     cursor: not-allowed;
 }
 
+.disabled {
+    color: var(--secondary-color-muted) !important;
+    cursor: not-allowed;
+}
+
 .input {
     width: 100%;
     border-radius: 8px;
     padding: 0.75rem;
     background: var(--secondary-color);
-    border: 1px solid var(--border-color);
+    border: none;
     font-size: 0.9rem;
     color: var(--text-color);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 5px var(--primary-color);
     outline: none;
 }
 
@@ -56,46 +54,20 @@
     font-style: italic;
 }
 
-/*.select {*/
-/*    height: 40px;*/
-/*    background: var(--secondary-color);*/
-/*    border: 1px solid var(--border-color);*/
-/*    border-radius: 8px;*/
-/*    padding: 0.5rem;*/
-/*    font-size: 0.9rem;*/
-/*    color: var(--text-color);*/
-/*    cursor: pointer;*/
-/*    transition: border-color 0.2s ease, box-shadow 0.2s ease;*/
-/*}*/
-
-/*.select:focus {*/
-/*    border-color: var(--primary-color);*/
-/*    box-shadow: 0 0 5px var(--primary-color);*/
-/*}*/
-
 .roomsContainer {
     display: flex;
     flex-direction: column;
     padding: 1rem;
     border: 1px solid var(--border-color);
-    background: var(--tertiary-color);
+    background: var(--primary-color);
     border-radius: 10px;
     gap: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sanfter Schatten */
-}
-
-.fieldsContainer {
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    background: var(--tertiary-color);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sanfter Schatten */
-    margin-left: 5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .fieldsList,
 .roomsList {
-    max-height: 30vh; /* Mehr Platz für längere Listen */
+    max-height: 20vh; /* Mehr Platz für längere Listen */
     overflow-y: auto;
     padding-right: 10px; /* Platz für Scrollbar */
     scrollbar-width: thin; /* Moderne, dünne Scrollbar */

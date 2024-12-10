@@ -50,8 +50,8 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
     return (
         <div
             className={`${styles.inputContainer} ${
-                (value && value.length > 0) ? 
-                    styles.inputValid : 
+                (value && !isNaN(parseInt(value)) && value.length > 0) ?
+                    styles.inputValid :
                     styles.inputInvalid}`}
             style={isFocus ? {borderStyle: "solid", borderWidth: "3px", borderColor: "black"} : {}}>
             <input value={value && !isNaN(parseInt(value.replace(/\D/g, ''))) ? parseInt(value.replace(/\D/g, '')) : ""}
@@ -78,10 +78,22 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
                     setIsMicTouched(false)
                     setIsRecording(false)
                 }}
-                style={{background: isMicTouched ? "black" : "white"}}
+                style={
+                    {
+                        background: isMicTouched ?
+                            "var(--text-color)" :
+                            "var(--primary-color)"
+                    }
+                }
             >
                 <FontAwesomeIcon
-                    style={{'--color-text': isMicTouched ? "white" : "black" } as React.CSSProperties}
+                    style={
+                        {
+                            '--text-color': isMicTouched ?
+                                "var(--primary-color)" :
+                                "var(--text-color)"
+                        } as React.CSSProperties
+                    }
                     icon={faMicrophone}/>
             </div>
         </div>

@@ -5,14 +5,17 @@
     'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
     /* Hauptfarben */
-    --primary-color: #e8fdda; /* Hauptfarbe: Grün */
+    /*--primary-color: #e8fdda; !* Hauptfarbe: Grün *!*/
+    --primary-color: #000000; /* Hauptfarbe: Grün */
     --primary-color-hover: #45A049; /* Hauptfarbe: Dunkleres Grün für Hover */
-    --secondary-color: #F5F5F5; /* Sekundärfarbe: Helles Grau für Hintergrundbereiche */
+    /*--secondary-color: #F5F5F5; !* Sekundärfarbe: Helles Grau für Hintergrundbereiche *!*/
+    --secondary-color: #303030; /* Sekundärfarbe: Helles Grau für Hintergrundbereiche */
     --secondary-color-light: #FFFFFF; /* Sekundärfarbe: Reines Weiß */
     --secondary-color-muted: #C0C0C0; /* Sekundärfarbe: Gedämpftes Grau für inaktive Elemente */
 
     /* Tertiäre Farben */
-    --tertiary-color: #E8E8E8; /* Tertiärfarbe: Panels, helles Grau */
+    /*--tertiary-color: #E8E8E8; !* Tertiärfarbe: Panels, helles Grau *!*/
+    --tertiary-color: #737373; /* Tertiärfarbe: Panels, helles Grau */
     --tertiary-color-light: #FAFAFA; /* Tertiärfarbe: Noch helleres Grau */
 
     /* Fehlerfarben */
@@ -22,7 +25,8 @@
     --valid-color: #E9F7EF; /* Valid-Farbe: Weiches Grün für Validierungsindikatoren */
 
     /* Textfarben */
-    --text-color: #333333; /* Primäre Textfarbe: Dunkelgrau */
+    /*--text-color: #333333; !* Primäre Textfarbe: Dunkelgrau *!*/
+    --text-color: #ffffff; /* Primäre Textfarbe: Dunkelgrau */
     --text-color-muted: #9E9E9E; /* Gedämpfter Text für Platzhalter */
     --text-color-light: #FFFFFF; /* Helle Textfarbe (z. B. auf dunklen Hintergründen) */
 
@@ -39,15 +43,19 @@
     --scrollbar-track-color: #E8E8E8; /* Scrollbar: Heller Hintergrund */
 
     /* Modalfarben */
-    --modal-background: rgba(255, 255, 255, 0.9); /* Modal-Hintergrund: Helles Weiß mit Transparenz */
+    --modal-background: rgba(83, 83, 83, 0.9); /* Modal-Hintergrund: Helles Weiß mit Transparenz */
 
     /* Disabled-Farben */
     --disabled-button-background: #A1A1A1; /* Hintergrundfarbe für deaktivierte Buttons */
     --disabled-button-text: #FFFFFF; /* Textfarbe für deaktivierte Buttons */
 
     /* Validierungsfarben */
-    --input-invalid-background: #FFE6E6; /* Fehlerhintergrund: Leichtes Rot */
-    --input-valid-background: #E6FFE6; /* Gültigkeitshintergrund: Leichtes Grün */
+    --input-invalid-background: #402323; /* Fehlerhintergrund: Leichtes Rot */
+    --input-valid-background: #2c652c; /* Gültigkeitshintergrund: Leichtes Grün */
+
+    /* transperant display colors */
+    --trans-display-color-light: rgba(0, 0, 0, 0.66);
+    --trans-display-color-dark: rgba(48, 48, 48, 0.66);
 }
 
 * {

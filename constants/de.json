@@ -19,7 +19,8 @@
     "fields": "Zähler",
     "selectedRoom": "Ausgewählter Raum",
     "none": "-",
-    "loading": "Lädt"
+    "loading": "Lädt",
+    "backToLogin": "Zurück zum Login"
   },
   "inputLabels": {
     "date": "Datum",
