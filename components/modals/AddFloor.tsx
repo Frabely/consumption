@@ -138,8 +138,8 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                                     className={styles.roomItemContainer}
                                     style={{
                                         background: room.name === currentSelectedRoom?.name ?
-                                            "var(--secondary-color)" :
-                                            "none"
+                                            "var(--tertiary-color)" :
+                                            "var(--secondary-color)"
                                     }}
                                 >
                                     <input
@@ -169,8 +169,8 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                                             className={styles.roomItemContainer}
                                             style={{
                                                 background: room.name === currentSelectedRoom?.name ?
-                                                    "var(--secondary-color)" :
-                                                    "none",
+                                                    "var(--tertiary-color)" :
+                                                    "var(--secondary-color)",
                                                 marginLeft: '1rem'
 
                                             }}

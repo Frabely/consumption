@@ -67,11 +67,14 @@
 
 .fieldsList,
 .roomsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
     max-height: 20vh; /* Mehr Platz für längere Listen */
     overflow-y: auto;
     padding-right: 10px; /* Platz für Scrollbar */
     scrollbar-width: thin; /* Moderne, dünne Scrollbar */
-    scrollbar-color: var(--primary-color) transparent;
+    scrollbar-color: var(--primary-color);
 }
 
 .fieldsList::-webkit-scrollbar,
@@ -109,7 +112,7 @@
 .roomFieldContainer {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 0.25rem;
 }
 
 .inputSaveContainer {
