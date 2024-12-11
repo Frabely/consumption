@@ -1,6 +1,5 @@
 import {Car, DataSet, House, LoadingStation, Room, User} from "@/constants/types";
 import {getCars, getFullDataSet, getHouses, getLoadingStations} from "@/firebase/functions";
-import {Simulate} from "react-dom/test-utils";
 
 export const DEFAULT_LOADING_STATION: LoadingStation = {
     id: '17498904',

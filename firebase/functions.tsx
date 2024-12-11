@@ -35,6 +35,7 @@ import {
     User,
     YearMonth
 } from "@/constants/types";
+import {Role} from "@/constants/enums";
 
 const db = getFirestore(firebaseApp)
 
@@ -120,9 +121,13 @@ export const checkUserId = async (id: string): Promise<User | undefined> => {
     const queryUserKey = query(consumptionDataRef, where('key', '==', id));
     return getDocs(queryUserKey).then((result) => {
         if (result && !result.empty && result.docs[0]) {
+            let role
+            if ((result.docs[0].get('role') as number) in Role)
+                role = (result.docs[0].get('role') as number) as Role
             const user: User = {
                 key: result.docs[0].get('key'),
-                name: result.docs[0].get('name')
+                name: result.docs[0].get('name'),
+                role: role,
             }
             return user
         }

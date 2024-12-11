@@ -1,3 +1,5 @@
+import {Role} from "@/constants/enums";
+
 export type DataSet = {
     id: string,
     kilometer: number,
@@ -16,8 +18,9 @@ export type DataSetNoId = {
 }
 
 export type User = {
-    name?: string
-    key?: string
+    name?: string,
+    key?: string,
+    role?: Role,
 }
 
 export type YearMonth = {

@@ -7,3 +7,9 @@ export enum ModalState {
     ChangeFloorFields,
     AddFloorData
 }
+
+export enum Role {
+    None,
+    User,
+    Admin,
+}

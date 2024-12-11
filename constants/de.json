@@ -20,7 +20,8 @@
     "selectedRoom": "Ausgewählter Raum",
     "none": "-",
     "loading": "Lädt",
-    "backToLogin": "Zurück zum Login"
+    "backToLogin": "Zurück zum Login",
+    "back": "Zurück"
   },
   "inputLabels": {
     "date": "Datum",

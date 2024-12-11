@@ -15,7 +15,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import AddFloor from "@/components/modals/AddFloor";
 import Link from "next/link";
 import {setModalState} from "@/store/reducer/modalState";
-import {ModalState} from "@/constants/enums";
+import {ModalState, Role} from "@/constants/enums";
 import MenuBuilding from "@/components/layout/menus/MenuBuilding";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import Loading from "@/components/Loading";
@@ -85,7 +85,7 @@ export default function BuildingConsumption() {
             <Image className={styles.image} src={img} alt={''}></Image>
             <div className={styles.imageFilter}/>
             {
-                state.currentUser.key ?
+                state.currentUser.key && state.currentUser.role === Role.Admin ?
                     (
                         <>
                             {state.isLoading ?
@@ -131,7 +131,11 @@ export default function BuildingConsumption() {
                         </>
                     )
                     :
-                    <Link className={styles.backToLoginButton} href={"/"}>{de.displayLabels.backToLogin}</Link>
+                    <Link className={styles.backToLoginButton} href={"/"}>
+                        {state.currentUser.key ?
+                            de.displayLabels.backToLogin :
+                            de.displayLabels.back}
+                    </Link>
             }
         </div>
     )

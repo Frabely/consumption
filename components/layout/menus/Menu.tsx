@@ -4,7 +4,7 @@ import globalMenuStyles from '../../../styles/layout/menus/globalMenu.module.css
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faAdd, faEllipsis, faFileCsv, faHouseFire, faPowerOff, faXmark} from '@fortawesome/free-solid-svg-icons'
 import {useDispatch, useSelector} from "react-redux";
-import {setModalStateNone, setModalState} from "@/store/reducer/modalState";
+import {setModalState, setModalStateNone} from "@/store/reducer/modalState";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setCurrentUser} from "@/store/reducer/currentUser";
 import {cars, EMPTY_USER, PATH_STRINGS} from "@/constants/constantData";
@@ -14,7 +14,7 @@ import {setCurrentCar} from "@/store/reducer/currentCar";
 import {getCars} from "@/firebase/functions";
 import Link from "next/link";
 import CustomSelect from "@/components/layout/CustomSelect";
-import {ModalState} from "@/constants/enums";
+import {ModalState, Role} from "@/constants/enums";
 
 export default function Menu({}: MenuProps) {
     const dispatch = useDispatch()
@@ -63,9 +63,13 @@ export default function Menu({}: MenuProps) {
                             <button onClick={onExportAsCsvClickHandler} className={globalMenuStyles.button}>
                                 <FontAwesomeIcon icon={faFileCsv}/>
                             </button>
-                            <Link href={PATH_STRINGS.buildingConsumption} className={globalMenuStyles.button}>
-                                <FontAwesomeIcon icon={faHouseFire}/>
-                            </Link>
+                            {
+                                state.currentUser.role === Role.Admin ?
+                                    <Link href={PATH_STRINGS.buildingConsumption} className={globalMenuStyles.button}>
+                                        <FontAwesomeIcon icon={faHouseFire}/>
+                                    </Link> :
+                                    null
+                            }
                             <CustomSelect
                                 onChange={onCarChangeHandler}
                                 defaultValue={state.currentCar.name}
@@ -92,15 +96,18 @@ export default function Menu({}: MenuProps) {
                         <div onClick={onExportAsCsvClickHandler} className={globalMenuStyles.menuItem}>
                             <FontAwesomeIcon icon={faFileCsv}/>
                         </div>
-                        <Link href={PATH_STRINGS.buildingConsumption} className={globalMenuStyles.menuItem}>
-                            <FontAwesomeIcon icon={faHouseFire}/>
-                        </Link>
+                        {
+                            state.currentUser.role === Role.Admin ?
+                                <Link href={PATH_STRINGS.buildingConsumption} className={globalMenuStyles.menuItem}>
+                                    <FontAwesomeIcon icon={faHouseFire}/>
+                                </Link> :
+                                null
+                        }
                         <div onClick={onLogoutHandler} className={globalMenuStyles.menuItem}>
                             <FontAwesomeIcon icon={faPowerOff}/>
                         </div>
                     </menu>
                 </div>}
-
         </>
     )
 }

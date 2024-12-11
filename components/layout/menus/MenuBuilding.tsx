@@ -66,9 +66,9 @@ export default function MenuBuilding({houses}: MenuBuildingProps) {
                             onChange={onHouseChangeHandler}
                             defaultValue={state.currentHouse.name}
                             options={houses.map((house) => house.name)}/>
-                        <div onClick={onLogoutHandler} className={globalMenuStyles.menuItem}>
+                        <Link href={"/"} onClick={onLogoutHandler} className={globalMenuStyles.menuItem}>
                             <FontAwesomeIcon icon={faPowerOff}/>
-                        </div>
+                        </Link>
                     </menu>
                 </div>
             }
