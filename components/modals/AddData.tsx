@@ -178,8 +178,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     options={loadingStations.map((loadingStation) => loadingStation.name)}
                     keys={loadingStations.map((loadingStation) => loadingStation.id)}
                     style={{
-                        width: "100%",
-                        padding: "1rem"
+                        width: "100%"
                 }}/>
                 <input value={state.kilometer}
                        className={`${styles.input} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}

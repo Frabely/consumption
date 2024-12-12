@@ -8,10 +8,10 @@
 
 .selectedValue {
     background: var(--secondary-color);
-    padding: 1rem;
-    height: 6dvh;
+    padding: 0.5rem;
+    height: 100%;
     border: 1px solid var(--tertiary-color);
-    border-radius: 5px;
+    border-radius: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
