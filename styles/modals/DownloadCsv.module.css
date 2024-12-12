@@ -1,14 +1,5 @@
-.button {
+.mainContainer {
     display: flex;
-    padding: 5% 5%;
-    margin-top: 5%;
-    align-items: center;
-    justify-content: center;
-    border-color: var(--border-color);
-    background: var(--secondary-color);
-    border-radius: 10px;
-}
-
-.button:disabled {
-    background: var(--primary-color);
+    flex-direction: column;
+    gap: 0.5rem;
 }

@@ -17,6 +17,8 @@ import {Language} from "@/constants/types";
 import {updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
 import {setDate} from "@/store/reducer/modal/date";
 import {ModalState} from "@/constants/enums";
+import CustomButton from "@/components/layout/CustomButton";
+import CustomSelect from "@/components/layout/CustomSelect";
 
 export default function AddData({prevKilometers}: AddDataModalProps) {
     const language: Language = de
@@ -161,59 +163,55 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         }
     }
 
-    const onLoadingStationChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
-        const selected = event.target.options.selectedIndex
-        const id: string = event.target.options[selected].id
-        const name: string = event.target.value
+    const onLoadingStationChangeHandler = (value: string, key: string) => {
+        const id: string = key
+        const name: string = value
         dispatch(setLoadingStation({id, name}))
     }
 
-
     return (
         <Modal formName={'addData'}>
-            <select
-                onChange={onLoadingStationChangeHandler}
-                className={styles.select}
-                    defaultValue={state.isChangingData ? language.loadingStation[`${state.loadingStation.name}`] : DEFAULT_LOADING_STATION.name}>
-                {loadingStations.map((loadingStation) => {
-
-                        return (
-                            <option id={loadingStation.id} key={loadingStation.id}>
-                                {language.loadingStation[`${loadingStation.name}`]}
-                            </option>
-                        )
-                    }
-                )}
-            </select>
-            <input value={state.kilometer}
-                   className={`${styles.input} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}
-                   type={"number"}
-                   min={state.currentCar.kilometer ? state.isChangingData ? prevKilometers + 1 : state.currentCar.kilometer : state.currentCar.kilometer}
-                   max={999999}
-                   step={1.0}
-                   onChange={(e) => {
-                       onKilometerChange(e)
-                   }}
-                   placeholder={de.inputLabels.kilometer}
-            />
-            <input value={state.power}
-                   className={`${styles.input} ${isInputValid.power ? styles.inputValid : styles.inputInvalid}`}
-                   type={"number"}
-                   min={0.1}
-                   max={99.9}
-                   step={0.1}
-                   placeholder={de.inputLabels.power}
-                   onChange={(e) => {
-                       powerOnChangeHandler(e)
-                   }}
-            />
-            <button disabled={disabled}
+            <div className={styles.mainContainer}>
+                <CustomSelect
+                    onChange={onLoadingStationChangeHandler}
+                    defaultValue={state.isChangingData ? language.loadingStation[`${state.loadingStation.name}`] : DEFAULT_LOADING_STATION.name}
+                    options={loadingStations.map((loadingStation) => loadingStation.name)}
+                    keys={loadingStations.map((loadingStation) => loadingStation.id)}
+                    style={{
+                        width: "100%",
+                        padding: "1rem"
+                }}/>
+                <input value={state.kilometer}
+                       className={`${styles.input} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}
+                       type={"number"}
+                       min={state.currentCar.kilometer ? state.isChangingData ? prevKilometers + 1 : state.currentCar.kilometer : state.currentCar.kilometer}
+                       max={999999}
+                       step={1.0}
+                       onChange={(e) => {
+                           onKilometerChange(e)
+                       }}
+                       placeholder={de.inputLabels.kilometer}
+                />
+                <input value={state.power}
+                       className={`${styles.input} ${isInputValid.power ? styles.inputValid : styles.inputInvalid}`}
+                       type={"number"}
+                       min={0.1}
+                       max={99.9}
+                       step={0.1}
+                       placeholder={de.inputLabels.power}
+                       onChange={(e) => {
+                           powerOnChangeHandler(e)
+                       }}
+                />
+                <CustomButton
                     onClick={state.isChangingData ? onChangeDataClickHandler : onAddDataClickHandler}
-                    className={styles.button}>{
-                state.isChangingData ?
-                    de.buttonLabels.changeData :
-                    de.buttonLabels.addData
-            }</button>
+                    disabled={disabled}
+                    label={state.isChangingData ?
+                        de.buttonLabels.changeData :
+                        de.buttonLabels.addData
+                    }
+                />
+            </div>
         </Modal>
     );
 }

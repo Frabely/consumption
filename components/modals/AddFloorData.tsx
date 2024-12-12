@@ -1,7 +1,7 @@
 'use client'
 
 import de from '../../constants/de.json'
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Modal from "@/components/layout/Modal";
 import {NumberDictionary, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
@@ -33,7 +33,6 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
             state.currentHouse.name,
             flatName,
             currentRoom.name).then((result) => {
-
             if (result) {
                 const fields: NumberDictionary = {...currentRoom.fields}
                 Object.entries(result).map(([key, value]) => {
@@ -44,8 +43,7 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
                 setCurrentRoom(newRoom)
             }
         })
-    }, [currentDateValue.month, currentDateValue.year, currentRoom.name, flatName, state.currentHouse.name]);
-
+    }, [currentDateValue.month, currentDateValue.year, currentRoom.fields, currentRoom.name, flatName, state.currentHouse.name]);
 
     const onFieldPairValueChange = (value: string, key: string) => {
         const currentFieldValue: number = parseInt(value.replace(/\D/g, ''))

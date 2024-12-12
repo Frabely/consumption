@@ -1,4 +1,4 @@
-import React, {CSSProperties, useState} from 'react';
+import React, { CSSProperties, useState } from 'react';
 import styles from "@/styles/layout/CustomSelect.module.css";
 
 export default function CustomSelect({
@@ -6,6 +6,7 @@ export default function CustomSelect({
                                          defaultValue,
                                          className,
                                          options,
+                                         keys,
                                          direction = 'down',
                                          style
                                      }: CustomSelectProps) {
@@ -18,8 +19,10 @@ export default function CustomSelect({
 
     const onOptionClickHandler = (index: number) => {
         const newValue = options[index];
+        const associatedKey = keys ? keys[index] : null;
+
         setSelectedValue(newValue);
-        onChange(newValue);
+        onChange(newValue, associatedKey);
         setIsExpanded(false);
     };
 
@@ -32,6 +35,7 @@ export default function CustomSelect({
             <div
                 className={`${styles.selectedValue} ${isExpanded ? styles.active : ''}`}
                 onClick={onToggleOptions}
+
             >
                 {selectedValue}
             </div>
@@ -40,7 +44,7 @@ export default function CustomSelect({
                     {options.map((option, index) => (
                         <div
                             className={styles.optionContainer}
-                            key={index}
+                            key={keys ? keys[index] : index}
                             onClick={() => onOptionClickHandler(index)}
                         >
                             {option}
@@ -53,10 +57,11 @@ export default function CustomSelect({
 }
 
 export type CustomSelectProps = {
-    onChange: (value: string) => void;
+    onChange: (value: string, key?: any) => void;
     defaultValue: string;
     className?: string;
     options: string[];
+    keys?: any[];
     direction?: 'down' | 'up' | 'left' | 'right';
-    style?: CSSProperties
+    style?: CSSProperties;
 };

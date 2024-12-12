@@ -4,7 +4,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem;
+    padding: 0 0.5rem;
     border-radius: 15px;
     gap: 1dvw;
     background: var(--secondary-color);

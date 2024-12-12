@@ -1,3 +1,9 @@
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 .button {
     display: flex;
     padding: 10px 15px;

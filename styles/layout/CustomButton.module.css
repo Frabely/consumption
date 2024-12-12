@@ -1,0 +1,24 @@
+.button {
+    display: flex;
+    padding: 0.5rem 0.75rem;
+    /*margin-top: 10px;*/
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: var(--primary-color);
+    color: var(--text-color);
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button:hover {
+    background: var(--secondary-color);
+}
+
+.button:disabled {
+    color: var(--secondary-color-muted);
+    background: var(--secondary-color);
+    cursor: not-allowed;
+}

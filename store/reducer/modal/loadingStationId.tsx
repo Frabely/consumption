@@ -6,7 +6,7 @@ const LoadingStationSlice = createSlice({
     name: 'loadingStation',
     initialState: DEFAULT_LOADING_STATION,
     reducers: {
-        setLoadingStation: (state, action: PayloadAction<LoadingStation>) => {
+        setLoadingStation: (_state, action: PayloadAction<LoadingStation>) => {
             return action.payload
         },
     },

@@ -1,26 +1,16 @@
-.button {
+.mainContainer {
     display: flex;
-    padding: 5% 5%;
-    margin-top: 5%;
-    /*width: 10vw;*/
-    align-items: center;
-    justify-content: center;
-    border-color: var(--border-color);
-    background: var(--secondary-color);
-    border-radius: 10px;
-}
-
-.button:disabled {
-    background: var(--primary-color);
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .input {
     border-radius: 10px;
-    margin-bottom: 5%;
-    padding: 5%;
+    padding: 0.5rem;
     background: var(--secondary-color);
     border-color: var(--border-color);
-    border-width: 2px;
+    border: none;
+    outline: none;
 }
 
 .inputInvalid {
@@ -33,13 +23,4 @@
 
 .input::placeholder {
     color: var(--text-color-muted);
-}
-
-.select {
-    margin-bottom: 5%;
-    padding: 5%;
-    border-radius: 10px;
-    background: var(--secondary-color);
-    border-color: var(--border-color);
-    border-width: 2px;
 }

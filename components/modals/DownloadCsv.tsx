@@ -9,6 +9,7 @@ import {DataSet, Language} from "@/constants/types";
 import {RootState} from "@/store/store";
 import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
 import {setModalStateNone} from "@/store/reducer/modalState";
+import CustomButton from "@/components/layout/CustomButton";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
     const state: RootState = useSelector((state: RootState) => state)
@@ -16,8 +17,8 @@ export default function DownloadCsv({}: DownloadCsvProps) {
     const de: Language = deJson
     const date = new Date()
     const year = date.getFullYear()
-    const month = date.getMonth()+1
-    const monthString : string = month < 10 ? `0` + month : month.toString()
+    const month = date.getMonth() + 1
+    const monthString: string = month < 10 ? `0` + month : month.toString()
 
     const [currentDateValue, setCurrentDateValue] = useState({
         year: year.toString(),
@@ -59,30 +60,34 @@ export default function DownloadCsv({}: DownloadCsvProps) {
     const onDownloadCsvClickHandler = () => {
         dispatch(setModalStateNone())
         if (state.currentCar.name) {
-        getFullDataSet(state.currentCar.name,{year: currentDateValue.year, month: currentDateValue.month}).then((dataSetArray) => {
-            if (dataSetArray) {
-                const blob = new Blob([dataSetArrayToTxt(dataSetArray)], { type: "text/plain" });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement("a");
-                link.download = `${currentDateValue.year}-${currentDateValue.month}.csv`;
-                link.href = url;
-                link.click();
-            }
-            else {
-                alert(`${de.messages.noDataForFollowMonthAndYearAvailable}: ${currentDateValue.year} ${currentDateValue.month}`)
-            }
-        })
+            getFullDataSet(state.currentCar.name, {
+                year: currentDateValue.year,
+                month: currentDateValue.month
+            }).then((dataSetArray) => {
+                if (dataSetArray) {
+                    const blob = new Blob([dataSetArrayToTxt(dataSetArray)], {type: "text/plain"});
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.download = `${currentDateValue.year}-${currentDateValue.month}.csv`;
+                    link.href = url;
+                    link.click();
+                } else {
+                    alert(`${de.messages.noDataForFollowMonthAndYearAvailable}: ${currentDateValue.year} ${currentDateValue.month}`)
+                }
+            })
         }
     }
     return (
         <Modal formName={'DownloadCsv'}>
-            <input
-                onChange={onDateInputChangeHandler}
-                value={`${currentDateValue.year}-${currentDateValue.month}`}
-                className={globalStyles.monthPicker}
-                type={"month"}/>
-            <button onClick={onDownloadCsvClickHandler} className={styles.button}>{de.buttonLabels.downloadCsv}</button>
-            <button onClick={onAbortClickHandler} className={styles.button}>{de.buttonLabels.abort}</button>
+            <div className={styles.mainContainer}>
+                <input
+                    onChange={onDateInputChangeHandler}
+                    value={`${currentDateValue.year}-${currentDateValue.month}`}
+                    className={globalStyles.monthPicker}
+                    type={"month"}/>
+                <CustomButton onClick={onDownloadCsvClickHandler} label={de.buttonLabels.downloadCsv}/>
+                <CustomButton onClick={onAbortClickHandler} label={de.buttonLabels.abort}/>
+            </div>
         </Modal>
     )
 }
