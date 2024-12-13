@@ -31,10 +31,13 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
     useEffect(() => {
         if (state.isReloadDataNeeded.isReloadHousesNeeded) {
             dispatch(setIsLoading(true))
+            const currentSelectedHouseName = state.currentHouse.name
             loadHouses()
                 .then((houses) => {
                     dispatch(setIsReloadHousesNeeded(false))
-                    dispatch(setCurrentHouse(houses[0]))
+                    dispatch(setCurrentHouse(
+                        houses.filter((house) => currentSelectedHouseName === house.name)[0])
+                    )
                     setHouseNames(houses)
                     dispatch(setIsLoading(false))
                 })

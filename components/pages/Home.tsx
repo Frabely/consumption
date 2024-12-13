@@ -20,7 +20,7 @@ export default function Home({}: HomeProps) {
 
     useEffect(() => {
         loadMainPageData().then(() => {
-            dispatch(setCurrentCar(cars.filter(car => car.name !== DEFAULT_CAR.name)[0]))
+            dispatch(setCurrentCar(cars.filter(car => car.name === DEFAULT_CAR.name)[0]))
             dispatch(setIsReloadNeeded({
                 isReloadHousesNeeded: true,
                 isReloadCarsNeeded: false,

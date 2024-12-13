@@ -1,7 +1,7 @@
 'use client'
 
 import de from '../../constants/de.json'
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import Modal from "@/components/layout/Modal";
 import {NumberDictionary, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
@@ -54,7 +54,6 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
     }
 
     const onSaveFieldClickHandler = async (key: string) => {
-
         setFieldValue(
             state.currentHouse.name,
             flatName,

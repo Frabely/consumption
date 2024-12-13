@@ -46,4 +46,7 @@
     padding: 1rem;
     width: 5dvh;
     height: 5dvh;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }

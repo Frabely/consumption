@@ -92,5 +92,5 @@ export default function MenuBuilding({houses}: MenuBuildingProps) {
 }
 
 export type MenuBuildingProps = {
-    houses: House[]
+    houses: House[],
 }

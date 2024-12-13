@@ -1,4 +1,4 @@
-import {Car, DataSet, House, LoadingStation, Room, User} from "@/constants/types";
+import {Car, DataSet, House, LoadingStation, User} from "@/constants/types";
 import {getCars, getFullDataSet, getHouses, getLoadingStations} from "@/firebase/functions";
 
 export const DEFAULT_LOADING_STATION: LoadingStation = {
@@ -6,23 +6,13 @@ export const DEFAULT_LOADING_STATION: LoadingStation = {
     name: 'carport'
 }
 
-export const PATH_STRINGS = {
-    mainPage: '/',
-    buildingConsumption: '/buildingConsumption'
-}
+export const DEFAULT_CAR_NAME = "Zoe"
 
-export let DEFAULT_CAR: Car = {
-    name: 'Zoe'
-}
+export let DEFAULT_CAR: Car;
 
 export let DEFAULT_HOUSE: House = {
     name: 'F233',
     flats: []
-}
-
-export let EMPTY_ROOM: Room = {
-    name: '-',
-    fields: {}
 }
 
 export const EMPTY_USER: User = {}
@@ -56,6 +46,15 @@ export const loadMainPageData = async () => {
     if (resultCars) {
         cars = resultCars
         if (cars.length > 0) {
+            cars.map((car) => {
+                if (car.name === DEFAULT_CAR_NAME)
+                    DEFAULT_CAR = {
+                        name: car.name,
+                        kilometer: car.kilometer,
+                        prevKilometer: car.prevKilometer,
+                    }
+            })
+            if (!DEFAULT_CAR)
             DEFAULT_CAR = {
                 name: cars[0].name,
                 kilometer: cars[0].kilometer,
