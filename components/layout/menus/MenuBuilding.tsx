@@ -6,12 +6,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEllipsis, faPowerOff, faXmark, faHouse} from "@fortawesome/free-solid-svg-icons";
 import {setCurrentUser} from "@/store/reducer/currentUser";
 import {setModalStateNone} from "@/store/reducer/modalState";
-import Link from "next/link";
 import {setCurrentHouse} from "@/store/reducer/currentHouse";
 import CustomSelect from "@/components/layout/CustomSelect";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import {EMPTY_USER} from "@/constants/constantData";
 import {House} from "@/constants/types";
+import {setPage} from "@/store/reducer/currentPage";
+import {Page} from "@/constants/enums";
 
 export default function MenuBuilding({houses}: MenuBuildingProps) {
     const dispatch = useDispatch()
@@ -21,11 +22,13 @@ export default function MenuBuilding({houses}: MenuBuildingProps) {
     const onLogoutHandler = () => {
         dispatch(setCurrentUser(EMPTY_USER))
         dispatch(setModalStateNone())
+        dispatch(setPage(Page.Home))
     }
 
     const onHomePageClickHandler = () => {
         dispatch(setModalStateNone())
         dispatch(setIsLoading(true))
+        dispatch(setPage(Page.Home))
     }
 
     const onHouseChangeHandler = (value: string) => {
@@ -36,7 +39,10 @@ export default function MenuBuilding({houses}: MenuBuildingProps) {
         <>
             {state.dimension.isHorizontal ?
                 <div className={globalMenuStyles.mainContainerHor}>
-                    <button className={globalMenuStyles.button} onClick={() => setMenuOpen(!menuOpen)}>
+                    <button
+                        className={globalMenuStyles.button}
+                        onClick={() => setMenuOpen(!menuOpen)}
+                    >
                         <FontAwesomeIcon icon={menuOpen ? faXmark : faEllipsis}/>
                     </button>
                     {menuOpen ? (
@@ -52,23 +58,32 @@ export default function MenuBuilding({houses}: MenuBuildingProps) {
                             />
                         </>
                     ) : null}
-                    <Link href={"/"} className={globalMenuStyles.button} onClick={onHomePageClickHandler}>
+                    <button
+                        className={globalMenuStyles.button}
+                        onClick={onHomePageClickHandler}
+                    >
                         <FontAwesomeIcon icon={faHouse}/>
-                    </Link>
+                    </button>
                 </div>
                 :
                 <div className={globalMenuStyles.mainContainerVert}>
                     <menu className={globalMenuStyles.menu}>
-                        <Link href={"/"} className={globalMenuStyles.menuItem} onClick={onHomePageClickHandler}>
+                        <button
+                            className={globalMenuStyles.menuItem}
+                            onClick={onHomePageClickHandler}
+                        >
                             <FontAwesomeIcon icon={faHouse}/>
-                        </Link>
+                        </button>
                         <CustomSelect
                             onChange={onHouseChangeHandler}
                             defaultValue={state.currentHouse.name}
                             options={houses.map((house) => house.name)}/>
-                        <Link href={"/"} onClick={onLogoutHandler} className={globalMenuStyles.menuItem}>
+                        <button
+                            onClick={onLogoutHandler}
+                            className={globalMenuStyles.menuItem}
+                        >
                             <FontAwesomeIcon icon={faPowerOff}/>
-                        </Link>
+                        </button>
                     </menu>
                 </div>
             }

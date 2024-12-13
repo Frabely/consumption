@@ -1,42 +1,34 @@
-'use client'
-
-import styles from '@/styles/buildingConsuption/page.module.css'
+import React, {useEffect, useRef, useState} from 'react';
+import {ModalState, Page, Role} from "@/constants/enums";
+import Loading from "@/components/Loading";
+import MenuBuilding from "@/components/layout/menus/MenuBuilding";
+import AddFloorData from "@/components/modals/AddFloorData";
+import AddFloor from "@/components/modals/AddFloor";
+import styles from "@/styles/pages/BuildingConsumption.module.css";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faAdd} from "@fortawesome/free-solid-svg-icons";
+import de from "@/constants/de.json";
+import {Flat, House, Room} from "@/constants/types";
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
-import {setDimension} from "@/store/reducer/dismension";
-import {useEffect, useRef, useState} from "react";
-import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
-import img from "@/public/bg_vert.jpg";
-import Image from "next/image";
-import {Flat, House, Room} from "@/constants/types";
-import AddFloorData from "@/components/modals/AddFloorData";
-import {faAdd} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import AddFloor from "@/components/modals/AddFloor";
-import Link from "next/link";
-import {setModalState} from "@/store/reducer/modalState";
-import {ModalState, Role} from "@/constants/enums";
-import MenuBuilding from "@/components/layout/menus/MenuBuilding";
+import {useAppDispatch} from "@/constants/hooks";
 import {setIsLoading} from "@/store/reducer/isLoading";
-import Loading from "@/components/Loading";
 import {loadHouses} from "@/constants/constantData";
 import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setCurrentHouse} from "@/store/reducer/currentHouse";
-import de from '../../constants/de.json'
+import {setModalState} from "@/store/reducer/modalState";
+import {setPage} from "@/store/reducer/currentPage";
 
-export default function BuildingConsumption() {
+export default function BuildingConsumption({}: BuildingConsumptionProps) {
     const [flatName, setFlatName] = useState("")
     const [currentRooms, setCurrentRooms] = useState<Room[]>([])
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useAppDispatch()
-    const dimension = useWindowDimensions()
     const touchTimer = useRef<NodeJS.Timeout | undefined>(undefined);
     const [isLongTouchTriggered, setIsLongTouchTriggered] = useState(false)
     const [houseNames, setHouseNames] = useState<House[]>([])
 
     useEffect(() => {
-        if (window)
-            dispatch(setDimension(dimension))
         if (state.isReloadDataNeeded.isReloadHousesNeeded) {
             dispatch(setIsLoading(true))
             loadHouses()
@@ -81,9 +73,7 @@ export default function BuildingConsumption() {
     }
 
     return (
-        <div className={styles.mainContainer}>
-            <Image className={styles.image} src={img} alt={''}></Image>
-            <div className={styles.imageFilter}/>
+        <>
             {
                 state.currentUser.key && state.currentUser.role === Role.Admin ?
                     (
@@ -131,12 +121,17 @@ export default function BuildingConsumption() {
                         </>
                     )
                     :
-                    <Link className={styles.backToLoginButton} href={"/"}>
+                    <button
+                        className={styles.backToLoginButton} onClick={() => {
+                        dispatch(setPage(Page.Home))
+                    }}>
                         {state.currentUser.key ?
                             de.displayLabels.backToLogin :
                             de.displayLabels.back}
-                    </Link>
+                    </button>
             }
-        </div>
-    )
+        </>
+    );
 }
+
+export type BuildingConsumptionProps = {}

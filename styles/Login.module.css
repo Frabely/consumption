@@ -6,8 +6,8 @@
 }
 
 .input {
-    margin-bottom: 1rem;
     padding: 1rem;
+    border-radius: 10px;
     background: var(--secondary-color);
     border: none;
     outline: none;

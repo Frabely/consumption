@@ -13,3 +13,8 @@ export enum Role {
     User,
     Admin,
 }
+
+export enum Page {
+    Home,
+    BuildingConsumption
+}

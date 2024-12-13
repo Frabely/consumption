@@ -9,22 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "6.4.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.1",
     "@fortawesome/free-regular-svg-icons": "6.4.0",
-    "@fortawesome/free-solid-svg-icons": "6.4.0",
-    "@fortawesome/react-fontawesome": "0.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.7.1",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@reduxjs/toolkit": "^2.5.0",
     "@types/node": "20.2.5",
     "@types/react": "18.2.8",
     "@types/react-dom": "18.2.4",
     "@types/webspeechapi": "^0.0.29",
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.4",
-    "firebase": "^9.22.2",
-    "next": "13.4.4",
+    "firebase": "^11.1.0",
+    "next": "^15.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-firebase-hooks": "^5.1.1",
-    "react-fontawesome": "^1.7.1",
     "react-redux": "^8.0.7",
     "typescript": "5.1.3"
   }
