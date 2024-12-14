@@ -32,6 +32,8 @@
     border-radius: 5px;
     overflow: hidden;
     animation: fadeIn 0.3s ease;
+    max-height: 7.5rem;
+    overflow-y: auto;
 }
 
 .optionsContainer.down {
@@ -55,7 +57,10 @@
 }
 
 .optionContainer {
+    align-items: center;
+    display: flex;
     padding: 10px;
+    height: 2.5rem; /* Feste Höhe für konsistente Anzeige */
     border-bottom: 1px solid #eee;
     transition: background 0.2s ease, color 0.2s ease;
 }

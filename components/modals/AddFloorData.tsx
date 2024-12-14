@@ -43,7 +43,8 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
                 setCurrentRoom(newRoom)
             }
         })
-    }, [currentDateValue.month, currentDateValue.year, currentRoom.fields, currentRoom.name, flatName, state.currentHouse.name]);
+        // eslint-disable-next-line
+    }, [currentDateValue.month, currentDateValue.year, currentRoom.name, flatName, state.currentHouse.name]);
 
     const onFieldPairValueChange = (value: string, key: string) => {
         const currentFieldValue: number = parseInt(value.replace(/\D/g, ''))
@@ -82,7 +83,8 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
 
     return (
         <Modal formName={'addFloorData'}>
-            <div className={styles.mainContainer}>
+            <div className={styles.mainContainer}
+                 style={state.dimension.isHorizontal ? {height: '100%'} : {height: '75dvh'}}>
                 <h1 className={styles.flatName}>{flatName}</h1>
                 <input onChange={onDateInputChangeHandler} value={`${currentDateValue.year}-${currentDateValue.month}`}
                        className={globalStyles.monthPicker} type={"month"}/>

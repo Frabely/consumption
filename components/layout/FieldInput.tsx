@@ -45,6 +45,7 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
                 recognition.stop();
             };
         }
+        // eslint-disable-next-line
     }, [isRecording]);
 
     return (
@@ -70,6 +71,14 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
             />
             <div
                 className={styles.microphoneContainer}
+                onMouseDown={() => {
+                    setIsMicTouched(true)
+                    setIsRecording(true)
+                }}
+                onMouseUp={() => {
+                    setIsMicTouched(false)
+                    setIsRecording(false)
+                }}
                 onTouchStart={() => {
                     setIsMicTouched(true)
                     setIsRecording(true)
