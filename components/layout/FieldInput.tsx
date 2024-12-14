@@ -1,10 +1,9 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, CSSProperties, useEffect, useState} from 'react';
 import styles from "@/styles/layout/FieldInput.module.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMicrophone} from "@fortawesome/free-solid-svg-icons";
 
-function FieldInput({value, onChange, placeholder}: FieldInputProps) {
-    const [isFocus, setIsFocus] = useState(false)
+function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
     const [isRecording, setIsRecording] = useState(false);
     const [isMicTouched, setIsMicTouched] = useState(false)
 
@@ -54,7 +53,7 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
                 (value && !isNaN(parseInt(value)) && value.length > 0) ?
                     styles.inputValid :
                     styles.inputInvalid}`}
-            style={isFocus ? {borderStyle: "solid", borderWidth: "3px", borderColor: "black"} : {}}>
+            style={style}>
             <input value={value && !isNaN(parseInt(value.replace(/\D/g, ''))) ? parseInt(value.replace(/\D/g, '')) : ""}
                    className={styles.input}
                    type={"number"}
@@ -64,10 +63,8 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
                    onChange={onChange}
                    placeholder={`${placeholder ? placeholder : ""}`}
                    onFocus={(event) => {
-                       setIsFocus(true)
                        event.target.select()
                    }}
-                   onBlur={() => setIsFocus(false)}
             />
             <div
                 className={styles.microphoneContainer}
@@ -112,7 +109,8 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
 export type FieldInputProps = {
     value?: string
     placeholder?: string,
-    onChange: (event: ChangeEvent<HTMLInputElement>) => void
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void,
+    style?: CSSProperties,
 }
 
 export default FieldInput;
