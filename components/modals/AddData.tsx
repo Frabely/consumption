@@ -164,18 +164,8 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     }
 
     const onLoadingStationChangeHandler = (value: string, key: string) => {
-        const id: string = key
-        let name: string;
-        if (key === language.loadingStation.official) {
-            name = "official"
-        }
-        else if (value === language.loadingStation.frontDoor) {
-            name = "frontDoor"
-        }
-        else {
-            name = "carport"
-        }
-        dispatch(setLoadingStation({id, name}))
+        const selectedLoadingStation = loadingStations.filter((loadingStation => loadingStation.id === key))[0]
+        dispatch(setLoadingStation(selectedLoadingStation))
     }
 
     return (
