@@ -165,7 +165,16 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 
     const onLoadingStationChangeHandler = (value: string, key: string) => {
         const id: string = key
-        const name: string = value
+        let name: string;
+        if (key === language.loadingStation.official) {
+            name = "official"
+        }
+        else if (value === language.loadingStation.frontDoor) {
+            name = "frontDoor"
+        }
+        else {
+            name = "carport"
+        }
         dispatch(setLoadingStation({id, name}))
     }
 
@@ -174,8 +183,8 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             <div className={styles.mainContainer}>
                 <CustomSelect
                     onChange={onLoadingStationChangeHandler}
-                    defaultValue={state.isChangingData ? language.loadingStation[`${state.loadingStation.name}`] : DEFAULT_LOADING_STATION.name}
-                    options={loadingStations.map((loadingStation) => loadingStation.name)}
+                    defaultValue={state.isChangingData ? language.loadingStation[`${state.loadingStation.name}`] : language.loadingStation[`${DEFAULT_LOADING_STATION.name}`]}
+                    options={loadingStations.map((loadingStation) => language.loadingStation[`${loadingStation.name}`])}
                     keys={loadingStations.map((loadingStation) => loadingStation.id)}
                     style={{
                         width: "100%"
