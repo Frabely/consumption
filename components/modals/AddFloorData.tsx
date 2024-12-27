@@ -27,6 +27,7 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
     })
 
     useEffect(() => {
+        console.log(flatName)
         getFieldValues(
             currentDateValue.year,
             currentDateValue.month,
@@ -35,6 +36,9 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
             currentRoom.name).then((result) => {
             if (result) {
                 const fields: NumberDictionary = {...currentRoom.fields}
+                Object.entries(fields).map(([key]) => {
+                    fields[`${key}`] = null
+                })
                 Object.entries(result).map(([key, value]) => {
                     const newKey = key.split("#").pop();
                     fields[`${newKey}`] = value
@@ -44,7 +48,7 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
             }
         })
         // eslint-disable-next-line
-    }, [currentDateValue.month, currentDateValue.year, currentRoom.name, flatName, state.currentHouse.name]);
+    }, [currentDateValue, currentDateValue, currentRoom.name, flatName, state.currentHouse.name]);
 
     const onFieldPairValueChange = (value: string, key: string) => {
         const currentFieldValue: number = parseInt(value.replace(/\D/g, ''))
@@ -75,6 +79,7 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
 
     const onDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
+        console.log(event.target.value.split("-")[0], event.target.value.split("-")[1])
         setCurrentDateValue({
             year: event.target.value.split("-")[0],
             month: event.target.value.split("-")[1]

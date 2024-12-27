@@ -312,8 +312,9 @@ export const getFieldValues = async (
         const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
         const allFields = await getDoc(dateCollectionRef);
         const fields = allFields.data()
-        if (!fields)
-            return
+        if (!fields) {
+            return {} as NumberDictionary
+        }
 
         const parts: string[] = []
         if (houseName) parts.push(houseName)
@@ -341,7 +342,7 @@ export const getFieldValues = async (
         return result
     } catch (error) {
         console.error(error);
-        return
+        return {} as NumberDictionary
     }
 }
 
