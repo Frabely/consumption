@@ -15,7 +15,7 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
             recognition.interimResults = true;
             recognition.lang = 'de-DE';
             recognition.onresult = (event: SpeechRecognitionEvent) => {
-                let currentTranscript = value ? value : ""
+                let currentTranscript = ""
                 // @ts-ignore
                 for (const result of event.results) {
                     currentTranscript += result[0].transcript;
@@ -36,6 +36,7 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
                 setIsRecording(false);
             };
             if (isRecording) {
+                onChange({target: {value: ""}} as ChangeEvent<HTMLInputElement>);
                 recognition.start();
             } else {
                 recognition.stop();
