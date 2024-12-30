@@ -35,7 +35,6 @@ export default function CustomSelect({
             <div
                 className={`${styles.selectedValue} ${isExpanded ? styles.active : ''}`}
                 onClick={onToggleOptions}
-
             >
                 {selectedValue}
             </div>

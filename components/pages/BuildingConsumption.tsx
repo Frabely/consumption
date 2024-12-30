@@ -18,6 +18,7 @@ import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setCurrentHouse} from "@/store/reducer/currentHouse";
 import {setModalState} from "@/store/reducer/modalState";
 import {setPage} from "@/store/reducer/currentPage";
+import DownloadBuildingCsv from "@/components/modals/DownloadBuildingCsv";
 
 export default function BuildingConsumption({}: BuildingConsumptionProps) {
     const [flatName, setFlatName] = useState("")
@@ -93,6 +94,9 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                                     ) : null}
                                     {state.modalState === ModalState.ChangeFloorFields ? (
                                         <AddFloor changingFloorData={{flatName, rooms: currentRooms}}/>
+                                    ) : null}
+                                    {state.modalState === ModalState.DownloadBuildingCsv ? (
+                                        <DownloadBuildingCsv/>
                                     ) : null}
                                     <div className={
                                         state.dimension.isHorizontal ?

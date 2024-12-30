@@ -5,7 +5,8 @@ import {faMicrophone} from "@fortawesome/free-solid-svg-icons";
 
 function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
     const [isRecording, setIsRecording] = useState(false);
-    const [isMicTouched, setIsMicTouched] = useState(false)
+    const [isMicTouched, setIsMicTouched] = useState(false);
+    const cleanInputRegEx: RegExp = /[^0-9.]|\.(?=.*\.)/g
 
     useEffect(() => {
         if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
@@ -22,7 +23,7 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
                 }
                 const simulatedEvent = {
                     target: {
-                        value: currentTranscript.replace(/\D/g, ''),
+                        value: currentTranscript.replace(cleanInputRegEx, ''),
                     },
                 } as ChangeEvent<HTMLInputElement>;
 
@@ -51,16 +52,13 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
     return (
         <div
             className={`${styles.inputContainer} ${
-                (value && !isNaN(parseInt(value)) && value.length > 0) ?
+                (value && !isNaN(parseFloat(value)) && value.length > 0) ?
                     styles.inputValid :
                     styles.inputInvalid}`}
             style={style}>
-            <input value={value && !isNaN(parseInt(value.replace(/\D/g, ''))) ? parseInt(value.replace(/\D/g, '')) : ""}
+            <input value={value && !isNaN(parseFloat(value.replace(cleanInputRegEx, ''))) ? parseFloat(value.replace(cleanInputRegEx, '')) : ""}
                    className={styles.input}
                    type={"number"}
-                   min={0}
-                   max={999999}
-                   step={1.0}
                    onChange={onChange}
                    placeholder={`${placeholder ? placeholder : ""}`}
                    onFocus={(event) => {

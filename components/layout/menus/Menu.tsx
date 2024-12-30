@@ -18,7 +18,9 @@ import {ModalState, Page, Role} from "@/constants/enums";
 
 export default function Menu({}: MenuProps) {
     const dispatch = useDispatch()
-    const state: RootState = useSelector((state: RootState) => state)
+    const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
+    const currentUserRole: Role | undefined = useSelector((state: RootState) => state.currentUser.role)
+    const currentCarName: string | undefined = useSelector((state: RootState) => state.currentCar.name)
     const [menuOpen, setMenuOpen] = useState(false)
 
     const onAddDataClickHandler = () => {
@@ -55,7 +57,7 @@ export default function Menu({}: MenuProps) {
 
     return (
         <>
-            {state.dimension.isHorizontal ?
+            {isHorizontal ?
                 <div className={globalMenuStyles.mainContainerHor}>
                     <button className={globalMenuStyles.button} onClick={() => setMenuOpen(!menuOpen)}>
                         <FontAwesomeIcon icon={menuOpen ? faXmark : faEllipsis}/>
@@ -69,7 +71,7 @@ export default function Menu({}: MenuProps) {
                                 <FontAwesomeIcon icon={faFileCsv}/>
                             </button>
                             {
-                                state.currentUser.role === Role.Admin ?
+                                currentUserRole === Role.Admin ?
                                     <button
                                         onClick={onBuildingConsumptionClickHandler}
                                         className={globalMenuStyles.button}
@@ -80,7 +82,7 @@ export default function Menu({}: MenuProps) {
                             }
                             <CustomSelect
                                 onChange={onCarChangeHandler}
-                                defaultValue={state.currentCar.name}
+                                defaultValue={currentCarName}
                                 options={cars.map((car) => car.name)}
                                 direction={"up"}
                             />
@@ -95,7 +97,7 @@ export default function Menu({}: MenuProps) {
                     <menu className={globalMenuStyles.menu}>
                         <CustomSelect
                             onChange={onCarChangeHandler}
-                            defaultValue={state.currentCar.name}
+                            defaultValue={currentCarName}
                             options={cars.map((car) => car.name)}
                         />
                         <div onClick={onAddDataClickHandler} className={globalMenuStyles.menuItem}>
@@ -105,7 +107,7 @@ export default function Menu({}: MenuProps) {
                             <FontAwesomeIcon icon={faFileCsv}/>
                         </div>
                         {
-                            state.currentUser.role === Role.Admin ?
+                            currentUserRole === Role.Admin ?
                                 <button
                                     onClick={onBuildingConsumptionClickHandler}
                                     className={globalMenuStyles.menuItem}

@@ -169,7 +169,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     }
 
     return (
-        <Modal formName={'addData'}>
+        <Modal formName={`${ModalState.AddCarData}`}>
             <div className={styles.mainContainer}>
                 <CustomSelect
                     onChange={onLoadingStationChangeHandler}

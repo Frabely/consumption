@@ -15,6 +15,10 @@
     "powerShort": "kW/h",
     "loadingStation": "Ladestation",
     "name": "Name",
+    "house": "Haus",
+    "flat": "Wohnung",
+    "room": "Raum",
+    "fieldValue": "Zählerwert",
     "rooms": "Räume",
     "fields": "Zähler",
     "selectedRoom": "Ausgewählter Raum",
@@ -70,7 +74,8 @@
     "roomNameEmpty": "Raumname leer!",
     "deleteRoomConfirmation": "Raum '{0}' wirklich löschen?",
     "deleteFieldConfirmation": "Zähler '{0}' wirklich löschen?",
-    "databaseError": "Datenbankfehler"
+    "databaseError": "Datenbankfehler",
+    "fieldSaved": "Wert: '{valueNumber}' im Zähler '{valueFieldName}' gespeichert."
   },
   "loadingStation": {
     "carport": "Carport",

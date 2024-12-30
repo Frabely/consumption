@@ -50,3 +50,14 @@
     -webkit-user-select: none;
     -ms-user-select: none;
 }
+
+.input[type=number]::-webkit-inner-spin-button,
+.input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Für Firefox */
+.input[type=number] {
+    -moz-appearance: textfield;
+}

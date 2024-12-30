@@ -145,3 +145,9 @@ export type ReloadNeeded = {
     isReloadDataSetNeeded: boolean,
     isReloadLoadingStationsNeeded: boolean,
 }
+
+export type DownloadBuildingCsvDto = {
+    key: string,
+    day: Date,
+    value: number
+}

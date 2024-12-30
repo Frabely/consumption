@@ -5,7 +5,8 @@ export enum ModalState {
     DownloadCsv,
     AddFloor,
     ChangeFloorFields,
-    AddFloorData
+    AddFloorData,
+    DownloadBuildingCsv,
 }
 
 export enum Role {

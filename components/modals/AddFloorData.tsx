@@ -13,6 +13,7 @@ import FieldInput from "@/components/layout/FieldInput";
 import {getFieldValues, setFieldValue} from "@/firebase/functions";
 import {RootState} from "@/store/store";
 import CustomSelect from "@/components/layout/CustomSelect";
+import {ModalState} from "@/constants/enums";
 
 export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) {
     const state: RootState = useSelector((state: RootState) => state)
@@ -25,6 +26,7 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
         year: year.toString(),
         month: monthString
     })
+    const cleanInputRegEx: RegExp = /[^0-9.]|\.(?=.*\.)/g
 
     useEffect(() => {
         console.log(flatName)
@@ -51,7 +53,7 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
     }, [currentDateValue, currentDateValue, currentRoom.name, flatName, state.currentHouse.name]);
 
     const onFieldPairValueChange = (value: string, key: string) => {
-        const currentFieldValue: number = parseInt(value.replace(/\D/g, ''))
+        const currentFieldValue: number = parseFloat(value.replace(cleanInputRegEx, ''))
         const fields: NumberDictionary = {...currentRoom.fields}
         fields[`${key}`] = currentFieldValue
         const newRoom: Room = {name: currentRoom.name, fields: fields}
@@ -68,7 +70,11 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
             currentDateValue.month,
             currentRoom.fields[`${key}`])
             .then(() => {
-                alert("saved")
+                // @ts-ignore
+                const value = currentRoom.fields[`${key}`]
+                alert(de.messages.fieldSaved
+                    .replace("{valueFieldName}", key)
+                    .replace("{valueNumber}", value ? value.toString() : "null"))
             })
     }
 
@@ -87,7 +93,7 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
     }
 
     return (
-        <Modal formName={'addFloorData'}>
+        <Modal formName={`${ModalState.AddFloorData}`}>
             <div className={styles.mainContainer}
                  style={state.dimension.isHorizontal ? {height: '100%'} : {height: '75dvh'}}>
                 <h1 className={styles.flatName}>{flatName}</h1>

@@ -4,19 +4,16 @@ import Modal from "@/components/layout/Modal";
 import {ChangeEvent, useState} from "react";
 import deJson from '../../constants/de.json'
 import {useDispatch, useSelector} from "react-redux";
-import {getFullDataSet} from "@/firebase/functions";
-import {DataSet, Language} from "@/constants/types";
+import {getFieldValuesForExport} from "@/firebase/functions";
+import {DownloadBuildingCsvDto} from "@/constants/types";
 import {RootState} from "@/store/store";
-import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import CustomButton from "@/components/layout/CustomButton";
 import {ModalState} from "@/constants/enums";
 
-export default function DownloadCsv({}: DownloadCsvProps) {
+export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useDispatch()
-    const de: Language = deJson
-    //Todo create date input
     const date = new Date()
     const year = date.getFullYear()
     const month = date.getMonth() + 1
@@ -41,57 +38,48 @@ export default function DownloadCsv({}: DownloadCsvProps) {
         }
     }
 
-    const dataSetArrayToTxt = (dataSetArray: DataSet[]): string => {
+    const fieldsToTxt = (fields: DownloadBuildingCsvDto[]): string => {
         let txtContent: string =
-            `${de.dataSet.loadingStationId};${de.dataSet.date};` +
-            `${de.dataSet.time};${de.dataSet.utcDate};${de.dataSet.utcTime};${de.dataSet.kilometer};` +
-            `${de.dataSet.power};${de.dataSet.name}\n`
-        dataSetArray.forEach((dataSet: DataSet) => {
-            const yearMonthDay: string = getDateString(dataSet.date).split(' ')[0]
-            const hoursMinutes: string = getDateString(dataSet.date).split(' ')[1]
-            const utcYearMonthDay: string = getUTCDateString(dataSet.date).split(' ')[0]
-            const utcHoursMinutes: string = getUTCDateString(dataSet.date).split(' ')[1]
-            txtContent +=
-                `${dataSet.loadingStation.id};${yearMonthDay};` +
-                `${hoursMinutes};${utcYearMonthDay};${utcHoursMinutes};${dataSet.kilometer};` +
-                `${dataSet.power.toString().replace('.', ',')};${dataSet.name} \n`
+            `${deJson.displayLabels.house};${deJson.displayLabels.flat};` +
+            `${deJson.displayLabels.room};${deJson.inputLabels.fieldName};${deJson.displayLabels.fieldValue}\n`
+        fields.forEach((field) => {
+            txtContent += `${field.key.replaceAll('#', ';')};${field.value};${field.day.getUTCDate().toString()};\n`
         })
         return txtContent
     }
 
     const onDownloadCsvClickHandler = () => {
         dispatch(setModalStateNone())
-        if (state.currentCar.name) {
-            getFullDataSet(state.currentCar.name, {
-                year: currentDateValue.year,
-                month: currentDateValue.month
-            }).then((dataSetArray) => {
-                if (dataSetArray) {
-                    const blob = new Blob([dataSetArrayToTxt(dataSetArray)], {type: "text/plain"});
+        if (state.currentHouse.name) {
+            getFieldValuesForExport(currentDateValue.year, currentDateValue.month, )
+                .then((fields) => {
+                if (fields.length > 0) {
+                    const blob = new Blob([fieldsToTxt(fields)], {type: "text/plain"});
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement("a");
                     link.download = `${currentDateValue.year}-${currentDateValue.month}.csv`;
                     link.href = url;
                     link.click();
                 } else {
-                    alert(`${de.messages.noDataForFollowMonthAndYearAvailable}: ${currentDateValue.year} ${currentDateValue.month}`)
+                    alert(`${deJson.messages.noDataForFollowMonthAndYearAvailable}: ${currentDateValue.year} ${currentDateValue.month}`)
                 }
             })
         }
     }
+
     return (
-        <Modal formName={`${ModalState.DownloadCsv}`}>
+        <Modal formName={`${ModalState.DownloadBuildingCsv}`}>
             <div className={styles.mainContainer}>
                 <input
                     onChange={onDateInputChangeHandler}
                     value={`${currentDateValue.year}-${currentDateValue.month}`}
                     className={globalStyles.monthPicker}
                     type={"month"}/>
-                <CustomButton onClick={onDownloadCsvClickHandler} label={de.buttonLabels.downloadCsv}/>
-                <CustomButton onClick={onAbortClickHandler} label={de.buttonLabels.abort}/>
+                <CustomButton onClick={onDownloadCsvClickHandler} label={deJson.buttonLabels.downloadCsv}/>
+                <CustomButton onClick={onAbortClickHandler} label={deJson.buttonLabels.abort}/>
             </div>
         </Modal>
     )
 }
 
-export type DownloadCsvProps = {}
+export type DownloadBuildingCsvProps = {}

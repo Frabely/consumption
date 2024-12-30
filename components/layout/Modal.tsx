@@ -9,7 +9,7 @@ import {setModalStateNone} from "@/store/reducer/modalState";
 import {ReactNode} from "react";
 
 export default function Modal({formName, children}: ModalProps) {
-    const state: RootState = useSelector((state: RootState) => state)
+    const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
     const dispatch = useDispatch()
 
     const onCloseClickHandler = async () => {
@@ -17,7 +17,7 @@ export default function Modal({formName, children}: ModalProps) {
     }
 
     return (
-        <div className={styles.mainContainer} style={state.dimension.isHorizontal ? {marginTop: '0'} : {}}>
+        <div className={styles.mainContainer} style={isHorizontal ? {marginTop: '0'} : {}}>
             <form name={formName} className={styles.mainInnerContainer}>
                 <div className={styles.header}>
                     <FontAwesomeIcon

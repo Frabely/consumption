@@ -3,20 +3,21 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/store/store";
 import globalMenuStyles from "@/styles/layout/menus/globalMenu.module.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEllipsis, faPowerOff, faXmark, faHouse} from "@fortawesome/free-solid-svg-icons";
+import {faEllipsis, faPowerOff, faXmark, faHouse, faFileCsv} from "@fortawesome/free-solid-svg-icons";
 import {setCurrentUser} from "@/store/reducer/currentUser";
-import {setModalStateNone} from "@/store/reducer/modalState";
+import {setModalState, setModalStateNone} from "@/store/reducer/modalState";
 import {setCurrentHouse} from "@/store/reducer/currentHouse";
 import CustomSelect from "@/components/layout/CustomSelect";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import {EMPTY_USER} from "@/constants/constantData";
 import {House} from "@/constants/types";
 import {setPage} from "@/store/reducer/currentPage";
-import {Page} from "@/constants/enums";
+import {ModalState, Page} from "@/constants/enums";
 
 export default function MenuBuilding({houses}: MenuBuildingProps) {
     const dispatch = useDispatch()
-    const state: RootState = useSelector((state: RootState) => state)
+    const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
+    const currentHouseName: string | undefined = useSelector((state: RootState) => state.currentHouse.name)
     const [menuOpen, setMenuOpen] = useState(false)
 
     const onLogoutHandler = () => {
@@ -35,9 +36,14 @@ export default function MenuBuilding({houses}: MenuBuildingProps) {
         dispatch(setCurrentHouse(houses.filter(house => house.name === value)[0]))
     }
 
+    const onExportAsCsvClickHandler = () => {
+        dispatch(setModalStateNone())
+        dispatch(setModalState(ModalState.DownloadBuildingCsv))
+    }
+
     return (
         <>
-            {state.dimension.isHorizontal ?
+            {isHorizontal ?
                 <div className={globalMenuStyles.mainContainerHor}>
                     <button
                         className={globalMenuStyles.button}
@@ -50,9 +56,12 @@ export default function MenuBuilding({houses}: MenuBuildingProps) {
                             <div onClick={onLogoutHandler} className={globalMenuStyles.button}>
                                 <FontAwesomeIcon icon={faPowerOff}/>
                             </div>
+                            <button onClick={onExportAsCsvClickHandler} className={globalMenuStyles.button}>
+                                <FontAwesomeIcon icon={faFileCsv}/>
+                            </button>
                             <CustomSelect
                                 onChange={onHouseChangeHandler}
-                                defaultValue={state.currentHouse.name}
+                                defaultValue={currentHouseName}
                                 options={houses.map((house) => house.name)}
                                 direction={"up"}
                             />
@@ -76,8 +85,11 @@ export default function MenuBuilding({houses}: MenuBuildingProps) {
                         </button>
                         <CustomSelect
                             onChange={onHouseChangeHandler}
-                            defaultValue={state.currentHouse.name}
+                            defaultValue={currentHouseName}
                             options={houses.map((house) => house.name)}/>
+                        <button onClick={onExportAsCsvClickHandler} className={globalMenuStyles.menuItem}>
+                            <FontAwesomeIcon icon={faFileCsv}/>
+                        </button>
                         <button
                             onClick={onLogoutHandler}
                             className={globalMenuStyles.menuItem}

@@ -26,7 +26,7 @@ import {
 import {
     Car,
     DataSet,
-    DataSetNoId,
+    DataSetNoId, DownloadBuildingCsvDto,
     Flat,
     House,
     LoadingStation,
@@ -295,7 +295,17 @@ export const setFieldValue = async (
     try {
         const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
         const key: string = `${houseName}#${flatName}#${roomName}#${fieldName}`
-        await setDoc(dateCollectionRef, {[`${key}`]: fieldValueToSet}, {merge: true});
+        const now = new Date();
+        const utcDate = new Date(Date.UTC(
+            parseInt(year),
+            parseInt(month)-1,
+            now.getUTCDate(),
+            0,
+            0,
+            0,
+            0
+        ));
+        await setDoc(dateCollectionRef, {[`${key}`]: {value: fieldValueToSet, day: Timestamp.fromDate(utcDate)}}, {merge: true});
     } catch (error) {
         console.error(error);
     }
@@ -334,7 +344,7 @@ export const getFieldValues = async (
                 }
             }
             if (isMatch) {
-                result[key] = !isNaN(parseInt(value)) ? parseInt(value) : null;
+                result[key] = !isNaN(parseFloat(value.value)) ? parseFloat(value.value) : null;
             }
 
         }
@@ -343,6 +353,28 @@ export const getFieldValues = async (
     } catch (error) {
         console.error(error);
         return {} as NumberDictionary
+    }
+}
+
+export const getFieldValuesForExport = async (year: string, month: string) => {
+    const downloadBuildingCsvDto: DownloadBuildingCsvDto[] = []
+    try {
+        const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
+        const allFields = await getDoc(dateCollectionRef);
+        const fields = allFields.data()
+        if (!fields) {
+            return downloadBuildingCsvDto
+        }
+
+        for (const [key, value] of Object.entries(fields))
+        {
+            downloadBuildingCsvDto.push({key, day: value.day.toDate(), value: value.value})
+        }
+        return downloadBuildingCsvDto
+    }
+    catch (error) {
+        console.error(error);
+        return downloadBuildingCsvDto
     }
 }
 
