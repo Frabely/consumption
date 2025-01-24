@@ -25,7 +25,8 @@
     "none": "-",
     "loading": "Lädt",
     "backToLogin": "Zurück zum Login",
-    "back": "Zurück"
+    "back": "Zurück",
+    "enterNewName": "Neuen Name eingeben"
   },
   "inputLabels": {
     "date": "Datum",

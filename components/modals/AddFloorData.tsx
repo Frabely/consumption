@@ -3,7 +3,7 @@
 import de from '../../constants/de.json'
 import {useSelector} from "react-redux";
 import Modal from "@/components/layout/Modal";
-import {NumberDictionary, Room} from "@/constants/types";
+import {FieldValue, Flat, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {ChangeEvent, CSSProperties, useEffect, useState} from "react";
@@ -15,72 +15,80 @@ import {RootState} from "@/store/store";
 import CustomSelect from "@/components/layout/CustomSelect";
 import {ModalState} from "@/constants/enums";
 
-export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) {
+export default function AddFloorData({flat}: AddFloorDataModalProps) {
+
+    const filterFieldValues = (flat: Flat, currentRoomId: string, allFieldValues: FieldValue[]) => {
+        const currentFieldValues: FieldValue[] = []
+        flat.rooms.filter(room => currentRoomId === room.id)[0].fields.map((field) => {
+            const currentFieldValue: FieldValue = {field}
+            allFieldValues.map((fieldValue) => {
+                if (fieldValue.field.id === field.id)
+                    currentFieldValue.value = fieldValue.value;
+            })
+            currentFieldValues.push(currentFieldValue)
+        })
+        return currentFieldValues
+    }
+
     const state: RootState = useSelector((state: RootState) => state)
     const date = new Date()
     const year = date.getFullYear()
     const month = date.getMonth() + 1
     const monthString: string = month < 10 ? `0` + month : month.toString()
-    const [currentRoom, setCurrentRoom] = useState<Room>(rooms[0])
+    const [currentRoom, setCurrentRoom] = useState<Room>(flat.rooms[0])
     const [currentDateValue, setCurrentDateValue] = useState({
         year: year.toString(),
         month: monthString
     })
     const cleanInputRegEx: RegExp = /[^0-9.]|\.(?=.*\.)/g
+    const [allFieldValues, setAllFieldValues] = useState<FieldValue[]>([])
+    const [currentFieldValues, setCurrentFieldValues] = useState<FieldValue[]>([])
 
     useEffect(() => {
-        console.log(flatName)
         getFieldValues(
             currentDateValue.year,
             currentDateValue.month,
-            state.currentHouse.name,
-            flatName,
-            currentRoom.name).then((result) => {
+            flat).then((result) => {
             if (result) {
-                const fields: NumberDictionary = {...currentRoom.fields}
-                Object.entries(fields).map(([key]) => {
-                    fields[`${key}`] = null
-                })
-                Object.entries(result).map(([key, value]) => {
-                    const newKey = key.split("#").pop();
-                    fields[`${newKey}`] = value
-                })
-                const newRoom: Room = {name: currentRoom.name, fields: fields}
-                setCurrentRoom(newRoom)
+                setAllFieldValues(result)
+                setCurrentFieldValues(filterFieldValues(flat, currentRoom.id, result))
+            }
+        }).catch((error) => {
+            console.log(error.message)
+        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentDateValue]);
+
+    const onFieldPairValueChange = (value: string, id: string) => {
+        const fieldValues = [...currentFieldValues]
+        fieldValues.map((fieldValue) => {
+            if (fieldValue.field.id === id) {
+                fieldValue.value = parseFloat(value.replace(cleanInputRegEx, ''))
             }
         })
-        // eslint-disable-next-line
-    }, [currentDateValue, currentDateValue, currentRoom.name, flatName, state.currentHouse.name]);
-
-    const onFieldPairValueChange = (value: string, key: string) => {
-        const currentFieldValue: number = parseFloat(value.replace(cleanInputRegEx, ''))
-        const fields: NumberDictionary = {...currentRoom.fields}
-        fields[`${key}`] = currentFieldValue
-        const newRoom: Room = {name: currentRoom.name, fields: fields}
-        setCurrentRoom(newRoom)
+        setCurrentFieldValues(fieldValues)
     }
 
-    const onSaveFieldClickHandler = async (key: string) => {
+    const onSaveFieldClickHandler = async (fieldValue: FieldValue) => {
         setFieldValue(
             state.currentHouse.name,
-            flatName,
-            currentRoom.name,
-            key,
+            flat,
+            currentRoom,
+            fieldValue.field,
             currentDateValue.year,
             currentDateValue.month,
-            currentRoom.fields[`${key}`])
+            fieldValue.value)
             .then(() => {
-                // @ts-ignore
-                const value = currentRoom.fields[`${key}`]
                 alert(de.messages.fieldSaved
-                    .replace("{valueFieldName}", key)
-                    .replace("{valueNumber}", value ? value.toString() : "null"))
+                    .replace("{valueFieldName}", fieldValue.field.name)
+                    .replace("{valueNumber}", fieldValue.value ? fieldValue.value.toString() : "undefined"))
             })
     }
 
     const onRoomChangeHandler = (value: string) => {
-        const selectedRoom = rooms.filter(room => room.name === value)[0]
-        setCurrentRoom(selectedRoom)
+        const changedRoom = flat.rooms.filter(room => room.name === value)[0]
+        setCurrentRoom(changedRoom)
+        setCurrentFieldValues(filterFieldValues(flat, changedRoom.id, allFieldValues))
     }
 
     const onDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -96,33 +104,33 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
         <Modal formName={`${ModalState.AddFloorData}`}>
             <div className={styles.mainContainer}
                  style={state.dimension.isHorizontal ? {height: '100%'} : {height: '75dvh'}}>
-                <h1 className={styles.flatName}>{flatName}</h1>
+                <h1 className={styles.flatName}>{flat.name}</h1>
                 <input onChange={onDateInputChangeHandler} value={`${currentDateValue.year}-${currentDateValue.month}`}
                        className={globalStyles.monthPicker} type={"month"}/>
                 <CustomSelect
                     onChange={onRoomChangeHandler}
                     defaultValue={currentRoom.name}
-                    options={rooms.map((room) => room.name)}
+                    options={flat.rooms.map((room) => room.name)}
                     style={{width: "100%"}}
                 />
-                {Object.entries(currentRoom.fields).map(([key, value]: [string, number | null], index: number) => {
+                {currentFieldValues.map((fieldValue, index: number) => {
                         return <div className={styles.inputContainer} key={index}>
-                            <p className={styles.fieldLabel}>{key}:</p>
+                            <p className={styles.fieldLabel}>{fieldValue.field.name}:</p>
                             <FieldInput
-                                value={value?.toString()}
+                                value={fieldValue.value?.toString()}
                                 onChange={(event) => {
-                                    onFieldPairValueChange(event.target.value, key)
+                                    onFieldPairValueChange(event.target.value, fieldValue.field.id)
                                 }}
                                 placeholder={de.inputLabels.placeholderValue}
                             />
                             <div onClick={() => {
-                                if (value && value > 0)
-                                    onSaveFieldClickHandler(key).catch(error => console.log(error))
+                                if (fieldValue.value && fieldValue.value > 0)
+                                    onSaveFieldClickHandler(fieldValue).catch(error => console.log(error))
                             }}>
                                 <FontAwesomeIcon
                                     style={
                                         {
-                                            '--text-color': value && value > 0 ?
+                                            '--text-color': fieldValue.value && fieldValue.value > 0 ?
                                                 "var(--text-color)" :
                                                 "var(--text-color-muted)"
                                         } as CSSProperties
@@ -138,6 +146,5 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
 }
 
 export type AddFloorDataModalProps = {
-    rooms: Room[],
-    flatName: string
+    flat: Flat
 }

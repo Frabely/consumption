@@ -8,7 +8,7 @@ import styles from "@/styles/pages/BuildingConsumption.module.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAdd} from "@fortawesome/free-solid-svg-icons";
 import de from "@/constants/de.json";
-import {Flat, House, Room} from "@/constants/types";
+import {Flat, House} from "@/constants/types";
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
 import {useAppDispatch} from "@/constants/hooks";
@@ -21,8 +21,7 @@ import {setPage} from "@/store/reducer/currentPage";
 import DownloadBuildingCsv from "@/components/modals/DownloadBuildingCsv";
 
 export default function BuildingConsumption({}: BuildingConsumptionProps) {
-    const [flatName, setFlatName] = useState("")
-    const [currentRooms, setCurrentRooms] = useState<Room[]>([])
+    const [currentFlat, setCurrentFlat] = useState<Flat | undefined>()
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useAppDispatch()
     const touchTimer = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -47,8 +46,7 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
     });
 
     const onTouchStartHandler = (flat: Flat) => {
-        setCurrentRooms(flat.rooms)
-        setFlatName(flat.name)
+        setCurrentFlat({...flat})
         touchTimer.current = setTimeout(() => {
             setIsLongTouchTriggered(true)
             onFloorClickHandler(true);
@@ -86,14 +84,14 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                                 <Loading/> :
                                 <>
                                     <MenuBuilding houses={houseNames}/>
-                                    {state.modalState === ModalState.AddFloorData ? (
-                                        <AddFloorData flatName={flatName} rooms={currentRooms}/>
+                                    {state.modalState === ModalState.AddFloorData && currentFlat ? (
+                                        <AddFloorData flat={currentFlat}/>
                                     ) : null}
                                     {state.modalState === ModalState.AddFloor ? (
-                                        <AddFloor/>
+                                        <AddFloor newFlatPosition={state.currentHouse.flats.length}/>
                                     ) : null}
                                     {state.modalState === ModalState.ChangeFloorFields ? (
-                                        <AddFloor changingFloorData={{flatName, rooms: currentRooms}}/>
+                                        <AddFloor currentFlat={currentFlat}/>
                                     ) : null}
                                     {state.modalState === ModalState.DownloadBuildingCsv ? (
                                         <DownloadBuildingCsv/>

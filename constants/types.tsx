@@ -115,28 +115,46 @@ export type Car = {
 }
 
 export type House = {
+    id: string,
     name: string,
-    flats: Flat[]
+    flats: Flat[],
+    position?: number
 }
 
 export type Flat = {
+    id: string,
     name: string,
-    rooms: Room[]
+    rooms: Room[],
+    position?: number
 }
 
 export type Room = {
+    id: string,
     name: string,
-    fields: NumberDictionary
+    fields: Field[],
+    position?: number
 }
 
-export type NumberDictionary = {
-    [index: string]: number | null;
+export type Field = {
+    id: string,
+    name: string,
+    position?: number
 }
 
-export type ChangingFloor = {
-    flatName: string
-    rooms: Room[],
+export type FieldValue = {
+    field: Field,
+    value?: number,
 }
+
+export type ChangeName = {
+    oldValue: {roomName: string, field: Field} | Room
+    newValue?: {roomName: string, field: Field} | Room
+    nameValidationFunction: (input: string) => boolean
+}
+
+// export type NumberDictionary = {
+//     [index: string]: number | null;
+// }
 
 export type ReloadNeeded = {
     isReloadHousesNeeded: boolean,
