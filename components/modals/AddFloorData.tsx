@@ -20,7 +20,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const filterFieldValues = (flat: Flat, currentRoomId: string, allFieldValues: FieldValue[]) => {
         const currentFieldValues: FieldValue[] = []
         flat.rooms.filter(room => currentRoomId === room.id)[0].fields.map((field) => {
-            const currentFieldValue: FieldValue = {field}
+            let currentFieldValue: FieldValue = {field}
             allFieldValues.map((fieldValue) => {
                 if (fieldValue.field.id === field.id)
                     currentFieldValue.value = fieldValue.value;

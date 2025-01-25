@@ -53,7 +53,9 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
                 `${fieldValueForExport.room.name};` +
                 `${fieldValueForExport.fieldValue.field.name};` +
                 `${fieldValueForExport.fieldValue.value};` +
-                `${fieldValueForExport.fieldValue.day.getUTCDate().toString()};\n`
+                `${fieldValueForExport.fieldValue.day ? 
+                    fieldValueForExport.fieldValue.day.getUTCDate().toString() : 
+                    "-"};\n`
         })
         return txtContent
     }

@@ -82,12 +82,7 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
             position: newFields.length
         }
         newFields.push(newField)
-        const newRoom: Room = {
-            id: currentSelectedRoom.id,
-            name: currentSelectedRoom.name,
-            fields: newFields,
-            position: currentSelectedRoom.position
-        }
+        const newRoom: Room = {...currentSelectedRoom, fields: newFields}
         const newRooms = rooms.map((currentRoom) => {
             if (currentRoom.name !== currentSelectedRoom.name) {
                 return currentRoom
@@ -146,7 +141,6 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         const oldField: Field = newFields[index - 1]
         newFields[index - 1] = {...currentField, position: oldField.position}
         newFields[index] = {...oldField, position: currentField.position}
-        newRooms[indexCurrentRoom].fields = newFields
         newRooms[indexCurrentRoom] = {
             ...newRooms[indexCurrentRoom],
             fields: newFields,
@@ -172,12 +166,7 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         if (window.confirm(de.messages.deleteRoomConfirmation.replace("{0}", room.name))) {
             setRooms(rooms.filter((currentRoom) => currentRoom.name !== room.name)
                 .map((room, index) => {
-                    return {
-                        id: room.id, name:
-                        room.name,
-                        fields: room.fields,
-                        position: index
-                    }
+                    return {...room, position: index}
                 }))
             if (currentSelectedRoom && room.name === currentSelectedRoom.name)
                 setCurrentSelectedRoom(undefined)
@@ -189,17 +178,13 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
             let newFields = [...room.fields]
             newFields = newFields.filter((field) => field.name !== currentField.name)
                 .map((field, index) => {
-                    return {
-                        id: field.id,
-                        name: field.name,
-                        position: index
-                    }
+                    return {...field, position: index}
                 })
             const newRooms = rooms.map((currentRoom) => {
                 if (currentRoom.name !== room.name) {
                     return currentRoom
                 }
-                return {id: room.id, name: room.name, fields: newFields, position: room.position}
+                return {...room, fields: newFields}
             })
             setRooms(newRooms)
         }

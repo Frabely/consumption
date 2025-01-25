@@ -143,7 +143,7 @@ export type Field = {
 
 export type FieldValue = {
     field: Field,
-    day: Date,
+    day?: Date,
     value?: number,
 }
 
