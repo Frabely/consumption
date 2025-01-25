@@ -466,6 +466,7 @@ export const getFieldValues = async (
                         name: fieldDoc.get("name"),
                         position: fieldDoc.get("position"),
                     },
+                    day: fieldValue.get("day").toDate(),
                     value: fieldValue.get("value")
                 })
         }
@@ -477,24 +478,34 @@ export const getFieldValues = async (
 }
 
 export const getFieldValuesForExport = async (year: string, month: string) => {
-    alert("Method not implemented.");
-    // const downloadBuildingCsvDto: DownloadBuildingCsvDto[] = []
-    // try {
-    //     const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
-    //     const allFields = await getDoc(dateCollectionRef);
-    //     const fields = allFields.data()
-    //     if (!fields) {
-    //         return downloadBuildingCsvDto
-    //     }
-    //
-    //     for (const [key, value] of Object.entries(fields)) {
-    //         downloadBuildingCsvDto.push({key, day: value.day.toDate(), value: value.value})
-    //     }
-    //     return downloadBuildingCsvDto
-    // } catch (error) {
-    //     console.error(error);
-    //     return downloadBuildingCsvDto
-    // }
+    try {
+        const houses: House[] = await getHouses()
+        const fieldValues: FieldValue[] = await getFieldValues(year, month)
+        const resultDownloadBuildingCsvDto: DownloadBuildingCsvDto[] = []
+        houses.map((house) => {
+            house.flats.map((flat) => {
+                flat.rooms.map((room) => {
+                    room.fields.map((field) => {
+                        fieldValues.map((fieldValue) => {
+                            if (field.id === fieldValue.field.id)
+                                resultDownloadBuildingCsvDto.push(
+                                    {
+                                        house,
+                                        flat,
+                                        room,
+                                        fieldValue: fieldValue,
+                                    })
+                        })
+                    })
+                })
+            })
+        })
+
+        return resultDownloadBuildingCsvDto
+    } catch (error) {
+        console.error(error);
+        return []
+    }
 }
 
 export const updateCarKilometer = async (carName: string, kilometer: number, prevKilometer?: number) => {

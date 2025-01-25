@@ -143,18 +143,9 @@ export type Field = {
 
 export type FieldValue = {
     field: Field,
+    day: Date,
     value?: number,
 }
-
-export type ChangeName = {
-    oldValue: {roomName: string, field: Field} | Room
-    newValue?: {roomName: string, field: Field} | Room
-    nameValidationFunction: (input: string) => boolean
-}
-
-// export type NumberDictionary = {
-//     [index: string]: number | null;
-// }
 
 export type ReloadNeeded = {
     isReloadHousesNeeded: boolean,
@@ -165,7 +156,8 @@ export type ReloadNeeded = {
 }
 
 export type DownloadBuildingCsvDto = {
-    key: string,
-    day: Date,
-    value: number
+    house: House,
+    flat: Flat,
+    room: Room,
+    fieldValue: FieldValue
 }

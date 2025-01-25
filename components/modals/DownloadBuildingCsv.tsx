@@ -38,12 +38,22 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
         }
     }
 
-    const fieldsToTxt = (fields: DownloadBuildingCsvDto[]): string => {
+    const fieldsToTxt = (fieldValuesForExport: DownloadBuildingCsvDto[]): string => {
         let txtContent: string =
-            `${deJson.displayLabels.house};${deJson.displayLabels.flat};` +
-            `${deJson.displayLabels.room};${deJson.inputLabels.fieldName};${deJson.displayLabels.fieldValue}\n`
-        fields.forEach((field) => {
-            txtContent += `${field.key.replaceAll('#', ';')};${field.value};${field.day.getUTCDate().toString()};\n`
+            `${deJson.displayLabels.house};` +
+            `${deJson.displayLabels.flat};` +
+            `${deJson.displayLabels.room};` +
+            `${deJson.inputLabels.fieldName};` +
+            `${deJson.displayLabels.fieldValue};` +
+            `${deJson.displayLabels.day}\n`
+        fieldValuesForExport.forEach((fieldValueForExport) => {
+            txtContent +=
+                `${fieldValueForExport.house.name};` +
+                `${fieldValueForExport.flat.name};` +
+                `${fieldValueForExport.room.name};` +
+                `${fieldValueForExport.fieldValue.field.name};` +
+                `${fieldValueForExport.fieldValue.value};` +
+                `${fieldValueForExport.fieldValue.day.getUTCDate().toString()};\n`
         })
         return txtContent
     }
@@ -52,9 +62,9 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
         dispatch(setModalStateNone())
         if (state.currentHouse.name) {
             getFieldValuesForExport(currentDateValue.year, currentDateValue.month, )
-                .then((fields) => {
-                if (fields.length > 0) {
-                    const blob = new Blob([fieldsToTxt(fields)], {type: "text/plain"});
+                .then((fieldValuesForExport) => {
+                if (fieldValuesForExport.length > 0) {
+                    const blob = new Blob([fieldsToTxt(fieldValuesForExport)], {type: "text/plain"});
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement("a");
                     link.download = `${currentDateValue.year}-${currentDateValue.month}.csv`;
