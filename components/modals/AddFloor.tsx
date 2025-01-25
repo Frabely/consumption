@@ -7,7 +7,7 @@ import de from "@/constants/de.json";
 import {Field, Flat, Room} from "@/constants/types";
 import {createFlat, updateFlat} from "@/firebase/functions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAdd, faMinus} from "@fortawesome/free-solid-svg-icons";
+import {faAdd, faMinus, faAnglesUp, faAnglesDown} from "@fortawesome/free-solid-svg-icons";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
 import {setIsLoading} from "@/store/reducer/isLoading";
@@ -22,6 +22,8 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
     const [rooms, setRooms] = useState<Room[]>(currentFlat && currentFlat?.rooms ? currentFlat.rooms : [])
     const [fieldNameInput, setFieldNameInput] = useState("")
     const [currentSelectedRoom, setCurrentSelectedRoom] = useState<Room | undefined>(currentFlat?.rooms[0])
+
+    console.log(rooms)
 
     const onAddDataClickHandler = async (event: any) => {
         dispatch(setIsLoading(true))
@@ -79,7 +81,8 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         const newField: Field = {
             id: "",
             name: fieldNameInput,
-            position: newFields.length}
+            position: newFields.length
+        }
         newFields.push(newField)
         const newRoom: Room = {
             id: currentSelectedRoom.id,
@@ -100,9 +103,55 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
 
     const onRoomNameChange = (event: any, indexCurrentRoom: number) => {
         const newRooms = [...rooms]
-        newRooms[indexCurrentRoom] = {id: rooms[indexCurrentRoom].id, name: event.target.value, fields: rooms[indexCurrentRoom].fields}
+        newRooms[indexCurrentRoom] = {
+            id: rooms[indexCurrentRoom].id,
+            name: event.target.value,
+            fields: rooms[indexCurrentRoom].fields
+        }
         setRooms(newRooms)
         setCurrentSelectedRoom(newRooms[indexCurrentRoom])
+    }
+
+    const onRoomArrowUpClickHandler = (room: Room) => {
+        let newRooms = [...rooms]
+        const indexCurrentRoom = newRooms.indexOf(room)
+        const oldRoom: Room = newRooms[indexCurrentRoom - 1]
+        newRooms[indexCurrentRoom - 1] = {...room, position: oldRoom.position}
+        newRooms[indexCurrentRoom] = {...oldRoom, position: room.position}
+        setRooms(newRooms)
+    }
+
+    const onRoomArrowDownClickHandler = (room: Room) => {
+        let newRooms = [...rooms]
+        const indexCurrentRoom = newRooms.indexOf(room)
+        const oldRoom: Room = newRooms[indexCurrentRoom + 1]
+        newRooms[indexCurrentRoom + 1] = {...room, position: oldRoom.position}
+        newRooms[indexCurrentRoom] = {...oldRoom, position: room.position}
+        setRooms(newRooms)
+    }
+
+    const onFieldArrowUpClickHandler = (currentRoom: Room, currentField: Field) => {
+        const newRooms = [...rooms]
+        const indexCurrentRoom = newRooms.indexOf(currentRoom)
+        const newFields = newRooms[indexCurrentRoom].fields
+        const indexCurrentField = newFields.indexOf(currentField)
+        const oldField: Field = newFields[indexCurrentField - 1]
+        newFields[indexCurrentField - 1] = {...currentField, position: oldField.position}
+        newFields[indexCurrentField] = {...oldField, position: currentField.position}
+        newRooms[indexCurrentRoom].fields = newFields
+        setRooms(newRooms)
+    }
+
+    const onFieldArrowDownClickHandler = (currentRoom: Room, currentField: Field) => {
+        const newRooms = [...rooms]
+        const indexCurrentRoom = newRooms.indexOf(currentRoom)
+        const newFields = newRooms[indexCurrentRoom].fields
+        const indexCurrentField = newFields.indexOf(currentField)
+        const oldField: Field = newFields[indexCurrentField + 1]
+        newFields[indexCurrentField + 1] = {...currentField, position: oldField.position}
+        newFields[indexCurrentField] = {...oldField, position: currentField.position}
+        newRooms[indexCurrentRoom].fields = newFields
+        setRooms(newRooms)
     }
 
     const onFieldNameChange = (event: any, indexCurrentRoom: number, indexCurrentField: number) => {
@@ -131,7 +180,7 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
                         position: index
                     }
                 }))
-            if(currentSelectedRoom && room.name === currentSelectedRoom.name)
+            if (currentSelectedRoom && room.name === currentSelectedRoom.name)
                 setCurrentSelectedRoom(undefined)
         }
     }
@@ -141,12 +190,12 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
             let newFields = [...room.fields]
             newFields = newFields.filter((field) => field.name !== currentField.name)
                 .map((field, index) => {
-                return {
-                    id: field.id,
-                    name: field.name,
-                    position: index
-                }
-            })
+                    return {
+                        id: field.id,
+                        name: field.name,
+                        position: index
+                    }
+                })
             const newRooms = rooms.map((currentRoom) => {
                 if (currentRoom.name !== room.name) {
                     return currentRoom
@@ -200,6 +249,22 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
                                                 className={styles.roomInput}
 
                                             />
+                                            {index === 0 ? null :
+                                                <FontAwesomeIcon
+                                                    onClick={() => {
+                                                        onRoomArrowUpClickHandler(room)
+                                                    }}
+                                                    className={styles.arrowButton}
+                                                    icon={faAnglesUp}/>
+                                            }
+                                            {index >= rooms.length - 1 ? null :
+                                                <FontAwesomeIcon
+                                                    onClick={() => {
+                                                        onRoomArrowDownClickHandler(room)
+                                                    }}
+                                                    className={styles.arrowButton}
+                                                    icon={faAnglesDown}/>
+                                            }
                                             <FontAwesomeIcon
                                                 onClick={() => {
                                                     onRemoveRoomClickHandler(room)
@@ -231,6 +296,22 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
                                                         key={"_" + indexFields}
                                                         className={styles.roomField}
                                                     />
+                                                    {indexFields === 0 ? null :
+                                                        <FontAwesomeIcon
+                                                            onClick={() => {
+                                                                onFieldArrowUpClickHandler(room, field)
+                                                            }}
+                                                            className={styles.arrowButton}
+                                                            icon={faAnglesUp}/>
+                                                    }
+                                                    {indexFields >= room.fields.length - 1 ? null :
+                                                        <FontAwesomeIcon
+                                                            onClick={() => {
+                                                                onFieldArrowDownClickHandler(room, field)
+                                                            }}
+                                                            className={styles.arrowButton}
+                                                            icon={faAnglesDown}/>
+                                                    }
                                                     <FontAwesomeIcon
                                                         onClick={() => {
                                                             onRemoveFieldClickHandler(room, field)
