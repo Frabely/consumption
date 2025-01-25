@@ -102,12 +102,25 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
     const onRoomNameChange = (event: any, indexCurrentRoom: number) => {
         const newRooms = [...rooms]
         newRooms[indexCurrentRoom] = {
-            id: rooms[indexCurrentRoom].id,
+            ...rooms[indexCurrentRoom],
             name: event.target.value,
-            fields: rooms[indexCurrentRoom].fields
         }
         setRooms(newRooms)
         setCurrentSelectedRoom(newRooms[indexCurrentRoom])
+    }
+
+    const onFieldNameChange = (event: any, indexCurrentRoom: number, indexCurrentField: number) => {
+        const newRooms = [...rooms]
+        const newFields = [...newRooms[indexCurrentRoom].fields]
+        newFields[indexCurrentField] = {
+            ...newRooms[indexCurrentRoom].fields[indexCurrentField],
+            name: event.target.value,
+        }
+        newRooms[indexCurrentRoom] = {
+            ...newRooms[indexCurrentRoom],
+            fields: newFields
+        }
+        setRooms(newRooms)
     }
 
     const onRoomArrowUpClickHandler = (room: Room, index: number) => {
@@ -151,21 +164,6 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         newRooms[indexCurrentRoom] = {
             ...newRooms[indexCurrentRoom],
             fields: newFields,
-        }
-        setRooms(newRooms)
-    }
-
-    const onFieldNameChange = (event: any, indexCurrentRoom: number, indexCurrentField: number) => {
-        const newRooms = [...rooms]
-        const newFields = [...newRooms[indexCurrentRoom].fields]
-        newFields[indexCurrentField] = {
-            id: newFields[indexCurrentField].id,
-            name: event.target.value,
-        }
-        newRooms[indexCurrentRoom] = {
-            id: rooms[indexCurrentRoom].id,
-            name: rooms[indexCurrentRoom].name,
-            fields: newFields
         }
         setRooms(newRooms)
     }
