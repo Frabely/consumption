@@ -22,8 +22,9 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
         flat.rooms.filter(room => currentRoomId === room.id)[0].fields.map((field) => {
             let currentFieldValue: FieldValue = {field}
             allFieldValues.map((fieldValue) => {
-                if (fieldValue.field.id === field.id)
+                if (fieldValue.field.id === field.id) {
                     currentFieldValue.value = fieldValue.value;
+                }
             })
             currentFieldValues.push(currentFieldValue)
         })
@@ -116,26 +117,29 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                 {currentFieldValues.map((fieldValue, index: number) => {
                         return <div className={styles.inputContainer} key={index}>
                             <p className={styles.fieldLabel}>{fieldValue.field.name}:</p>
-                            <FieldInput
-                                value={fieldValue.value?.toString()}
-                                onChange={(event) => {
-                                    onFieldPairValueChange(event.target.value, fieldValue.field.id)
-                                }}
-                                placeholder={de.inputLabels.placeholderValue}
-                            />
-                            <div onClick={() => {
-                                if (fieldValue.value && fieldValue.value > 0)
-                                    onSaveFieldClickHandler(fieldValue).catch(error => console.log(error))
-                            }}>
-                                <FontAwesomeIcon
-                                    style={
-                                        {
-                                            '--text-color': fieldValue.value && fieldValue.value > 0 ?
-                                                "var(--text-color)" :
-                                                "var(--text-color-muted)"
-                                        } as CSSProperties
-                                    }
-                                    icon={faSave}/>
+                            <div className={styles.fieldInputContainer}>
+                                <FieldInput
+                                    value={fieldValue.value?.toString()}
+                                    onChange={(event) => {
+                                        onFieldPairValueChange(event.target.value, fieldValue.field.id)
+                                    }}
+                                    placeholder={de.inputLabels.placeholderValue}
+                                    style={{width: "13rem"}}
+                                />
+                                <div onClick={() => {
+                                    if (fieldValue.value && fieldValue.value > 0)
+                                        onSaveFieldClickHandler(fieldValue).catch(error => console.log(error))
+                                }}>
+                                    <FontAwesomeIcon
+                                        style={
+                                            {
+                                                '--text-color': fieldValue.value && fieldValue.value > 0 ?
+                                                    "var(--text-color)" :
+                                                    "var(--text-color-muted)"
+                                            } as CSSProperties
+                                        }
+                                        icon={faSave}/>
+                                </div>
                             </div>
                         </div>
                     }

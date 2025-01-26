@@ -10,8 +10,7 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
 
     useEffect(() => {
         if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
-            const SpeechRecognition = window.webkitSpeechRecognition;
-            const recognition: SpeechRecognition = new SpeechRecognition();
+            const recognition: SpeechRecognition = new window.webkitSpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
             recognition.lang = 'de-DE';

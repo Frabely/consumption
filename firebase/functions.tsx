@@ -19,7 +19,7 @@ import {
     Timestamp,
     getDoc,
     deleteDoc,
-    CollectionReference, QueryDocumentSnapshot, DocumentReference,
+    CollectionReference, QueryDocumentSnapshot, DocumentReference, limit,
 } from "@firebase/firestore";
 import {
     Car,
@@ -414,8 +414,15 @@ export const setFieldValue = async (
             db,
             `${DB_HOUSES}/${houseName}/${DB_FLATS}/${flat.id}/${DB_ROOMS}/${room.id}/${DB_DATA_FIELDS_KEY}/${field.id}`,
         ))
-        const documentSnapshot = await getDoc(doc(db, pathValues, `/${field.id}`))
-        if (!documentSnapshot.exists()) {
+
+        const fieldQuery = query(
+            collection(db, pathValues),
+            where("fieldId", "==", field.id),
+            limit(1)
+        );
+
+        const querySnapshot = await getDocs(fieldQuery);
+        if (querySnapshot.empty) {
             await addDoc(
                 collection(db, pathValues),
                 {
@@ -427,6 +434,7 @@ export const setFieldValue = async (
                     fieldId: field.id
                 });
         } else {
+            const documentSnapshot = querySnapshot.docs[0];
             await updateDoc(
                 documentSnapshot.ref,
                 {
