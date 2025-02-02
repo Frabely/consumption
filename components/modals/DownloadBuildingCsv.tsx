@@ -57,7 +57,7 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
                     fieldValueForExport.fieldValue.day.getUTCDate().toString() : 
                     "-"};\n`
         })
-        return txtContent
+        return txtContent.replace('.', ',')
     }
 
     const onDownloadCsvClickHandler = () => {
