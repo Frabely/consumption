@@ -126,14 +126,6 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         setRooms(newRooms)
     }
 
-    const onRoomArrowDownClickHandler = (room: Room, index: number) => {
-        let newRooms = [...rooms]
-        const oldRoom: Room = newRooms[index + 1]
-        newRooms[index + 1] = {...room, position: oldRoom.position}
-        newRooms[index] = {...oldRoom, position: room.position}
-        setRooms(newRooms)
-    }
-
     const onFieldArrowUpClickHandler = (currentRoom: Room, currentField: Field, index: number) => {
         let newRooms: Room[] = [...rooms]
         const indexCurrentRoom = newRooms.indexOf(currentRoom)
@@ -145,6 +137,14 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
             ...newRooms[indexCurrentRoom],
             fields: newFields,
         }
+        setRooms(newRooms)
+    }
+
+    const onRoomArrowDownClickHandler = (room: Room, index: number) => {
+        let newRooms = [...rooms]
+        const oldRoom: Room = newRooms[index + 1]
+        newRooms[index + 1] = {...room, position: oldRoom.position}
+        newRooms[index] = {...oldRoom, position: room.position}
         setRooms(newRooms)
     }
 

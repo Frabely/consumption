@@ -66,7 +66,9 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
             getFieldValuesForExport(currentDateValue.year, currentDateValue.month, )
                 .then((fieldValuesForExport) => {
                 if (fieldValuesForExport.length > 0) {
-                    const blob = new Blob([fieldsToTxt(fieldValuesForExport)], {type: "text/plain"});
+                    const BOM = "\uFEFF";
+                    const csvContent = BOM + fieldsToTxt(fieldValuesForExport);
+                    const blob = new Blob([csvContent], {type: "text/csv;charset=utf-8;"});
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement("a");
                     link.download = `${currentDateValue.year}-${currentDateValue.month}.csv`;
