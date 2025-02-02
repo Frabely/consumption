@@ -115,7 +115,11 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                     style={{width: "100%"}}
                 />
                 {currentFieldValues.map((fieldValue, index: number) => {
-                        return <div className={styles.inputContainer} key={index}>
+                        return (
+                            <div
+                                className={styles.inputContainer}
+                                style={state.dimension.isHorizontal ? {flexDirection: 'column'} : undefined}
+                                key={index}>
                             <p className={styles.fieldLabel}>{fieldValue.field.name}:</p>
                             <div className={styles.fieldInputContainer}>
                                 <FieldInput
@@ -142,6 +146,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                                 </div>
                             </div>
                         </div>
+                        )
                     }
                 )}
             </div>
