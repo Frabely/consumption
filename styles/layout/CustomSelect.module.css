@@ -16,6 +16,11 @@
     justify-content: space-between;
     align-items: center;
     transition: background 0.3s ease;
+    width: 100%;
+    overflow-x: scroll;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .selectedValue:hover {
@@ -33,7 +38,7 @@
     overflow: hidden;
     animation: fadeIn 0.3s ease;
     max-height: 7.5rem;
-    overflow-y: auto;
+    white-space: nowrap;
 }
 
 .optionsContainer.down {

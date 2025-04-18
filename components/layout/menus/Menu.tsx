@@ -99,6 +99,7 @@ export default function Menu({}: MenuProps) {
                             onChange={onCarChangeHandler}
                             defaultValue={currentCarName}
                             options={cars.map((car) => car.name)}
+                            style={{width: "10rem"}}
                         />
                         <div onClick={onAddDataClickHandler} className={globalMenuStyles.menuItem}>
                             <FontAwesomeIcon icon={faAdd}/>
