@@ -19,3 +19,8 @@ export enum Page {
     Home,
     BuildingConsumption
 }
+
+export enum HomeTabs {
+    Statistics = 0,
+    ConsumptionData = 1,
+}

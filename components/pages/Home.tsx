@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
 import {useAppDispatch} from "@/constants/hooks";
@@ -8,15 +8,18 @@ import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import Loading from "@/components/Loading";
 import Menu from "@/components/layout/menus/Menu";
-import {ModalState} from "@/constants/enums";
+import {HomeTabs, ModalState} from "@/constants/enums";
 import AddData from "@/components/modals/AddData";
 import DownloadCsv from "@/components/modals/DownloadCsv";
 import Display from "@/components/Display";
 import Login from "@/components/Login";
+import CustomTab from "@/components/layout/CustomTab";
+import Statistics from "@/components/Statistics";
 
 export default function Home({}: HomeProps) {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useAppDispatch()
+    const [selected, setSelected] = useState(1)
 
     useEffect(() => {
         loadMainPageData().then(() => {
@@ -34,6 +37,8 @@ export default function Home({}: HomeProps) {
         })
     }, [dispatch]);
 
+
+
     return (
         <>
         {state.isLoading ?
@@ -49,7 +54,8 @@ export default function Home({}: HomeProps) {
                             {state.modalState === ModalState.DownloadCsv ? (
                                 <DownloadCsv/>
                             ) : null}
-                            <Display/>
+                            <CustomTab selected={selected} setSelected={setSelected}/>
+                            {HomeTabs.Statistics === selected ? <Display/> : <Statistics/>}
                         </>
                         :
                         <Login/>
