@@ -15,6 +15,7 @@ import Display from "@/components/Display";
 import Login from "@/components/Login";
 import CustomTab from "@/components/layout/CustomTab";
 import Statistics from "@/components/Statistics";
+import de from "@/constants/de.json"
 
 export default function Home({}: HomeProps) {
     const state: RootState = useSelector((state: RootState) => state)
@@ -54,7 +55,12 @@ export default function Home({}: HomeProps) {
                             {state.modalState === ModalState.DownloadCsv ? (
                                 <DownloadCsv/>
                             ) : null}
-                            <CustomTab selected={selected} setSelected={setSelected}/>
+                            <CustomTab
+                                tabNames={[
+                                    de.displayLabels.enteredItems,
+                                    de.displayLabels.statistics]}
+                                selected={selected}
+                                setSelected={setSelected}/>
                             {HomeTabs.Statistics === selected ? <Display/> : <Statistics/>}
                         </>
                         :

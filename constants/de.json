@@ -27,7 +27,12 @@
     "backToLogin": "Zurück zum Login",
     "back": "Zurück",
     "enterNewName": "Neuen Name eingeben",
-    "day": "Tag"
+    "day": "Tag",
+    "enteredItems": "Eintragungen",
+    "statistics": "Auswertung",
+    "kilometersDriven": "Zurückgelegte Kilometer",
+    "kwhFueled": "Geladene Menge",
+    "currentPriceToPay": "Aktuell zu zahlender Betrag"
   },
   "inputLabels": {
     "date": "Datum",
@@ -38,7 +43,8 @@
     "flatName": "Wohnungsname",
     "roomName": "Raumname",
     "fieldName": "Zählername",
-    "placeholderValue": "Wert"
+    "placeholderValue": "Wert",
+    "priceMultiplier": "Preismultiplikator"
   },
   "buttonLabels": {
     "addData": "Daten hinzufügen",

@@ -5,6 +5,7 @@ import {YearMonth} from "@/constants/types";
 import {getFullDataSet} from "@/firebase/functions";
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
+import de from "@/constants/de.json"
 
 export default function Statistics({}: StatisticsProps) {
     const state: RootState = useSelector((state: RootState) => state)
@@ -17,6 +18,7 @@ export default function Statistics({}: StatisticsProps) {
 
     const [kilometersDriven, setKilometersDriven] = useState(0)
     const [kwhFueled, setKwhFueled] = useState(0)
+    const [priceMultiplier, setPriceMultiplier] = useState("0.2")
     const [priceToPay, setPriceToPay] = useState(0)
     const [currentDateValue, setCurrentDateValue] = useState<YearMonth>({
         year: year.toString(),
@@ -32,7 +34,8 @@ export default function Statistics({}: StatisticsProps) {
                     kwh += parseFloat(dataItem.power.toString())
                 })
                 setKwhFueled(kwh)
-                setPriceToPay(kwh * 0.2)
+                if (isPowerValid(priceMultiplier))
+                    setPriceToPay(kwh * parseFloat(priceMultiplier) ?? 1)
                 setKilometersDriven(dataSet[0].kilometer - dataSet[dataSet.length-1].kilometer)
             } else {
                 setKwhFueled(0)
@@ -40,7 +43,7 @@ export default function Statistics({}: StatisticsProps) {
                 setKilometersDriven(0)
             }
         }).catch((e: Error) => console.log(e.message))
-    }, [state.currentCar.name, currentDateValue]);
+    }, [state.currentCar.name, currentDateValue, priceMultiplier]);
 
     const onDateInputChangeHandler = async (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.value !== '') {
@@ -53,17 +56,40 @@ export default function Statistics({}: StatisticsProps) {
         }
     }
 
+    function isPowerValid(power: string) {
+        const powerNumber = parseFloat(power)
+        if (powerNumber !== undefined && !Number.isNaN(powerNumber)) {
+            return powerNumber < 100 && powerNumber > 0;
+        }
+    }
+
     return (
-        <>
-            <input
-                onChange={onDateInputChangeHandler}
-                value={`${currentDateValue.year}-${currentDateValue.month}`}
-                className={globalStyles.monthPicker}
-                type={"month"}/>
-            <div>kilometersDriven: {kilometersDriven} km</div>
-            <div>kwhFueled: {kwhFueled} kWh</div>
-            <div>priceToPay: {priceToPay} €</div>
-        </>
+        <div className={styles.mainContainer}>
+            <div className={styles.inputContainer}>
+                <div>{de.inputLabels.date}:</div>
+                <input
+                    onChange={onDateInputChangeHandler}
+                    value={`${currentDateValue.year}-${currentDateValue.month}`}
+                    className={globalStyles.monthPicker}
+                    type={"month"}/>
+            </div>
+            <div className={styles.inputContainer}>
+                <div>{de.inputLabels.priceMultiplier}:</div>
+                <input
+                    onChange={(e) => setPriceMultiplier(e.target.value)}
+                    value={priceMultiplier}
+                    className={`${styles.input} ${isPowerValid(priceMultiplier) ? styles.inputValid : styles.inputInvalid}`}
+                    min={0.01}
+                    max={99.99}
+                    step={0.01}
+                    type={"number"}/>
+            </div>
+            <div className={styles.infoFieldContainer}>
+                <div>{de.displayLabels.kilometersDriven}: {kilometersDriven} km</div>
+                <div>{de.displayLabels.kwhFueled}: {kwhFueled.toFixed(2)} kWh</div>
+                <div>{de.displayLabels.currentPriceToPay}: {priceToPay.toFixed(2)} €</div>
+            </div>
+        </div>
     );
 }
 
