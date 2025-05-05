@@ -35,7 +35,7 @@
     border: 1px solid #ccc;
     z-index: 1000;
     border-radius: 5px;
-    overflow: hidden;
+    overflow: scroll;
     animation: fadeIn 0.3s ease;
     max-height: 7.5rem;
     white-space: nowrap;
