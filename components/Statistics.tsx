@@ -9,6 +9,7 @@ import de from "@/constants/de.json"
 
 export default function Statistics({}: StatisticsProps) {
     const state: RootState = useSelector((state: RootState) => state)
+    const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
 
     //Todo create date input
     const date = new Date()
@@ -65,26 +66,29 @@ export default function Statistics({}: StatisticsProps) {
 
     return (
         <div className={styles.mainContainer}>
-            <div className={styles.inputContainer}>
-                <div>{de.inputLabels.date}:</div>
-                <input
-                    onChange={onDateInputChangeHandler}
-                    value={`${currentDateValue.year}-${currentDateValue.month}`}
-                    className={globalStyles.monthPicker}
-                    type={"month"}/>
+            <div>
+                <div className={styles.inputContainer}>
+                    <div>{de.inputLabels.date}:</div>
+                    <input
+                        onChange={onDateInputChangeHandler}
+                        value={`${currentDateValue.year}-${currentDateValue.month}`}
+                        className={globalStyles.monthPicker}
+                        type={"month"}/>
+                </div>
+                <div className={styles.inputContainer}>
+                    <div>{de.inputLabels.priceMultiplier}:</div>
+                    <input
+                        onChange={(e) => setPriceMultiplier(e.target.value)}
+                        value={priceMultiplier}
+                        className={`${styles.input} ${isPowerValid(priceMultiplier) ? styles.inputValid : styles.inputInvalid}`}
+                        min={0.01}
+                        max={99.99}
+                        step={0.01}
+                        type={"number"}/>
+                </div>
             </div>
-            <div className={styles.inputContainer}>
-                <div>{de.inputLabels.priceMultiplier}:</div>
-                <input
-                    onChange={(e) => setPriceMultiplier(e.target.value)}
-                    value={priceMultiplier}
-                    className={`${styles.input} ${isPowerValid(priceMultiplier) ? styles.inputValid : styles.inputInvalid}`}
-                    min={0.01}
-                    max={99.99}
-                    step={0.01}
-                    type={"number"}/>
-            </div>
-            <div className={styles.infoFieldContainer}>
+
+            <div className={isHorizontal ? styles.infoFieldContainerHor : styles.infoFieldContainerVert}>
                 <div>{de.displayLabels.kilometersDriven}: {kilometersDriven} km</div>
                 <div>{de.displayLabels.kwhFueled}: {kwhFueled.toFixed(2)} kWh</div>
                 <div>{de.displayLabels.currentPriceToPay}: {priceToPay.toFixed(2)} €</div>

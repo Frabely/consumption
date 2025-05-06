@@ -14,13 +14,23 @@
     width: 100%;
 }
 
-.infoFieldContainer {
+.infoFieldContainerHor {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     background: var(--primary-color);
     padding: 1rem;
     border-radius: 10px;
+}
+
+.infoFieldContainerVert {
+    display: flex;
+    flex-direction: row;
+    background: var(--primary-color);
+    padding: 1rem;
+    border-radius: 10px;
+    justify-content: space-between;
+    width: 100%
 }
 
 .input {
