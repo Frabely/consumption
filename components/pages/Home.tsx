@@ -20,7 +20,7 @@ import de from "@/constants/de.json"
 export default function Home({}: HomeProps) {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useAppDispatch()
-    const [selected, setSelected] = useState(1)
+    const [selected, setSelected] = useState(0)
 
     useEffect(() => {
         loadMainPageData().then(() => {
