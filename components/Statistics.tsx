@@ -73,6 +73,7 @@ export default function Statistics({}: StatisticsProps) {
                         onChange={onDateInputChangeHandler}
                         value={`${currentDateValue.year}-${currentDateValue.month}`}
                         className={globalStyles.monthPicker}
+                        style={{width: "10rem"}}
                         type={"month"}/>
                 </div>
                 <div className={styles.inputContainer}>
@@ -89,9 +90,12 @@ export default function Statistics({}: StatisticsProps) {
             </div>
 
             <div className={isHorizontal ? styles.infoFieldContainerHor : styles.infoFieldContainerVert}>
-                <div>{de.displayLabels.kilometersDriven}: {kilometersDriven} km</div>
-                <div>{de.displayLabels.kwhFueled}: {kwhFueled.toFixed(2)} kWh</div>
-                <div>{de.displayLabels.currentPriceToPay}: {priceToPay.toFixed(2)} €</div>
+                <div>{de.displayLabels.kilometersDriven}:</div>
+                <div>{kilometersDriven} km</div>
+                <div>{de.displayLabels.kwhFueled}:</div>
+                <div>{kwhFueled.toFixed(2)} kWh</div>
+                <div>{de.displayLabels.currentPriceToPay}:</div>
+                <div>{priceToPay.toFixed(2)} €</div>
             </div>
         </div>
     );
