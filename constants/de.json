@@ -44,7 +44,8 @@
     "roomName": "Raumname",
     "fieldName": "Zählername",
     "placeholderValue": "Wert",
-    "priceMultiplier": "Preismultiplikator"
+    "priceMultiplier": "Preismultiplikator",
+    "currentSelectedCar": "Ausgewähltes Auto"
   },
   "buttonLabels": {
     "addData": "Daten hinzufügen",

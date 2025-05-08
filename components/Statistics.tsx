@@ -10,6 +10,7 @@ import de from "@/constants/de.json"
 export default function Statistics({}: StatisticsProps) {
     const state: RootState = useSelector((state: RootState) => state)
     const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
+    const currentCarName: string | undefined = useSelector((state: RootState) => state.currentCar.name)
 
     //Todo create date input
     const date = new Date()
@@ -67,6 +68,12 @@ export default function Statistics({}: StatisticsProps) {
     return (
         <div className={styles.mainContainer}>
             <div>
+                {isHorizontal ?
+                    <div className={styles.inputContainer}>
+                        <div>{de.inputLabels.currentSelectedCar}:</div>
+                        <div>{currentCarName}</div>
+                    </div>
+                : null}
                 <div className={styles.inputContainer}>
                     <div>{de.inputLabels.date}:</div>
                     <input
@@ -90,12 +97,12 @@ export default function Statistics({}: StatisticsProps) {
             </div>
 
             <div className={isHorizontal ? styles.infoFieldContainerHor : styles.infoFieldContainerVert}>
-                <div>{de.displayLabels.kilometersDriven}:</div>
-                <div>{kilometersDriven} km</div>
                 <div>{de.displayLabels.kwhFueled}:</div>
                 <div>{kwhFueled.toFixed(2)} kWh</div>
                 <div>{de.displayLabels.currentPriceToPay}:</div>
                 <div>{priceToPay.toFixed(2)} €</div>
+                <div>{de.displayLabels.kilometersDriven}:</div>
+                <div>{kilometersDriven} km</div>
             </div>
         </div>
     );

@@ -8,7 +8,8 @@ export default function CustomSelect({
                                          options,
                                          keys,
                                          direction = 'down',
-                                         style
+                                         style,
+                                         styleOptions
                                      }: CustomSelectProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedValue, setSelectedValue] = useState(defaultValue);
@@ -39,7 +40,7 @@ export default function CustomSelect({
                 {selectedValue}
             </div>
             {isExpanded && (
-                <div className={`${styles.optionsContainer} ${styles[direction]}`}>
+                <div className={`${styles.optionsContainer} ${styles[direction]}`} style={styleOptions}>
                     {options.map((option, index) => (
                         <div
                             className={styles.optionContainer}
@@ -63,4 +64,5 @@ export type CustomSelectProps = {
     keys?: any[];
     direction?: 'down' | 'up' | 'left' | 'right';
     style?: CSSProperties;
+    styleOptions?: CSSProperties;
 };
