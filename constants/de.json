@@ -45,7 +45,9 @@
     "fieldName": "Zählername",
     "placeholderValue": "Wert",
     "priceMultiplier": "Preismultiplikator",
-    "currentSelectedCar": "Ausgewähltes Auto"
+    "currentSelectedCar": "Ausgewähltes Auto",
+    "from": "Von",
+    "to": "Bis"
   },
   "buttonLabels": {
     "addData": "Daten hinzufügen",
