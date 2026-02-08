@@ -6,8 +6,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClose} from "@fortawesome/free-solid-svg-icons";
 import {setModalStateNone} from "@/store/reducer/modalState";
+import {ReactNode} from "react";
 
-export default function Modal(props: any, {formName}: ModalProps) {
+export default function Modal({ formName, children }: ModalProps) {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useDispatch()
 
@@ -25,7 +26,7 @@ export default function Modal(props: any, {formName}: ModalProps) {
                         icon={faClose}/>
                 </div>
                 <div className={styles.childPropsContainer}>
-                    {props.children}
+                    {children}
                 </div>
             </form>
         </div>
@@ -33,5 +34,6 @@ export default function Modal(props: any, {formName}: ModalProps) {
 }
 
 export type ModalProps = {
-    formName: string
+    formName: string,
+    children?: ReactNode
 }

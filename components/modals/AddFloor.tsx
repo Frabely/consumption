@@ -6,7 +6,7 @@ import styles from "@/styles/modals/AddFloor.module.css";
 import de from "@/constants/de.json";
 import {ChangingFloor, Flat, Room} from "@/constants/types";
 import {createOrUpdateFlat, updateFlatStructure} from "@/firebase/functions";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAdd, faMinus} from "@fortawesome/free-solid-svg-icons";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
@@ -225,7 +225,7 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                                         '--text-color': roomNameInput && roomNameInput.length > 0 ?
                                             "var(--text-color)" :
                                             "var(--text-color-muted)"
-                                    } as CSSProperties
+                                    } as CSSProperties & CSSVariables
                                 }
                                 icon={faAdd}/>
                         </div>
@@ -255,7 +255,7 @@ export default function AddFloor({changingFloorData}: AddFloorModalProps) {
                                         '--text-color': fieldNameInput && fieldNameInput.length > 0 ?
                                             "var(--text-color)" :
                                             "var(--text-color-muted)"
-                                    } as CSSProperties
+                                    } as CSSProperties & CSSVariables
                                 }
                                 icon={faAdd}/>
                         </div>
