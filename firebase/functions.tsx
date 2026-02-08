@@ -301,6 +301,24 @@ export const setFieldValue = async (
     }
 }
 
+export const deleteFieldValue = async (
+    houseName: string,
+    flatName: string,
+    roomName: string,
+    fieldName: string,
+    year: string,
+    month: string) => {
+    try {
+        const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
+        const key: string = `${houseName}#${flatName}#${roomName}#${fieldName}`
+        await updateDoc(dateCollectionRef, {
+            [key]: null
+        });
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 export const getFieldValues = async (
     year: string,
     month: string,

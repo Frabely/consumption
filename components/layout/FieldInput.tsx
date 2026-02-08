@@ -1,6 +1,6 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, CSSProperties, useEffect, useState} from 'react';
 import styles from "@/styles/layout/FieldInput.module.css";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMicrophone} from "@fortawesome/free-solid-svg-icons";
 
 function FieldInput({value, onChange, placeholder}: FieldInputProps) {
@@ -23,7 +23,7 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
                 }
                 const simulatedEvent = {
                     target: {
-                        value: currentTranscript.replace(/\D/g, ''),
+                        value: currentTranscript.replace(/[^\d-]/g, ''),
                     },
                 } as ChangeEvent<HTMLInputElement>;
 
@@ -47,6 +47,8 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
         }
     }, [isRecording]);
 
+
+
     return (
         <div
             className={`${styles.inputContainer} ${
@@ -54,10 +56,10 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
                     styles.inputValid :
                     styles.inputInvalid}`}
             style={isFocus ? {borderStyle: "solid", borderWidth: "3px", borderColor: "black"} : {}}>
-            <input value={value && !isNaN(parseInt(value.replace(/\D/g, ''))) ? parseInt(value.replace(/\D/g, '')) : ""}
+            <input value={value && !isNaN(parseInt(value.replace(/[^\d-]/g, ''))) ? parseInt(value.replace(/[^\d-]/g, '')) : ""}
                    className={styles.input}
                    type={"number"}
-                   min={0}
+                   min={-999999}
                    max={999999}
                    step={1.0}
                    onChange={onChange}
@@ -92,7 +94,7 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
                             '--text-color': isMicTouched ?
                                 "var(--primary-color)" :
                                 "var(--text-color)"
-                        } as React.CSSProperties
+                        } as CSSProperties & CSSVariables
                     }
                     icon={faMicrophone}/>
             </div>

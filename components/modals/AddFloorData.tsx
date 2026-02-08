@@ -1,16 +1,16 @@
 'use client'
 
 import de from '../../constants/de.json'
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import Modal from "@/components/layout/Modal";
 import {NumberDictionary, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {ChangeEvent, CSSProperties, useEffect, useState} from "react";
-import {faSave} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSave, faBan} from "@fortawesome/free-solid-svg-icons";
+import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FieldInput from "@/components/layout/FieldInput";
-import {getFieldValues, setFieldValue} from "@/firebase/functions";
+import {deleteFieldValue, getFieldValues, setFieldValue} from "@/firebase/functions";
 import {RootState} from "@/store/store";
 import CustomSelect from "@/components/layout/CustomSelect";
 
@@ -32,21 +32,28 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
             currentDateValue.month,
             state.currentHouse.name,
             flatName,
-            currentRoom.name).then((result) => {
+            currentRoom.name
+        ).then((result) => {
             if (result) {
-                const fields: NumberDictionary = {...currentRoom.fields}
-                Object.entries(result).map(([key, value]) => {
-                    const newKey = key.split("#").pop();
-                    fields[`${newKey}`] = value
-                })
-                const newRoom: Room = {name: currentRoom.name, fields: fields}
-                setCurrentRoom(newRoom)
+                setCurrentRoom(prevRoom => {
+                    const fields: NumberDictionary = { ...prevRoom.fields };
+
+                    Object.entries(result).forEach(([key, value]) => {
+                        const newKey = key.split("#").pop();
+                        fields[`${newKey}`] = value;
+                    });
+
+                    return {
+                        ...prevRoom,
+                        fields
+                    };
+                });
             }
-        })
-    }, [currentDateValue.month, currentDateValue.year, currentRoom.fields, currentRoom.name, flatName, state.currentHouse.name]);
+        });
+    }, [currentDateValue, currentRoom.name, flatName, state.currentHouse.name]);
 
     const onFieldPairValueChange = (value: string, key: string) => {
-        const currentFieldValue: number = parseInt(value.replace(/\D/g, ''))
+        const currentFieldValue: number = parseInt(value.replace(/[^\d-]/g, ''))
         const fields: NumberDictionary = {...currentRoom.fields}
         fields[`${key}`] = currentFieldValue
         const newRoom: Room = {name: currentRoom.name, fields: fields}
@@ -66,6 +73,22 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
             .then(() => {
                 alert("saved")
             })
+    }
+
+    const onDeleteFieldClickHandler = async (key: string) => {
+        const fields: NumberDictionary = {...currentRoom.fields}
+        fields[`${key}`] = null
+        const newRoom: Room = {name: currentRoom.name, fields: fields}
+        setCurrentRoom(newRoom)
+
+        deleteFieldValue(
+            state.currentHouse.name,
+            flatName,
+            currentRoom.name,
+            key,
+            currentDateValue.year,
+            currentDateValue.month)
+            .catch((ex) => alert(ex.message))
     }
 
     const onRoomChangeHandler = (value: string) => {
@@ -104,18 +127,32 @@ export default function AddFloorData({flatName, rooms}: AddFloorDataModalProps) 
                                 placeholder={de.inputLabels.placeholderValue}
                             />
                             <div onClick={() => {
-                                if (value && value > 0)
+                                if (value !== null && !isNaN(value))
                                     onSaveFieldClickHandler(key).catch(error => console.log(error))
                             }}>
                                 <FontAwesomeIcon
                                     style={
                                         {
-                                            '--text-color': value && value > 0 ?
+                                            '--text-color': value ?
                                                 "var(--text-color)" :
                                                 "var(--text-color-muted)"
-                                        } as CSSProperties
+                                        } as CSSProperties & CSSVariables
                                     }
                                     icon={faSave}/>
+                            </div>
+                            <div onClick={() => {
+                                if (value !== null && !isNaN(value))
+                                    onDeleteFieldClickHandler(key).catch(error => console.log(error))
+                            }}>
+                                <FontAwesomeIcon
+                                    style={
+                                        {
+                                            '--text-color': value !== null && !isNaN(value) ?
+                                                "var(--text-color)" :
+                                                "var(--text-color-muted)"
+                                        } as CSSProperties & CSSVariables
+                                    }
+                                    icon={faBan}/>
                             </div>
                         </div>
                     }
