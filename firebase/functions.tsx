@@ -447,6 +447,40 @@ export const setFieldValue = async (
     }
 }
 
+export const deleteFieldValue = async (
+    houseName: string,
+    flat: Flat,
+    room: Room,
+    field: Field,
+    year: string,
+    month: string,) => {
+    try {
+        const pathValues = `${DB_BUILDING_CONSUMPTION}/${year}-${month}/${DB_FIELD_VALUES}`;
+        const fieldRef = await getDoc(doc(
+            db,
+            `${DB_HOUSES}/${houseName}/${DB_FLATS}/${flat.id}/${DB_ROOMS}/${room.id}/${DB_DATA_FIELDS_KEY}/${field.id}`,
+        ))
+
+        const fieldQuery = query(
+            collection(db, pathValues),
+            where("field", "==", fieldRef.ref),
+            limit(1)
+        );
+
+        const querySnapshot = await getDocs(fieldQuery);
+        if (!querySnapshot.empty) {
+            const documentSnapshot = querySnapshot.docs[0];
+            await updateDoc(
+                documentSnapshot.ref,
+                {
+                    value: null,
+                });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 export const getFieldValues = async (
     year: string,
     month: string,

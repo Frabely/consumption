@@ -7,29 +7,32 @@ import {FieldValue, Flat, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {ChangeEvent, CSSProperties, useEffect, useState} from "react";
-import {faSave} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSave, faBan} from "@fortawesome/free-solid-svg-icons";
+import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FieldInput from "@/components/layout/FieldInput";
-import {getFieldValues, setFieldValue} from "@/firebase/functions";
+import {deleteFieldValue, getFieldValues, setFieldValue} from "@/firebase/functions";
 import {RootState} from "@/store/store";
 import CustomSelect from "@/components/layout/CustomSelect";
 import {ModalState} from "@/constants/enums";
 
 export default function AddFloorData({flat}: AddFloorDataModalProps) {
+    const filterFieldValues = (
+        flat: Flat,
+        currentRoomId: string,
+        allFieldValues: FieldValue[]
+    ): FieldValue[] => {
+        const room = flat.rooms.find(r => r.id === currentRoomId);
+        if (!room) return [];
 
-    const filterFieldValues = (flat: Flat, currentRoomId: string, allFieldValues: FieldValue[]) => {
-        const currentFieldValues: FieldValue[] = []
-        flat.rooms.filter(room => currentRoomId === room.id)[0].fields.map((field) => {
-            let currentFieldValue: FieldValue = {field}
-            allFieldValues.map((fieldValue) => {
-                if (fieldValue.field.id === field.id) {
-                    currentFieldValue.value = fieldValue.value;
-                }
-            })
-            currentFieldValues.push(currentFieldValue)
-        })
-        return currentFieldValues
-    }
+        const valueByFieldId = new Map(
+            allFieldValues.map(fv => [fv.field.id, fv.value] as const)
+        );
+
+        return room.fields.map(field => ({
+            field,
+            value: valueByFieldId.has(field.id) ? valueByFieldId.get(field.id)! : null
+        }));
+    };
 
     const state: RootState = useSelector((state: RootState) => state)
     const date = new Date()
@@ -41,9 +44,10 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
         year: year.toString(),
         month: monthString
     })
-    const cleanInputRegEx: RegExp = /[^0-9.]|\.(?=.*\.)/g
     const [allFieldValues, setAllFieldValues] = useState<FieldValue[]>([])
     const [currentFieldValues, setCurrentFieldValues] = useState<FieldValue[]>([])
+
+    console.log(currentFieldValues)
 
     useEffect(() => {
         getFieldValues(
@@ -58,32 +62,54 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
             console.log(error.message)
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentDateValue]);
+    }, [currentDateValue, currentRoom]);
 
     const onFieldPairValueChange = (value: string, id: string) => {
         const fieldValues = [...currentFieldValues]
         fieldValues.map((fieldValue) => {
             if (fieldValue.field.id === id) {
-                fieldValue.value = parseFloat(value.replace(cleanInputRegEx, ''))
+                fieldValue.value = value
             }
         })
         setCurrentFieldValues(fieldValues)
     }
 
     const onSaveFieldClickHandler = async (fieldValue: FieldValue) => {
-        setFieldValue(
-            state.currentHouse.name,
-            flat,
-            currentRoom,
-            fieldValue.field,
-            currentDateValue.year,
-            currentDateValue.month,
-            fieldValue.value)
-            .then(() => {
-                alert(de.messages.fieldSaved
-                    .replace("{valueFieldName}", fieldValue.field.name)
-                    .replace("{valueNumber}", fieldValue.value ? fieldValue.value.toString() : "undefined"))
+        if (fieldValue.value && !isNaN(Number(fieldValue.value))) {
+            setFieldValue(
+                state.currentHouse.name,
+                flat,
+                currentRoom,
+                fieldValue.field,
+                currentDateValue.year,
+                currentDateValue.month,
+                Number(fieldValue.value))
+                .then(() => {
+                    alert(de.messages.fieldSaved
+                        .replace("{valueFieldName}", fieldValue.field.name)
+                        .replace("{valueNumber}", fieldValue.value ? fieldValue.value.toString() : "undefined"))
+                })
+        }
+    }
+
+    const onDeleteFieldClickHandler = async (fieldValueToDelete: FieldValue) => {
+        if (fieldValueToDelete.value !== null) {
+            const fieldValues = [...currentFieldValues]
+            fieldValues.map((field) => {
+                if (field.field.id === fieldValueToDelete.field.id) {
+                    fieldValueToDelete.value = null
+                }
             })
+            setCurrentFieldValues(fieldValues)
+            deleteFieldValue(
+                state.currentHouse.name,
+                flat,
+                currentRoom,
+                fieldValueToDelete.field,
+                currentDateValue.year,
+                currentDateValue.month)
+                .catch((ex) => console.log(ex))
+        }
     }
 
     const onRoomChangeHandler = (value: string) => {
@@ -123,7 +149,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                             <p className={styles.fieldLabel}>{fieldValue.field.name}:</p>
                             <div className={styles.fieldInputContainer}>
                                 <FieldInput
-                                    value={fieldValue.value?.toString()}
+                                    value={fieldValue.value}
                                     onChange={(event) => {
                                         onFieldPairValueChange(event.target.value, fieldValue.field.id)
                                     }}
@@ -131,18 +157,30 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                                     style={{width: "13rem"}}
                                 />
                                 <div onClick={() => {
-                                    if (fieldValue.value && fieldValue.value > 0)
-                                        onSaveFieldClickHandler(fieldValue).catch(error => console.log(error))
+                                    onSaveFieldClickHandler(fieldValue).catch(error => console.log(error))
                                 }}>
                                     <FontAwesomeIcon
                                         style={
                                             {
-                                                '--text-color': fieldValue.value && fieldValue.value > 0 ?
+                                                '--text-color': fieldValue.value && !isNaN(Number(fieldValue.value)) ?
                                                     "var(--text-color)" :
                                                     "var(--text-color-muted)"
-                                            } as CSSProperties
+                                            } as CSSProperties & CSSVariables
                                         }
                                         icon={faSave}/>
+                                </div>
+                                <div onClick={() => {
+                                    onDeleteFieldClickHandler(fieldValue).catch(error => console.log(error))
+                                }}>
+                                    <FontAwesomeIcon
+                                        style={
+                                            {
+                                                '--text-color': fieldValue.value && !isNaN(Number(fieldValue.value)) ?
+                                                    "var(--text-color)" :
+                                                    "var(--text-color-muted)"
+                                            } as CSSProperties & CSSVariables
+                                        }
+                                        icon={faBan}/>
                                 </div>
                             </div>
                         </div>

@@ -144,7 +144,7 @@ export type Field = {
 export type FieldValue = {
     field: Field,
     day?: Date,
-    value?: number,
+    value: string | null,
 }
 
 export type ReloadNeeded = {
