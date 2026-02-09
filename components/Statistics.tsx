@@ -2,13 +2,12 @@ import React, {ChangeEvent, useEffect, useState} from 'react';
 import styles from '../styles/Statistics.module.css'
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {YearMonth} from "@/constants/types";
-import {getFullDataSet} from "@/firebase/functions";
+import {loadAllConsumptionDocsBetween} from "@/firebase/functions";
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
 import de from "@/constants/de.json"
 
 export default function Statistics({}: StatisticsProps) {
-    const state: RootState = useSelector((state: RootState) => state)
     const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
     const currentCarName: string | undefined = useSelector((state: RootState) => state.currentCar.name)
 
@@ -30,59 +29,26 @@ export default function Statistics({}: StatisticsProps) {
         year: year.toString(),
         month: monthString
     })
-    const [analysisData, setAnalysisData] = useState<AnalysisItem[]>([])
-
-    type AnalysisItem = {
-        yearMonth: YearMonth,
-        kwhFueled: number,
-        priceToPay: number,
-        kilometersDriven: number,
-    }
 
     useEffect(() => {
-        const analysisItems: AnalysisItem[] = []
-        let y = Number(fromDateValue.year);
-        let m = Number(fromDateValue.month);
-
-        while (y <  Number(toDateValue.year) || (y ===  Number(toDateValue.year) && m <=  Number(toDateValue.month))) {
-            getFullDataSet(state.currentCar.name, { year: y.toString(), month: (m < 10 ? `0` + m : m).toString() }).then((dataSet) => {
-                let analysisItem: AnalysisItem = {
-                    yearMonth: { year: y.toString(), month: (m < 10 ? `0` + m : m).toString() },
-                    kwhFueled: 0,
-                    priceToPay: 0,
-                    kilometersDriven: 0,
-                }
-                if (dataSet && dataSet.length > 0)
-                {
-                    let kwh = 0
-                    dataSet.map((dataItem) => {
-                        kwh += parseFloat(dataItem.power.toString())
-                    })
-                    analysisItem.kwhFueled = kwh;
-                    // setKwhFueled(kwh)
-                    if (isPowerValid(priceMultiplier))
-                        // setPriceToPay(kwh * parseFloat(priceMultiplier) ?? 1)
-                        analysisItem.priceToPay = kwh * parseFloat(priceMultiplier) ?? 1;
-                    // setKilometersDriven(dataSet[0].kilometer - dataSet[dataSet.length-1].kilometer)
-                    analysisItem.kilometersDriven = dataSet[0].kilometer - dataSet[dataSet.length-1].kilometer
-                } /*else {
-                    setKwhFueled(0)
-                    setPriceToPay(0)
-                    setKilometersDriven(0)
-                }*/
-                analysisItems.push(analysisItem)
-            }).catch((e: Error) => console.log(e.message))
-
-            m++;
-            if (m === 13) {
-                m = 1;
-                y++;
+        loadAllConsumptionDocsBetween(fromDateValue, toDateValue, currentCarName).then((result) => {
+            if (result && result.length > 0) {
+                let kwh = 0
+                result.map((dataItem) => {
+                    kwh += parseFloat(dataItem.data.power.toString())
+                })
+                setKwhFueled(kwh)
+                if (isPowerValid(priceMultiplier))
+                    setPriceToPay(kwh * parseFloat(priceMultiplier) ?? 1)
+                setKilometersDriven(result[result.length-1].data.kilometer - result[0].data.kilometer)
             }
-        }
-
-        console.log(analysisItems)
-
-    }, [state.currentCar.name, fromDateValue, priceMultiplier, toDateValue]);
+            else {
+                setKwhFueled(0)
+                setPriceToPay(0)
+                setKilometersDriven(0)
+            }
+        }).catch((ex) => console.log(ex))
+    }, [currentCarName, fromDateValue, priceMultiplier, toDateValue]);
 
     const onFromDateInputChangeHandler = async (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.value !== '') {
@@ -168,5 +134,4 @@ export default function Statistics({}: StatisticsProps) {
 }
 
 export type StatisticsProps = {
-
 }

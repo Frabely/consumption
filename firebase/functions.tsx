@@ -80,6 +80,33 @@ export const getFullDataSet = async (carName: string, passedDate?: YearMonth) =>
     }
 }
 
+export const loadAllConsumptionDocsBetween = async (
+    from: YearMonth,
+    to: YearMonth,
+    carName: string
+) => {
+    const yearMonths = monthsBetween(from, to);
+
+    const perMonth = await Promise.all(
+        yearMonths.map(async (yearMonth) => {
+            const colRef = collection(db,
+                `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}` +
+                `/${yearMonth.year}` +
+                `/${(Number(yearMonth.month) < 10 ? `0` + yearMonth.month : yearMonth.month)}`
+            );
+            const snap = await getDocs(colRef);
+            return snap.docs.map((d) => ({
+                year: yearMonth.year,
+                month: yearMonth.month,
+                id: d.id,
+                data: d.data() as DataSet,
+            }));
+        })
+    );
+
+    return perMonth.flat();
+}
+
 export const addDataSetToCollection = (carName: string, dataSet: DataSetNoId) => {
     const {date, kilometer, power, name, loadingStation} = dataSet
     const month = date.getMonth() + 1;
@@ -561,3 +588,22 @@ export const updateCarKilometer = async (carName: string, kilometer: number, pre
         console.log(error.message)
     })
 }
+
+const monthsBetween = (from: YearMonth, to: YearMonth): YearMonth[] => {
+    let year = Number(from.year);
+    let month = Number(from.month);
+
+    const endYear = Number(to.year);
+    const endMonth = Number(to.month);
+
+    const allMonthsBetween: YearMonth[] = [];
+    while (year < endYear || (year === endYear && month <= endMonth)) {
+        allMonthsBetween.push({ year: String(year), month: String(month) });
+        month++;
+        if (month === 13) {
+            month = 1;
+            year++;
+        }
+    }
+    return allMonthsBetween;
+};
