@@ -12,6 +12,10 @@
     padding: 0.5rem;
     background: var(--modal-background);
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    overflow: auto;
 }
 
 .header {
@@ -25,7 +29,6 @@
 }
 
 .childPropsContainer {
-    max-height: 80dvh;
     min-width: 40dvw;
     padding: 0.5rem;
     border-radius: 5px;

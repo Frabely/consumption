@@ -1,7 +1,3 @@
-.mainContainer {
-    height: 100dvh;
-}
-
 .contentContainerHor {
     padding: 5dvh 5vw 15dvh 5vw;
     display: grid;
@@ -45,21 +41,6 @@
     line-height: 1.4;
     word-break: break-word;
     overflow-wrap: anywhere;
-}
-
-.image {
-    position: fixed;
-    z-index: -2;
-    width: 100%;
-    height: 100%;
-}
-
-.imageFilter {
-    position: fixed;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9);
 }
 
 .backToLoginButton {

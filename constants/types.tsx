@@ -115,27 +115,36 @@ export type Car = {
 }
 
 export type House = {
+    id: string,
     name: string,
-    flats: Flat[]
+    flats: Flat[],
+    position?: number
 }
 
 export type Flat = {
+    id: string,
     name: string,
-    rooms: Room[]
+    rooms: Room[],
+    position?: number
 }
 
 export type Room = {
+    id: string,
     name: string,
-    fields: NumberDictionary
+    fields: Field[],
+    position?: number
 }
 
-export type NumberDictionary = {
-    [index: string]: number | null;
+export type Field = {
+    id: string,
+    name: string,
+    position?: number
 }
 
-export type ChangingFloor = {
-    flatName: string
-    rooms: Room[],
+export type FieldValue = {
+    field: Field,
+    day?: Date,
+    value: string | null,
 }
 
 export type ReloadNeeded = {
@@ -144,4 +153,11 @@ export type ReloadNeeded = {
     isReloadFieldsNeeded: boolean,
     isReloadDataSetNeeded: boolean,
     isReloadLoadingStationsNeeded: boolean,
+}
+
+export type DownloadBuildingCsvDto = {
+    house: House,
+    flat: Flat,
+    room: Room,
+    fieldValue: FieldValue
 }

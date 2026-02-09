@@ -13,6 +13,7 @@ import dimensionSlice from "@/store/reducer/dismension";
 import CurrentHouseSlice from "@/store/reducer/currentHouse";
 import isReloadDataNeededSlice from "@/store/reducer/isReloadDataNeeded";
 import isLoadingSlice from "@/store/reducer/isLoading";
+import currentPageSlice from "@/store/reducer/currentPage";
 
 export const store = configureStore({
     reducer: {
@@ -30,6 +31,7 @@ export const store = configureStore({
         [dimensionSlice.name]: dimensionSlice.reducer,
         [isReloadDataNeededSlice.name]: isReloadDataNeededSlice.reducer,
         [isLoadingSlice.name]: isLoadingSlice.reducer,
+        [currentPageSlice.name]: currentPageSlice.reducer,
     },
     devTools: true,
     middleware: getDefaultMiddleware => getDefaultMiddleware({
@@ -37,7 +39,7 @@ export const store = configureStore({
     })
 })
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
+// Infer the RootState and AppDispatch types from the store itself
 export type RootState = ReturnType<typeof store.getState>
 // // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch

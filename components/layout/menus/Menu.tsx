@@ -7,18 +7,20 @@ import {useDispatch, useSelector} from "react-redux";
 import {setModalState, setModalStateNone} from "@/store/reducer/modalState";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setCurrentUser} from "@/store/reducer/currentUser";
-import {cars, EMPTY_USER, PATH_STRINGS} from "@/constants/constantData";
+import {cars, EMPTY_USER} from "@/constants/constantData";
 import {RootState} from "@/store/store";
 import React, {useState} from "react";
 import {setCurrentCar} from "@/store/reducer/currentCar";
+import {setPage} from "@/store/reducer/currentPage";
 import {getCars} from "@/firebase/functions";
-import Link from "next/link";
 import CustomSelect from "@/components/layout/CustomSelect";
-import {ModalState, Role} from "@/constants/enums";
+import {ModalState, Page, Role} from "@/constants/enums";
 
 export default function Menu({}: MenuProps) {
     const dispatch = useDispatch()
-    const state: RootState = useSelector((state: RootState) => state)
+    const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
+    const currentUserRole: Role | undefined = useSelector((state: RootState) => state.currentUser.role)
+    const currentCarName: string | undefined = useSelector((state: RootState) => state.currentCar.name)
     const [menuOpen, setMenuOpen] = useState(false)
 
     const onAddDataClickHandler = () => {
@@ -30,6 +32,7 @@ export default function Menu({}: MenuProps) {
     const onLogoutHandler = () => {
         dispatch(setCurrentUser(EMPTY_USER))
         dispatch(setModalStateNone())
+        dispatch(setPage(Page.Home))
     }
 
 
@@ -48,9 +51,13 @@ export default function Menu({}: MenuProps) {
         })
     }
 
+    const onBuildingConsumptionClickHandler = () => {
+        dispatch(setPage(Page.BuildingConsumption))
+    }
+
     return (
         <>
-            {state.dimension.isHorizontal ?
+            {isHorizontal ?
                 <div className={globalMenuStyles.mainContainerHor}>
                     <button className={globalMenuStyles.button} onClick={() => setMenuOpen(!menuOpen)}>
                         <FontAwesomeIcon icon={menuOpen ? faXmark : faEllipsis}/>
@@ -64,15 +71,18 @@ export default function Menu({}: MenuProps) {
                                 <FontAwesomeIcon icon={faFileCsv}/>
                             </button>
                             {
-                                state.currentUser.role === Role.Admin ?
-                                    <Link href={PATH_STRINGS.buildingConsumption} className={globalMenuStyles.button}>
+                                currentUserRole === Role.Admin ?
+                                    <button
+                                        onClick={onBuildingConsumptionClickHandler}
+                                        className={globalMenuStyles.button}
+                                    >
                                         <FontAwesomeIcon icon={faHouseFire}/>
-                                    </Link> :
+                                    </button> :
                                     null
                             }
                             <CustomSelect
                                 onChange={onCarChangeHandler}
-                                defaultValue={state.currentCar.name}
+                                defaultValue={currentCarName}
                                 options={cars.map((car) => car.name)}
                                 direction={"up"}
                             />
@@ -87,8 +97,9 @@ export default function Menu({}: MenuProps) {
                     <menu className={globalMenuStyles.menu}>
                         <CustomSelect
                             onChange={onCarChangeHandler}
-                            defaultValue={state.currentCar.name}
+                            defaultValue={currentCarName}
                             options={cars.map((car) => car.name)}
+                            style={{width: "10rem"}}
                         />
                         <div onClick={onAddDataClickHandler} className={globalMenuStyles.menuItem}>
                             <FontAwesomeIcon icon={faAdd}/>
@@ -97,10 +108,13 @@ export default function Menu({}: MenuProps) {
                             <FontAwesomeIcon icon={faFileCsv}/>
                         </div>
                         {
-                            state.currentUser.role === Role.Admin ?
-                                <Link href={PATH_STRINGS.buildingConsumption} className={globalMenuStyles.menuItem}>
+                            currentUserRole === Role.Admin ?
+                                <button
+                                    onClick={onBuildingConsumptionClickHandler}
+                                    className={globalMenuStyles.menuItem}
+                                >
                                     <FontAwesomeIcon icon={faHouseFire}/>
-                                </Link> :
+                                </button> :
                                 null
                         }
                         <div onClick={onLogoutHandler} className={globalMenuStyles.menuItem}>

@@ -1,0 +1,56 @@
+.mainContainer {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    padding: 0.5rem;
+}
+
+.inputContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    width: 100%;
+}
+
+.infoFieldContainerHor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: var(--primary-color);
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.infoFieldContainerVert {
+    display: flex;
+    flex-direction: row;
+    background: var(--primary-color);
+    padding: 1rem;
+    border-radius: 10px;
+    justify-content: space-between;
+    width: 100%
+}
+
+.input {
+    border-radius: 10px;
+    padding: 0.5rem;
+    background: var(--secondary-color);
+    border-color: var(--border-color);
+    border: none;
+    outline: none;
+}
+
+.inputInvalid {
+    background-color: var(--input-invalid-background);
+}
+
+.inputValid {
+    background: var(--input-valid-background);
+}
+
+.input::placeholder {
+    color: var(--text-color-muted);
+}

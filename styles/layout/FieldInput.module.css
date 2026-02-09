@@ -46,4 +46,18 @@
     padding: 1rem;
     width: 5dvh;
     height: 5dvh;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.input[type=number]::-webkit-inner-spin-button,
+.input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Für Firefox */
+.input[type=number] {
+    -moz-appearance: textfield;
 }

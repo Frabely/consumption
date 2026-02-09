@@ -1,7 +1,7 @@
 import {
     DB_BUILDING_CONSUMPTION,
-    DB_CARS, DB_DATA_FLATS_KEY, DB_DATA_ROOMS_KEY,
-    DB_DATA_SET_COLLECTION_KEY, DB_FLATS, DB_HOUSES,
+    DB_CARS, DB_DATA_FIELDS_KEY, DB_DATA_FLATS_KEY, DB_DATA_ROOMS_KEY,
+    DB_DATA_SET_COLLECTION_KEY, DB_FIELD_VALUES, DB_FLATS, DB_HOUSES,
     DB_LOADING_STATIONS, DB_ROOMS,
     DB_USER_COLLECTION_KEY
 } from "@/constants/constantData";
@@ -17,25 +17,24 @@ import {
     updateDoc,
     where,
     Timestamp,
-    setDoc,
     getDoc,
     deleteDoc,
-    deleteField,
-    FieldValue,
+    CollectionReference, QueryDocumentSnapshot, DocumentReference, limit,
 } from "@firebase/firestore";
 import {
     Car,
     DataSet,
-    DataSetNoId,
+    DataSetNoId, DownloadBuildingCsvDto, Field,
     Flat,
     House,
     LoadingStation,
-    NumberDictionary,
     Room,
     User,
-    YearMonth
+    YearMonth,
+    FieldValue
 } from "@/constants/types";
 import {Role} from "@/constants/enums";
+import { QueryFieldFilterConstraint, and } from "firebase/firestore";
 
 const db = getFirestore(firebaseApp)
 
@@ -175,6 +174,34 @@ export const getCars = async () => {
     return cars
 }
 
+export const getFields = async (houseId: string, flatId: string, roomId: string) => {
+    const fields: Field[] = []
+    const FieldsCollectionRef = collection(
+        db,
+        `${DB_HOUSES}/${houseId}/${DB_DATA_FLATS_KEY}/${flatId}/${DB_DATA_ROOMS_KEY}/${roomId}/${DB_DATA_FIELDS_KEY}`
+    );
+    const qsFieldsDocs = await getDocs(FieldsCollectionRef).catch(error => {
+        console.log(error.message)
+    })
+    if (qsFieldsDocs && !qsFieldsDocs.empty) {
+        for (const field of qsFieldsDocs.docs) {
+            const newField: Field = {
+                id: field.id,
+                name: field.get('name'),
+                position: field.get('position'),
+            }
+            fields.push(newField)
+        }
+    }
+    return fields
+        .sort((a, b) => {
+            if (a.position === undefined && b.position === undefined) return 0;
+            if (a.position === undefined) return 1;
+            if (b.position === undefined) return -1;
+            return a.position - b.position;
+        })
+}
+
 export const getRooms = async (houseId: string, flatId: string) => {
     const rooms: Room[] = []
     const roomsRef = collection(
@@ -187,13 +214,21 @@ export const getRooms = async (houseId: string, flatId: string) => {
     if (qsRoomsDocs && !qsRoomsDocs.empty) {
         for (const room of qsRoomsDocs.docs) {
             const newRoom: Room = {
-                name: room.id,
-                fields: room.data()
+                id: room.id,
+                name: room.get('name'),
+                fields: await getFields(houseId, flatId, room.id),
+                position: room.get('position'),
             }
             rooms.push(newRoom)
         }
     }
     return rooms
+        .sort((a, b) => {
+            if (a.position === undefined && b.position === undefined) return 0;
+            if (a.position === undefined) return 1;
+            if (b.position === undefined) return -1;
+            return a.position - b.position;
+        })
 }
 
 export const getFlats = async (houseId: string) => {
@@ -205,13 +240,21 @@ export const getFlats = async (houseId: string) => {
     if (qsFlatDocs && !qsFlatDocs.empty) {
         for (const flat of qsFlatDocs.docs) {
             const newFlat: Flat = {
-                name: flat.id,
-                rooms: await getRooms(houseId, flat.id)
+                id: flat.id,
+                name: flat.get('name'),
+                rooms: await getRooms(houseId, flat.id),
+                position: flat.get('position'),
             }
             flats.push(newFlat)
         }
     }
     return flats
+        .sort((a, b) => {
+            if (a.position === undefined && b.position === undefined) return 0;
+            if (a.position === undefined) return 1;
+            if (b.position === undefined) return -1;
+            return a.position - b.position;
+        })
 }
 
 export const getHouses = async () => {
@@ -225,60 +268,123 @@ export const getHouses = async () => {
         for (const house of qsDocs.docs) {
             const flats = await getFlats(house.id)
             const newHouse: House = {
+                id: house.id,
                 name: house.id,
-                flats: flats
+                flats: flats,
+                position: house.get('position'),
             }
             houses.push(newHouse)
         }
     }
     return houses
+        .sort((a, b) => {
+            if (a.position === undefined && b.position === undefined) return 0;
+            if (a.position === undefined) return 1;
+            if (b.position === undefined) return -1;
+            return a.position - b.position;
+        })
 }
 
-export const createOrUpdateFlat = async (flat: Flat, houseName: string) => {
+export const createFlat = async (flat: Flat, houseName: string) => {
     try {
-        const flatDocRef = doc(db, `houses/${houseName}/flats/${flat.name}`);
-        await setDoc(flatDocRef, {name: flat.name}, {merge: true});
-        const roomsCollectionRef = collection(flatDocRef, "rooms");
+        const flatColRef = collection(db, `houses/${houseName}/flats`);
+        const createdFlatDoc = await addDoc(flatColRef, {name: flat.name, position: flat?.position});
+        const roomsCollectionRef = collection(flatColRef, `/${createdFlatDoc.id}/rooms`)
         for (const room of flat.rooms) {
-            const roomDocRef = doc(roomsCollectionRef, room.name);
-            await setDoc(roomDocRef, room.fields, {merge: true});
+            const createdRoomDoc = await addDoc(roomsCollectionRef, {name: room.name, position: room?.position});
+            const fieldsCollectionRef = collection(roomsCollectionRef, `/${createdRoomDoc.id}/fields`)
+            for (const field of room.fields) {
+                await addDoc(fieldsCollectionRef, {name: field.name, position: field?.position});
+            }
         }
     } catch (error) {
         console.error(error);
     }
 }
 
-export const updateFlatStructure = async (houseName: string, flat: Flat) => {
+export const updateFlat = async (houseName: string, flat: Flat) => {
     try {
-        const roomNames = flat.rooms.map((room) => room.name)
-        const roomsString = `${DB_HOUSES}/${houseName}/${DB_FLATS}/${flat.name}/${DB_ROOMS}`
-        const roomsRef = collection(db, roomsString);
-        const roomsSnapshot = await getDocs(roomsRef)
-        const roomsToDelete = roomsSnapshot.docs
-            .filter((room) => !roomNames.includes(room.id))
-        const rooms = roomsSnapshot.docs
-            .filter((room) => roomNames.includes(room.id))
-        for (let i = 0; i < roomsToDelete.length; i++) {
-            await deleteDoc(doc(db, `${roomsString}/${roomsToDelete[i].id}`)).catch((error) => console.log(error.message))
+        const deleteUpdatePromises: Promise<void>[] = [];
+        const dbFlat = await getDoc(doc(db, `${DB_HOUSES}/${houseName}/${DB_FLATS}/${flat.id}`));
+        deleteUpdatePromises.push(updateDoc(dbFlat.ref, {name: flat.name, position: flat.position}))
+        deleteUpdatePromises.push(updateRooms(collection(db, `${DB_HOUSES}/${houseName}/${DB_FLATS}/${flat.id}/${DB_ROOMS}`), flat.rooms))
+        await Promise.all(deleteUpdatePromises);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const updateRooms = async (roomsCollectionRef: CollectionReference, rooms: Room[]) => {
+    try {
+        const deleteUpdatePromises: Promise<void>[] = [];
+        const addPromises: Promise<DocumentReference>[] = [];
+        const roomsToAdd = rooms.filter((room) => room.id === "")
+        const roomsToNotAddIds = rooms.filter((room) => room.id !== "").map((room) => room.id)
+        const dbRooms = await getDocs(roomsCollectionRef)
+        const roomsToDelete: QueryDocumentSnapshot[] = []
+        const roomsToUpdate: QueryDocumentSnapshot[] = []
+        dbRooms.docs.map((room) => {
+            if (!roomsToNotAddIds.includes(room.id)) {
+                roomsToDelete.push(room)
+            } else roomsToUpdate.push(room)
+        })
+
+        for (const room of roomsToDelete) {
+            deleteUpdatePromises.push(deleteDoc(room.ref))
+        }
+        for (const room of roomsToAdd) {
+            const roomDocument = await addDoc(roomsCollectionRef, {name: room.name, position: room.position})
+            room.fields.forEach((field) => {
+                addPromises.push(addDoc(collection(db, roomDocument.path + `/${DB_DATA_FIELDS_KEY}`), {
+                    name: field.name,
+                    position: field?.position
+                }))
+            })
+        }
+        for (const dbRoom of roomsToUpdate) {
+            const roomToUpdate = rooms.filter((room) => room.id === dbRoom.id)[0]
+            deleteUpdatePromises.push(updateDoc(dbRoom.ref, {name: roomToUpdate.name, position: roomToUpdate.position}))
+            deleteUpdatePromises.push(updateFields(collection(db, roomsCollectionRef.path + `/${roomToUpdate.id}/${DB_DATA_FIELDS_KEY}`), roomToUpdate.fields))
         }
 
-        await Promise.all(
-            flat.rooms.map(async (room) => {
-                const flatRoomFields = Object.keys(room.fields)
-                for (let i = 0; i < rooms.length; i++) {
-                    const fieldNames = Object.keys(rooms[i].data())
-                    const fieldsToDelete = fieldNames.filter(item => !flatRoomFields.includes(item));
-                    if (fieldsToDelete.length > 0) {
-                        const deleteObject = fieldsToDelete.reduce((record: Record<string, FieldValue>, field) => {
-                            record[field] = deleteField();
-                            return record;
-                        }, {});
+        await Promise.all(deleteUpdatePromises);
+        await Promise.all(addPromises);
+    } catch (error) {
+        console.error(error);
+    }
+}
 
-                        const roomDocRef = doc(db, `${roomsString}/${rooms[i].id}`);
-                        await updateDoc(roomDocRef, deleteObject)
-                    }
-                }
+export const updateFields = async (fieldCollectionRef: CollectionReference, fields: Field[]) => {
+    try {
+        const deleteUpdatePromises: Promise<void>[] = [];
+        const addPromises: Promise<DocumentReference>[] = [];
+        const fieldsToAdd = fields.filter((field) => field.id === "")
+        const fieldsToNotAddIds = fields.filter((field) => field.id !== "").map((field) => field.id)
+        const dbFields = await getDocs(fieldCollectionRef)
+        const fieldsToDelete: QueryDocumentSnapshot[] = []
+        const fieldsToUpdate: QueryDocumentSnapshot[] = []
+        dbFields.docs.map((field) => {
+            if (!fieldsToNotAddIds.includes(field.id)) {
+                fieldsToDelete.push(field)
+            } else fieldsToUpdate.push(field)
+        })
+
+        for (const field of fieldsToDelete) {
+            deleteUpdatePromises.push(deleteDoc(field.ref))
+        }
+        for (const field of fieldsToAdd) {
+            addPromises.push(addDoc(fieldCollectionRef, {name: field.name, position: field.position}))
+        }
+        for (const dbField of fieldsToUpdate) {
+            const fieldToUpdate = fields.filter((field) => field.id === dbField.id)[0]
+            deleteUpdatePromises.push(updateDoc(dbField.ref, {
+                name: fieldToUpdate.name,
+                position: fieldToUpdate.position
             }))
+        }
+
+        await Promise.all(deleteUpdatePromises);
+        await Promise.all(addPromises);
     } catch (error) {
         console.error(error);
     }
@@ -286,16 +392,56 @@ export const updateFlatStructure = async (houseName: string, flat: Flat) => {
 
 export const setFieldValue = async (
     houseName: string,
-    flatName: string,
-    roomName: string,
-    fieldName: string,
+    flat: Flat,
+    room: Room,
+    field: Field,
     year: string,
     month: string,
-    fieldValueToSet: number | null) => {
+    fieldValueToSet?: number) => {
     try {
-        const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
-        const key: string = `${houseName}#${flatName}#${roomName}#${fieldName}`
-        await setDoc(dateCollectionRef, {[`${key}`]: fieldValueToSet}, {merge: true});
+        const now = new Date();
+        const utcDate = new Date(Date.UTC(
+            parseInt(year),
+            parseInt(month) - 1,
+            now.getUTCDate(),
+            0,
+            0,
+            0,
+            0
+        ));
+        const pathValues = `${DB_BUILDING_CONSUMPTION}/${year}-${month}/${DB_FIELD_VALUES}`;
+        const fieldRef = await getDoc(doc(
+            db,
+            `${DB_HOUSES}/${houseName}/${DB_FLATS}/${flat.id}/${DB_ROOMS}/${room.id}/${DB_DATA_FIELDS_KEY}/${field.id}`,
+        ))
+
+        const fieldQuery = query(
+            collection(db, pathValues),
+            where("fieldId", "==", field.id),
+            limit(1)
+        );
+
+        const querySnapshot = await getDocs(fieldQuery);
+        if (querySnapshot.empty) {
+            await addDoc(
+                collection(db, pathValues),
+                {
+                    day: Timestamp.fromDate(utcDate),
+                    value: fieldValueToSet,
+                    field: fieldRef.ref,
+                    flatId: flat.id,
+                    roomId: room.id,
+                    fieldId: field.id
+                });
+        } else {
+            const documentSnapshot = querySnapshot.docs[0];
+            await updateDoc(
+                documentSnapshot.ref,
+                {
+                    day: Timestamp.fromDate(utcDate),
+                    value: fieldValueToSet,
+                });
+        }
     } catch (error) {
         console.error(error);
     }
@@ -322,44 +468,69 @@ export const deleteFieldValue = async (
 export const getFieldValues = async (
     year: string,
     month: string,
-    houseName?: string,
-    flatName?: string,
-    roomName?: string,
-    fieldName?: string) => {
+    flat?: Flat,
+    room?: Room,
+    field?: Field) => {
     try {
-        const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
-        const allFields = await getDoc(dateCollectionRef);
-        const fields = allFields.data()
-        if (!fields)
-            return
-
-        const parts: string[] = []
-        if (houseName) parts.push(houseName)
-        if (flatName) parts.push(flatName)
-        if (roomName) parts.push(roomName)
-        if (fieldName) parts.push(fieldName)
-
-        const result: NumberDictionary = {}
-
-        for (const [key, value] of Object.entries(fields)) {
-            const keyParts = key.split("#");
-            let isMatch = true;
-            for (let i = 0; i < parts.length; i++) {
-                if (keyParts[i] !== parts[i]) {
-                    isMatch = false;
-                    break;
-                }
-            }
-            if (isMatch) {
-                result[key] = !isNaN(parseInt(value)) ? parseInt(value) : null;
-            }
-
+        const resultFields: FieldValue[] = []
+        const fieldValueCollectionRef = collection(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}/${DB_FIELD_VALUES}`);
+        const whereStatements: QueryFieldFilterConstraint[] = []
+        if (flat)
+            whereStatements.push(where("flatId", "==", flat.id));
+        if (room)
+            whereStatements.push(where("roomId", "==", room.id));
+        if (field)
+            whereStatements.push(where("fieldId", "==", field.id));
+        const fieldValueQuery = query(fieldValueCollectionRef, and(...whereStatements))
+        const allFields = await getDocs(fieldValueQuery);
+        for (const fieldValue of allFields.docs) {
+            const fieldDoc = await getDoc(fieldValue.get("field"))
+            resultFields.push(
+                {
+                    field: {
+                        id: fieldDoc.id,
+                        name: fieldDoc.get("name"),
+                        position: fieldDoc.get("position"),
+                    },
+                    day: fieldValue.get("day").toDate(),
+                    value: fieldValue.get("value")
+                })
         }
-
-        return result
+        return resultFields
     } catch (error) {
         console.error(error);
-        return
+        return []
+    }
+}
+
+export const getFieldValuesForExport = async (year: string, month: string) => {
+    try {
+        const houses: House[] = await getHouses()
+        const fieldValues: FieldValue[] = await getFieldValues(year, month)
+        const resultDownloadBuildingCsvDto: DownloadBuildingCsvDto[] = []
+        houses.map((house) => {
+            house.flats.map((flat) => {
+                flat.rooms.map((room) => {
+                    room.fields.map((field) => {
+                        fieldValues.map((fieldValue) => {
+                            if (field.id === fieldValue.field.id)
+                                resultDownloadBuildingCsvDto.push(
+                                    {
+                                        house,
+                                        flat,
+                                        room,
+                                        fieldValue: fieldValue,
+                                    })
+                        })
+                    })
+                })
+            })
+        })
+
+        return resultDownloadBuildingCsvDto
+    } catch (error) {
+        console.error(error);
+        return []
     }
 }
 

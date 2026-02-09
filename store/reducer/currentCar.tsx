@@ -1,10 +1,12 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Car} from "@/constants/types";
-import {DEFAULT_CAR} from "@/constants/constantData";
+import {DEFAULT_CAR_NAME} from "@/constants/constantData";
+
+
 
 const CurrentCarSlice = createSlice({
     name: 'currentCar',
-    initialState: DEFAULT_CAR,
+    initialState: {name: DEFAULT_CAR_NAME} as Car,
     reducers: {
         setCurrentCar: (state, action: PayloadAction<Car>) => {
             return action.payload

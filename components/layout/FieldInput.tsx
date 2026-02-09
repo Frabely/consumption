@@ -3,27 +3,26 @@ import styles from "@/styles/layout/FieldInput.module.css";
 import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMicrophone} from "@fortawesome/free-solid-svg-icons";
 
-function FieldInput({value, onChange, placeholder}: FieldInputProps) {
-    const [isFocus, setIsFocus] = useState(false)
+function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
     const [isRecording, setIsRecording] = useState(false);
-    const [isMicTouched, setIsMicTouched] = useState(false)
+    const [isMicTouched, setIsMicTouched] = useState(false);
+    // const cleanInputRegEx: RegExp = /[^0-9.-]|\.(?=.*\.)|-(?=.*-)|(?<!^)-/g
 
     useEffect(() => {
         if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
-            const SpeechRecognition = window.webkitSpeechRecognition;
-            const recognition: SpeechRecognition = new SpeechRecognition();
+            const recognition: SpeechRecognition = new window.webkitSpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
             recognition.lang = 'de-DE';
             recognition.onresult = (event: SpeechRecognitionEvent) => {
-                let currentTranscript = value ? value : ""
+                let currentTranscript = ""
                 // @ts-ignore
                 for (const result of event.results) {
                     currentTranscript += result[0].transcript;
                 }
                 const simulatedEvent = {
                     target: {
-                        value: currentTranscript.replace(/[^\d-]/g, ''),
+                        value: currentTranscript,
                     },
                 } as ChangeEvent<HTMLInputElement>;
 
@@ -37,6 +36,7 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
                 setIsRecording(false);
             };
             if (isRecording) {
+                onChange({target: {value: ""}} as ChangeEvent<HTMLInputElement>);
                 recognition.start();
             } else {
                 recognition.stop();
@@ -45,33 +45,37 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
                 recognition.stop();
             };
         }
+        // eslint-disable-next-line
     }, [isRecording]);
-
-
 
     return (
         <div
             className={`${styles.inputContainer} ${
-                (value && !isNaN(parseInt(value)) && value.length > 0) ?
+                (value && !isNaN(Number(value))) ?
                     styles.inputValid :
                     styles.inputInvalid}`}
-            style={isFocus ? {borderStyle: "solid", borderWidth: "3px", borderColor: "black"} : {}}>
-            <input value={value && !isNaN(parseInt(value.replace(/[^\d-]/g, ''))) ? parseInt(value.replace(/[^\d-]/g, '')) : ""}
+            style={style}>
+            <input value={value ? value : ""}
                    className={styles.input}
-                   type={"number"}
-                   min={-999999}
-                   max={999999}
-                   step={1.0}
+                   type={"text"}
+                   inputMode={"decimal"}
+                   step={0.1}
                    onChange={onChange}
                    placeholder={`${placeholder ? placeholder : ""}`}
                    onFocus={(event) => {
-                       setIsFocus(true)
                        event.target.select()
                    }}
-                   onBlur={() => setIsFocus(false)}
             />
             <div
                 className={styles.microphoneContainer}
+                onMouseDown={() => {
+                    setIsMicTouched(true)
+                    setIsRecording(true)
+                }}
+                onMouseUp={() => {
+                    setIsMicTouched(false)
+                    setIsRecording(false)
+                }}
                 onTouchStart={() => {
                     setIsMicTouched(true)
                     setIsRecording(true)
@@ -103,9 +107,11 @@ function FieldInput({value, onChange, placeholder}: FieldInputProps) {
 }
 
 export type FieldInputProps = {
-    value?: string
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void,
+    value: string | null,
     placeholder?: string,
-    onChange: (event: ChangeEvent<HTMLInputElement>) => void
+    style?: CSSProperties,
+    validationRegEx?: RegExp,
 }
 
 export default FieldInput;

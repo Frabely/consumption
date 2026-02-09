@@ -10,11 +10,20 @@
 
 .fieldLabel {
     margin-left: 0.5rem;
+    width: 100%;
 }
 
 .fieldsContainer {
     display: flex;
     flex-direction: column;
+    gap: 1rem;
+}
+
+.fieldInputContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     gap: 1rem;
 }
 

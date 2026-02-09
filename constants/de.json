@@ -15,13 +15,24 @@
     "powerShort": "kW/h",
     "loadingStation": "Ladestation",
     "name": "Name",
+    "house": "Haus",
+    "flat": "Wohnung",
+    "room": "Raum",
+    "fieldValue": "Zählerwert",
     "rooms": "Räume",
     "fields": "Zähler",
     "selectedRoom": "Ausgewählter Raum",
     "none": "-",
     "loading": "Lädt",
     "backToLogin": "Zurück zum Login",
-    "back": "Zurück"
+    "back": "Zurück",
+    "enterNewName": "Neuen Name eingeben",
+    "day": "Tag",
+    "enteredItems": "Eintragungen",
+    "statistics": "Auswertung",
+    "kilometersDriven": "Zurückgelegte Kilometer",
+    "kwhFueled": "Geladene Menge",
+    "currentPriceToPay": "Aktuell zu zahlender Betrag"
   },
   "inputLabels": {
     "date": "Datum",
@@ -32,7 +43,9 @@
     "flatName": "Wohnungsname",
     "roomName": "Raumname",
     "fieldName": "Zählername",
-    "placeholderValue": "Wert"
+    "placeholderValue": "Wert",
+    "priceMultiplier": "Preismultiplikator",
+    "currentSelectedCar": "Ausgewähltes Auto"
   },
   "buttonLabels": {
     "addData": "Daten hinzufügen",
@@ -70,7 +83,8 @@
     "roomNameEmpty": "Raumname leer!",
     "deleteRoomConfirmation": "Raum '{0}' wirklich löschen?",
     "deleteFieldConfirmation": "Zähler '{0}' wirklich löschen?",
-    "databaseError": "Datenbankfehler"
+    "databaseError": "Datenbankfehler",
+    "fieldSaved": "Wert: '{valueNumber}' im Zähler '{valueFieldName}' gespeichert."
   },
   "loadingStation": {
     "carport": "Carport",

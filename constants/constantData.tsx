@@ -1,4 +1,4 @@
-import {Car, DataSet, House, LoadingStation, Room, User} from "@/constants/types";
+import {Car, DataSet, House, LoadingStation, User} from "@/constants/types";
 import {getCars, getFullDataSet, getHouses, getLoadingStations} from "@/firebase/functions";
 
 export const DEFAULT_LOADING_STATION: LoadingStation = {
@@ -6,23 +6,14 @@ export const DEFAULT_LOADING_STATION: LoadingStation = {
     name: 'carport'
 }
 
-export const PATH_STRINGS = {
-    mainPage: '/',
-    buildingConsumption: '/buildingConsumption'
-}
+export const DEFAULT_CAR_NAME = "Zoe"
 
-export let DEFAULT_CAR: Car = {
-    name: 'Zoe'
-}
+export let DEFAULT_CAR: Car;
 
 export let DEFAULT_HOUSE: House = {
+    id: "",
     name: 'F233',
     flats: []
-}
-
-export let EMPTY_ROOM: Room = {
-    name: '-',
-    fields: {}
 }
 
 export const EMPTY_USER: User = {}
@@ -30,11 +21,13 @@ export const EMPTY_USER: User = {}
 export const DB_DATA_SET_COLLECTION_KEY: string = 'consumptionData'
 export const DB_DATA_FLATS_KEY: string = 'flats'
 export const DB_DATA_ROOMS_KEY: string = 'rooms'
+export const DB_DATA_FIELDS_KEY: string = 'fields'
 export const DB_USER_COLLECTION_KEY: string = 'users'
 export const DB_CARS: string = 'cars'
 export const DB_HOUSES: string = 'houses'
 export const DB_FLATS: string = 'flats'
 export const DB_ROOMS: string = 'rooms'
+export const DB_FIELD_VALUES: string = 'values'
 export const DB_BUILDING_CONSUMPTION: string = 'buildingConsumption'
 export const DB_LOADING_STATIONS: string = 'loadingStations'
 
@@ -56,6 +49,15 @@ export const loadMainPageData = async () => {
     if (resultCars) {
         cars = resultCars
         if (cars.length > 0) {
+            cars.map((car) => {
+                if (car.name === DEFAULT_CAR_NAME)
+                    DEFAULT_CAR = {
+                        name: car.name,
+                        kilometer: car.kilometer,
+                        prevKilometer: car.prevKilometer,
+                    }
+            })
+            if (!DEFAULT_CAR)
             DEFAULT_CAR = {
                 name: cars[0].name,
                 kilometer: cars[0].kilometer,
