@@ -33,22 +33,27 @@ export default function Statistics({}: StatisticsProps) {
     useEffect(() => {
         loadAllConsumptionDocsBetween(fromDateValue, toDateValue, currentCarName).then((result) => {
             if (result && result.length > 0) {
-                let kwh = 0
-                result.map((dataItem) => {
-                    kwh += parseFloat(dataItem.data.power.toString())
-                })
+                const kwh = result.reduce(
+                    (sum, item) => sum + Number(item.data.power),
+                    0
+                );
                 setKwhFueled(kwh)
-                if (isPowerValid(priceMultiplier))
-                    setPriceToPay(kwh * parseFloat(priceMultiplier) ?? 1)
                 setKilometersDriven(result[result.length-1].data.kilometer - result[0].data.kilometer)
             }
             else {
                 setKwhFueled(0)
-                setPriceToPay(0)
                 setKilometersDriven(0)
             }
         }).catch((ex) => console.log(ex))
-    }, [currentCarName, fromDateValue, priceMultiplier, toDateValue]);
+    }, [currentCarName, fromDateValue, toDateValue]);
+
+    useEffect(() => {
+        const multiplier = isPowerValid(priceMultiplier)
+            ? Number(String(priceMultiplier).replace(",", "."))
+            : 1;
+
+        setPriceToPay(kwhFueled * multiplier);
+    }, [kwhFueled, priceMultiplier]);
 
     const onFromDateInputChangeHandler = async (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.value !== '') {
