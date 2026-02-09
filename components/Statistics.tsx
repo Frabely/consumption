@@ -2,13 +2,12 @@ import React, {ChangeEvent, useEffect, useState} from 'react';
 import styles from '../styles/Statistics.module.css'
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {YearMonth} from "@/constants/types";
-import {getFullDataSet} from "@/firebase/functions";
+import {loadAllConsumptionDocsBetween} from "@/firebase/functions";
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
 import de from "@/constants/de.json"
 
 export default function Statistics({}: StatisticsProps) {
-    const state: RootState = useSelector((state: RootState) => state)
     const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
     const currentCarName: string | undefined = useSelector((state: RootState) => state.currentCar.name)
 
@@ -22,39 +21,54 @@ export default function Statistics({}: StatisticsProps) {
     const [kwhFueled, setKwhFueled] = useState(0)
     const [priceMultiplier, setPriceMultiplier] = useState("0.2")
     const [priceToPay, setPriceToPay] = useState(0)
-    const [currentDateValue, setCurrentDateValue] = useState<YearMonth>({
+    const [fromDateValue, setFromDateValue] = useState<YearMonth>({
+        year: year.toString(),
+        month: monthString
+    })
+    const [toDateValue, setToDateValue] = useState<YearMonth>({
         year: year.toString(),
         month: monthString
     })
 
     useEffect(() => {
-        getFullDataSet(state.currentCar.name, currentDateValue).then((dataSet) => {
-            if (dataSet && dataSet.length > 0)
-            {
+        loadAllConsumptionDocsBetween(fromDateValue, toDateValue, currentCarName).then((result) => {
+            if (result && result.length > 0) {
                 let kwh = 0
-                dataSet.map((dataItem) => {
-                    kwh += parseFloat(dataItem.power.toString())
+                result.map((dataItem) => {
+                    kwh += parseFloat(dataItem.data.power.toString())
                 })
                 setKwhFueled(kwh)
                 if (isPowerValid(priceMultiplier))
                     setPriceToPay(kwh * parseFloat(priceMultiplier) ?? 1)
-                setKilometersDriven(dataSet[0].kilometer - dataSet[dataSet.length-1].kilometer)
-            } else {
+                setKilometersDriven(result[result.length-1].data.kilometer - result[0].data.kilometer)
+            }
+            else {
                 setKwhFueled(0)
                 setPriceToPay(0)
                 setKilometersDriven(0)
             }
-        }).catch((e: Error) => console.log(e.message))
-    }, [state.currentCar.name, currentDateValue, priceMultiplier]);
+        }).catch((ex) => console.log(ex))
+    }, [currentCarName, fromDateValue, priceMultiplier, toDateValue]);
 
-    const onDateInputChangeHandler = async (event: ChangeEvent<HTMLInputElement>) => {
+    const onFromDateInputChangeHandler = async (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.value !== '') {
             const arrayDate: string[] = event.target.value.split('-')
             const yearMonth = {
                 year: arrayDate[0],
                 month: arrayDate[1]
             }
-            setCurrentDateValue(yearMonth)
+            setFromDateValue(yearMonth)
+        }
+    }
+
+    const onToDateInputChangeHandler = async (event: ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value !== '') {
+            const arrayDate: string[] = event.target.value.split('-')
+            const yearMonth = {
+                year: arrayDate[0],
+                month: arrayDate[1]
+            }
+            setToDateValue(yearMonth)
         }
     }
 
@@ -75,13 +89,24 @@ export default function Statistics({}: StatisticsProps) {
                     </div>
                 : null}
                 <div className={styles.inputContainer}>
-                    <div>{de.inputLabels.date}:</div>
+                    <div>{de.inputLabels.from}:</div>
                     <input
-                        onChange={onDateInputChangeHandler}
-                        value={`${currentDateValue.year}-${currentDateValue.month}`}
+                        onChange={onFromDateInputChangeHandler}
+                        value={`${fromDateValue.year}-${fromDateValue.month}`}
                         className={globalStyles.monthPicker}
-                        style={{width: "10rem"}}
-                        type={"month"}/>
+                        style={{width: "12rem"}}
+                        type={"month"}
+                        max={``}/>
+                </div>
+                <div className={styles.inputContainer}>
+                    <div>{de.inputLabels.to}:</div>
+                    <input
+                        onChange={onToDateInputChangeHandler}
+                        value={`${toDateValue.year}-${toDateValue.month}`}
+                        className={globalStyles.monthPicker}
+                        style={{width: "12rem"}}
+                        type={"month"}
+                        max={``}/>
                 </div>
                 <div className={styles.inputContainer}>
                     <div>{de.inputLabels.priceMultiplier}:</div>
@@ -109,5 +134,4 @@ export default function Statistics({}: StatisticsProps) {
 }
 
 export type StatisticsProps = {
-
 }
