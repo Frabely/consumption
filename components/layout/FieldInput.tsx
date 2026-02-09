@@ -1,12 +1,12 @@
 import React, {ChangeEvent, CSSProperties, useEffect, useState} from 'react';
 import styles from "@/styles/layout/FieldInput.module.css";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMicrophone} from "@fortawesome/free-solid-svg-icons";
 
 function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
     const [isRecording, setIsRecording] = useState(false);
     const [isMicTouched, setIsMicTouched] = useState(false);
-    const cleanInputRegEx: RegExp = /[^0-9.]|\.(?=.*\.)/g
+    // const cleanInputRegEx: RegExp = /[^0-9.-]|\.(?=.*\.)|-(?=.*-)|(?<!^)-/g
 
     useEffect(() => {
         if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
@@ -22,7 +22,7 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
                 }
                 const simulatedEvent = {
                     target: {
-                        value: currentTranscript.replace(cleanInputRegEx, ''),
+                        value: currentTranscript,
                     },
                 } as ChangeEvent<HTMLInputElement>;
 
@@ -51,13 +51,15 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
     return (
         <div
             className={`${styles.inputContainer} ${
-                (value && !isNaN(parseFloat(value)) && value.length > 0) ?
+                (value && !isNaN(Number(value))) ?
                     styles.inputValid :
                     styles.inputInvalid}`}
             style={style}>
-            <input value={value && !isNaN(parseFloat(value.replace(cleanInputRegEx, ''))) ? parseFloat(value.replace(cleanInputRegEx, '')) : ""}
+            <input value={value ? value : ""}
                    className={styles.input}
-                   type={"number"}
+                   type={"text"}
+                   inputMode={"decimal"}
+                   step={0.1}
                    onChange={onChange}
                    placeholder={`${placeholder ? placeholder : ""}`}
                    onFocus={(event) => {
@@ -96,7 +98,7 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
                             '--text-color': isMicTouched ?
                                 "var(--primary-color)" :
                                 "var(--text-color)"
-                        } as React.CSSProperties
+                        } as CSSProperties & CSSVariables
                     }
                     icon={faMicrophone}/>
             </div>
@@ -105,10 +107,11 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
 }
 
 export type FieldInputProps = {
-    value?: string
-    placeholder?: string,
     onChange: (event: ChangeEvent<HTMLInputElement>) => void,
+    value: string | null,
+    placeholder?: string,
     style?: CSSProperties,
+    validationRegEx?: RegExp,
 }
 
 export default FieldInput;
