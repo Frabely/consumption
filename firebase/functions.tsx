@@ -104,7 +104,7 @@ export const loadAllConsumptionDocsBetween = async (
         })
     );
 
-    return perMonth.flat();
+    return perMonth.flat().sort((a, b) => a.data.kilometer - b.data.kilometer);
 }
 
 export const addDataSetToCollection = (carName: string, dataSet: DataSetNoId) => {
