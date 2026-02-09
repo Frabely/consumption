@@ -7,10 +7,10 @@ import {FieldValue, Flat, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {ChangeEvent, CSSProperties, useEffect, useState} from "react";
-import {faSave} from "@fortawesome/free-solid-svg-icons";
+import {faSave, faBan} from "@fortawesome/free-solid-svg-icons";
 import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FieldInput from "@/components/layout/FieldInput";
-import {getFieldValues, setFieldValue} from "@/firebase/functions";
+import {deleteFieldValue, getFieldValues, setFieldValue} from "@/firebase/functions";
 import {RootState} from "@/store/store";
 import CustomSelect from "@/components/layout/CustomSelect";
 import {ModalState} from "@/constants/enums";
@@ -90,7 +90,26 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                         .replace("{valueNumber}", fieldValue.value ? fieldValue.value.toString() : "undefined"))
                 })
         }
+    }
 
+    const onDeleteFieldClickHandler = async (fieldValueToDelete: FieldValue) => {
+        if (fieldValueToDelete.value !== null) {
+            const fieldValues = [...currentFieldValues]
+            fieldValues.map((field) => {
+                if (field.field.id === fieldValueToDelete.field.id) {
+                    fieldValueToDelete.value = null
+                }
+            })
+            setCurrentFieldValues(fieldValues)
+            deleteFieldValue(
+                state.currentHouse.name,
+                flat,
+                currentRoom,
+                fieldValueToDelete.field,
+                currentDateValue.year,
+                currentDateValue.month)
+                .catch((ex) => console.log(ex))
+        }
     }
 
     const onRoomChangeHandler = (value: string) => {
@@ -149,6 +168,19 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                                             } as CSSProperties & CSSVariables
                                         }
                                         icon={faSave}/>
+                                </div>
+                                <div onClick={() => {
+                                    onDeleteFieldClickHandler(fieldValue).catch(error => console.log(error))
+                                }}>
+                                    <FontAwesomeIcon
+                                        style={
+                                            {
+                                                '--text-color': fieldValue.value && !isNaN(Number(fieldValue.value)) ?
+                                                    "var(--text-color)" :
+                                                    "var(--text-color-muted)"
+                                            } as CSSProperties & CSSVariables
+                                        }
+                                        icon={faBan}/>
                                 </div>
                             </div>
                         </div>

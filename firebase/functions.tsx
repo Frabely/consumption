@@ -449,17 +449,33 @@ export const setFieldValue = async (
 
 export const deleteFieldValue = async (
     houseName: string,
-    flatName: string,
-    roomName: string,
-    fieldName: string,
+    flat: Flat,
+    room: Room,
+    field: Field,
     year: string,
-    month: string) => {
+    month: string,) => {
     try {
-        const dateCollectionRef = doc(db, `${DB_BUILDING_CONSUMPTION}/${year}-${month}`);
-        const key: string = `${houseName}#${flatName}#${roomName}#${fieldName}`
-        await updateDoc(dateCollectionRef, {
-            [key]: null
-        });
+        const pathValues = `${DB_BUILDING_CONSUMPTION}/${year}-${month}/${DB_FIELD_VALUES}`;
+        const fieldRef = await getDoc(doc(
+            db,
+            `${DB_HOUSES}/${houseName}/${DB_FLATS}/${flat.id}/${DB_ROOMS}/${room.id}/${DB_DATA_FIELDS_KEY}/${field.id}`,
+        ))
+
+        const fieldQuery = query(
+            collection(db, pathValues),
+            where("field", "==", fieldRef.ref),
+            limit(1)
+        );
+
+        const querySnapshot = await getDocs(fieldQuery);
+        if (!querySnapshot.empty) {
+            const documentSnapshot = querySnapshot.docs[0];
+            await updateDoc(
+                documentSnapshot.ref,
+                {
+                    value: null,
+                });
+        }
     } catch (error) {
         console.error(error);
     }

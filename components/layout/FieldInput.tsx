@@ -6,7 +6,6 @@ import {faMicrophone} from "@fortawesome/free-solid-svg-icons";
 function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
     const [isRecording, setIsRecording] = useState(false);
     const [isMicTouched, setIsMicTouched] = useState(false);
-    // const cleanInputRegEx: RegExp = /[^0-9.-]|\.(?=.*\.)|-(?=.*-)|(?<!^)-/g
 
     useEffect(() => {
         if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
