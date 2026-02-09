@@ -154,6 +154,7 @@ export const checkUserId = async (id: string): Promise<User | undefined> => {
                 key: result.docs[0].get('key'),
                 name: result.docs[0].get('name'),
                 role: role,
+                defaultCar: result.docs[0].get('defaultCar'),
             }
             return user
         }

@@ -1,12 +1,11 @@
-import {Car, DataSet, House, LoadingStation, User} from "@/constants/types";
-import {getCars, getFullDataSet, getHouses, getLoadingStations} from "@/firebase/functions";
+import {Car, House, LoadingStation, User} from "@/constants/types";
+import {getCars, getHouses, getLoadingStations} from "@/firebase/functions";
+import {CarNames} from "@/constants/enums";
 
 export const DEFAULT_LOADING_STATION: LoadingStation = {
     id: '17498904',
     name: 'carport'
 }
-
-export const DEFAULT_CAR_NAME = "Zoe"
 
 export let DEFAULT_CAR: Car;
 
@@ -34,7 +33,6 @@ export const DB_LOADING_STATIONS: string = 'loadingStations'
 export let loadingStations: LoadingStation[] = []
 export let cars: Car[] = []
 export let houses: House[] = []
-export let dataSet: DataSet[] = []
 
 export const loadMainPageData = async () => {
     const resultStations = await getLoadingStations().catch((error: Error) => {
@@ -50,7 +48,7 @@ export const loadMainPageData = async () => {
         cars = resultCars
         if (cars.length > 0) {
             cars.map((car) => {
-                if (car.name === DEFAULT_CAR_NAME)
+                if (car.name === CarNames.Zoe)
                     DEFAULT_CAR = {
                         name: car.name,
                         kilometer: car.kilometer,
@@ -63,10 +61,6 @@ export const loadMainPageData = async () => {
                 kilometer: cars[0].kilometer,
                 prevKilometer: cars[0].prevKilometer,
             }
-            const resultDataSet = await getFullDataSet(DEFAULT_CAR.name)
-                .catch((error: Error) => console.log(error.message))
-            if (resultDataSet)
-                dataSet = resultDataSet
         }
     }
 }

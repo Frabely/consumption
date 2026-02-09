@@ -15,6 +15,7 @@ import {setPage} from "@/store/reducer/currentPage";
 import {getCars} from "@/firebase/functions";
 import CustomSelect from "@/components/layout/CustomSelect";
 import {ModalState, Page, Role} from "@/constants/enums";
+import {setDataSetArray} from "@/store/reducer/currentDataSet";
 
 export default function Menu({}: MenuProps) {
     const dispatch = useDispatch()
@@ -33,6 +34,7 @@ export default function Menu({}: MenuProps) {
         dispatch(setCurrentUser(EMPTY_USER))
         dispatch(setModalStateNone())
         dispatch(setPage(Page.Home))
+        dispatch(setDataSetArray([]))
     }
 
 

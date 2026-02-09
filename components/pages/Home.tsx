@@ -2,8 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
 import {useAppDispatch} from "@/constants/hooks";
-import {cars, DEFAULT_CAR, loadMainPageData} from "@/constants/constantData";
-import {setCurrentCar} from "@/store/reducer/currentCar";
+import {loadMainPageData} from "@/constants/constantData";
 import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import Loading from "@/components/Loading";
@@ -24,7 +23,6 @@ export default function Home({}: HomeProps) {
 
     useEffect(() => {
         loadMainPageData().then(() => {
-            dispatch(setCurrentCar(cars.filter(car => car.name === DEFAULT_CAR.name)[0]))
             dispatch(setIsReloadNeeded({
                 isReloadHousesNeeded: true,
                 isReloadCarsNeeded: false,
@@ -42,32 +40,28 @@ export default function Home({}: HomeProps) {
 
     return (
         <>
-        {state.isLoading ?
-                <Loading/> :
+            {state.isLoading ? <Loading/> : null}
+            {state.currentUser.key ?
                 <>
-                    {state.currentUser.key ?
-                        <>
-                            <Menu/>
-                            {state.modalState === ModalState.AddCarData || state.modalState === ModalState.ChangeCarData ? (
-                                <AddData
-                                    prevKilometers={state.currentCar.prevKilometer ? state.currentCar.prevKilometer : 0}/>
-                            ) : null}
-                            {state.modalState === ModalState.DownloadCsv ? (
-                                <DownloadCsv/>
-                            ) : null}
-                            <CustomTab
-                                tabNames={[
-                                    de.displayLabels.enteredItems,
-                                    de.displayLabels.statistics]}
-                                selected={selected}
-                                setSelected={setSelected}/>
-                            {HomeTabs.Statistics === selected ? <Display/> : <Statistics/>}
-                        </>
-                        :
-                        <Login/>
-                    }
+                    <Menu/>
+                    {state.modalState === ModalState.AddCarData || state.modalState === ModalState.ChangeCarData ? (
+                        <AddData
+                            prevKilometers={state.currentCar.prevKilometer ? state.currentCar.prevKilometer : 0}/>
+                    ) : null}
+                    {state.modalState === ModalState.DownloadCsv ? (
+                        <DownloadCsv/>
+                    ) : null}
+                    <CustomTab
+                        tabNames={[
+                            de.displayLabels.enteredItems,
+                            de.displayLabels.statistics]}
+                        selected={selected}
+                        setSelected={setSelected}/>
+                    {HomeTabs.Statistics === selected ? <Display/> : <Statistics/>}
                 </>
-        }
+                :
+                <Login/>
+            }
         </>
     );
 }

@@ -21,6 +21,7 @@ export type User = {
     name?: string,
     key?: string,
     role?: Role,
+    defaultCar?: string
 }
 
 export type YearMonth = {

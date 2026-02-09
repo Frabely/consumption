@@ -80,49 +80,46 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                 state.currentUser.key && state.currentUser.role === Role.Admin ?
                     (
                         <>
-                            {state.isLoading ?
-                                <Loading/> :
-                                <>
-                                    <MenuBuilding houses={houseNames}/>
-                                    {state.modalState === ModalState.AddFloorData && currentFlat ? (
-                                        <AddFloorData flat={currentFlat}/>
-                                    ) : null}
-                                    {state.modalState === ModalState.AddFloor ? (
-                                        <AddFloor newFlatPosition={state.currentHouse.flats.length}/>
-                                    ) : null}
-                                    {state.modalState === ModalState.ChangeFloorFields ? (
-                                        <AddFloor currentFlat={currentFlat}/>
-                                    ) : null}
-                                    {state.modalState === ModalState.DownloadBuildingCsv ? (
-                                        <DownloadBuildingCsv/>
-                                    ) : null}
-                                    <div className={
-                                        state.dimension.isHorizontal ?
-                                            styles.contentContainerHor :
-                                            styles.contentContainerVert}>
-                                        <div onClick={
-                                            () => {
-                                                onAddFloorClickHandler()
-                                            }}
-                                             className={styles.flatsItem}
-                                             style={state.currentHouse.flats.length < 4 ? {height: '50%'} : {}}>
-                                            <FontAwesomeIcon icon={faAdd}/>
-                                        </div>
-                                        {state.currentHouse.flats.map((flat) =>
-                                            <div
-                                                onTouchStart={() => onTouchStartHandler(flat)}
-                                                onTouchEnd={() => onTouchEndHandler()}
-                                                onMouseDown={() => onTouchStartHandler(flat)}
-                                                onMouseUp={() => onTouchEndHandler()}
-                                                key={flat.name}
-                                                className={styles.flatsItem}
-                                                style={state.currentHouse.flats.length < 4 ? {height: '50%'} : {}}
-                                            >
-                                                <h3 className={styles.flatsItemTitle}>{flat.name}</h3>
-                                            </div>
-                                        )}
+                            {state.isLoading ? <Loading/> : null }
+                            <MenuBuilding houses={houseNames}/>
+                            {state.modalState === ModalState.AddFloorData && currentFlat ? (
+                                <AddFloorData flat={currentFlat}/>
+                            ) : null}
+                            {state.modalState === ModalState.AddFloor ? (
+                                <AddFloor newFlatPosition={state.currentHouse.flats.length}/>
+                            ) : null}
+                            {state.modalState === ModalState.ChangeFloorFields ? (
+                                <AddFloor currentFlat={currentFlat}/>
+                            ) : null}
+                            {state.modalState === ModalState.DownloadBuildingCsv ? (
+                                <DownloadBuildingCsv/>
+                            ) : null}
+                            <div className={
+                                state.dimension.isHorizontal ?
+                                    styles.contentContainerHor :
+                                    styles.contentContainerVert}>
+                                <div onClick={
+                                    () => {
+                                        onAddFloorClickHandler()
+                                    }}
+                                     className={styles.flatsItem}
+                                     style={state.currentHouse.flats.length < 4 ? {height: '50%'} : {}}>
+                                    <FontAwesomeIcon icon={faAdd}/>
+                                </div>
+                                {state.currentHouse.flats.map((flat) =>
+                                    <div
+                                        onTouchStart={() => onTouchStartHandler(flat)}
+                                        onTouchEnd={() => onTouchEndHandler()}
+                                        onMouseDown={() => onTouchStartHandler(flat)}
+                                        onMouseUp={() => onTouchEndHandler()}
+                                        key={flat.name}
+                                        className={styles.flatsItem}
+                                        style={state.currentHouse.flats.length < 4 ? {height: '50%'} : {}}
+                                    >
+                                        <h3 className={styles.flatsItemTitle}>{flat.name}</h3>
                                     </div>
-                                </>}
+                                )}
+                            </div>
                         </>
                     )
                     :
