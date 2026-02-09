@@ -1,14 +1,14 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Car} from "@/constants/types";
-import {DEFAULT_CAR_NAME} from "@/constants/constantData";
+import {CarNames} from "@/constants/enums";
 
 
 
 const CurrentCarSlice = createSlice({
     name: 'currentCar',
-    initialState: {name: DEFAULT_CAR_NAME} as Car,
+    initialState: {name: CarNames.Zoe} as Car,
     reducers: {
-        setCurrentCar: (state, action: PayloadAction<Car>) => {
+        setCurrentCar: (_, action: PayloadAction<Car>) => {
             return action.payload
         },
         updateCarKilometers: (state, action: PayloadAction<number>) => {

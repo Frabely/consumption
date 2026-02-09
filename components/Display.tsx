@@ -8,12 +8,14 @@ import {getFullDataSet} from "@/firebase/functions";
 import {setDataSetArray} from "@/store/reducer/currentDataSet";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {ModalState} from "@/constants/enums";
+import {setIsLoading} from "@/store/reducer/isLoading";
 
 export default function Display({}: DisplayProps) {
     const state: RootState = useSelector((state: RootState) => state)
     const dispatch = useDispatch()
     useEffect(() => {
-        if (state.modalState === ModalState.None && state.currentCar.name)
+        if (state.modalState === ModalState.None && state.currentCar.name) {
+            dispatch(setIsLoading(true))
             getFullDataSet(state.currentCar.name).then((dataSet) => {
                     if (dataSet) {
                         dispatch(setDataSetArray(dataSet))
@@ -23,7 +25,10 @@ export default function Display({}: DisplayProps) {
                 }
             ).catch((error) => {
                 console.log(error.message)
+            }).finally(() => {
+                dispatch(setIsLoading(false))
             })
+        }
         else if (state.currentCar.kilometer)
             dispatch(setKilometer(state.currentCar.kilometer.toString()))
     }, [dispatch, state.modalState, state.currentCar])

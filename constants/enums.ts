@@ -24,3 +24,9 @@ export enum HomeTabs {
     Statistics = 0,
     ConsumptionData = 1,
 }
+
+export enum CarNames {
+    Zoe = "Zoe",
+    Peugeot508 = "Peugeot 508",
+    BMW = "BMW"
+}
