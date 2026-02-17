@@ -1,35 +1,102 @@
-.mainContainerLight {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 0.5rem;
-    background: var(--trans-display-color-light);
-    flex-wrap: wrap;
-}
-
+.mainContainerLight,
 .mainContainerDark {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 0.5rem;
-    background: var(--trans-display-color-dark);
-    flex-wrap: wrap;
+    gap: 0.82rem;
+    margin-bottom: 0.92rem;
+    padding: 0.84rem 0.95rem 0.8rem;
+    min-height: 9.6rem;
+    border-radius: 20px;
+    background: rgba(250, 247, 242, 0.96);
+    border: 1px solid rgba(223, 210, 194, 0.92);
+    box-shadow: 0 10px 18px rgba(38, 27, 18, 0.2);
 }
 
-.statsContainer {
+.topRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.72rem;
+    min-height: 4.2rem;
+}
+
+.leftSide {
+    display: flex;
+    gap: 0.65rem;
+    min-width: 0;
+}
+
+.iconBubble {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.18rem;
+    height: 2.18rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #c08b5a, #9f6f45);
+}
+
+.icon {
+    color: #fff5e9;
+    font-size: 0.82rem;
+}
+
+.dateColumn {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 0.18rem;
+    min-width: 0;
 }
 
-.innerContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+.primaryDate {
+    font-size: 0.95rem;
+    font-weight: 750;
+    color: #353238;
 }
 
-.item {
+.secondaryDate {
+    font-size: 0.8rem;
+    color: #73707a;
+}
+
+.valueColumn {
     display: flex;
-    padding: 0.5rem 0.2rem;
-    color: var(--text-color);
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 0.26rem;
+    flex-shrink: 0;
+}
+
+.kmValue {
+    color: #343139;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.powerValue {
+    color: #b0663e;
+    font-size: 1.06rem;
+    line-height: 1;
+    font-weight: 800;
+}
+
+.bottomRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.52rem;
+    border-top: 1px solid rgba(139, 124, 110, 0.24);
+    gap: 0.8rem;
+}
+
+.stationValue {
+    color: #646068;
+    font-size: 0.84rem;
+}
+
+.nameValue {
+    color: #37343b;
+    font-size: 0.92rem;
+    font-weight: 800;
 }

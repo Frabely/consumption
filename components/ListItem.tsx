@@ -11,6 +11,8 @@ import {Language, LoadingStation} from "@/constants/types";
 import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch} from "@/store/hooks";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBolt} from "@fortawesome/free-solid-svg-icons";
 
 export default function ListItem({kilometer, name, power, date, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
     const language: Language = de
@@ -51,31 +53,24 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
                  }
              }}
              className={isLight ? styles.mainContainerLight : styles.mainContainerDark}>
-            <div className={styles.statsContainer}>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.local}:</div>
-                    <div className={styles.item}>{localDateString}</div>
+            <div className={styles.topRow}>
+                <div className={styles.leftSide}>
+                    <div className={styles.iconBubble}>
+                        <FontAwesomeIcon icon={faBolt} className={styles.icon}/>
+                    </div>
+                    <div className={styles.dateColumn}>
+                        <div className={styles.primaryDate}>{localDateString}</div>
+                        <div className={styles.secondaryDate}>{UTCDateString}</div>
+                    </div>
                 </div>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.UTC}:</div>
-                    <div className={styles.item}>{UTCDateString}</div>
+                <div className={styles.valueColumn}>
+                    <div className={styles.kmValue}>{kilometer} {language.displayLabels.kilometerShort}</div>
+                    <div className={styles.powerValue}>{power} {language.displayLabels.powerShort}</div>
                 </div>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.kilometer}:</div>
-                    <div className={styles.item}>{kilometer} {language.displayLabels.kilometerShort}</div>
-                </div>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.power}:</div>
-                    <div className={styles.item}>{power} {language.displayLabels.powerShort}</div>
-                </div>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.loadingStation}:</div>
-                    <div className={styles.item}>{language.loadingStation[`${loadingStation.name}`]}</div>
-                </div>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.name}:</div>
-                    <div className={styles.item}>{name}</div>
-                </div>
+            </div>
+            <div className={styles.bottomRow}>
+                <div className={styles.stationValue}>{language.displayLabels.loadingStation}: {language.loadingStation[`${loadingStation.name}`]}</div>
+                <div className={styles.nameValue}>{name}</div>
             </div>
         </div>
     )

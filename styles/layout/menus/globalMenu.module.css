@@ -1,34 +1,56 @@
 .mainContainerVert {
-    display: flex;
-    flex-direction: row;
-    height: 10dvh;
-    background: var(--primary-color);
-    padding: 0 5%;
     position: fixed;
-    width: 100%;
+    right: 1.4rem;
+    bottom: 1.4rem;
+    z-index: 15;
+    width: auto;
+    height: auto;
+    background: transparent;
+    padding: 0;
 }
 
 .mainContainerHor {
-    top: 90dvh;
-    height: 10dvh;
+    position: fixed;
+    left: 1.1rem;
+    right: 1.1rem;
+    bottom: 1.1rem;
+    z-index: 15;
+    width: auto;
+    height: auto;
     display: flex;
     flex-direction: row;
-    padding: 1rem;
-    position: fixed;
-    width: 100%;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
+    gap: 0.6rem;
+    padding: 0;
 }
 
 .button {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 6dvh;
-    width: 6dvh;
+    height: 4.35rem;
+    width: 4.35rem;
+    font-size: 1.7rem;
     border: none;
     border-radius: 100px;
-    background: var(--secondary-color);
+    color: #f8f3ec;
+    background: linear-gradient(135deg, #6b5a4d, #a07b5d);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 8px 24px rgba(66, 44, 28, 0.38);
+}
+
+.mainContainerHor > .button:first-child {
+    order: 1;
+}
+
+.mainContainerHor > *:not(:first-child):not(:last-child) {
+    order: 2;
+}
+
+.mainContainerHor > .button:last-child {
+    order: 3;
 }
 
 .selectHor {
@@ -43,26 +65,27 @@
 
 .menu {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    height: 100%;
-    width: 100%;
-    justify-content: space-between;
+    gap: 0.6rem;
 }
 
 .menuItem {
     display: flex;
-    height: 100%;
-    padding: 0 5%;
+    width: 3.2rem;
+    height: 3.2rem;
     align-items: center;
     justify-content: center;
     border: none;
-    background: var(--primary-color);
+    border-radius: 999px;
+    color: #eef4ff;
+    background: rgba(31, 39, 60, 0.7);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
 .menuItem:hover {
     cursor: pointer;
-    background: var(--secondary-color);
+    background: rgba(54, 72, 108, 0.8);
 }
 
 .selectVert {

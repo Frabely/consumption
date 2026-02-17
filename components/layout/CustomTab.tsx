@@ -1,17 +1,13 @@
 import React from 'react';
 import styles from '../../styles/layout/CustomTab.module.css'
-import {useAppSelector} from "@/store/hooks";
 
 
 export default function CustomTab({tabNames, setSelected, selected}: CustomTabProps) {
-    const isHorizontal: boolean = useAppSelector((state) => state.dimension.isHorizontal)
-
     return (
-        <div className={styles.mainContainer} style={!isHorizontal ? {paddingTop: "10dvh"} : undefined}>
+        <div className={styles.mainContainer}>
             {tabNames.map((tab, index) =>
                 <div
-                    className={styles.tabContainer}
-                    style={index === selected ? {background: "var(--trans-display-color-dark)"}: {}}
+                    className={`${styles.tabContainer} ${index === selected ? styles.tabSelected : ""}`}
                     key={index}
                     onClick={() => setSelected(index)}
                 >

@@ -1,8 +1,9 @@
 .mainContainer {
     display: flex;
     justify-content: center;
-    background: var(--trans-display-color-light);
-    margin-bottom: 0.5rem;
+    gap: 0.58rem;
+    padding: 0.95rem 0.95rem 0.9rem;
+    background: transparent;
 }
 
 .tabContainer {
@@ -10,5 +11,22 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: 0.5rem;
+    min-height: 2.85rem;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: rgba(245, 241, 236, 0.92);
+    background: rgba(102, 95, 88, 0.46);
+    transition: all 0.2s ease;
+}
+
+.tabContainer:hover {
+    cursor: pointer;
+    background: rgba(115, 105, 97, 0.54);
+}
+
+.tabSelected {
+    color: #3a342e;
+    background: linear-gradient(180deg, rgba(248, 244, 238, 0.99), rgba(233, 226, 216, 0.97));
+    box-shadow: 0 10px 22px rgba(30, 23, 16, 0.2);
 }

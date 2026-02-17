@@ -11,7 +11,6 @@ import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {
     selectCurrentCar,
     selectCurrentDataSet,
-    selectDimension,
     selectModalState
 } from "@/store/selectors";
 
@@ -19,7 +18,6 @@ export default function Display({}: DisplayProps) {
     const modalState = useAppSelector(selectModalState)
     const currentCar = useAppSelector(selectCurrentCar)
     const currentDataSet = useAppSelector(selectCurrentDataSet)
-    const dimension = useAppSelector(selectDimension)
     const dispatch = useAppDispatch()
     useEffect(() => {
         if (modalState === ModalState.None && currentCar.name) {
@@ -43,13 +41,13 @@ export default function Display({}: DisplayProps) {
 
     return (
         <>
-            <div className={styles.mainContainer} style={dimension.isHorizontal ? {paddingTop: '0dvh', paddingBottom: '0', height: '85%'}: {}}>
+            <div className={styles.mainContainer}>
                 <div className={styles.list}>
                     {currentDataSet.map((dataSet: DataSet, index: number) =>
                     {
                         if (index%2 === 0) {
                             return (
-                                <ListItem key={index}
+                                <ListItem key={dataSet.id}
                                           kilometer={dataSet.kilometer}
                                           date={dataSet.date}
                                           name={dataSet.name}
@@ -62,7 +60,7 @@ export default function Display({}: DisplayProps) {
                             )
                         }
                         else return (
-                            <ListItem key={index}
+                            <ListItem key={dataSet.id}
                                       kilometer={dataSet.kilometer}
                                       date={dataSet.date}
                                       name={dataSet.name}

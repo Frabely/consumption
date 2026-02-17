@@ -1,0 +1,31 @@
+.homeViewport {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100dvh;
+    padding: 9.2dvh 1rem 5.9rem;
+    overflow: hidden;
+}
+
+.glassPanel {
+    width: min(620px, 100%);
+    max-height: calc(100dvh - 14.8rem);
+    border-radius: 26px;
+    background: rgba(166, 158, 149, 0.33);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(247, 239, 230, 0.2);
+    box-shadow: 0 18px 40px rgba(35, 28, 22, 0.36);
+    overflow: hidden;
+}
+
+.tabContent {
+    border-top: 1px solid rgba(255, 249, 242, 0.13);
+    overflow: hidden;
+}
+
+@media (min-width: 900px) {
+    .homeViewport {
+        padding-top: 10.5dvh;
+    }
+}

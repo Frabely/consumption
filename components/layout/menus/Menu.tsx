@@ -19,7 +19,6 @@ import {useAppDispatch, useAppSelector} from "@/store/hooks";
 
 export default function Menu({}: MenuProps) {
     const dispatch = useAppDispatch()
-    const isHorizontal: boolean = useAppSelector((state: RootState) => state.dimension.isHorizontal)
     const currentUserRole: Role | undefined = useAppSelector((state: RootState) => state.currentUser.role)
     const currentCarName: string | undefined = useAppSelector((state: RootState) => state.currentCar.name)
     const [menuOpen, setMenuOpen] = useState(false)
@@ -58,73 +57,41 @@ export default function Menu({}: MenuProps) {
     }
 
     return (
-        <>
-            {isHorizontal ?
-                <div className={globalMenuStyles.mainContainerHor}>
-                    <button className={globalMenuStyles.button} onClick={() => setMenuOpen(!menuOpen)}>
-                        <FontAwesomeIcon icon={menuOpen ? faXmark : faEllipsis}/>
+        <div className={globalMenuStyles.mainContainerHor}>
+            <button className={globalMenuStyles.button} onClick={() => setMenuOpen(!menuOpen)}>
+                <FontAwesomeIcon icon={menuOpen ? faXmark : faEllipsis}/>
+            </button>
+            {menuOpen ? (
+                <>
+                    <button onClick={onLogoutHandler} className={globalMenuStyles.button}>
+                        <FontAwesomeIcon icon={faPowerOff}/>
                     </button>
-                    {menuOpen ? (
-                        <>
-                            <button onClick={onLogoutHandler} className={globalMenuStyles.button}>
-                                <FontAwesomeIcon icon={faPowerOff}/>
-                            </button>
-                            <button onClick={onExportAsCsvClickHandler} className={globalMenuStyles.button}>
-                                <FontAwesomeIcon icon={faFileCsv}/>
-                            </button>
-                            {
-                                currentUserRole === Role.Admin ?
-                                    <button
-                                        onClick={onBuildingConsumptionClickHandler}
-                                        className={globalMenuStyles.button}
-                                    >
-                                        <FontAwesomeIcon icon={faHouseFire}/>
-                                    </button> :
-                                    null
-                            }
-                            <CustomSelect
-                                onChange={onCarChangeHandler}
-                                defaultValue={currentCarName}
-                                options={cars.map((car) => car.name)}
-                                direction={"up"}
-                            />
-                        </>
-                    ) : null}
-                    <button className={globalMenuStyles.button} onClick={onAddDataClickHandler}>
-                        <FontAwesomeIcon icon={faAdd}/>
+                    <button onClick={onExportAsCsvClickHandler} className={globalMenuStyles.button}>
+                        <FontAwesomeIcon icon={faFileCsv}/>
                     </button>
-                </div>
-                :
-                <div className={globalMenuStyles.mainContainerVert}>
-                    <menu className={globalMenuStyles.menu}>
-                        <CustomSelect
-                            onChange={onCarChangeHandler}
-                            defaultValue={currentCarName}
-                            options={cars.map((car) => car.name)}
-                            style={{width: "10rem"}}
-                        />
-                        <div onClick={onAddDataClickHandler} className={globalMenuStyles.menuItem}>
-                            <FontAwesomeIcon icon={faAdd}/>
-                        </div>
-                        <div onClick={onExportAsCsvClickHandler} className={globalMenuStyles.menuItem}>
-                            <FontAwesomeIcon icon={faFileCsv}/>
-                        </div>
-                        {
-                            currentUserRole === Role.Admin ?
-                                <button
-                                    onClick={onBuildingConsumptionClickHandler}
-                                    className={globalMenuStyles.menuItem}
-                                >
-                                    <FontAwesomeIcon icon={faHouseFire}/>
-                                </button> :
-                                null
-                        }
-                        <div onClick={onLogoutHandler} className={globalMenuStyles.menuItem}>
-                            <FontAwesomeIcon icon={faPowerOff}/>
-                        </div>
-                    </menu>
-                </div>}
-        </>
+                    {
+                        currentUserRole === Role.Admin ?
+                            <button
+                                onClick={onBuildingConsumptionClickHandler}
+                                className={globalMenuStyles.button}
+                            >
+                                <FontAwesomeIcon icon={faHouseFire}/>
+                            </button> :
+                            null
+                    }
+                    <CustomSelect
+                        onChange={onCarChangeHandler}
+                        defaultValue={currentCarName}
+                        options={cars.map((car) => car.name)}
+                        direction={"up"}
+                        style={{width: "10rem"}}
+                    />
+                </>
+            ) : null}
+            <button className={globalMenuStyles.button} onClick={onAddDataClickHandler}>
+                <FontAwesomeIcon icon={faAdd}/>
+            </button>
+        </div>
     )
 }
 

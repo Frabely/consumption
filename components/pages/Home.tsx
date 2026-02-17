@@ -14,6 +14,7 @@ import Login from "@/components/Login";
 import CustomTab from "@/components/layout/CustomTab";
 import Statistics from "@/components/Statistics";
 import de from "@/constants/de.json"
+import styles from "@/styles/pages/Home.module.css";
 import {
     selectCurrentCar,
     selectCurrentUser,
@@ -59,13 +60,19 @@ export default function Home({}: HomeProps) {
                     {modalState === ModalState.DownloadCsv ? (
                         <DownloadCsv/>
                     ) : null}
-                    <CustomTab
-                        tabNames={[
-                            de.displayLabels.enteredItems,
-                            de.displayLabels.statistics]}
-                        selected={selected}
-                        setSelected={setSelected}/>
-                    {HomeTabs.Statistics === selected ? <Display/> : <Statistics/>}
+                    <div className={styles.homeViewport}>
+                        <section className={styles.glassPanel}>
+                            <CustomTab
+                                tabNames={[
+                                    de.displayLabels.enteredItems,
+                                    de.displayLabels.statistics]}
+                                selected={selected}
+                                setSelected={setSelected}/>
+                            <div className={styles.tabContent}>
+                                {HomeTabs.Statistics === selected ? <Display/> : <Statistics/>}
+                            </div>
+                        </section>
+                    </div>
                 </>
                 :
                 <Login/>
