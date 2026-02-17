@@ -5,43 +5,50 @@
     "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
     "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 
-  --primary-color: #6b5a4d;
-  --primary-color-hover: #7a685b;
-  --secondary-color: #f6eee3;
-  --secondary-color-light: #fffaf4;
-  --secondary-color-muted: #cbbcae;
+  --primary-color: #2f7c72;
+  --primary-color-hover: #276a61;
+  --secondary-color: #e6eeec;
+  --secondary-color-light: #eef4f2;
+  --secondary-color-muted: #8ea29c;
 
-  --tertiary-color: #d8c9b8;
-  --tertiary-color-light: #f8f2ea;
+  --tertiary-color: #d4dedb;
+  --tertiary-color-light: #e3ebe8;
 
-  --error-color: #c95d53;
-  --error-color-hover: #b84b41;
-  --success-color: #4f8f62;
-  --valid-color: #e9f7ef;
+  --error-color: #ba655f;
+  --error-color-hover: #a14f4a;
+  --success-color: #4f7e63;
+  --valid-color: #deede6;
 
-  --text-color: #2f241b;
-  --text-color-muted: #8f7d6d;
-  --text-color-light: #f8f3ec;
+  --text-color: #1f2a26;
+  --text-color-muted: #63736b;
+  --text-color-light: #edf3f1;
 
   --box-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
   --box-shadow-medium: 0 6px 12px rgba(0, 0, 0, 0.15);
 
-  --border-color: #d7c7b6;
-  --border-color-muted: #baa998;
+  --border-color: #b6c7c2;
+  --border-color-muted: #9badA8;
 
-  --scrollbar-thumb-color: #9f7c61;
-  --scrollbar-track-color: #efe3d6;
+  --scrollbar-thumb-color: #7a8f84;
+  --scrollbar-track-color: #e2ebe8;
 
-  --modal-background: rgba(166, 158, 149, 0.35);
+  --modal-background: rgba(30, 45, 42, 0.42);
 
-  --disabled-button-background: #b9aa9a;
-  --disabled-button-text: #5a4a3b;
+  --disabled-button-background: #9fada8;
+  --disabled-button-text: #42514d;
 
-  --input-invalid-background: rgba(227, 190, 190, 0.56);
-  --input-valid-background: rgba(201, 224, 203, 0.58);
+  --input-invalid-background: rgba(225, 193, 190, 0.62);
+  --input-valid-background: rgba(204, 224, 207, 0.66);
 
-  --trans-display-color-light: rgba(160, 145, 130, 0.38);
-  --trans-display-color-dark: rgba(136, 121, 108, 0.44);
+  --trans-display-color-light: rgba(124, 145, 139, 0.38);
+  --trans-display-color-dark: rgba(97, 118, 112, 0.42);
+
+  --panel-glass: rgba(98, 118, 113, 0.34);
+  --surface-strong: rgba(234, 242, 239, 0.94);
+  --surface-soft: rgba(223, 233, 230, 0.9);
+  --surface-muted: rgba(206, 219, 215, 0.84);
+  --focus-ring: rgba(47, 124, 114, 0.28);
+  --accent-contrast: #f7f4f1;
 }
 
 * {
