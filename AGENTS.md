@@ -8,6 +8,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Korrigiere Ursachen, nicht nur Symptome.
 - Keine stillen "quick fixes", die technische Schulden erhoehen.
 - Halte Verhalten stabil, ausser eine Verhaltensaenderung ist explizit gewuenscht.
+- Nutze Serena (MCP) so oft wie moeglich fuer Analyse, Navigation und Code-Aenderungen im Projekt.
 - Bewerte Architektur, Lesbarkeit, Wartbarkeit und Risikomanagement konsequent aus Senior-Developer-Sicht.
 - Wende SOLID- und DRY-Prinzipien konsequent an.
 - Bevorzuge eine klare, gut erweiterbare Architektur mit sauber getrennten Verantwortlichkeiten.
@@ -43,7 +44,14 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Bestehende CSS-Module-Struktur beibehalten.
 - Keine Inline-Styles fuer komplexe Layout-Logik, ausser fuer dynamische Kleinigkeiten.
 - Auf mobile und desktop Layout achten.
+- Alle Designs muessen responsiv umgesetzt werden; mobile hat Prioritaet, Tablet soll ebenfalls sauber unterstuetzt werden.
+- Fuer Select-Eingaben soll projektweit das vorhandene CustomSelect verwendet werden.
+- Dialog-Buttons sollen konsistent aussehen (gleiche visuelle Sprache, gleiche Hoehe/Padding/Abstaende fuer gleichartige Aktionen).
+- Bei Submit/Cancel-Kombinationen muss der Submit-Button visuell klar hervorgehoben sein; beide Buttons muessen dennoch identische Hoehe haben.
+- Dialog-Paddings sollen konsistent sein; vergleichbare Dialogtypen verwenden dieselben horizontalen/vertikalen Abstaende.
 - Texte aus den vorhandenen Sprachdateien beziehen, nicht hart codieren.
+- Kontrast und Lesbarkeit muessen in allen Zustaenden passen (normal, hover, focus, disabled, valid/invalid); helle Hintergruende brauchen dunkle Schrift und umgekehrt.
+- Bei Overlays/Modals (z. B. "Daten hinzufuegen") muss die Lesbarkeit immer klar priorisiert werden: ausreichend abgedunkelter Hintergrund und ausreichend opake Foreground-Flaechen, damit Inhalte eindeutig erkennbar bleiben.
 
 ## 7. Benennung und Struktur
 - Dateinamen und Exporte klar und konsistent benennen.
@@ -66,6 +74,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Wenn keine Tests vorhanden sind: manuelle Testschritte kurz dokumentieren.
 
 ## 10. Review-Checkliste vor Abschluss
+- Vor jedem Commit ist eine kurze Selbst-Review verpflichtend (Diff, Risiken, Regressionen, offene Punkte).
 - Ist die Loesung die einfachste robuste Variante?
 - Sind Edge Cases und Fehlerpfade abgedeckt?
 - Sind Effects/Async-Pfade stabil und ohne doppelte Aufrufe?

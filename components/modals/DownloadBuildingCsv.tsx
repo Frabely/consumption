@@ -6,7 +6,6 @@ import deJson from '../../constants/de.json'
 import {getFieldValuesForExport} from "@/firebase/functions";
 import {DownloadBuildingCsvDto} from "@/constants/types";
 import {setModalStateNone} from "@/store/reducer/modalState";
-import CustomButton from "@/components/layout/CustomButton";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentHouse} from "@/store/selectors";
@@ -82,15 +81,29 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
     }
 
     return (
-        <Modal formName={`${ModalState.DownloadBuildingCsv}`}>
+        <Modal formName={`${ModalState.DownloadBuildingCsv}`} title={deJson.buttonLabels.downloadCsv}>
             <div className={styles.mainContainer}>
-                <input
-                    onChange={onDateInputChangeHandler}
-                    value={`${currentDateValue.year}-${currentDateValue.month}`}
-                    className={globalStyles.monthPicker}
-                    type={"month"}/>
-                <CustomButton onClick={onDownloadCsvClickHandler} label={deJson.buttonLabels.downloadCsv}/>
-                <CustomButton onClick={onAbortClickHandler} label={deJson.buttonLabels.abort}/>
+                <div className={styles.headerArea}>
+                    <span className={styles.contextLabel}>{deJson.displayLabels.house}:</span>
+                    <strong className={styles.contextValue}>{currentHouse.name ?? "-"}</strong>
+                </div>
+                <div className={styles.inputRow}>
+                    <span className={styles.label}>{deJson.inputLabels.date}</span>
+                    <input
+                        onChange={onDateInputChangeHandler}
+                        value={`${currentDateValue.year}-${currentDateValue.month}`}
+                        className={`${globalStyles.monthPicker} ${styles.monthInput}`}
+                        type={"month"}
+                    />
+                </div>
+                <div className={styles.actionRow}>
+                    <button type={"button"} className={styles.secondaryButton} onClick={onAbortClickHandler}>
+                        {deJson.buttonLabels.abort}
+                    </button>
+                    <button type={"button"} className={styles.primaryButton} onClick={onDownloadCsvClickHandler}>
+                        {deJson.buttonLabels.downloadCsv}
+                    </button>
+                </div>
             </div>
         </Modal>
     )

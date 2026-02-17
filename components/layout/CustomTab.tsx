@@ -4,16 +4,19 @@ import styles from '../../styles/layout/CustomTab.module.css'
 
 export default function CustomTab({tabNames, setSelected, selected}: CustomTabProps) {
     return (
-        <div className={styles.mainContainer}>
-            {tabNames.map((tab, index) =>
-                <div
+        <div className={styles.mainContainer} role={"tablist"} aria-label={"Home tabs"}>
+            {tabNames.map((tab, index) => (
+                <button
+                    type={"button"}
+                    role={"tab"}
+                    aria-selected={index === selected}
                     className={`${styles.tabContainer} ${index === selected ? styles.tabSelected : ""}`}
                     key={index}
                     onClick={() => setSelected(index)}
                 >
                     {tab}
-                </div>
-            )}
+                </button>
+            ))}
         </div>
     );
 }

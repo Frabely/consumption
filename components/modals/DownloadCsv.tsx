@@ -7,7 +7,6 @@ import {getFullDataSet} from "@/firebase/functions";
 import {DataSet, Language} from "@/constants/types";
 import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
 import {setModalStateNone} from "@/store/reducer/modalState";
-import CustomButton from "@/components/layout/CustomButton";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentCar} from "@/store/selectors";
@@ -80,15 +79,29 @@ export default function DownloadCsv({}: DownloadCsvProps) {
         }
     }
     return (
-        <Modal formName={`${ModalState.DownloadCsv}`}>
+        <Modal formName={`${ModalState.DownloadCsv}`} title={de.buttonLabels.downloadCsv}>
             <div className={styles.mainContainer}>
-                <input
-                    onChange={onDateInputChangeHandler}
-                    value={`${currentDateValue.year}-${currentDateValue.month}`}
-                    className={globalStyles.monthPicker}
-                    type={"month"}/>
-                <CustomButton onClick={onDownloadCsvClickHandler} label={de.buttonLabels.downloadCsv}/>
-                <CustomButton onClick={onAbortClickHandler} label={de.buttonLabels.abort}/>
+                <div className={styles.headerArea}>
+                    <span className={styles.contextLabel}>{de.inputLabels.currentSelectedCar}:</span>
+                    <strong className={styles.contextValue}>{currentCar.name ?? "-"}</strong>
+                </div>
+                <div className={styles.inputRow}>
+                    <span className={styles.label}>{de.inputLabels.date}</span>
+                    <input
+                        onChange={onDateInputChangeHandler}
+                        value={`${currentDateValue.year}-${currentDateValue.month}`}
+                        className={`${globalStyles.monthPicker} ${styles.monthInput}`}
+                        type={"month"}
+                    />
+                </div>
+                <div className={styles.actionRow}>
+                    <button type={"button"} className={styles.secondaryButton} onClick={onAbortClickHandler}>
+                        {de.buttonLabels.abort}
+                    </button>
+                    <button type={"button"} className={styles.primaryButton} onClick={onDownloadCsvClickHandler}>
+                        {de.buttonLabels.downloadCsv}
+                    </button>
+                </div>
             </div>
         </Modal>
     )

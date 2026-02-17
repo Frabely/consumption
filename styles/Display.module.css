@@ -1,5 +1,5 @@
 .mainContainer {
-    height: clamp(330px, 44dvh, 430px);
+    height: 100%;
     padding: 0.55rem 0.8rem 0.35rem;
     overflow: hidden;
     overflow-y: auto;

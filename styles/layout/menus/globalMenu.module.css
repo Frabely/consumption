@@ -1,19 +1,8 @@
-.mainContainerVert {
-    position: fixed;
-    right: 1.4rem;
-    bottom: 1.4rem;
-    z-index: 15;
-    width: auto;
-    height: auto;
-    background: transparent;
-    padding: 0;
-}
-
 .mainContainerHor {
     position: fixed;
-    left: 1.1rem;
-    right: 1.1rem;
-    bottom: 1.1rem;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
     z-index: 15;
     width: auto;
     height: auto;
@@ -21,78 +10,119 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-end;
-    gap: 0.6rem;
+    gap: 0.7rem;
     padding: 0;
+}
+
+.menuAnchor {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+}
+
+.menuPopover {
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 0.6rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.7rem;
+    border-radius: 20px;
+    background: rgba(238, 227, 215, 0.94);
+    border: 1px solid rgba(179, 152, 128, 0.62);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 14px 28px rgba(33, 24, 17, 0.26);
+    min-width: 15.8rem;
+    max-width: min(18.2rem, calc(100dvw - 2rem));
+    z-index: 30;
+}
+
+.actionRow {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    min-height: 3.2rem;
+    padding: 0.32rem 0.4rem;
+    border-radius: 14px;
+    background: rgba(246, 236, 226, 0.84);
+    border: 1px solid rgba(171, 146, 124, 0.32);
+    text-align: left;
+    cursor: pointer;
+}
+
+.actionRow:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(246, 220, 193, 0.24);
+}
+
+.actionIconShell {
+    pointer-events: none;
+}
+
+.actionLabel {
+    color: #16120f;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    flex: 1;
 }
 
 .button {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 4.35rem;
-    width: 4.35rem;
-    font-size: 1.7rem;
+    height: 3.65rem;
+    width: 3.65rem;
+    font-size: 1.35rem;
     border: none;
     border-radius: 100px;
-    color: #f8f3ec;
-    background: linear-gradient(135deg, #6b5a4d, #a07b5d);
+    color: #100d0a;
+    background: linear-gradient(135deg, #dcc4ac, #c89f7e);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     box-shadow: 0 8px 24px rgba(66, 44, 28, 0.38);
+    transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
 }
 
-.mainContainerHor > .button:first-child {
-    order: 1;
+.actionButton {
+    width: 2.85rem;
+    height: 2.85rem;
+    flex-shrink: 0;
 }
 
-.mainContainerHor > *:not(:first-child):not(:last-child) {
-    order: 2;
+.button svg {
+    width: 1.28rem;
+    height: 1.28rem;
 }
 
-.mainContainerHor > .button:last-child {
-    order: 3;
+.button:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
 }
 
-.selectHor {
-    height: 6dvh;
-    background: var(--secondary-color);
-    border-color: var(--border-color);
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.button:active {
+    transform: translateY(0);
 }
 
-.menu {
+.button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(246, 220, 193, 0.26), 0 8px 24px rgba(66, 44, 28, 0.38);
+}
+
+.selectWrapper {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
+    gap: 0.35rem;
 }
 
-.menuItem {
-    display: flex;
-    width: 3.2rem;
-    height: 3.2rem;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 999px;
-    color: #eef4ff;
-    background: rgba(31, 39, 60, 0.7);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-}
-
-.menuItem:hover {
-    cursor: pointer;
-    background: rgba(54, 72, 108, 0.8);
-}
-
-.selectVert {
-    margin-bottom: 5%;
-    padding: 5%;
-    background: var(--secondary-color);
-    border-color: var(--border-color);
-    border-width: 2px;
+.selectWrapperWithDivider {
+    margin-top: 0.2rem;
+    padding-top: 0.58rem;
+    border-top: 1px solid rgba(147, 122, 101, 0.32);
 }
 

@@ -1,42 +1,123 @@
 .mainContainer {
-    display: flex;
-    width: 100%;
-    height: 90%;
-    margin-top: 10dvh;
     position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
     justify-content: center;
     align-items: center;
+    padding: 1rem;
+    background: rgba(18, 13, 9, 0.62);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
 .mainInnerContainer {
-    padding: 0.5rem;
-    background: var(--modal-background);
-    z-index: 1;
+    width: min(640px, 100%);
+    max-height: min(86dvh, 760px);
     display: flex;
     flex-direction: column;
-    height: 90%;
-    overflow: auto;
+    padding: 0.9rem 0.95rem 1rem;
+    border-radius: 24px;
+    background: rgba(189, 177, 163, 0.9);
+    border: 1px solid rgba(247, 239, 230, 0.22);
+    box-shadow: 0 22px 40px rgba(33, 24, 17, 0.42);
+    overflow: hidden;
+}
+
+.mainInnerContainerTransparent {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0.5rem 0.6rem 0.55rem;
 }
 
 .header {
     display: flex;
+    gap: 0.65rem;
     justify-content: flex-end;
     align-items: center;
+    padding-bottom: 0.38rem;
+}
+
+.headerTitle {
+    margin: 0;
+    margin-right: auto;
+    color: #2f241b;
+    font-size: 1.08rem;
+    font-weight: 800;
+    line-height: 1.2;
 }
 
 .icon {
-    font-size: 100%;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.45rem;
+    border-radius: 999px;
+    color: #2f241b;
+    background: rgba(248, 239, 228, 0.88);
+    cursor: pointer;
+}
+
+.iconInner {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.6rem;
+    z-index: 2;
+}
+
+.iconInFlow {
+    position: static;
+}
+
+.innerCloseRow {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0.12rem 0.45rem 0.25rem 0.2rem;
 }
 
 .childPropsContainer {
-    min-width: 40dvw;
-    padding: 0.5rem;
-    border-radius: 5px;
+    width: 100%;
+    min-width: 0;
+    flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.25rem 0.15rem 0.1rem;
+    border-radius: 16px;
+    background: rgba(243, 235, 224, 0.9);
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.menu {
-    z-index: 1;
+.childPropsContainerAutoHeight {
+    flex: 0 0 auto;
+    overflow: visible;
+}
+
+.childPropsContainerNoScroll {
+    overflow: hidden;
+}
+
+.childPropsContainerWithInnerClose {
+    position: relative;
+    padding-top: 3rem;
+}
+
+.childPropsContainerTransparent {
+    background: transparent;
+    padding: 0.15rem 0.05rem 0;
+}
+
+.childPropsContainerWithInnerClose.childPropsContainerTransparent {
+    padding-top: 3rem;
+}
+
+.childPropsContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.childPropsContainer::-webkit-scrollbar-thumb {
+    border-radius: 99px;
+    background: rgba(133, 110, 92, 0.7);
 }

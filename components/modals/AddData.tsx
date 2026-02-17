@@ -15,9 +15,10 @@ import {Language} from "@/constants/types";
 import {updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
 import {setDate} from "@/store/reducer/modal/date";
 import {ModalState} from "@/constants/enums";
-import CustomButton from "@/components/layout/CustomButton";
 import CustomSelect from "@/components/layout/CustomSelect";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBolt, faCarSide} from "@fortawesome/free-solid-svg-icons";
 import {
     selectCurrentCar,
     selectCurrentUser,
@@ -182,46 +183,63 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     }
 
     return (
-        <Modal formName={`${ModalState.AddCarData}`}>
+        <Modal
+            formName={`${ModalState.AddCarData}`}
+            contentAutoHeight={true}
+        >
             <div className={styles.mainContainer}>
-                <CustomSelect
-                    onChange={onLoadingStationChangeHandler}
-                    defaultValue={changingData ? language.loadingStation[`${loadingStation.name}`] : language.loadingStation[`${DEFAULT_LOADING_STATION.name}`]}
-                    options={loadingStations.map((loadingStation) => language.loadingStation[`${loadingStation.name}`])}
-                    keys={loadingStations.map((loadingStation) => loadingStation.id)}
-                    style={{
-                        width: "100%"
-                }}/>
-                <input value={kilometer}
-                       className={`${styles.input} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}
-                       type={"number"}
-                       min={currentCar.kilometer ? changingData ? prevKilometers + 1 : currentCar.kilometer : currentCar.kilometer}
-                       max={999999}
-                       step={1.0}
-                       onChange={(e) => {
-                           onKilometerChange(e)
-                       }}
-                       placeholder={de.inputLabels.kilometer}
-                />
-                <input value={power}
-                       className={`${styles.input} ${isInputValid.power ? styles.inputValid : styles.inputInvalid}`}
-                       type={"number"}
-                       min={0.1}
-                       max={99.9}
-                       step={0.1}
-                       placeholder={de.inputLabels.power}
-                       onChange={(e) => {
-                           powerOnChangeHandler(e)
-                       }}
-                />
-                <CustomButton
-                    onClick={changingData ? onChangeDataClickHandler : onAddDataClickHandler}
-                    disabled={disabled}
-                    label={changingData ?
-                        de.buttonLabels.changeData :
-                        de.buttonLabels.addData
-                    }
-                />
+                <div className={styles.selectRow}>
+                    <div className={styles.selectField}>
+                        <CustomSelect
+                            onChange={onLoadingStationChangeHandler}
+                            defaultValue={changingData ? language.loadingStation[`${loadingStation.name}`] : language.loadingStation[`${DEFAULT_LOADING_STATION.name}`]}
+                            options={loadingStations.map((item) => language.loadingStation[`${item.name}`])}
+                            keys={loadingStations.map((item) => item.id)}
+                            style={{width: "100%"}}
+                        />
+                    </div>
+                </div>
+
+                <span className={styles.sectionLabel}>{de.inputLabels.kilometer}</span>
+                <div className={`${styles.inputRow} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}>
+                    <FontAwesomeIcon className={styles.leadingIcon} icon={faCarSide}/>
+                    <input
+                        value={kilometer}
+                        className={styles.innerInput}
+                        type={"number"}
+                        min={currentCar.kilometer ? changingData ? prevKilometers + 1 : currentCar.kilometer : currentCar.kilometer}
+                        max={999999}
+                        step={1.0}
+                        onChange={onKilometerChange}
+                        placeholder={de.inputLabels.kilometer}
+                    />
+                </div>
+
+                <span className={styles.sectionLabel}>{de.inputLabels.power}</span>
+                <div className={`${styles.inputRow} ${isInputValid.power ? styles.inputValid : styles.inputInvalid}`}>
+                    <FontAwesomeIcon className={styles.leadingIcon} icon={faBolt}/>
+                    <input
+                        value={power}
+                        className={styles.innerInput}
+                        type={"number"}
+                        min={0.1}
+                        max={99.9}
+                        step={0.1}
+                        placeholder={de.inputLabels.power}
+                        onChange={powerOnChangeHandler}
+                    />
+                </div>
+
+                <div className={styles.submitArea}>
+                    <button
+                        type={"button"}
+                        className={styles.submitButton}
+                        onClick={changingData ? onChangeDataClickHandler : onAddDataClickHandler}
+                        disabled={disabled}
+                    >
+                        {changingData ? de.buttonLabels.changeData : de.buttonLabels.addData}
+                    </button>
+                </div>
             </div>
         </Modal>
     );

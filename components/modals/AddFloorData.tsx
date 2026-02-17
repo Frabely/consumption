@@ -13,12 +13,11 @@ import {deleteFieldValue, getFieldValues, setFieldValue} from "@/firebase/functi
 import CustomSelect from "@/components/layout/CustomSelect";
 import {ModalState} from "@/constants/enums";
 import {useAppSelector} from "@/store/hooks";
-import {selectCurrentHouse, selectDimension} from "@/store/selectors";
+import {selectCurrentHouse} from "@/store/selectors";
 import {filterFieldValuesByRoom, parseYearMonthInput} from "@/domain/fieldValueMapping";
 
 export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const currentHouse = useAppSelector(selectCurrentHouse)
-    const dimension = useAppSelector(selectDimension)
     const date = new Date()
     const year = date.getFullYear()
     const month = date.getMonth() + 1
@@ -108,12 +107,14 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     }
 
     return (
-        <Modal formName={`${ModalState.AddFloorData}`}>
-            <div className={styles.mainContainer}
-                 style={dimension.isHorizontal ? {height: '100%'} : {height: '75dvh'}}>
-                <h1 className={styles.flatName}>{flat.name}</h1>
-                <input onChange={onDateInputChangeHandler} value={`${currentDateValue.year}-${currentDateValue.month}`}
-                       className={globalStyles.monthPicker} type={"month"}/>
+        <Modal formName={`${ModalState.AddFloorData}`} title={flat.name}>
+            <div className={styles.mainContainer}>
+                <input
+                    onChange={onDateInputChangeHandler}
+                    value={`${currentDateValue.year}-${currentDateValue.month}`}
+                    className={`${globalStyles.monthPicker} ${styles.monthPicker}`}
+                    type={"month"}
+                />
                 <CustomSelect
                     onChange={onRoomChangeHandler}
                     defaultValue={currentRoom.name}
@@ -121,41 +122,52 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                     style={{width: "100%"}}
                 />
                 {currentFieldValues.map((fieldValue, index: number) => {
-                        return (
-                            <div
-                                className={styles.inputContainer}
-                                style={dimension.isHorizontal ? {flexDirection: 'column'} : undefined}
-                                key={index}>
+                    const isValueValid = !!fieldValue.value && !isNaN(Number(fieldValue.value))
+                    return (
+                        <div
+                            className={styles.inputContainer}
+                            key={index}>
                             <p className={styles.fieldLabel}>{fieldValue.field.name}:</p>
                             <div className={styles.fieldInputContainer}>
-                                <FieldInput
-                                    value={fieldValue.value}
-                                    onChange={(event) => {
-                                        onFieldPairValueChange(event.target.value, fieldValue.field.id)
+                                <div className={styles.fieldInputWrapper}>
+                                    <FieldInput
+                                        value={fieldValue.value}
+                                        onChange={(event) => {
+                                            onFieldPairValueChange(event.target.value, fieldValue.field.id)
+                                        }}
+                                        placeholder={de.inputLabels.placeholderValue}
+                                    />
+                                </div>
+                                <div
+                                    className={`${styles.actionIconButton} ${isValueValid ? "" : styles.actionIconDisabled}`}
+                                    onClick={() => {
+                                        if (isValueValid) {
+                                            onSaveFieldClickHandler(fieldValue).catch(error => console.error(error))
+                                        }
                                     }}
-                                    placeholder={de.inputLabels.placeholderValue}
-                                    style={{width: "13rem"}}
-                                />
-                                <div onClick={() => {
-                                    onSaveFieldClickHandler(fieldValue).catch(error => console.error(error))
-                                }}>
+                                >
                                     <FontAwesomeIcon
                                         style={
                                             {
-                                                '--text-color': fieldValue.value && !isNaN(Number(fieldValue.value)) ?
+                                                '--text-color': isValueValid ?
                                                     "var(--text-color)" :
                                                     "var(--text-color-muted)"
                                             } as CSSProperties & CSSVariables
                                         }
                                         icon={faSave}/>
                                 </div>
-                                <div onClick={() => {
-                                    onDeleteFieldClickHandler(fieldValue).catch(error => console.error(error))
-                                }}>
+                                <div
+                                    className={`${styles.actionIconButton} ${isValueValid ? "" : styles.actionIconDisabled}`}
+                                    onClick={() => {
+                                        if (isValueValid) {
+                                            onDeleteFieldClickHandler(fieldValue).catch(error => console.error(error))
+                                        }
+                                    }}
+                                >
                                     <FontAwesomeIcon
                                         style={
                                             {
-                                                '--text-color': fieldValue.value && !isNaN(Number(fieldValue.value)) ?
+                                                '--text-color': isValueValid ?
                                                     "var(--text-color)" :
                                                     "var(--text-color-muted)"
                                             } as CSSProperties & CSSVariables
@@ -164,8 +176,8 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                                 </div>
                             </div>
                         </div>
-                        )
-                    }
+                    )
+                }
                 )}
             </div>
         </Modal>

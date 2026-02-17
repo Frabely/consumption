@@ -5,8 +5,6 @@ import MenuBuilding from "@/components/layout/menus/MenuBuilding";
 import AddFloorData from "@/components/modals/AddFloorData";
 import AddFloor from "@/components/modals/AddFloor";
 import styles from "@/styles/pages/BuildingConsumption.module.css";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAdd} from "@fortawesome/free-solid-svg-icons";
 import de from "@/constants/de.json";
 import {Flat, House} from "@/constants/types";
 import {useAppDispatch} from "@/store/hooks";
@@ -21,7 +19,6 @@ import DownloadBuildingCsv from "@/components/modals/DownloadBuildingCsv";
 import {
     selectCurrentHouse,
     selectCurrentUser,
-    selectDimension,
     selectIsLoading,
     selectIsReloadDataNeeded,
     selectModalState
@@ -31,7 +28,6 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
     const [currentFlat, setCurrentFlat] = useState<Flat | undefined>()
     const currentHouse = useAppSelector(selectCurrentHouse)
     const currentUser = useAppSelector(selectCurrentUser)
-    const dimension = useAppSelector(selectDimension)
     const isLoading = useAppSelector(selectIsLoading)
     const modalState = useAppSelector(selectModalState)
     const isReloadDataNeeded = useAppSelector(selectIsReloadDataNeeded)
@@ -93,7 +89,7 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                     (
                         <>
                             {isLoading ? <Loading/> : null }
-                            <MenuBuilding houses={houseNames}/>
+                            <MenuBuilding houses={houseNames} onAddFloor={onAddFloorClickHandler}/>
                             {modalState === ModalState.AddFloorData && currentFlat ? (
                                 <AddFloorData flat={currentFlat}/>
                             ) : null}
@@ -106,18 +102,8 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                             {modalState === ModalState.DownloadBuildingCsv ? (
                                 <DownloadBuildingCsv/>
                             ) : null}
-                            <div className={
-                                dimension.isHorizontal ?
-                                    styles.contentContainerHor :
-                                    styles.contentContainerVert}>
-                                <div onClick={
-                                    () => {
-                                        onAddFloorClickHandler()
-                                    }}
-                                     className={styles.flatsItem}
-                                     style={currentHouse.flats.length < 4 ? {height: '50%'} : {}}>
-                                    <FontAwesomeIcon icon={faAdd}/>
-                                </div>
+                            <div className={styles.pageViewport}>
+                                <div className={styles.flatsGrid}>
                                 {currentHouse.flats.map((flat) =>
                                     <div
                                         onTouchStart={() => onTouchStartHandler(flat)}
@@ -126,11 +112,11 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                                         onMouseUp={() => onTouchEndHandler()}
                                         key={flat.name}
                                         className={styles.flatsItem}
-                                        style={currentHouse.flats.length < 4 ? {height: '50%'} : {}}
                                     >
                                         <h3 className={styles.flatsItemTitle}>{flat.name}</h3>
                                     </div>
                                 )}
+                                </div>
                             </div>
                         </>
                     )
