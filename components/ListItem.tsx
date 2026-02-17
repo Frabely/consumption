@@ -1,6 +1,5 @@
 import styles from '../styles/ListItem.module.css'
 import de from '../constants/de.json'
-import {useDispatch} from "react-redux";
 import {setDate} from "@/store/reducer/modal/date";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
@@ -11,13 +10,16 @@ import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {Language, LoadingStation} from "@/constants/types";
 import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
 import {ModalState} from "@/constants/enums";
+import {useAppDispatch} from "@/store/hooks";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBolt} from "@fortawesome/free-solid-svg-icons";
 
 export default function ListItem({kilometer, name, power, date, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
     const language: Language = de
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     const localDateString: string = getDateString(date)
     const UTCDateString: string = getUTCDateString(date)
-    let timeOut: any
+    let timeOut: ReturnType<typeof setTimeout> | undefined
     const touchStart = () => {
         timeOut = setTimeout(() => {
             dispatch(setIsChangingData(true))
@@ -40,38 +42,35 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
     return (
         <div onTouchStart={touchStart}
              onTouchEnd={() => {
-                 clearTimeout(timeOut)
+                 if (timeOut) {
+                     clearTimeout(timeOut)
+                 }
              }}
              onMouseDown={touchStart}
              onMouseUp={() => {
-                 clearTimeout(timeOut)
+                 if (timeOut) {
+                     clearTimeout(timeOut)
+                 }
              }}
              className={isLight ? styles.mainContainerLight : styles.mainContainerDark}>
-            <div className={styles.statsContainer}>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.local}:</div>
-                    <div className={styles.item}>{localDateString}</div>
+            <div className={styles.topRow}>
+                <div className={styles.leftSide}>
+                    <div className={styles.iconBubble}>
+                        <FontAwesomeIcon icon={faBolt} className={styles.icon}/>
+                    </div>
+                    <div className={styles.dateColumn}>
+                        <div className={styles.primaryDate}>{localDateString}</div>
+                        <div className={styles.secondaryDate}>{UTCDateString}</div>
+                    </div>
                 </div>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.UTC}:</div>
-                    <div className={styles.item}>{UTCDateString}</div>
+                <div className={styles.valueColumn}>
+                    <div className={styles.kmValue}>{kilometer} {language.displayLabels.kilometerShort}</div>
+                    <div className={styles.powerValue}>{power} {language.displayLabels.powerShort}</div>
                 </div>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.kilometer}:</div>
-                    <div className={styles.item}>{kilometer} {language.displayLabels.kilometerShort}</div>
-                </div>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.power}:</div>
-                    <div className={styles.item}>{power} {language.displayLabels.powerShort}</div>
-                </div>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.loadingStation}:</div>
-                    <div className={styles.item}>{language.loadingStation[`${loadingStation.name}`]}</div>
-                </div>
-                <div className={styles.innerContainer}>
-                    <div className={styles.item}>{language.displayLabels.name}:</div>
-                    <div className={styles.item}>{name}</div>
-                </div>
+            </div>
+            <div className={styles.bottomRow}>
+                <div className={styles.stationValue}>{language.displayLabels.loadingStation}: {language.loadingStation[`${loadingStation.name}`]}</div>
+                <div className={styles.nameValue}>{name}</div>
             </div>
         </div>
     )

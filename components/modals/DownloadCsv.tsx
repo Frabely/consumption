@@ -3,18 +3,18 @@ import globalStyles from "@/styles/GlobalStyles.module.css";
 import Modal from "@/components/layout/Modal";
 import {ChangeEvent, useState} from "react";
 import deJson from '../../constants/de.json'
-import {useDispatch, useSelector} from "react-redux";
 import {getFullDataSet} from "@/firebase/functions";
 import {DataSet, Language} from "@/constants/types";
-import {RootState} from "@/store/store";
 import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
 import {setModalStateNone} from "@/store/reducer/modalState";
-import CustomButton from "@/components/layout/CustomButton";
 import {ModalState} from "@/constants/enums";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {selectCurrentCar} from "@/store/selectors";
+import {parseYearMonthInput} from "@/domain/fieldValueMapping";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
-    const state: RootState = useSelector((state: RootState) => state)
-    const dispatch = useDispatch()
+    const currentCar = useAppSelector(selectCurrentCar)
+    const dispatch = useAppDispatch()
     const de: Language = deJson
     //Todo create date input
     const date = new Date()
@@ -33,11 +33,10 @@ export default function DownloadCsv({}: DownloadCsvProps) {
 
     const onDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.value !== '') {
-            const arrayDate: string[] = event.target.value.split('-')
-            setCurrentDateValue({
-                year: arrayDate[0],
-                month: arrayDate[1]
-            })
+            const parsed = parseYearMonthInput(event.target.value)
+            if (parsed) {
+                setCurrentDateValue(parsed)
+            }
         }
     }
 
@@ -61,8 +60,8 @@ export default function DownloadCsv({}: DownloadCsvProps) {
 
     const onDownloadCsvClickHandler = () => {
         dispatch(setModalStateNone())
-        if (state.currentCar.name) {
-            getFullDataSet(state.currentCar.name, {
+        if (currentCar.name) {
+            getFullDataSet(currentCar.name, {
                 year: currentDateValue.year,
                 month: currentDateValue.month
             }).then((dataSetArray) => {
@@ -80,15 +79,29 @@ export default function DownloadCsv({}: DownloadCsvProps) {
         }
     }
     return (
-        <Modal formName={`${ModalState.DownloadCsv}`}>
+        <Modal formName={`${ModalState.DownloadCsv}`} title={de.buttonLabels.downloadCsv}>
             <div className={styles.mainContainer}>
-                <input
-                    onChange={onDateInputChangeHandler}
-                    value={`${currentDateValue.year}-${currentDateValue.month}`}
-                    className={globalStyles.monthPicker}
-                    type={"month"}/>
-                <CustomButton onClick={onDownloadCsvClickHandler} label={de.buttonLabels.downloadCsv}/>
-                <CustomButton onClick={onAbortClickHandler} label={de.buttonLabels.abort}/>
+                <div className={styles.headerArea}>
+                    <span className={styles.contextLabel}>{de.inputLabels.currentSelectedCar}:</span>
+                    <strong className={styles.contextValue}>{currentCar.name ?? "-"}</strong>
+                </div>
+                <div className={styles.inputRow}>
+                    <span className={styles.label}>{de.inputLabels.date}</span>
+                    <input
+                        onChange={onDateInputChangeHandler}
+                        value={`${currentDateValue.year}-${currentDateValue.month}`}
+                        className={`${globalStyles.monthPicker} ${styles.monthInput}`}
+                        type={"month"}
+                    />
+                </div>
+                <div className={styles.actionRow}>
+                    <button type={"button"} className={styles.secondaryButton} onClick={onAbortClickHandler}>
+                        {de.buttonLabels.abort}
+                    </button>
+                    <button type={"button"} className={styles.primaryButton} onClick={onDownloadCsvClickHandler}>
+                        {de.buttonLabels.downloadCsv}
+                    </button>
+                </div>
             </div>
         </Modal>
     )

@@ -1,6 +1,4 @@
-import React, {CSSProperties, useState} from 'react';
-import {RootState} from "@/store/store";
-import {useDispatch, useSelector} from "react-redux";
+import React, {ChangeEvent, CSSProperties, MouseEvent, useState} from 'react';
 import Modal from "@/components/layout/Modal";
 import styles from "@/styles/modals/AddFloor.module.css";
 import de from "@/constants/de.json";
@@ -13,39 +11,42 @@ import {ModalState} from "@/constants/enums";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
 import CustomButton from "@/components/layout/CustomButton";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {selectCurrentHouse, selectModalState} from "@/store/selectors";
 
 export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: AddFloorModalProps) {
-    const state: RootState = useSelector((state: RootState) => state)
-    const dispatch = useDispatch()
+    const currentHouse = useAppSelector(selectCurrentHouse)
+    const modalState = useAppSelector(selectModalState)
+    const dispatch = useAppDispatch()
     const [flatName, setFlatName] = useState(currentFlat && currentFlat?.rooms ? currentFlat.name : "")
     const [roomNameInput, setRoomNameInput] = useState("")
     const [rooms, setRooms] = useState<Room[]>(currentFlat && currentFlat?.rooms ? currentFlat.rooms : [])
     const [fieldNameInput, setFieldNameInput] = useState("")
     const [currentSelectedRoom, setCurrentSelectedRoom] = useState<Room | undefined>(currentFlat?.rooms[0])
 
-    const onAddDataClickHandler = async (event: any) => {
+    const onAddDataClickHandler = async (event: MouseEvent<HTMLElement>) => {
         dispatch(setIsLoading(true))
         event.preventDefault()
 
         try {
-            if (state.modalState === ModalState.ChangeFloorFields && currentFlat) {
+            if (modalState === ModalState.ChangeFloorFields && currentFlat) {
                 const newFlat: Flat = {id: currentFlat.id, name: flatName, rooms: rooms, position: currentFlat.position}
-                await updateFlat(state.currentHouse.name, newFlat)
+                await updateFlat(currentHouse.name, newFlat)
             } else {
                 const newFlat: Flat = {id: "", name: flatName, rooms: rooms, position: newFlatPosition}
-                await createFlat(newFlat, state.currentHouse.name)
+                await createFlat(newFlat, currentHouse.name)
             }
             dispatch(setModalStateNone())
             dispatch(setIsReloadHousesNeeded(true))
             dispatch(setIsLoading(false))
         } catch (error) {
-            console.log(error)
+            console.error(error)
             alert(de.messages.databaseError)
             dispatch(setIsLoading(false))
         }
     }
 
-    const onAddRoomClickHandler = (event: any) => {
+    const onAddRoomClickHandler = (event: MouseEvent<HTMLElement>) => {
         event.preventDefault()
         if (roomNameInput.length === 0) {
             alert(de.messages.fieldNameEmpty)
@@ -64,7 +65,7 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         setRoomNameInput("")
     }
 
-    const onAddFieldClickHandler = (event: any) => {
+    const onAddFieldClickHandler = (event: MouseEvent<HTMLElement>) => {
         event.preventDefault()
         if (!currentSelectedRoom) {
             alert(de.messages.selectARoom)
@@ -94,7 +95,7 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         setFieldNameInput("")
     }
 
-    const onRoomNameChange = (event: any, indexCurrentRoom: number) => {
+    const onRoomNameChange = (event: ChangeEvent<HTMLInputElement>, indexCurrentRoom: number) => {
         const newRooms = [...rooms]
         newRooms[indexCurrentRoom] = {
             ...rooms[indexCurrentRoom],
@@ -104,7 +105,7 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         setCurrentSelectedRoom(newRooms[indexCurrentRoom])
     }
 
-    const onFieldNameChange = (event: any, indexCurrentRoom: number, indexCurrentField: number) => {
+    const onFieldNameChange = (event: ChangeEvent<HTMLInputElement>, indexCurrentRoom: number, indexCurrentField: number) => {
         const newRooms = [...rooms]
         const newFields = [...newRooms[indexCurrentRoom].fields]
         newFields[indexCurrentField] = {
@@ -190,11 +191,16 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         }
     }
 
+    const canAddRoom = roomNameInput.length > 0 && rooms.filter(room => room.name === roomNameInput).length === 0
+    const canAddField = fieldNameInput.length > 0 &&
+        !!currentSelectedRoom &&
+        currentSelectedRoom.fields.filter(field => field.name === fieldNameInput).length === 0
     return (
         <>
 
             <Modal
                 formName={currentFlat ? `${ModalState.AddFloor}` : `${ModalState.ChangeFloorFields}`}
+                contentTransparent={true}
             >
                 <div className={styles.mainContainer}>
                     <input value={flatName}
@@ -205,184 +211,175 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
                            }}
                            placeholder={de.inputLabels.flatName}
                     />
-                    <div className={styles.roomsContainer}>
-                        <p className={styles.roomyLabel}>{de.displayLabels.rooms}:</p>
-                        <div
-                            className={styles.roomsList}
-                        >
-                            {rooms.map((room, index) => {
-                                return (
-                                    <div className={styles.roomFieldContainer} key={index}>
-                                        <div
-                                            key={index}
-                                            className={styles.roomItemContainer}
-                                            style={{
-                                                background: room.name === currentSelectedRoom?.name ?
-                                                    "var(--tertiary-color)" :
-                                                    "var(--secondary-color)"
-                                            }}
-                                        >
-                                            <input
-                                                value={room.name}
-                                                onChange={(event) => {
-                                                    onRoomNameChange(event, index)
+                    {rooms.length > 0 ? (
+                        <>
+                            <p className={styles.roomyLabel}>{de.displayLabels.rooms}:</p>
+                            <div
+                                className={styles.roomsList}
+                            >
+                                {rooms.map((room, index) => {
+                                    return (
+                                        <div className={styles.roomFieldContainer} key={index}>
+                                            <div
+                                                key={index}
+                                                className={styles.roomItemContainer}
+                                                style={{
+                                                    background: room.name === currentSelectedRoom?.name ?
+                                                        "var(--tertiary-color)" :
+                                                        "var(--secondary-color)"
                                                 }}
-                                                onClick={() => {
-                                                    setCurrentSelectedRoom(room)
-                                                }}
-                                                className={styles.roomInput}
-
-                                            />
-                                            {index === 0 ? null :
-                                                <FontAwesomeIcon
-                                                    onClick={() => {
-                                                        onRoomArrowUpClickHandler(room, index)
-                                                    }}
-                                                    className={styles.arrowButton}
-                                                    icon={faAnglesUp}/>
-                                            }
-                                            {index >= rooms.length - 1 ? null :
-                                                <FontAwesomeIcon
-                                                    onClick={() => {
-                                                        onRoomArrowDownClickHandler(room, index)
-                                                    }}
-                                                    className={styles.arrowButton}
-                                                    icon={faAnglesDown}/>
-                                            }
-                                            <FontAwesomeIcon
-                                                onClick={() => {
-                                                    onRemoveRoomClickHandler(room)
-                                                }}
-                                                className={styles.deleteButton}
-                                                icon={faMinus}/>
-                                        </div>
-                                        {room.fields.map((field, indexFields) =>
-                                            (
-                                                <div
-                                                    key={index + indexFields}
-                                                    className={styles.roomItemContainer}
-                                                    style={{
-                                                        background: room.name === currentSelectedRoom?.name ?
-                                                            "var(--tertiary-color)" :
-                                                            "var(--secondary-color)",
-                                                        marginLeft: '1rem'
-
+                                            >
+                                                <input
+                                                    value={room.name}
+                                                    onChange={(event) => {
+                                                        onRoomNameChange(event, index)
                                                     }}
                                                     onClick={() => {
                                                         setCurrentSelectedRoom(room)
                                                     }}
-                                                >
-                                                    <input
-                                                        value={field.name}
-                                                        onChange={(event) => {
-                                                            onFieldNameChange(event, index, indexFields)
-                                                        }}
-                                                        key={"_" + indexFields}
-                                                        className={styles.roomField}
-                                                    />
-                                                    {indexFields === 0 ? null :
-                                                        <FontAwesomeIcon
-                                                            onClick={() => {
-                                                                onFieldArrowUpClickHandler(room, field, indexFields)
-                                                            }}
-                                                            className={styles.arrowButton}
-                                                            icon={faAnglesUp}/>
-                                                    }
-                                                    {indexFields >= room.fields.length - 1 ? null :
-                                                        <FontAwesomeIcon
-                                                            onClick={() => {
-                                                                onFieldArrowDownClickHandler(room, field, indexFields)
-                                                            }}
-                                                            className={styles.arrowButton}
-                                                            icon={faAnglesDown}/>
-                                                    }
+                                                    className={styles.roomInput}
+
+                                                />
+                                                {index === 0 ? null :
                                                     <FontAwesomeIcon
                                                         onClick={() => {
-                                                            onRemoveFieldClickHandler(room, field)
+                                                            onRoomArrowUpClickHandler(room, index)
                                                         }}
-                                                        className={styles.deleteButton}
-                                                        icon={faMinus}/>
-                                                </div>
-                                            ))}
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        <div className={styles.inputSaveContainer}>
-                            <input value={roomNameInput}
-                                   className={`${styles.input} ${
-                                       roomNameInput.length !== 0 &&
-                                       rooms.filter(room => room.name === roomNameInput).length === 0 ?
-                                           styles.inputValid : styles.inputInvalid
-                                   } ${rooms.length !== 0 ? styles.inputRooms : ""}`}
-                                   type={"text"}
-                                   onChange={(e) => {
-                                       setRoomNameInput(e.target.value)
-                                   }}
-                                   placeholder={de.inputLabels.roomName}
-                            />
-                            <div onClick={(event) => {
-                                if (roomNameInput &&
-                                    roomNameInput.length > 0 &&
-                                    rooms.filter(room => room.name === roomNameInput).length === 0
-                                )
+                                                        className={styles.arrowButton}
+                                                        icon={faAnglesUp}/>
+                                                }
+                                                {index >= rooms.length - 1 ? null :
+                                                    <FontAwesomeIcon
+                                                        onClick={() => {
+                                                            onRoomArrowDownClickHandler(room, index)
+                                                        }}
+                                                        className={styles.arrowButton}
+                                                        icon={faAnglesDown}/>
+                                                }
+                                                <FontAwesomeIcon
+                                                    onClick={() => {
+                                                        onRemoveRoomClickHandler(room)
+                                                    }}
+                                                    className={styles.deleteButton}
+                                                    icon={faMinus}/>
+                                            </div>
+                                            {room.fields.map((field, indexFields) =>
+                                                (
+                                                    <div
+                                                        key={index + indexFields}
+                                                        className={styles.roomItemContainer}
+                                                        style={{
+                                                            background: room.name === currentSelectedRoom?.name ?
+                                                                "var(--tertiary-color)" :
+                                                                "var(--secondary-color)",
+                                                            marginLeft: '1rem'
+
+                                                        }}
+                                                        onClick={() => {
+                                                            setCurrentSelectedRoom(room)
+                                                        }}
+                                                    >
+                                                        <input
+                                                            value={field.name}
+                                                            onChange={(event) => {
+                                                                onFieldNameChange(event, index, indexFields)
+                                                            }}
+                                                            key={"_" + indexFields}
+                                                            className={styles.roomField}
+                                                        />
+                                                        {indexFields === 0 ? null :
+                                                            <FontAwesomeIcon
+                                                                onClick={() => {
+                                                                    onFieldArrowUpClickHandler(room, field, indexFields)
+                                                                }}
+                                                                className={styles.arrowButton}
+                                                                icon={faAnglesUp}/>
+                                                        }
+                                                        {indexFields >= room.fields.length - 1 ? null :
+                                                            <FontAwesomeIcon
+                                                                onClick={() => {
+                                                                    onFieldArrowDownClickHandler(room, field, indexFields)
+                                                                }}
+                                                                className={styles.arrowButton}
+                                                                icon={faAnglesDown}/>
+                                                        }
+                                                        <FontAwesomeIcon
+                                                            onClick={() => {
+                                                                onRemoveFieldClickHandler(room, field)
+                                                            }}
+                                                            className={styles.deleteButton}
+                                                            icon={faMinus}/>
+                                                    </div>
+                                                ))}
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </>
+                    ) : null}
+                    <div className={styles.inputSaveContainer}>
+                        <input value={roomNameInput}
+                               className={`${styles.input} ${
+                                   canAddRoom ?
+                                       styles.inputValid : styles.inputInvalid
+                               } ${rooms.length !== 0 ? styles.inputRooms : ""}`}
+                               type={"text"}
+                               onChange={(e) => {
+                                   setRoomNameInput(e.target.value)
+                               }}
+                               placeholder={de.inputLabels.roomName}
+                        />
+                        <div
+                            className={`${styles.addIconButton} ${canAddRoom ? "" : styles.addIconDisabled}`}
+                            onClick={(event) => {
+                                if (canAddRoom) {
                                     onAddRoomClickHandler(event)
-                            }}>
-                                <FontAwesomeIcon
-                                    style={
-                                        {
-                                            '--text-color':
-                                                roomNameInput &&
-                                                roomNameInput.length > 0 &&
-                                                rooms.filter(room => room.name === roomNameInput).length === 0 ?
-                                                    "var(--text-color)" :
-                                                    "var(--text-color-muted)"
-                                        } as CSSProperties & CSSVariables
-                                    }
-                                    icon={faAdd}/>
-                            </div>
-                        </div>
-                        <div className={styles.inputSaveContainer}>
-                            <input value={fieldNameInput}
-                                   className={`${styles.input} ${
-                                       fieldNameInput.length > 0 &&
-                                       currentSelectedRoom?.fields
-                                           .filter(field => field.name === fieldNameInput).length === 0 ?
-                                           styles.inputValid : styles.inputInvalid}`}
-                                   type={"text"}
-                                   onChange={(e) => {
-                                       setFieldNameInput(e.target.value)
-                                   }}
-                                   disabled={!currentSelectedRoom || !currentSelectedRoom.name}
-                                   placeholder={`${de.inputLabels.fieldName} ${
-                                       !currentSelectedRoom?.name ?
-                                           '' :
-                                           `${currentSelectedRoom?.name}`}`}
-                            />
-                            <div onClick={(event) => {
-                                if (
-                                    fieldNameInput &&
-                                    fieldNameInput.length > 0 &&
-                                    currentSelectedRoom?.fields
-                                        .filter(field => field.name === fieldNameInput).length === 0
-                                )
-                                    onAddFieldClickHandler(event)
-                            }}>
-                                <FontAwesomeIcon
-                                    style={
-                                        {
-                                            '--text-color': fieldNameInput &&
-                                            fieldNameInput.length > 0 &&
-                                            currentSelectedRoom?.fields
-                                                .filter(field => field.name === fieldNameInput).length === 0 ?
-                                                "var(--text-color)" :
-                                                "var(--text-color-muted)"
-                                        } as CSSProperties & CSSVariables
-                                    }
-                                    icon={faAdd}/>
-                            </div>
+                                }
+                            }}
+                        >
+                            <FontAwesomeIcon
+                                style={
+                                    {
+                                        '--text-color': canAddRoom ? "var(--text-color)" : "var(--text-color-muted)"
+                                    } as CSSProperties & CSSVariables
+                                }
+                                icon={faAdd}/>
                         </div>
                     </div>
+                    <div className={styles.inputSaveContainer}>
+                        <input value={fieldNameInput}
+                               className={`${styles.input} ${
+                                   canAddField ?
+                                       styles.inputValid : styles.inputInvalid}`}
+                               type={"text"}
+                               onChange={(e) => {
+                                   setFieldNameInput(e.target.value)
+                               }}
+                               disabled={!currentSelectedRoom || !currentSelectedRoom.name}
+                               placeholder={`${de.inputLabels.fieldName} ${
+                                   !currentSelectedRoom?.name ?
+                                       '' :
+                                       `${currentSelectedRoom?.name}`}`}
+                        />
+                        <div
+                            className={`${styles.addIconButton} ${canAddField ? "" : styles.addIconDisabled}`}
+                            onClick={(event) => {
+                                if (canAddField) {
+                                    onAddFieldClickHandler(event)
+                                }
+                            }}
+                        >
+                            <FontAwesomeIcon
+                                style={
+                                    {
+                                        '--text-color': canAddField ? "var(--text-color)" : "var(--text-color-muted)"
+                                    } as CSSProperties & CSSVariables
+                                }
+                                icon={faAdd}/>
+                        </div>
+                    </div>
+                </div>
+                <div className={styles.saveActionRow}>
                     <CustomButton
                         onClick={
                             async (event) => {

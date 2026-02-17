@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {RootState} from "@/store/store";
-import {useSelector} from "react-redux";
-import {useAppDispatch} from "@/constants/hooks";
+import {useAppDispatch} from "@/store/hooks";
+import {useAppSelector} from "@/store/hooks";
 import {loadMainPageData} from "@/constants/constantData";
 import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setIsLoading} from "@/store/reducer/isLoading";
@@ -15,9 +14,19 @@ import Login from "@/components/Login";
 import CustomTab from "@/components/layout/CustomTab";
 import Statistics from "@/components/Statistics";
 import de from "@/constants/de.json"
+import styles from "@/styles/pages/Home.module.css";
+import {
+    selectCurrentCar,
+    selectCurrentUser,
+    selectIsLoading,
+    selectModalState
+} from "@/store/selectors";
 
 export default function Home({}: HomeProps) {
-    const state: RootState = useSelector((state: RootState) => state)
+    const isLoading = useAppSelector(selectIsLoading)
+    const currentUser = useAppSelector(selectCurrentUser)
+    const modalState = useAppSelector(selectModalState)
+    const currentCar = useAppSelector(selectCurrentCar)
     const dispatch = useAppDispatch()
     const [selected, setSelected] = useState(0)
 
@@ -32,7 +41,7 @@ export default function Home({}: HomeProps) {
             }))
             dispatch(setIsLoading(false))
         }).catch((error: Error) => {
-            console.log(error.message)
+            console.error(error.message)
         })
     }, [dispatch]);
 
@@ -40,24 +49,30 @@ export default function Home({}: HomeProps) {
 
     return (
         <>
-            {state.isLoading ? <Loading/> : null}
-            {state.currentUser.key ?
+            {isLoading ? <Loading/> : null}
+            {currentUser.key ?
                 <>
                     <Menu/>
-                    {state.modalState === ModalState.AddCarData || state.modalState === ModalState.ChangeCarData ? (
+                    {modalState === ModalState.AddCarData || modalState === ModalState.ChangeCarData ? (
                         <AddData
-                            prevKilometers={state.currentCar.prevKilometer ? state.currentCar.prevKilometer : 0}/>
+                            prevKilometers={currentCar.prevKilometer ? currentCar.prevKilometer : 0}/>
                     ) : null}
-                    {state.modalState === ModalState.DownloadCsv ? (
+                    {modalState === ModalState.DownloadCsv ? (
                         <DownloadCsv/>
                     ) : null}
-                    <CustomTab
-                        tabNames={[
-                            de.displayLabels.enteredItems,
-                            de.displayLabels.statistics]}
-                        selected={selected}
-                        setSelected={setSelected}/>
-                    {HomeTabs.Statistics === selected ? <Display/> : <Statistics/>}
+                    <div className={styles.homeViewport}>
+                        <section className={styles.glassPanel}>
+                            <CustomTab
+                                tabNames={[
+                                    de.displayLabels.enteredItems,
+                                    de.displayLabels.statistics]}
+                                selected={selected}
+                                setSelected={setSelected}/>
+                            <div className={styles.tabContent}>
+                                {HomeTabs.Statistics === selected ? <Display/> : <Statistics/>}
+                            </div>
+                        </section>
+                    </div>
                 </>
                 :
                 <Login/>

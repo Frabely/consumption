@@ -1,24 +1,22 @@
 import React from 'react';
 import styles from '../../styles/layout/CustomTab.module.css'
-import {RootState} from "@/store/store";
-import {useSelector} from "react-redux";
 
 
 export default function CustomTab({tabNames, setSelected, selected}: CustomTabProps) {
-    const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
-
     return (
-        <div className={styles.mainContainer} style={!isHorizontal ? {paddingTop: "10dvh"} : undefined}>
-            {tabNames.map((tab, index) =>
-                <div
-                    className={styles.tabContainer}
-                    style={index === selected ? {background: "var(--trans-display-color-dark)"}: {}}
+        <div className={styles.mainContainer} role={"tablist"} aria-label={"Home tabs"}>
+            {tabNames.map((tab, index) => (
+                <button
+                    type={"button"}
+                    role={"tab"}
+                    aria-selected={index === selected}
+                    className={`${styles.tabContainer} ${index === selected ? styles.tabSelected : ""}`}
                     key={index}
                     onClick={() => setSelected(index)}
                 >
                     {tab}
-                </div>
-            )}
+                </button>
+            ))}
         </div>
     );
 }

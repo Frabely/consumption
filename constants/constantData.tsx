@@ -36,13 +36,13 @@ export let houses: House[] = []
 
 export const loadMainPageData = async () => {
     const resultStations = await getLoadingStations().catch((error: Error) => {
-        console.log(error.message)
+        console.error(error.message)
     })
     if (resultStations)
         loadingStations = resultStations
 
     const resultCars = await getCars().catch((error: Error) => {
-        console.log(error.message)
+        console.error(error.message)
     })
     if (resultCars) {
         cars = resultCars

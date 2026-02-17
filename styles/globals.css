@@ -1,75 +1,64 @@
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
-  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
-    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
-    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
-    /* Hauptfarben */
-    /*--primary-color: #e8fdda; !* Hauptfarbe: Grün *!*/
-    --primary-color: #000000; /* Hauptfarbe: Grün */
-    --primary-color-hover: #45A049; /* Hauptfarbe: Dunkleres Grün für Hover */
-    /*--secondary-color: #F5F5F5; !* Sekundärfarbe: Helles Grau für Hintergrundbereiche *!*/
-    --secondary-color: #303030; /* Sekundärfarbe: Helles Grau für Hintergrundbereiche */
-    --secondary-color-light: #FFFFFF; /* Sekundärfarbe: Reines Weiß */
-    --secondary-color-muted: #C0C0C0; /* Sekundärfarbe: Gedämpftes Grau für inaktive Elemente */
+  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+    "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
+    "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 
-    /* Tertiäre Farben */
-    /*--tertiary-color: #E8E8E8; !* Tertiärfarbe: Panels, helles Grau *!*/
-    --tertiary-color: #737373; /* Tertiärfarbe: Panels, helles Grau */
-    --tertiary-color-light: #FAFAFA; /* Tertiärfarbe: Noch helleres Grau */
+  --primary-color: #6b5a4d;
+  --primary-color-hover: #7a685b;
+  --secondary-color: #f6eee3;
+  --secondary-color-light: #fffaf4;
+  --secondary-color-muted: #cbbcae;
 
-    /* Fehlerfarben */
-    --error-color: #FF5252; /* Fehlerfarbe: Rot */
-    --error-color-hover: #FF1744; /* Fehlerfarbe: Dunkleres Rot für Hover */
-    --success-color: #4CAF50; /* Erfolgsfarbe: Grün (gleiche wie Primärfarbe für Konsistenz) */
-    --valid-color: #E9F7EF; /* Valid-Farbe: Weiches Grün für Validierungsindikatoren */
+  --tertiary-color: #d8c9b8;
+  --tertiary-color-light: #f8f2ea;
 
-    /* Textfarben */
-    /*--text-color: #333333; !* Primäre Textfarbe: Dunkelgrau *!*/
-    --text-color: #ffffff; /* Primäre Textfarbe: Dunkelgrau */
-    --text-color-muted: #9E9E9E; /* Gedämpfter Text für Platzhalter */
-    --text-color-light: #FFFFFF; /* Helle Textfarbe (z. B. auf dunklen Hintergründen) */
+  --error-color: #c95d53;
+  --error-color-hover: #b84b41;
+  --success-color: #4f8f62;
+  --valid-color: #e9f7ef;
 
-    /* Schattierungen */
-    --box-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1); /* Leichter Schatten für Container */
-    --box-shadow-medium: 0 6px 12px rgba(0, 0, 0, 0.15); /* Mittlerer Schatten für Hervorhebungen */
+  --text-color: #2f241b;
+  --text-color-muted: #8f7d6d;
+  --text-color-light: #f8f3ec;
 
-    /* Rahmenfarben */
-    --border-color: #DDDDDD; /* Standardrahmen: Helles Grau */
-    --border-color-muted: #BBBBBB; /* Gedämpfter Rahmen für inaktive Bereiche */
+  --box-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --box-shadow-medium: 0 6px 12px rgba(0, 0, 0, 0.15);
 
-    /* Scrollbar */
-    --scrollbar-thumb-color: #4CAF50; /* Scrollbar: Grün passend zur Primärfarbe */
-    --scrollbar-track-color: #E8E8E8; /* Scrollbar: Heller Hintergrund */
+  --border-color: #d7c7b6;
+  --border-color-muted: #baa998;
 
-    /* Modalfarben */
-    --modal-background: rgba(83, 83, 83, 0.9); /* Modal-Hintergrund: Helles Weiß mit Transparenz */
+  --scrollbar-thumb-color: #9f7c61;
+  --scrollbar-track-color: #efe3d6;
 
-    /* Disabled-Farben */
-    --disabled-button-background: #A1A1A1; /* Hintergrundfarbe für deaktivierte Buttons */
-    --disabled-button-text: #FFFFFF; /* Textfarbe für deaktivierte Buttons */
+  --modal-background: rgba(166, 158, 149, 0.35);
 
-    /* Validierungsfarben */
-    --input-invalid-background: #402323; /* Fehlerhintergrund: Leichtes Rot */
-    --input-valid-background: #2c652c; /* Gültigkeitshintergrund: Leichtes Grün */
+  --disabled-button-background: #b9aa9a;
+  --disabled-button-text: #5a4a3b;
 
-    /* transperant display colors */
-    --trans-display-color-light: rgba(0, 0, 0, 0.66);
-    --trans-display-color-dark: rgba(48, 48, 48, 0.66);
+  --input-invalid-background: rgba(227, 190, 190, 0.56);
+  --input-valid-background: rgba(201, 224, 203, 0.58);
+
+  --trans-display-color-light: rgba(160, 145, 130, 0.38);
+  --trans-display-color-dark: rgba(136, 121, 108, 0.44);
 }
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  color: var(--text-color);
-  font-size: 1.2rem;
-  font-weight: bold;
-  font-family: "Gill Sans", sans-serif;
 }
 
 html,
 body {
   max-width: 100dvw;
   overflow-x: hidden;
+}
+
+body {
+  color: var(--text-color);
+  font-size: 16px;
+  font-weight: 400;
+  font-family: "Gill Sans", sans-serif;
 }

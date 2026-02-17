@@ -1,56 +1,152 @@
 .mainContainer {
-    display: flex;
-    align-items: start;
-    flex-direction: column;
-    padding: 0.5rem;
-}
-
-.inputContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    width: 100%;
-}
-
-.infoFieldContainerHor {
+    height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    background: var(--primary-color);
-    padding: 1rem;
-    border-radius: 10px;
+    gap: 0.8rem;
+    padding: 0.7rem 0.8rem 0.6rem;
+    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
-.infoFieldContainerVert {
+.mainContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.mainContainer::-webkit-scrollbar-thumb {
+    border-radius: 99px;
+    background: rgba(133, 110, 92, 0.7);
+}
+
+.filtersCard {
     display: flex;
-    flex-direction: row;
-    background: var(--primary-color);
-    padding: 1rem;
-    border-radius: 10px;
-    justify-content: space-between;
-    width: 100%
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.9rem;
+    border-radius: 18px;
+    background: rgba(250, 247, 242, 0.94);
+    border: 1px solid rgba(223, 210, 194, 0.9);
+    box-shadow: 0 10px 18px rgba(38, 27, 18, 0.18);
+}
+
+.inputGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+}
+
+.inputRow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.label {
+    color: #4b4037;
+    font-size: 0.88rem;
+    font-weight: 700;
 }
 
 .input {
-    border-radius: 10px;
-    padding: 0.5rem;
-    background: var(--secondary-color);
-    border-color: var(--border-color);
-    border: none;
+    width: 100%;
+    border-radius: 14px;
+    padding: 0.72rem 0.85rem;
+    background: rgba(252, 248, 241, 0.95);
+    border: 1px solid rgba(210, 189, 167, 0.5);
     outline: none;
+    color: #3f3329;
+    font-family: inherit;
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.2;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.monthInput {
+    font-family: inherit;
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.selectedContext {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+}
+
+.contextLabel {
+    color: #4b4037;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.contextValue {
+    color: #2f241b;
+    font-size: 1.02rem;
+    font-weight: 800;
+}
+
+.input:hover {
+    background: rgba(255, 252, 247, 0.98);
+}
+
+.input:focus {
+    border-color: rgba(170, 126, 88, 0.85);
+    box-shadow: 0 0 0 3px rgba(170, 126, 88, 0.22);
 }
 
 .inputInvalid {
-    background-color: var(--input-invalid-background);
+    background: rgba(227, 190, 190, 0.56);
+    border-color: rgba(182, 80, 80, 0.46);
 }
 
 .inputValid {
-    background: var(--input-valid-background);
+    background: rgba(201, 224, 203, 0.58);
+    border-color: rgba(94, 146, 98, 0.42);
 }
 
-.input::placeholder {
-    color: var(--text-color-muted);
+.input.inputInvalid:focus {
+    border-color: rgba(182, 80, 80, 0.78);
+    box-shadow: 0 0 0 3px rgba(182, 80, 80, 0.2);
+}
+
+.input.inputValid:focus {
+    border-color: rgba(94, 146, 98, 0.75);
+    box-shadow: 0 0 0 3px rgba(94, 146, 98, 0.18);
+}
+
+.kpiGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+}
+
+.kpiCard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.75rem 0.8rem;
+    border-radius: 16px;
+    background: rgba(250, 247, 242, 0.96);
+    border: 1px solid rgba(223, 210, 194, 0.9);
+    box-shadow: 0 8px 16px rgba(38, 27, 18, 0.16);
+}
+
+.kpiLabel {
+    color: #6b6157;
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.kpiValue {
+    color: #3a332c;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+@media (max-width: 760px) {
+    .kpiGrid {
+        grid-template-columns: 1fr;
+    }
 }
