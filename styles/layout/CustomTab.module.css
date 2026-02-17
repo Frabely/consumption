@@ -18,28 +18,28 @@
     font-family: inherit;
     font-weight: 700;
     font-size: 0.92rem;
-    color: rgba(245, 238, 229, 0.96);
-    background: rgba(80, 68, 58, 0.96);
-    border: 1px solid rgba(96, 81, 69, 0.98);
+    color: var(--text-color-light);
+    background: color-mix(in srgb, var(--text-color) 78%, #000 0%);
+    border: 1px solid color-mix(in srgb, var(--text-color) 62%, transparent);
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     cursor: pointer;
 }
 
 .tabContainer:hover {
-    background: rgba(92, 78, 67, 0.98);
+    background: color-mix(in srgb, var(--text-color) 84%, #000 0%);
 }
 
 .tabContainer:focus-visible {
-    outline: 2px solid rgba(246, 230, 210, 0.85);
+    outline: 2px solid color-mix(in srgb, var(--secondary-color-light) 86%, transparent);
     outline-offset: 1px;
 }
 
 .tabSelected {
-    color: #2f241b;
-    background: rgba(245, 238, 228, 0.98);
-    border-color: rgba(188, 163, 134, 0.95);
+    color: var(--text-color);
+    background: var(--surface-strong);
+    border-color: var(--border-color-muted);
 }
 
 .tabSelected:hover {
-    background: rgba(245, 238, 228, 0.98);
+    background: var(--surface-strong);
 }

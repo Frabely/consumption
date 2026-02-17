@@ -25,10 +25,10 @@
     padding: 0.95rem 1rem;
     border-radius: 14px;
     border: none;
-    background: rgba(255, 252, 247, 0.98);
+    background: var(--surface-strong);
     outline: none;
     font-size: 1rem;
-    color: #261d16;
+    color: var(--text-color);
     font-weight: 700;
     letter-spacing: 0.02em;
     width: 100%;
@@ -55,8 +55,8 @@
     justify-content: center;
     border: none;
     border-radius: 999px;
-    background: rgba(217, 196, 176, 0.52);
-    color: #2e241c;
+    background: var(--surface-muted);
+    color: var(--text-color);
     cursor: pointer;
     transition: filter 0.18s ease, transform 0.18s ease;
 }
@@ -68,13 +68,13 @@
 
 .visibilityButton:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(170, 126, 88, 0.24);
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .input::placeholder {
-    color: #6b5b4d;
+    color: var(--text-color-muted);
 }
 
 .input:focus {
-    box-shadow: 0 0 0 3px rgba(170, 126, 88, 0.18);
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }

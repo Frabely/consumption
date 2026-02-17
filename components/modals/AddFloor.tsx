@@ -200,6 +200,7 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
 
             <Modal
                 formName={currentFlat ? `${ModalState.AddFloor}` : `${ModalState.ChangeFloorFields}`}
+                title={modalState === ModalState.ChangeFloorFields ? de.buttonLabels.changeFloor : de.buttonLabels.addFloor}
                 contentTransparent={true}
             >
                 <div className={styles.mainContainer}>

@@ -185,6 +185,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     return (
         <Modal
             formName={`${ModalState.AddCarData}`}
+            title={changingData ? de.buttonLabels.changeData : de.buttonLabels.addData}
             contentAutoHeight={true}
         >
             <div className={styles.mainContainer}>

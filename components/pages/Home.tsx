@@ -6,7 +6,7 @@ import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import Loading from "@/components/Loading";
 import Menu from "@/components/layout/menus/Menu";
-import {HomeTabs, ModalState} from "@/constants/enums";
+import {ModalState} from "@/constants/enums";
 import AddData from "@/components/modals/AddData";
 import DownloadCsv from "@/components/modals/DownloadCsv";
 import Display from "@/components/Display";
@@ -29,6 +29,7 @@ export default function Home({}: HomeProps) {
     const currentCar = useAppSelector(selectCurrentCar)
     const dispatch = useAppDispatch()
     const [selected, setSelected] = useState(0)
+    const isEvaluationTab = selected === 1
 
     useEffect(() => {
         loadMainPageData().then(() => {
@@ -61,15 +62,15 @@ export default function Home({}: HomeProps) {
                         <DownloadCsv/>
                     ) : null}
                     <div className={styles.homeViewport}>
-                        <section className={styles.glassPanel}>
+                        <section className={`${styles.glassPanel} ${isEvaluationTab ? styles.glassPanelContentHeight : ""}`}>
                             <CustomTab
                                 tabNames={[
                                     de.displayLabels.enteredItems,
                                     de.displayLabels.statistics]}
                                 selected={selected}
                                 setSelected={setSelected}/>
-                            <div className={styles.tabContent}>
-                                {HomeTabs.Statistics === selected ? <Display/> : <Statistics/>}
+                            <div className={`${styles.tabContent} ${isEvaluationTab ? styles.tabContentAuto : ""}`}>
+                                {isEvaluationTab ? <Statistics/> : <Display/>}
                             </div>
                         </section>
                     </div>

@@ -6,15 +6,15 @@
     gap: 0.8rem;
     padding: 0.48rem;
     border-radius: 16px;
-    background: rgba(243, 235, 224, 0.9);
-    border: 1px solid rgba(223, 210, 194, 0.9);
+    background: var(--surface-strong);
+    border: 1px solid var(--border-color);
     overflow: hidden;
 }
 
 .saveActionRow {
     margin-top: 0;
     padding-top: 0.62rem;
-    border-top: 1px solid rgba(147, 122, 101, 0.32);
+    border-top: 1px solid var(--border-color-muted);
     display: flex;
     justify-content: flex-end;
 }
@@ -53,10 +53,10 @@
     width: 100%;
     border-radius: 14px;
     padding: 0.72rem 0.85rem;
-    background: rgba(252, 248, 241, 0.95);
-    border: 1px solid rgba(210, 189, 167, 0.5);
+    background: var(--surface-strong);
+    border: 1px solid var(--border-color);
     font-size: 0.9rem;
-    color: #3f3329;
+    color: var(--text-color);
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
@@ -77,12 +77,12 @@
 }
 
 .input:hover {
-    background: rgba(255, 252, 247, 0.98);
+    background: var(--secondary-color-light);
 }
 
 .input:focus {
-    border-color: rgba(170, 126, 88, 0.85);
-    box-shadow: 0 0 0 3px rgba(170, 126, 88, 0.22);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .input.inputInvalid:focus {
@@ -97,7 +97,7 @@
 
 .roomyLabel {
     margin-left: 0.12rem;
-    color: #4b4037;
+    color: var(--text-color-muted);
     font-size: 0.9rem;
     font-weight: 700;
 }
@@ -112,8 +112,8 @@
     overflow-y: auto;
     padding: 0.3rem 0.35rem 0.3rem 0.3rem;
     border-radius: 14px;
-    background: rgba(250, 247, 242, 0.88);
-    border: 1px solid rgba(223, 210, 194, 0.82);
+    background: var(--surface-soft);
+    border: 1px solid var(--border-color);
     scrollbar-width: thin;
     scrollbar-color: var(--primary-color);
 }
@@ -134,7 +134,7 @@
     border: none;
     outline: none;
     background: transparent;
-    color: #3f3329;
+    color: var(--text-color);
     width: 100%;
 }
 
@@ -147,7 +147,7 @@
     border: none;
     outline: none;
     background: transparent;
-    color: #3f3329;
+    color: var(--text-color);
     font-size: 0.9rem;
     width: 100%;
 }
@@ -164,8 +164,8 @@
     justify-content: space-between;
     align-items: center;
     gap: 0.55rem;
-    background: rgba(250, 247, 242, 0.9);
-    border: 1px solid rgba(223, 210, 194, 0.82);
+    background: var(--surface-soft);
+    border: 1px solid var(--border-color);
     border-radius: 13px;
     padding: 0.42rem 0.5rem;
 }
@@ -181,8 +181,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(121, 94, 74, 0.95), rgba(163, 125, 93, 0.95));
-    color: #f8f3ec;
+    background: var(--primary-color);
+    color: var(--accent-contrast);
     cursor: pointer;
     transition: filter 0.18s ease, transform 0.18s ease;
 }
@@ -206,8 +206,8 @@
     height: 1.7rem;
     padding: 0.2rem;
     font-size: 0.78rem;
-    background: linear-gradient(135deg, rgba(156, 86, 72, 0.95), rgba(136, 71, 59, 0.95));
-    color: #fff4ec;
+    background: var(--error-color);
+    color: #fff7f5;
     border: 1px solid rgba(214, 170, 158, 0.42);
     cursor: pointer;
     transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
@@ -233,7 +233,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.56rem 0.72rem;
-    background: rgba(252, 248, 241, 0.96);
+    background: var(--surface-strong);
     border-radius: 11px;
     border: 1px solid rgba(170, 143, 119, 0.32);
     transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
@@ -241,7 +241,7 @@
 }
 
 .roomItemContainer:hover {
-    background: rgba(246, 238, 227, 0.92);
+    background: var(--surface-soft);
     border-color: rgba(170, 143, 119, 0.5);
 }
 
@@ -254,13 +254,13 @@
 }
 
 .arrowButton {
-    background: linear-gradient(135deg, rgba(121, 94, 74, 0.95), rgba(163, 125, 93, 0.95));
+    background: var(--primary-color);
     border-radius: 100%;
     width: 1.7rem;
     height: 1.7rem;
     padding: 0.2rem;
     font-size: 0.74rem;
-    color: #f8f3ec;
+    color: var(--accent-contrast);
     border: 1px solid rgba(176, 138, 102, 0.44);
     cursor: pointer;
     transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
