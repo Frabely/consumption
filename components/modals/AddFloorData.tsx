@@ -10,31 +10,15 @@ import {faSave, faBan} from "@fortawesome/free-solid-svg-icons";
 import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FieldInput from "@/components/layout/FieldInput";
 import {deleteFieldValue, getFieldValues, setFieldValue} from "@/firebase/functions";
-import {RootState} from "@/store/store";
 import CustomSelect from "@/components/layout/CustomSelect";
 import {ModalState} from "@/constants/enums";
 import {useAppSelector} from "@/store/hooks";
+import {selectCurrentHouse, selectDimension} from "@/store/selectors";
+import {filterFieldValuesByRoom, parseYearMonthInput} from "@/domain/fieldValueMapping";
 
 export default function AddFloorData({flat}: AddFloorDataModalProps) {
-    const filterFieldValues = (
-        flat: Flat,
-        currentRoomId: string,
-        allFieldValues: FieldValue[]
-    ): FieldValue[] => {
-        const room = flat.rooms.find(r => r.id === currentRoomId);
-        if (!room) return [];
-
-        const valueByFieldId = new Map(
-            allFieldValues.map(fv => [fv.field.id, fv.value] as const)
-        );
-
-        return room.fields.map(field => ({
-            field,
-            value: valueByFieldId.has(field.id) ? valueByFieldId.get(field.id)! : null
-        }));
-    };
-
-    const state: RootState = useAppSelector((state: RootState) => state)
+    const currentHouse = useAppSelector(selectCurrentHouse)
+    const dimension = useAppSelector(selectDimension)
     const date = new Date()
     const year = date.getFullYear()
     const month = date.getMonth() + 1
@@ -54,7 +38,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
             flat).then((result) => {
             if (result) {
                 setAllFieldValues(result)
-                setCurrentFieldValues(filterFieldValues(flat, currentRoom.id, result))
+                setCurrentFieldValues(filterFieldValuesByRoom(flat, currentRoom.id, result))
             }
         }).catch((error) => {
             console.error(error.message)
@@ -74,7 +58,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const onSaveFieldClickHandler = async (fieldValue: FieldValue) => {
         if (fieldValue.value && !isNaN(Number(fieldValue.value))) {
             setFieldValue(
-                state.currentHouse.name,
+                currentHouse.name,
                 flat,
                 currentRoom,
                 fieldValue.field,
@@ -99,7 +83,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
             })
             setCurrentFieldValues(fieldValues)
             deleteFieldValue(
-                state.currentHouse.name,
+                currentHouse.name,
                 flat,
                 currentRoom,
                 fieldValueToDelete.field,
@@ -112,21 +96,21 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const onRoomChangeHandler = (value: string) => {
         const changedRoom = flat.rooms.filter(room => room.name === value)[0]
         setCurrentRoom(changedRoom)
-        setCurrentFieldValues(filterFieldValues(flat, changedRoom.id, allFieldValues))
+        setCurrentFieldValues(filterFieldValuesByRoom(flat, changedRoom.id, allFieldValues))
     }
 
     const onDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
-        setCurrentDateValue({
-            year: event.target.value.split("-")[0],
-            month: event.target.value.split("-")[1]
-        })
+        const parsed = parseYearMonthInput(event.target.value)
+        if (parsed) {
+            setCurrentDateValue(parsed)
+        }
     }
 
     return (
         <Modal formName={`${ModalState.AddFloorData}`}>
             <div className={styles.mainContainer}
-                 style={state.dimension.isHorizontal ? {height: '100%'} : {height: '75dvh'}}>
+                 style={dimension.isHorizontal ? {height: '100%'} : {height: '75dvh'}}>
                 <h1 className={styles.flatName}>{flat.name}</h1>
                 <input onChange={onDateInputChangeHandler} value={`${currentDateValue.year}-${currentDateValue.month}`}
                        className={globalStyles.monthPicker} type={"month"}/>
@@ -140,7 +124,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                         return (
                             <div
                                 className={styles.inputContainer}
-                                style={state.dimension.isHorizontal ? {flexDirection: 'column'} : undefined}
+                                style={dimension.isHorizontal ? {flexDirection: 'column'} : undefined}
                                 key={index}>
                             <p className={styles.fieldLabel}>{fieldValue.field.name}:</p>
                             <div className={styles.fieldInputContainer}>

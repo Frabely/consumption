@@ -10,9 +10,10 @@ import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import Home from "@/components/pages/Home";
 import {Page} from "@/constants/enums";
 import BuildingConsumption from "@/components/pages/BuildingConsumption";
+import {selectCurrentPage} from "@/store/selectors";
 
 export default function App() {
-    const state = useAppSelector((currentState) => currentState)
+    const currentPage = useAppSelector(selectCurrentPage)
     const dispatch = useAppDispatch()
     const dimension = useWindowDimensions()
 
@@ -26,7 +27,7 @@ export default function App() {
             <Image className={styles.image} src={img} alt={''}/>
             <div className={styles.imageFilter}/>
             {
-                state.currentPage === Page.Home ?
+                currentPage === Page.Home ?
                     <Home/> :
                     <BuildingConsumption/>
             }

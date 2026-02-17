@@ -5,14 +5,15 @@ import {ChangeEvent, useState} from "react";
 import deJson from '../../constants/de.json'
 import {getFieldValuesForExport} from "@/firebase/functions";
 import {DownloadBuildingCsvDto} from "@/constants/types";
-import {RootState} from "@/store/store";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import CustomButton from "@/components/layout/CustomButton";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {selectCurrentHouse} from "@/store/selectors";
+import {parseYearMonthInput} from "@/domain/fieldValueMapping";
 
 export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
-    const state: RootState = useAppSelector((state: RootState) => state)
+    const currentHouse = useAppSelector(selectCurrentHouse)
     const dispatch = useAppDispatch()
     const date = new Date()
     const year = date.getFullYear()
@@ -30,11 +31,10 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
 
     const onDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.value !== '') {
-            const arrayDate: string[] = event.target.value.split('-')
-            setCurrentDateValue({
-                year: arrayDate[0],
-                month: arrayDate[1]
-            })
+            const parsed = parseYearMonthInput(event.target.value)
+            if (parsed) {
+                setCurrentDateValue(parsed)
+            }
         }
     }
 
@@ -62,8 +62,8 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
 
     const onDownloadCsvClickHandler = () => {
         dispatch(setModalStateNone())
-        if (state.currentHouse.name) {
-            getFieldValuesForExport(currentDateValue.year, currentDateValue.month, )
+        if (currentHouse.name) {
+            getFieldValuesForExport(currentDateValue.year, currentDateValue.month)
                 .then((fieldValuesForExport) => {
                 if (fieldValuesForExport.length > 0) {
                     const BOM = "\uFEFF";

@@ -1,5 +1,4 @@
 import React, {ChangeEvent, CSSProperties, MouseEvent, useState} from 'react';
-import {RootState} from "@/store/store";
 import Modal from "@/components/layout/Modal";
 import styles from "@/styles/modals/AddFloor.module.css";
 import de from "@/constants/de.json";
@@ -13,9 +12,11 @@ import {setIsLoading} from "@/store/reducer/isLoading";
 import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
 import CustomButton from "@/components/layout/CustomButton";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {selectCurrentHouse, selectModalState} from "@/store/selectors";
 
 export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: AddFloorModalProps) {
-    const state: RootState = useAppSelector((state: RootState) => state)
+    const currentHouse = useAppSelector(selectCurrentHouse)
+    const modalState = useAppSelector(selectModalState)
     const dispatch = useAppDispatch()
     const [flatName, setFlatName] = useState(currentFlat && currentFlat?.rooms ? currentFlat.name : "")
     const [roomNameInput, setRoomNameInput] = useState("")
@@ -28,12 +29,12 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         event.preventDefault()
 
         try {
-            if (state.modalState === ModalState.ChangeFloorFields && currentFlat) {
+            if (modalState === ModalState.ChangeFloorFields && currentFlat) {
                 const newFlat: Flat = {id: currentFlat.id, name: flatName, rooms: rooms, position: currentFlat.position}
-                await updateFlat(state.currentHouse.name, newFlat)
+                await updateFlat(currentHouse.name, newFlat)
             } else {
                 const newFlat: Flat = {id: "", name: flatName, rooms: rooms, position: newFlatPosition}
-                await createFlat(newFlat, state.currentHouse.name)
+                await createFlat(newFlat, currentHouse.name)
             }
             dispatch(setModalStateNone())
             dispatch(setIsReloadHousesNeeded(true))

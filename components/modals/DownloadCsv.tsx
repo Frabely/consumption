@@ -5,15 +5,16 @@ import {ChangeEvent, useState} from "react";
 import deJson from '../../constants/de.json'
 import {getFullDataSet} from "@/firebase/functions";
 import {DataSet, Language} from "@/constants/types";
-import {RootState} from "@/store/store";
 import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import CustomButton from "@/components/layout/CustomButton";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {selectCurrentCar} from "@/store/selectors";
+import {parseYearMonthInput} from "@/domain/fieldValueMapping";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
-    const state: RootState = useAppSelector((state: RootState) => state)
+    const currentCar = useAppSelector(selectCurrentCar)
     const dispatch = useAppDispatch()
     const de: Language = deJson
     //Todo create date input
@@ -33,11 +34,10 @@ export default function DownloadCsv({}: DownloadCsvProps) {
 
     const onDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.value !== '') {
-            const arrayDate: string[] = event.target.value.split('-')
-            setCurrentDateValue({
-                year: arrayDate[0],
-                month: arrayDate[1]
-            })
+            const parsed = parseYearMonthInput(event.target.value)
+            if (parsed) {
+                setCurrentDateValue(parsed)
+            }
         }
     }
 
@@ -61,8 +61,8 @@ export default function DownloadCsv({}: DownloadCsvProps) {
 
     const onDownloadCsvClickHandler = () => {
         dispatch(setModalStateNone())
-        if (state.currentCar.name) {
-            getFullDataSet(state.currentCar.name, {
+        if (currentCar.name) {
+            getFullDataSet(currentCar.name, {
                 year: currentDateValue.year,
                 month: currentDateValue.month
             }).then((dataSetArray) => {

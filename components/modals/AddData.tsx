@@ -3,7 +3,6 @@
 import styles from "../../styles/modals/AddData.module.css"
 import de from '../../constants/de.json'
 import {setModalStateNone} from "@/store/reducer/modalState";
-import {RootState} from "@/store/store";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
 import {addDataSetToCollection, changeDataSetInCollection, updateCarKilometer} from "@/firebase/functions";
@@ -19,32 +18,58 @@ import {ModalState} from "@/constants/enums";
 import CustomButton from "@/components/layout/CustomButton";
 import CustomSelect from "@/components/layout/CustomSelect";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {
+    selectCurrentCar,
+    selectCurrentUser,
+    selectDate,
+    selectId,
+    selectIsChangingData,
+    selectKilometer,
+    selectLoadingStation,
+    selectModalState,
+    selectPower
+} from "@/store/selectors";
+import {isKilometerValid, isPowerValid, parseIntegerOrNull} from "@/domain/carDataValidation";
 
 export default function AddData({prevKilometers}: AddDataModalProps) {
     const language: Language = de
     const dispatch = useAppDispatch()
-    const state: RootState = useAppSelector((state: RootState) => state)
+    const modalState = useAppSelector(selectModalState)
+    const currentCar = useAppSelector(selectCurrentCar)
+    const currentUser = useAppSelector(selectCurrentUser)
+    const kilometer = useAppSelector(selectKilometer)
+    const power = useAppSelector(selectPower)
+    const loadingStation = useAppSelector(selectLoadingStation)
+    const id = useAppSelector(selectId)
+    const date = useAppSelector(selectDate)
+    const changingData = useAppSelector(selectIsChangingData)
     const [isInputValid, setIsInputValid] = useState({
-        kilometer: isKilometerValid(state.kilometer),
-        power: isPowerValid(state.power)
+        kilometer: isKilometerValid({
+            kilometer,
+            isChangingData: changingData,
+            prevKilometers,
+            currentCarKilometer: currentCar.kilometer
+        }),
+        power: isPowerValid(power)
     })
     const [disabled, setDisabled] = useState(true);
 
     useEffect(() => {
-        if (state.modalState === ModalState.AddCarData) {
+        if (modalState === ModalState.AddCarData) {
             dispatch(setPower(""));
-            if (state.currentCar.kilometer) {
-                dispatch(setKilometer(state.currentCar.kilometer.toString()));
+            if (currentCar.kilometer) {
+                dispatch(setKilometer(currentCar.kilometer.toString()));
             }
             dispatch(setIsChangingData(false));
             dispatch(setLoadingStation(DEFAULT_LOADING_STATION));
         }
-    }, [dispatch, state.currentCar.kilometer, state.modalState]);
+    }, [currentCar.kilometer, dispatch, modalState]);
 
     useEffect(() => {
-        if (state.currentCar.kilometer)
-            dispatch(setKilometer(state.currentCar.kilometer.toString()))
-    }, [dispatch, state.currentCar.kilometer])
+        if (currentCar.kilometer) {
+            dispatch(setKilometer(currentCar.kilometer.toString()))
+        }
+    }, [currentCar.kilometer, dispatch])
 
     useEffect(() => {
         if (isInputValid.power && isInputValid.kilometer) {
@@ -54,33 +79,29 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 
     const setModalToDefault = () => {
         dispatch(setPower(''))
-        if (state.currentCar.kilometer)
-            dispatch(setKilometer(state.currentCar.kilometer.toString()))
+        if (currentCar.kilometer)
+            dispatch(setKilometer(currentCar.kilometer.toString()))
         dispatch(setIsChangingData(false))
         dispatch(setLoadingStation(DEFAULT_LOADING_STATION))
     }
 
     const onAddDataClickHandler = () => {
-        if (state.currentCar.kilometer && state.currentCar.name && state.currentCar.kilometer < parseInt(state.kilometer)) {
+        const kilometerValue = parseIntegerOrNull(kilometer)
+        if (currentCar.kilometer && currentCar.name && kilometerValue !== null && currentCar.kilometer < kilometerValue) {
             const dateNow = new Date()
             dispatch(setDate(dateNow))
-            const carKilometersPreUpdate = state.currentCar.kilometer
+            const carKilometersPreUpdate = currentCar.kilometer
             dispatch(updateCarPrevKilometers(carKilometersPreUpdate))
-            dispatch(updateCarKilometers(parseInt(state.kilometer)))
-            const {
-                power,
-                kilometer,
-                loadingStation
-            } = state
+            dispatch(updateCarKilometers(kilometerValue))
 
-            addDataSetToCollection(state.currentCar.name, {
+            addDataSetToCollection(currentCar.name, {
                 date: dateNow,
-                kilometer: parseInt(kilometer),
+                kilometer: kilometerValue,
                 power: parseFloat(power),
-                name: state.currentUser.name ? state.currentUser.name : '',
-                loadingStation: loadingStation
+                name: currentUser.name ? currentUser.name : '',
+                loadingStation
             })
-            updateCarKilometer(state.currentCar.name, parseInt(state.kilometer), carKilometersPreUpdate)
+            updateCarKilometer(currentCar.name, kilometerValue, carKilometersPreUpdate)
                 .catch((error: Error) => {
                     console.error(error.message)
                 })
@@ -92,23 +113,17 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     }
 
     const onChangeDataClickHandler = () => {
-        if (state.currentCar.kilometer && state.currentCar.name && state.currentCar.prevKilometer && state.currentCar.prevKilometer < parseInt(state.kilometer)) {
-            dispatch(updateCarKilometers(parseInt(state.kilometer)))
-            const {
-                id,
-                power,
-                kilometer,
-                loadingStation,
-                date
-            } = state
-            changeDataSetInCollection(state.currentCar.name,
+        const kilometerValue = parseIntegerOrNull(kilometer)
+        if (currentCar.kilometer && currentCar.name && currentCar.prevKilometer && kilometerValue !== null && currentCar.prevKilometer < kilometerValue) {
+            dispatch(updateCarKilometers(kilometerValue))
+            changeDataSetInCollection(currentCar.name,
                 date,
                 parseFloat(power),
-                parseInt(kilometer),
+                kilometerValue,
                 loadingStation,
                 id
             )
-            updateCarKilometer(state.currentCar.name, parseInt(state.kilometer))
+            updateCarKilometer(currentCar.name, kilometerValue)
                 .catch((error: Error) => {
                     console.error(error.message)
                 })
@@ -118,21 +133,18 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             alert('Invalid Data')
     }
 
-    function isKilometerValid(kilometer: string) {
-        const kilometerNumber: undefined | number = parseInt(kilometer)
-        if (state.isChangingData)
-            return kilometerNumber && kilometerNumber > prevKilometers && kilometerNumber < 1000000
-        else
-            return kilometerNumber && state.currentCar.kilometer && kilometerNumber > state.currentCar.kilometer && kilometerNumber < 1000000
-    }
-
     const onKilometerChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const currentKilometerValue: number | undefined = parseInt(e.target.value)
-        if (currentKilometerValue && currentKilometerValue > 0)
+        const currentKilometerValue = parseIntegerOrNull(e.target.value)
+        if (currentKilometerValue !== null && currentKilometerValue > 0)
             dispatch(setKilometer(currentKilometerValue.toString()))
         else
             dispatch(setKilometer(''))
-        if (isKilometerValid(currentKilometerValue.toString())) {
+        if (isKilometerValid({
+            kilometer: currentKilometerValue?.toString() ?? "",
+            isChangingData: changingData,
+            prevKilometers,
+            currentCarKilometer: currentCar.kilometer
+        })) {
             setIsInputValid({
                 ...isInputValid,
                 kilometer: true
@@ -142,13 +154,6 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 ...isInputValid,
                 kilometer: false
             });
-        }
-    }
-
-    function isPowerValid(power: string) {
-        const powerNumber = parseFloat(power)
-        if (powerNumber !== undefined && !Number.isNaN(powerNumber)) {
-            return powerNumber < 99.9 && powerNumber > 0.0;
         }
     }
 
@@ -181,16 +186,16 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             <div className={styles.mainContainer}>
                 <CustomSelect
                     onChange={onLoadingStationChangeHandler}
-                    defaultValue={state.isChangingData ? language.loadingStation[`${state.loadingStation.name}`] : language.loadingStation[`${DEFAULT_LOADING_STATION.name}`]}
+                    defaultValue={changingData ? language.loadingStation[`${loadingStation.name}`] : language.loadingStation[`${DEFAULT_LOADING_STATION.name}`]}
                     options={loadingStations.map((loadingStation) => language.loadingStation[`${loadingStation.name}`])}
                     keys={loadingStations.map((loadingStation) => loadingStation.id)}
                     style={{
                         width: "100%"
                 }}/>
-                <input value={state.kilometer}
+                <input value={kilometer}
                        className={`${styles.input} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}
                        type={"number"}
-                       min={state.currentCar.kilometer ? state.isChangingData ? prevKilometers + 1 : state.currentCar.kilometer : state.currentCar.kilometer}
+                       min={currentCar.kilometer ? changingData ? prevKilometers + 1 : currentCar.kilometer : currentCar.kilometer}
                        max={999999}
                        step={1.0}
                        onChange={(e) => {
@@ -198,7 +203,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                        }}
                        placeholder={de.inputLabels.kilometer}
                 />
-                <input value={state.power}
+                <input value={power}
                        className={`${styles.input} ${isInputValid.power ? styles.inputValid : styles.inputInvalid}`}
                        type={"number"}
                        min={0.1}
@@ -210,9 +215,9 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                        }}
                 />
                 <CustomButton
-                    onClick={state.isChangingData ? onChangeDataClickHandler : onAddDataClickHandler}
+                    onClick={changingData ? onChangeDataClickHandler : onAddDataClickHandler}
                     disabled={disabled}
-                    label={state.isChangingData ?
+                    label={changingData ?
                         de.buttonLabels.changeData :
                         de.buttonLabels.addData
                     }

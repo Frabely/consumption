@@ -8,14 +8,23 @@ import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {ModalState} from "@/constants/enums";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {
+    selectCurrentCar,
+    selectCurrentDataSet,
+    selectDimension,
+    selectModalState
+} from "@/store/selectors";
 
 export default function Display({}: DisplayProps) {
-    const state = useAppSelector((currentState) => currentState)
+    const modalState = useAppSelector(selectModalState)
+    const currentCar = useAppSelector(selectCurrentCar)
+    const currentDataSet = useAppSelector(selectCurrentDataSet)
+    const dimension = useAppSelector(selectDimension)
     const dispatch = useAppDispatch()
     useEffect(() => {
-        if (state.modalState === ModalState.None && state.currentCar.name) {
+        if (modalState === ModalState.None && currentCar.name) {
             dispatch(setIsLoading(true))
-            getFullDataSet(state.currentCar.name).then((dataSet) => {
+            getFullDataSet(currentCar.name).then((dataSet) => {
                     if (dataSet) {
                         dispatch(setDataSetArray(dataSet))
                     }
@@ -28,15 +37,15 @@ export default function Display({}: DisplayProps) {
                 dispatch(setIsLoading(false))
             })
         }
-        else if (state.currentCar.kilometer)
-            dispatch(setKilometer(state.currentCar.kilometer.toString()))
-    }, [dispatch, state.modalState, state.currentCar])
+        else if (currentCar.kilometer)
+            dispatch(setKilometer(currentCar.kilometer.toString()))
+    }, [currentCar, dispatch, modalState])
 
     return (
         <>
-            <div className={styles.mainContainer} style={state.dimension.isHorizontal ? {paddingTop: '0dvh', paddingBottom: '0', height: '85%'}: {}}>
+            <div className={styles.mainContainer} style={dimension.isHorizontal ? {paddingTop: '0dvh', paddingBottom: '0', height: '85%'}: {}}>
                 <div className={styles.list}>
-                    {state.currentDataSet.map((dataSet: DataSet, index: number) =>
+                    {currentDataSet.map((dataSet: DataSet, index: number) =>
                     {
                         if (index%2 === 0) {
                             return (

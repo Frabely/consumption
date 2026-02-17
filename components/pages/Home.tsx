@@ -14,9 +14,18 @@ import Login from "@/components/Login";
 import CustomTab from "@/components/layout/CustomTab";
 import Statistics from "@/components/Statistics";
 import de from "@/constants/de.json"
+import {
+    selectCurrentCar,
+    selectCurrentUser,
+    selectIsLoading,
+    selectModalState
+} from "@/store/selectors";
 
 export default function Home({}: HomeProps) {
-    const state = useAppSelector((currentState) => currentState)
+    const isLoading = useAppSelector(selectIsLoading)
+    const currentUser = useAppSelector(selectCurrentUser)
+    const modalState = useAppSelector(selectModalState)
+    const currentCar = useAppSelector(selectCurrentCar)
     const dispatch = useAppDispatch()
     const [selected, setSelected] = useState(0)
 
@@ -39,15 +48,15 @@ export default function Home({}: HomeProps) {
 
     return (
         <>
-            {state.isLoading ? <Loading/> : null}
-            {state.currentUser.key ?
+            {isLoading ? <Loading/> : null}
+            {currentUser.key ?
                 <>
                     <Menu/>
-                    {state.modalState === ModalState.AddCarData || state.modalState === ModalState.ChangeCarData ? (
+                    {modalState === ModalState.AddCarData || modalState === ModalState.ChangeCarData ? (
                         <AddData
-                            prevKilometers={state.currentCar.prevKilometer ? state.currentCar.prevKilometer : 0}/>
+                            prevKilometers={currentCar.prevKilometer ? currentCar.prevKilometer : 0}/>
                     ) : null}
-                    {state.modalState === ModalState.DownloadCsv ? (
+                    {modalState === ModalState.DownloadCsv ? (
                         <DownloadCsv/>
                     ) : null}
                     <CustomTab
