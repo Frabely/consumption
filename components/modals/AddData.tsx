@@ -2,7 +2,6 @@
 
 import styles from "../../styles/modals/AddData.module.css"
 import de from '../../constants/de.json'
-import {useDispatch, useSelector} from "react-redux";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import {RootState} from "@/store/store";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
@@ -19,11 +18,12 @@ import {setDate} from "@/store/reducer/modal/date";
 import {ModalState} from "@/constants/enums";
 import CustomButton from "@/components/layout/CustomButton";
 import CustomSelect from "@/components/layout/CustomSelect";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 
 export default function AddData({prevKilometers}: AddDataModalProps) {
     const language: Language = de
-    const dispatch = useDispatch()
-    const state: RootState = useSelector((state: RootState) => state)
+    const dispatch = useAppDispatch()
+    const state: RootState = useAppSelector((state: RootState) => state)
     const [isInputValid, setIsInputValid] = useState({
         kilometer: isKilometerValid(state.kilometer),
         power: isPowerValid(state.power)
@@ -31,10 +31,15 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     const [disabled, setDisabled] = useState(true);
 
     useEffect(() => {
-        if (state.modalState === ModalState.AddCarData)
-            setModalToDefault()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        if (state.modalState === ModalState.AddCarData) {
+            dispatch(setPower(""));
+            if (state.currentCar.kilometer) {
+                dispatch(setKilometer(state.currentCar.kilometer.toString()));
+            }
+            dispatch(setIsChangingData(false));
+            dispatch(setLoadingStation(DEFAULT_LOADING_STATION));
+        }
+    }, [dispatch, state.currentCar.kilometer, state.modalState]);
 
     useEffect(() => {
         if (state.currentCar.kilometer)

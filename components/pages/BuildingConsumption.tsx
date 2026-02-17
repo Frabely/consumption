@@ -9,9 +9,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAdd} from "@fortawesome/free-solid-svg-icons";
 import de from "@/constants/de.json";
 import {Flat, House} from "@/constants/types";
-import {RootState} from "@/store/store";
-import {useSelector} from "react-redux";
 import {useAppDispatch} from "@/store/hooks";
+import {useAppSelector} from "@/store/hooks";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import {loadHouses} from "@/constants/constantData";
 import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
@@ -22,7 +21,7 @@ import DownloadBuildingCsv from "@/components/modals/DownloadBuildingCsv";
 
 export default function BuildingConsumption({}: BuildingConsumptionProps) {
     const [currentFlat, setCurrentFlat] = useState<Flat | undefined>()
-    const state: RootState = useSelector((state: RootState) => state)
+    const state = useAppSelector((currentState) => currentState)
     const dispatch = useAppDispatch()
     const touchTimer = useRef<NodeJS.Timeout | undefined>(undefined);
     const [isLongTouchTriggered, setIsLongTouchTriggered] = useState(false)

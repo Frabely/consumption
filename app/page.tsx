@@ -1,20 +1,18 @@
 'use client'
 
 import styles from '../styles/page.module.css'
-import {RootState} from "@/store/store";
-import {useSelector} from "react-redux";
 import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
 import {setDimension} from "@/store/reducer/dimension";
 import {useEffect} from "react";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
-import {useAppDispatch} from "@/store/hooks";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import Home from "@/components/pages/Home";
 import {Page} from "@/constants/enums";
 import BuildingConsumption from "@/components/pages/BuildingConsumption";
 
 export default function App() {
-    const state: RootState = useSelector((state: RootState) => state)
+    const state = useAppSelector((currentState) => currentState)
     const dispatch = useAppDispatch()
     const dimension = useWindowDimensions()
 

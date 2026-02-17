@@ -3,7 +3,6 @@
 import globalMenuStyles from '../../../styles/layout/menus/globalMenu.module.css'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faAdd, faEllipsis, faFileCsv, faHouseFire, faPowerOff, faXmark} from '@fortawesome/free-solid-svg-icons'
-import {useDispatch, useSelector} from "react-redux";
 import {setModalState, setModalStateNone} from "@/store/reducer/modalState";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setCurrentUser} from "@/store/reducer/currentUser";
@@ -16,12 +15,13 @@ import {getCars} from "@/firebase/functions";
 import CustomSelect from "@/components/layout/CustomSelect";
 import {ModalState, Page, Role} from "@/constants/enums";
 import {setDataSetArray} from "@/store/reducer/currentDataSet";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 
 export default function Menu({}: MenuProps) {
-    const dispatch = useDispatch()
-    const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
-    const currentUserRole: Role | undefined = useSelector((state: RootState) => state.currentUser.role)
-    const currentCarName: string | undefined = useSelector((state: RootState) => state.currentCar.name)
+    const dispatch = useAppDispatch()
+    const isHorizontal: boolean = useAppSelector((state: RootState) => state.dimension.isHorizontal)
+    const currentUserRole: Role | undefined = useAppSelector((state: RootState) => state.currentUser.role)
+    const currentCarName: string | undefined = useAppSelector((state: RootState) => state.currentCar.name)
     const [menuOpen, setMenuOpen] = useState(false)
 
     const onAddDataClickHandler = () => {

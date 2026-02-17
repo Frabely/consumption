@@ -1,6 +1,5 @@
 import styles from '../styles/ListItem.module.css'
 import de from '../constants/de.json'
-import {useDispatch} from "react-redux";
 import {setDate} from "@/store/reducer/modal/date";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
@@ -11,10 +10,11 @@ import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {Language, LoadingStation} from "@/constants/types";
 import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
 import {ModalState} from "@/constants/enums";
+import {useAppDispatch} from "@/store/hooks";
 
 export default function ListItem({kilometer, name, power, date, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
     const language: Language = de
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     const localDateString: string = getDateString(date)
     const UTCDateString: string = getUTCDateString(date)
     let timeOut: ReturnType<typeof setTimeout> | undefined

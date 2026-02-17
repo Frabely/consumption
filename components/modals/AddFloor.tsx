@@ -1,6 +1,5 @@
 import React, {ChangeEvent, CSSProperties, MouseEvent, useState} from 'react';
 import {RootState} from "@/store/store";
-import {useDispatch, useSelector} from "react-redux";
 import Modal from "@/components/layout/Modal";
 import styles from "@/styles/modals/AddFloor.module.css";
 import de from "@/constants/de.json";
@@ -13,10 +12,11 @@ import {ModalState} from "@/constants/enums";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
 import CustomButton from "@/components/layout/CustomButton";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 
 export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: AddFloorModalProps) {
-    const state: RootState = useSelector((state: RootState) => state)
-    const dispatch = useDispatch()
+    const state: RootState = useAppSelector((state: RootState) => state)
+    const dispatch = useAppDispatch()
     const [flatName, setFlatName] = useState(currentFlat && currentFlat?.rooms ? currentFlat.name : "")
     const [roomNameInput, setRoomNameInput] = useState("")
     const [rooms, setRooms] = useState<Room[]>(currentFlat && currentFlat?.rooms ? currentFlat.rooms : [])

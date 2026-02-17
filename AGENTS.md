@@ -9,6 +9,8 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Keine stillen "quick fixes", die technische Schulden erhoehen.
 - Halte Verhalten stabil, ausser eine Verhaltensaenderung ist explizit gewuenscht.
 - Bewerte Architektur, Lesbarkeit, Wartbarkeit und Risikomanagement konsequent aus Senior-Developer-Sicht.
+- Wende SOLID- und DRY-Prinzipien konsequent an.
+- Bevorzuge eine klare, gut erweiterbare Architektur mit sauber getrennten Verantwortlichkeiten.
 
 ## 2. TypeScript-Standards
 - `strict` bleibt aktiv; keine Aufweichung in `tsconfig.json`.
@@ -55,6 +57,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Nutzerkritische Fehlerpfade im UI sichtbar machen (z. B. Lade-/Fehlerzustand).
 
 ## 9. Tests und Verifikation
+- Fuer neue Features, Bugfixes und Refactorings sollen passende Tests erstellt oder bestehende Tests erweitert werden.
 - Bei Logik-Aenderungen mindestens die betroffenen Flows lokal pruefen.
 - Vor Abschluss mindestens:
   - Type-Check/Lint erfolgreich

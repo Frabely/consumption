@@ -3,13 +3,12 @@ import styles from '../styles/Statistics.module.css'
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {YearMonth} from "@/constants/types";
 import {loadAllConsumptionDocsBetween} from "@/firebase/functions";
-import {RootState} from "@/store/store";
-import {useSelector} from "react-redux";
 import de from "@/constants/de.json"
+import {useAppSelector} from "@/store/hooks";
 
 export default function Statistics({}: StatisticsProps) {
-    const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
-    const currentCarName: string | undefined = useSelector((state: RootState) => state.currentCar.name)
+    const isHorizontal: boolean = useAppSelector((state) => state.dimension.isHorizontal)
+    const currentCarName: string | undefined = useAppSelector((state) => state.currentCar.name)
 
     //Todo create date input
     const date = new Date()

@@ -1,7 +1,5 @@
 import styles from '../styles/Display.module.css'
 import ListItem from "@/components/ListItem";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "@/store/store";
 import {DataSet} from "@/constants/types";
 import {useEffect} from "react";
 import {getFullDataSet} from "@/firebase/functions";
@@ -9,10 +7,11 @@ import {setDataSetArray} from "@/store/reducer/currentDataSet";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {ModalState} from "@/constants/enums";
 import {setIsLoading} from "@/store/reducer/isLoading";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 
 export default function Display({}: DisplayProps) {
-    const state: RootState = useSelector((state: RootState) => state)
-    const dispatch = useDispatch()
+    const state = useAppSelector((currentState) => currentState)
+    const dispatch = useAppDispatch()
     useEffect(() => {
         if (state.modalState === ModalState.None && state.currentCar.name) {
             dispatch(setIsLoading(true))

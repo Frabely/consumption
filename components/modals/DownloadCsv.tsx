@@ -3,7 +3,6 @@ import globalStyles from "@/styles/GlobalStyles.module.css";
 import Modal from "@/components/layout/Modal";
 import {ChangeEvent, useState} from "react";
 import deJson from '../../constants/de.json'
-import {useDispatch, useSelector} from "react-redux";
 import {getFullDataSet} from "@/firebase/functions";
 import {DataSet, Language} from "@/constants/types";
 import {RootState} from "@/store/store";
@@ -11,10 +10,11 @@ import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import CustomButton from "@/components/layout/CustomButton";
 import {ModalState} from "@/constants/enums";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
-    const state: RootState = useSelector((state: RootState) => state)
-    const dispatch = useDispatch()
+    const state: RootState = useAppSelector((state: RootState) => state)
+    const dispatch = useAppDispatch()
     const de: Language = deJson
     //Todo create date input
     const date = new Date()

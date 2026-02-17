@@ -3,14 +3,14 @@ import de from '../constants/de.json'
 import {ChangeEvent} from "react";
 import {checkUserId} from "@/firebase/functions";
 import {User} from "@/constants/types";
-import {useDispatch} from "react-redux";
 import {setCurrentUser} from "@/store/reducer/currentUser";
 import {cars} from "@/constants/constantData";
 import {CarNames} from "@/constants/enums";
 import {setCurrentCar} from "@/store/reducer/currentCar";
+import {useAppDispatch} from "@/store/hooks";
 
 export default function Login({}: LoginProps) {
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
     const onInputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value.length === 4) {

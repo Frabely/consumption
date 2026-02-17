@@ -1,7 +1,6 @@
 'use client'
 
 import de from '../../constants/de.json'
-import {useSelector} from "react-redux";
 import Modal from "@/components/layout/Modal";
 import {FieldValue, Flat, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
@@ -14,6 +13,7 @@ import {deleteFieldValue, getFieldValues, setFieldValue} from "@/firebase/functi
 import {RootState} from "@/store/store";
 import CustomSelect from "@/components/layout/CustomSelect";
 import {ModalState} from "@/constants/enums";
+import {useAppSelector} from "@/store/hooks";
 
 export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const filterFieldValues = (
@@ -34,7 +34,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
         }));
     };
 
-    const state: RootState = useSelector((state: RootState) => state)
+    const state: RootState = useAppSelector((state: RootState) => state)
     const date = new Date()
     const year = date.getFullYear()
     const month = date.getMonth() + 1
@@ -59,8 +59,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
         }).catch((error) => {
             console.error(error.message)
         })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentDateValue, currentRoom]);
+    }, [currentDateValue, currentRoom, flat]);
 
     const onFieldPairValueChange = (value: string, id: string) => {
         const fieldValues = [...currentFieldValues]

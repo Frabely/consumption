@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/store/store";
 import globalMenuStyles from "@/styles/layout/menus/globalMenu.module.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -13,11 +12,12 @@ import {EMPTY_USER} from "@/constants/constantData";
 import {House} from "@/constants/types";
 import {setPage} from "@/store/reducer/currentPage";
 import {ModalState, Page} from "@/constants/enums";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 
 export default function MenuBuilding({houses}: MenuBuildingProps) {
-    const dispatch = useDispatch()
-    const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
-    const currentHouseName: string | undefined = useSelector((state: RootState) => state.currentHouse.name)
+    const dispatch = useAppDispatch()
+    const isHorizontal: boolean = useAppSelector((state: RootState) => state.dimension.isHorizontal)
+    const currentHouseName: string | undefined = useAppSelector((state: RootState) => state.currentHouse.name)
     const [menuOpen, setMenuOpen] = useState(false)
 
     const onLogoutHandler = () => {

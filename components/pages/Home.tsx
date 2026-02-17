@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {RootState} from "@/store/store";
-import {useSelector} from "react-redux";
 import {useAppDispatch} from "@/store/hooks";
+import {useAppSelector} from "@/store/hooks";
 import {loadMainPageData} from "@/constants/constantData";
 import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setIsLoading} from "@/store/reducer/isLoading";
@@ -17,7 +16,7 @@ import Statistics from "@/components/Statistics";
 import de from "@/constants/de.json"
 
 export default function Home({}: HomeProps) {
-    const state: RootState = useSelector((state: RootState) => state)
+    const state = useAppSelector((currentState) => currentState)
     const dispatch = useAppDispatch()
     const [selected, setSelected] = useState(0)
 

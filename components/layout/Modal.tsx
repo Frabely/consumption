@@ -1,16 +1,15 @@
 'use client'
 
 import styles from "../../styles/layout/Modal.module.css"
-import {RootState} from "@/store/store";
-import {useDispatch, useSelector} from "react-redux";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClose} from "@fortawesome/free-solid-svg-icons";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import {ReactNode} from "react";
 
 export default function Modal({formName, children}: ModalProps) {
-    const isHorizontal: boolean = useSelector((state: RootState) => state.dimension.isHorizontal)
-    const dispatch = useDispatch()
+    const isHorizontal: boolean = useAppSelector((state) => state.dimension.isHorizontal)
+    const dispatch = useAppDispatch()
 
     const onCloseClickHandler = async () => {
         dispatch(setModalStateNone())
