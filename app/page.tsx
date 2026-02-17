@@ -1,26 +1,25 @@
 'use client'
 
 import styles from '../styles/page.module.css'
-import {RootState} from "@/store/store";
-import {useSelector} from "react-redux";
 import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
-import {setDimension} from "@/store/reducer/dismension";
+import {setDimension} from "@/store/reducer/dimension";
 import {useEffect} from "react";
-import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import Home from "@/components/pages/Home";
 import {Page} from "@/constants/enums";
 import BuildingConsumption from "@/components/pages/BuildingConsumption";
+import {selectCurrentPage} from "@/store/selectors";
 
 export default function App() {
-    const state: RootState = useSelector((state: RootState) => state)
+    const currentPage = useAppSelector(selectCurrentPage)
     const dispatch = useAppDispatch()
     const dimension = useWindowDimensions()
 
     useEffect(() => {
-        if (window)
-            dispatch(setDimension(dimension))
-    })
+        dispatch(setDimension(dimension));
+    }, [dimension, dispatch]);
 
 
     return (
@@ -28,7 +27,7 @@ export default function App() {
             <Image className={styles.image} src={img} alt={''}/>
             <div className={styles.imageFilter}/>
             {
-                state.currentPage === Page.Home ?
+                currentPage === Page.Home ?
                     <Home/> :
                     <BuildingConsumption/>
             }

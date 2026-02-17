@@ -1,73 +1,107 @@
 .mainSelectContainer {
     position: relative;
     width: 100px;
-    font-family: Arial, sans-serif;
+    font-family: inherit;
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.2;
     user-select: none;
     cursor: pointer;
 }
 
 .selectedValue {
-    background: var(--secondary-color);
-    padding: 0.5rem;
-    height: 100%;
-    border: 1px solid var(--tertiary-color);
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background 0.3s ease;
     width: 100%;
-    overflow-x: scroll;
+    min-height: 2.7rem;
+    padding: 0.62rem 0.82rem;
+    border-radius: 14px;
+    border: 1px solid rgba(210, 189, 167, 0.5);
+    background: rgba(252, 248, 241, 0.95);
+    color: #3f3329;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.2;
 }
 
-.selectedValue:hover {
-    background: var(--secondary-color);
+.selectedText {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chevron {
+    margin-left: 0.5rem;
+    color: #8f7864;
+    font-size: 1rem;
+    line-height: 1;
+    transition: transform 0.18s ease;
+}
+
+.chevronExpanded {
+    transform: rotate(180deg);
+}
+
+.selectedValue:hover,
+.selectedValue.active {
+    background: rgba(255, 252, 247, 0.98);
+    border-color: rgba(170, 126, 88, 0.72);
+    box-shadow: 0 0 0 3px rgba(170, 126, 88, 0.16);
 }
 
 .optionsContainer {
     position: absolute;
     min-width: 100%;
-    background: var(--tertiary-color);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ccc;
+    margin-top: 0.35rem;
+    border-radius: 12px;
+    border: 1px solid rgba(210, 189, 167, 0.5);
+    background: rgba(252, 248, 241, 0.98);
+    box-shadow: 0 14px 24px rgba(37, 26, 18, 0.2);
+    overflow-y: auto;
+    overflow-x: hidden;
     z-index: 1000;
-    border-radius: 5px;
-    overflow: scroll;
-    animation: fadeIn 0.3s ease;
-    max-height: 7.5rem;
-    white-space: nowrap;
+    max-height: 11rem;
+    animation: fadeIn 0.18s ease;
 }
 
 .optionsContainer.down {
-    top: 100%;
+    top: calc(100% + 0.1rem);
     left: 0;
 }
 
 .optionsContainer.up {
-    bottom: 100%;
+    bottom: calc(100% + 0.1rem);
     left: 0;
 }
 
 .optionsContainer.right {
     top: 0;
-    left: 100%;
+    left: calc(100% + 0.1rem);
 }
 
 .optionsContainer.left {
     top: 0;
-    right: 100%;
+    right: calc(100% + 0.1rem);
 }
 
 .optionContainer {
-    align-items: center;
     display: flex;
-    padding: 10px;
-    height: 2.5rem; /* Feste Höhe für konsistente Anzeige */
-    border-bottom: 1px solid #eee;
-    transition: background 0.2s ease, color 0.2s ease;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0.58rem 0.8rem;
+    color: #3f3329;
+    border-bottom: 1px solid rgba(220, 205, 191, 0.45);
+    transition: background-color 0.16s ease;
+    cursor: pointer;
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.2;
 }
 
 .optionContainer:last-child {
@@ -75,14 +109,18 @@
 }
 
 .optionContainer:hover {
-    background: var(--tertiary-color);
-    color: var(--text-color);
+    background: rgba(233, 221, 205, 0.58);
+}
+
+.optionSelected {
+    background: rgba(222, 204, 183, 0.52);
+    font-weight: 700;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(-6px);
     }
     to {
         opacity: 1;

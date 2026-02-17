@@ -1,32 +1,59 @@
 .inputContainer {
     width: 100%;
+    min-height: 3rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0 0.5rem;
-    border-radius: 15px;
-    gap: 1dvw;
-    background: var(--secondary-color);
-    border: 3px solid transparent;
+    padding: 0.15rem 0.2rem 0.15rem 0.82rem;
+    border-radius: 14px;
+    gap: 0.55rem;
+    background: rgba(252, 248, 241, 0.95);
+    border: 1px solid rgba(210, 189, 167, 0.5);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.inputContainer:hover {
+    background: rgba(255, 252, 247, 0.98);
+}
+
+.inputContainer:focus-within {
+    border-color: rgba(170, 126, 88, 0.85);
+    box-shadow: 0 0 0 3px rgba(170, 126, 88, 0.22);
 }
 
 .inputInvalid {
-    background-color: var(--input-invalid-background);
+    background: rgba(227, 190, 190, 0.55);
 }
 
 .inputValid {
-    background: var(--input-valid-background);
+    background: rgba(201, 224, 203, 0.55);
 }
 
-.inputContainerFocus {
-    border: 3px solid black;
+.inputInvalid:hover {
+    background: rgba(227, 190, 190, 0.62);
+}
+
+.inputValid:hover {
+    background: rgba(201, 224, 203, 0.62);
+}
+
+.inputContainer.inputInvalid:focus-within {
+    border-color: rgba(182, 80, 80, 0.78);
+    box-shadow: 0 0 0 3px rgba(182, 80, 80, 0.2);
+}
+
+.inputContainer.inputValid:focus-within {
+    border-color: rgba(94, 146, 98, 0.75);
+    box-shadow: 0 0 0 3px rgba(94, 146, 98, 0.18);
 }
 
 .input {
     background: none;
     border: none;
-    width: 70%;
+    width: 100%;
+    color: #3f3329;
+    font-size: 0.95rem;
 }
 
 .input:hover {
@@ -41,14 +68,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px black solid;
-    border-radius: 100%;
-    padding: 1rem;
-    width: 5dvh;
-    height: 5dvh;
+    border-radius: 999px;
+    width: 2.35rem;
+    height: 2.35rem;
     user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.microphoneContainer:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.04);
 }
 
 .input[type=number]::-webkit-inner-spin-button,
@@ -57,7 +88,6 @@
     margin: 0;
 }
 
-/* Für Firefox */
 .input[type=number] {
     -moz-appearance: textfield;
 }

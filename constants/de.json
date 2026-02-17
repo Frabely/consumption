@@ -57,6 +57,9 @@
     "changeData": "Daten ändern",
     "abort": "Abbrechen",
     "downloadCsv" : "Csv herunterladen",
+    "logout": "Logout",
+    "buildingConsumption": "Gebäude",
+    "home": "Home",
     "close": "Schließen"
   },
   "floorLabels": {

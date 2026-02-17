@@ -5,13 +5,10 @@ import MenuBuilding from "@/components/layout/menus/MenuBuilding";
 import AddFloorData from "@/components/modals/AddFloorData";
 import AddFloor from "@/components/modals/AddFloor";
 import styles from "@/styles/pages/BuildingConsumption.module.css";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAdd} from "@fortawesome/free-solid-svg-icons";
 import de from "@/constants/de.json";
 import {Flat, House} from "@/constants/types";
-import {RootState} from "@/store/store";
-import {useSelector} from "react-redux";
-import {useAppDispatch} from "@/constants/hooks";
+import {useAppDispatch} from "@/store/hooks";
+import {useAppSelector} from "@/store/hooks";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import {loadHouses} from "@/constants/constantData";
 import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
@@ -19,19 +16,30 @@ import {setCurrentHouse} from "@/store/reducer/currentHouse";
 import {setModalState} from "@/store/reducer/modalState";
 import {setPage} from "@/store/reducer/currentPage";
 import DownloadBuildingCsv from "@/components/modals/DownloadBuildingCsv";
+import {
+    selectCurrentHouse,
+    selectCurrentUser,
+    selectIsLoading,
+    selectIsReloadDataNeeded,
+    selectModalState
+} from "@/store/selectors";
 
 export default function BuildingConsumption({}: BuildingConsumptionProps) {
     const [currentFlat, setCurrentFlat] = useState<Flat | undefined>()
-    const state: RootState = useSelector((state: RootState) => state)
+    const currentHouse = useAppSelector(selectCurrentHouse)
+    const currentUser = useAppSelector(selectCurrentUser)
+    const isLoading = useAppSelector(selectIsLoading)
+    const modalState = useAppSelector(selectModalState)
+    const isReloadDataNeeded = useAppSelector(selectIsReloadDataNeeded)
     const dispatch = useAppDispatch()
     const touchTimer = useRef<NodeJS.Timeout | undefined>(undefined);
     const [isLongTouchTriggered, setIsLongTouchTriggered] = useState(false)
     const [houseNames, setHouseNames] = useState<House[]>([])
 
     useEffect(() => {
-        if (state.isReloadDataNeeded.isReloadHousesNeeded) {
+        if (isReloadDataNeeded.isReloadHousesNeeded) {
             dispatch(setIsLoading(true))
-            const currentSelectedHouseName = state.currentHouse.name
+            const currentSelectedHouseName = currentHouse.name
             loadHouses()
                 .then((houses) => {
                     dispatch(setIsReloadHousesNeeded(false))
@@ -41,9 +49,9 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                     setHouseNames(houses)
                     dispatch(setIsLoading(false))
                 })
-                .catch((error) => console.log(error.messages))
+                .catch((error) => console.error(error.message))
         }
-    });
+    }, [currentHouse.name, dispatch, isReloadDataNeeded.isReloadHousesNeeded]);
 
     const onTouchStartHandler = (flat: Flat) => {
         setCurrentFlat({...flat})
@@ -77,36 +85,26 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
     return (
         <>
             {
-                state.currentUser.key && state.currentUser.role === Role.Admin ?
+                currentUser.key && currentUser.role === Role.Admin ?
                     (
                         <>
-                            {state.isLoading ? <Loading/> : null }
-                            <MenuBuilding houses={houseNames}/>
-                            {state.modalState === ModalState.AddFloorData && currentFlat ? (
+                            {isLoading ? <Loading/> : null }
+                            <MenuBuilding houses={houseNames} onAddFloor={onAddFloorClickHandler}/>
+                            {modalState === ModalState.AddFloorData && currentFlat ? (
                                 <AddFloorData flat={currentFlat}/>
                             ) : null}
-                            {state.modalState === ModalState.AddFloor ? (
-                                <AddFloor newFlatPosition={state.currentHouse.flats.length}/>
+                            {modalState === ModalState.AddFloor ? (
+                                <AddFloor newFlatPosition={currentHouse.flats.length}/>
                             ) : null}
-                            {state.modalState === ModalState.ChangeFloorFields ? (
+                            {modalState === ModalState.ChangeFloorFields ? (
                                 <AddFloor currentFlat={currentFlat}/>
                             ) : null}
-                            {state.modalState === ModalState.DownloadBuildingCsv ? (
+                            {modalState === ModalState.DownloadBuildingCsv ? (
                                 <DownloadBuildingCsv/>
                             ) : null}
-                            <div className={
-                                state.dimension.isHorizontal ?
-                                    styles.contentContainerHor :
-                                    styles.contentContainerVert}>
-                                <div onClick={
-                                    () => {
-                                        onAddFloorClickHandler()
-                                    }}
-                                     className={styles.flatsItem}
-                                     style={state.currentHouse.flats.length < 4 ? {height: '50%'} : {}}>
-                                    <FontAwesomeIcon icon={faAdd}/>
-                                </div>
-                                {state.currentHouse.flats.map((flat) =>
+                            <div className={styles.pageViewport}>
+                                <div className={styles.flatsGrid}>
+                                {currentHouse.flats.map((flat) =>
                                     <div
                                         onTouchStart={() => onTouchStartHandler(flat)}
                                         onTouchEnd={() => onTouchEndHandler()}
@@ -114,11 +112,11 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                                         onMouseUp={() => onTouchEndHandler()}
                                         key={flat.name}
                                         className={styles.flatsItem}
-                                        style={state.currentHouse.flats.length < 4 ? {height: '50%'} : {}}
                                     >
                                         <h3 className={styles.flatsItemTitle}>{flat.name}</h3>
                                     </div>
                                 )}
+                                </div>
                             </div>
                         </>
                     )
@@ -127,7 +125,7 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                         className={styles.backToLoginButton} onClick={() => {
                         dispatch(setPage(Page.Home))
                     }}>
-                        {state.currentUser.key ?
+                        {currentUser.key ?
                             de.displayLabels.backToLogin :
                             de.displayLabels.back}
                     </button>

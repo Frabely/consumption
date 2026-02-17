@@ -1,4 +1,4 @@
-import React, {ChangeEvent, CSSProperties, useEffect, useState} from 'react';
+import React, {ChangeEvent, CSSProperties, useEffect, useRef, useState} from 'react';
 import styles from "@/styles/layout/FieldInput.module.css";
 import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMicrophone} from "@fortawesome/free-solid-svg-icons";
@@ -6,6 +6,11 @@ import {faMicrophone} from "@fortawesome/free-solid-svg-icons";
 function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
     const [isRecording, setIsRecording] = useState(false);
     const [isMicTouched, setIsMicTouched] = useState(false);
+    const onChangeRef = useRef(onChange);
+
+    useEffect(() => {
+        onChangeRef.current = onChange;
+    }, [onChange]);
 
     useEffect(() => {
         if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
@@ -15,9 +20,8 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
             recognition.lang = 'de-DE';
             recognition.onresult = (event: SpeechRecognitionEvent) => {
                 let currentTranscript = ""
-                // @ts-ignore
-                for (const result of event.results) {
-                    currentTranscript += result[0].transcript;
+                for (let index = 0; index < event.results.length; index += 1) {
+                    currentTranscript += event.results[index][0].transcript;
                 }
                 const simulatedEvent = {
                     target: {
@@ -25,7 +29,7 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
                     },
                 } as ChangeEvent<HTMLInputElement>;
 
-                onChange(simulatedEvent);
+                onChangeRef.current(simulatedEvent);
 
             };
             recognition.onstart = () => {
@@ -35,7 +39,7 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
                 setIsRecording(false);
             };
             if (isRecording) {
-                onChange({target: {value: ""}} as ChangeEvent<HTMLInputElement>);
+                onChangeRef.current({target: {value: ""}} as ChangeEvent<HTMLInputElement>);
                 recognition.start();
             } else {
                 recognition.stop();
@@ -44,7 +48,6 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
                 recognition.stop();
             };
         }
-        // eslint-disable-next-line
     }, [isRecording]);
 
     return (
@@ -57,7 +60,6 @@ function FieldInput({value, onChange, placeholder, style}: FieldInputProps) {
             <input value={value ? value : ""}
                    className={styles.input}
                    type={"text"}
-                   inputMode={"decimal"}
                    step={0.1}
                    onChange={onChange}
                    placeholder={`${placeholder ? placeholder : ""}`}

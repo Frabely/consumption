@@ -1,26 +1,80 @@
 .mainContainer {
     display: flex;
-    height: 100dvh;
+    min-height: 100dvh;
     justify-content: center;
     align-items: center;
+    padding: 1.1rem;
+}
+
+.loginCard {
+    width: min(540px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
 }
 
 .input {
-    padding: 1rem;
-    border-radius: 10px;
-    background: var(--secondary-color);
+    margin-top: 0.3rem;
+    padding: 0.95rem 1rem;
+    border-radius: 14px;
     border: none;
+    background: rgba(255, 252, 247, 0.98);
     outline: none;
-    max-width: 80dvw;
+    font-size: 1rem;
+    color: #261d16;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    width: 100%;
+}
+
+.inputWrapper {
+    position: relative;
+}
+
+.inputWrapper .input {
+    margin-top: 0;
+    padding-right: 2.8rem;
+}
+
+.visibilityButton {
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.95rem;
+    height: 1.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 999px;
+    background: rgba(217, 196, 176, 0.52);
+    color: #2e241c;
+    cursor: pointer;
+    transition: filter 0.18s ease, transform 0.18s ease;
+}
+
+.visibilityButton:hover {
+    filter: brightness(1.04);
+    transform: translateY(-50%) scale(1.02);
+}
+
+.visibilityButton:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(170, 126, 88, 0.24);
 }
 
 .input::placeholder {
-    color: var(--text-color-muted);
+    color: #6b5b4d;
 }
 
-.image {
-    position: absolute;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
+.input:focus {
+    box-shadow: 0 0 0 3px rgba(170, 126, 88, 0.18);
 }

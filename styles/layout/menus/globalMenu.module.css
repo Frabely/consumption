@@ -1,75 +1,128 @@
-.mainContainerVert {
+.mainContainerHor {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 15;
+    width: auto;
+    height: auto;
     display: flex;
     flex-direction: row;
-    height: 10dvh;
-    background: var(--primary-color);
-    padding: 0 5%;
-    position: fixed;
-    width: 100%;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 0.7rem;
+    padding: 0;
 }
 
-.mainContainerHor {
-    top: 90dvh;
-    height: 10dvh;
+.menuAnchor {
+    position: relative;
     display: flex;
-    flex-direction: row;
-    padding: 1rem;
-    position: fixed;
-    width: 100%;
-    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.menuPopover {
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 0.6rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.7rem;
+    border-radius: 20px;
+    background: rgba(238, 227, 215, 0.94);
+    border: 1px solid rgba(179, 152, 128, 0.62);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 14px 28px rgba(33, 24, 17, 0.26);
+    min-width: 15.8rem;
+    max-width: min(18.2rem, calc(100dvw - 2rem));
+    z-index: 30;
+}
+
+.actionRow {
+    display: flex;
     align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    min-height: 3.2rem;
+    padding: 0.32rem 0.4rem;
+    border-radius: 14px;
+    background: rgba(246, 236, 226, 0.84);
+    border: 1px solid rgba(171, 146, 124, 0.32);
+    text-align: left;
+    cursor: pointer;
+}
+
+.actionRow:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(246, 220, 193, 0.24);
+}
+
+.actionIconShell {
+    pointer-events: none;
+}
+
+.actionLabel {
+    color: #16120f;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    flex: 1;
 }
 
 .button {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 6dvh;
-    width: 6dvh;
+    height: 3.65rem;
+    width: 3.65rem;
+    font-size: 1.35rem;
     border: none;
     border-radius: 100px;
-    background: var(--secondary-color);
+    color: #100d0a;
+    background: linear-gradient(135deg, #dcc4ac, #c89f7e);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 8px 24px rgba(66, 44, 28, 0.38);
+    transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
 }
 
-.selectHor {
-    height: 6dvh;
-    background: var(--secondary-color);
-    border-color: var(--border-color);
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.actionButton {
+    width: 2.85rem;
+    height: 2.85rem;
+    flex-shrink: 0;
 }
 
-.menu {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 100%;
+.button svg {
+    width: 1.28rem;
+    height: 1.28rem;
+}
+
+.button:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+.button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(246, 220, 193, 0.26), 0 8px 24px rgba(66, 44, 28, 0.38);
+}
+
+.selectWrapper {
     width: 100%;
-    justify-content: space-between;
-}
-
-.menuItem {
     display: flex;
-    height: 100%;
-    padding: 0 5%;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: var(--primary-color);
+    flex-direction: column;
+    gap: 0.35rem;
 }
 
-.menuItem:hover {
-    cursor: pointer;
-    background: var(--secondary-color);
-}
-
-.selectVert {
-    margin-bottom: 5%;
-    padding: 5%;
-    background: var(--secondary-color);
-    border-color: var(--border-color);
-    border-width: 2px;
+.selectWrapperWithDivider {
+    margin-top: 0.2rem;
+    padding-top: 0.58rem;
+    border-top: 1px solid rgba(147, 122, 101, 0.32);
 }
 
