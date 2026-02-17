@@ -24,7 +24,7 @@ export default function Display({}: DisplayProps) {
                         dispatch(setDataSetArray([]))
                 }
             ).catch((error) => {
-                console.log(error.message)
+                console.error(error.message)
             }).finally(() => {
                 dispatch(setIsLoading(false))
             })

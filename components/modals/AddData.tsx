@@ -77,7 +77,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             })
             updateCarKilometer(state.currentCar.name, parseInt(state.kilometer), carKilometersPreUpdate)
                 .catch((error: Error) => {
-                    console.log(error.message)
+                    console.error(error.message)
                 })
 
             dispatch(setModalStateNone())
@@ -105,7 +105,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             )
             updateCarKilometer(state.currentCar.name, parseInt(state.kilometer))
                 .catch((error: Error) => {
-                    console.log(error.message)
+                    console.error(error.message)
                 })
             dispatch(setModalStateNone())
             setModalToDefault()
@@ -163,7 +163,10 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         }
     }
 
-    const onLoadingStationChangeHandler = (value: string, key: string) => {
+    const onLoadingStationChangeHandler = (value: string, key?: string) => {
+        if (!key) {
+            return
+        }
         const selectedLoadingStation = loadingStations.filter((loadingStation => loadingStation.id === key))[0]
         dispatch(setLoadingStation(selectedLoadingStation))
     }

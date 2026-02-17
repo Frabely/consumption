@@ -37,17 +37,17 @@ export type LoadingStation = {
 
 export type Language =
     {
-    [index: string]:any
+    [index: string]: unknown
     "head": {
-        [index: string]: any
+        [index: string]: string
         "title": string
     },
     "menu": {
-        [index: string]: any
+        [index: string]: string
         "addData": string
     },
     "displayLabels": {
-        [index: string]: any
+        [index: string]: string
         "local": string,
         "UTC": string,
         "kilometer": string,
@@ -58,7 +58,7 @@ export type Language =
         "name": string,
     },
     "inputLabels": {
-        [index: string]: any
+        [index: string]: string
         "date": string,
         "kilometer": string,
         "power": string,
@@ -66,14 +66,14 @@ export type Language =
         "userID": string,
     },
     "buttonLabels": {
-        [index: string]: any
+        [index: string]: string
         "addData": string,
         "changeData": string,
         "abort": string,
         "downloadCsv": string
     },
     "floorLabels": {
-        [index: string]: any
+        [index: string]: string
         "groundFloorLeft": string,
         "groundFloorRight": string,
         "firstFloorLeft": string,
@@ -82,7 +82,7 @@ export type Language =
         "SecondFloorRight": string
     },
     "dataSet": {
-        [index: string]: any
+        [index: string]: string
         "date": string,
         "time": string,
         "utcDate": string,
@@ -92,11 +92,11 @@ export type Language =
         "name": string,
     },
     "messages": {
-        [index: string]: any
+        [index: string]: string
         "noDataForFollowMonthAndYearAvailable": string
     },
     "loadingStation": {
-        [index: string]: any
+        [index: string]: string
         "carport": string,
         "frontDoor": string,
         "official": string

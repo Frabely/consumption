@@ -44,7 +44,7 @@ export default function Statistics({}: StatisticsProps) {
                 setKwhFueled(0)
                 setKilometersDriven(0)
             }
-        }).catch((ex) => console.log(ex))
+        }).catch((ex) => console.error(ex))
     }, [currentCarName, fromDateValue, toDateValue]);
 
     useEffect(() => {

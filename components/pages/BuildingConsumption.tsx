@@ -41,7 +41,7 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                     setHouseNames(houses)
                     dispatch(setIsLoading(false))
                 })
-                .catch((error) => console.log(error.messages))
+                .catch((error) => console.error(error.message))
         }
     });
 

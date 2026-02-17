@@ -49,7 +49,7 @@ export default function Menu({}: MenuProps) {
                 dispatch(setCurrentCar(result.filter(car => car.name === value)[0]))
             }
         }).catch((error: Error) => {
-            console.log(error.message)
+            console.error(error.message)
         })
     }
 

@@ -20,7 +20,7 @@ export default function CustomSelect({
 
     const onOptionClickHandler = (index: number) => {
         const newValue = options[index];
-        const associatedKey = keys ? keys[index] : null;
+        const associatedKey = keys ? keys[index] : undefined;
 
         setSelectedValue(newValue);
         onChange(newValue, associatedKey);
@@ -57,11 +57,11 @@ export default function CustomSelect({
 }
 
 export type CustomSelectProps = {
-    onChange: (value: string, key?: any) => void;
+    onChange: (value: string, key?: string) => void;
     defaultValue: string;
     className?: string;
     options: string[];
-    keys?: any[];
+    keys?: string[];
     direction?: 'down' | 'up' | 'left' | 'right';
     style?: CSSProperties;
     styleOptions?: CSSProperties;

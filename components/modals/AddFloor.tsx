@@ -1,4 +1,4 @@
-import React, {CSSProperties, useState} from 'react';
+import React, {ChangeEvent, CSSProperties, MouseEvent, useState} from 'react';
 import {RootState} from "@/store/store";
 import {useDispatch, useSelector} from "react-redux";
 import Modal from "@/components/layout/Modal";
@@ -23,7 +23,7 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
     const [fieldNameInput, setFieldNameInput] = useState("")
     const [currentSelectedRoom, setCurrentSelectedRoom] = useState<Room | undefined>(currentFlat?.rooms[0])
 
-    const onAddDataClickHandler = async (event: any) => {
+    const onAddDataClickHandler = async (event: MouseEvent<HTMLElement>) => {
         dispatch(setIsLoading(true))
         event.preventDefault()
 
@@ -39,13 +39,13 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
             dispatch(setIsReloadHousesNeeded(true))
             dispatch(setIsLoading(false))
         } catch (error) {
-            console.log(error)
+            console.error(error)
             alert(de.messages.databaseError)
             dispatch(setIsLoading(false))
         }
     }
 
-    const onAddRoomClickHandler = (event: any) => {
+    const onAddRoomClickHandler = (event: MouseEvent<HTMLElement>) => {
         event.preventDefault()
         if (roomNameInput.length === 0) {
             alert(de.messages.fieldNameEmpty)
@@ -64,7 +64,7 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         setRoomNameInput("")
     }
 
-    const onAddFieldClickHandler = (event: any) => {
+    const onAddFieldClickHandler = (event: MouseEvent<HTMLElement>) => {
         event.preventDefault()
         if (!currentSelectedRoom) {
             alert(de.messages.selectARoom)
@@ -94,7 +94,7 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         setFieldNameInput("")
     }
 
-    const onRoomNameChange = (event: any, indexCurrentRoom: number) => {
+    const onRoomNameChange = (event: ChangeEvent<HTMLInputElement>, indexCurrentRoom: number) => {
         const newRooms = [...rooms]
         newRooms[indexCurrentRoom] = {
             ...rooms[indexCurrentRoom],
@@ -104,7 +104,7 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         setCurrentSelectedRoom(newRooms[indexCurrentRoom])
     }
 
-    const onFieldNameChange = (event: any, indexCurrentRoom: number, indexCurrentField: number) => {
+    const onFieldNameChange = (event: ChangeEvent<HTMLInputElement>, indexCurrentRoom: number, indexCurrentField: number) => {
         const newRooms = [...rooms]
         const newFields = [...newRooms[indexCurrentRoom].fields]
         newFields[indexCurrentField] = {

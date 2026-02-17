@@ -32,7 +32,7 @@ export default function Home({}: HomeProps) {
             }))
             dispatch(setIsLoading(false))
         }).catch((error: Error) => {
-            console.log(error.message)
+            console.error(error.message)
         })
     }, [dispatch]);
 

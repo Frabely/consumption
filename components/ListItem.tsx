@@ -17,7 +17,7 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
     const dispatch = useDispatch()
     const localDateString: string = getDateString(date)
     const UTCDateString: string = getUTCDateString(date)
-    let timeOut: any
+    let timeOut: ReturnType<typeof setTimeout> | undefined
     const touchStart = () => {
         timeOut = setTimeout(() => {
             dispatch(setIsChangingData(true))
@@ -40,11 +40,15 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
     return (
         <div onTouchStart={touchStart}
              onTouchEnd={() => {
-                 clearTimeout(timeOut)
+                 if (timeOut) {
+                     clearTimeout(timeOut)
+                 }
              }}
              onMouseDown={touchStart}
              onMouseUp={() => {
-                 clearTimeout(timeOut)
+                 if (timeOut) {
+                     clearTimeout(timeOut)
+                 }
              }}
              className={isLight ? styles.mainContainerLight : styles.mainContainerDark}>
             <div className={styles.statsContainer}>

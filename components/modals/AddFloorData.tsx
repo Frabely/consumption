@@ -47,8 +47,6 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const [allFieldValues, setAllFieldValues] = useState<FieldValue[]>([])
     const [currentFieldValues, setCurrentFieldValues] = useState<FieldValue[]>([])
 
-    console.log(currentFieldValues)
-
     useEffect(() => {
         getFieldValues(
             currentDateValue.year,
@@ -59,7 +57,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                 setCurrentFieldValues(filterFieldValues(flat, currentRoom.id, result))
             }
         }).catch((error) => {
-            console.log(error.message)
+            console.error(error.message)
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentDateValue, currentRoom]);
@@ -108,7 +106,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                 fieldValueToDelete.field,
                 currentDateValue.year,
                 currentDateValue.month)
-                .catch((ex) => console.log(ex))
+                .catch((ex) => console.error(ex))
         }
     }
 
@@ -120,7 +118,6 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
 
     const onDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
-        console.log(event.target.value.split("-")[0], event.target.value.split("-")[1])
         setCurrentDateValue({
             year: event.target.value.split("-")[0],
             month: event.target.value.split("-")[1]
@@ -157,7 +154,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                                     style={{width: "13rem"}}
                                 />
                                 <div onClick={() => {
-                                    onSaveFieldClickHandler(fieldValue).catch(error => console.log(error))
+                                    onSaveFieldClickHandler(fieldValue).catch(error => console.error(error))
                                 }}>
                                     <FontAwesomeIcon
                                         style={
@@ -170,7 +167,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                                         icon={faSave}/>
                                 </div>
                                 <div onClick={() => {
-                                    onDeleteFieldClickHandler(fieldValue).catch(error => console.log(error))
+                                    onDeleteFieldClickHandler(fieldValue).catch(error => console.error(error))
                                 }}>
                                     <FontAwesomeIcon
                                         style={

@@ -55,7 +55,7 @@ export const getFullDataSet = async (carName: string, passedDate?: YearMonth) =>
 
     const queryKilometersDesc = query(consumptionDataRef, orderBy("kilometer", "desc"));
     const querySnapshot = await getDocs(queryKilometersDesc).catch(error => {
-        console.log(error.message)
+        console.error(error.message)
     })
     if (querySnapshot && !querySnapshot.empty) {
         querySnapshot.docs.map((docResult) => {
@@ -122,7 +122,7 @@ export const addDataSetToCollection = (carName: string, dataSet: DataSetNoId) =>
         name,
         loadingStationId: loadingStation.id
     }).then().catch((error: Error) => {
-        console.log(error.message)
+        console.error(error.message)
     })
 }
 
@@ -138,7 +138,7 @@ export const changeDataSetInCollection = (carName: string, date: Date, power: nu
         power: decimalPower,
         loadingStationId: loadingStation.id
     }).then().catch((error: Error) => {
-        console.log(error.message)
+        console.error(error.message)
     })
 }
 
@@ -160,7 +160,7 @@ export const checkUserId = async (id: string): Promise<User | undefined> => {
         }
         return undefined
     }).catch((error: Error) => {
-        console.log(error.message)
+        console.error(error.message)
         return undefined
     })
 }
@@ -169,7 +169,7 @@ export const getLoadingStations = async () => {
     const loadingStations: LoadingStation[] = []
     const consumptionDataRef = collection(db, `${DB_LOADING_STATIONS}`);
     const qsDocs = await getDocs(consumptionDataRef).catch(error => {
-        console.log(error.message)
+        console.error(error.message)
     })
     if (qsDocs && !qsDocs.empty) {
         qsDocs.docs.map((loadingStation) => {
@@ -187,7 +187,7 @@ export const getCars = async () => {
     const cars: Car[] = []
     const carsRef = collection(db, `${DB_CARS}`);
     const qsDocs = await getDocs(carsRef).catch(error => {
-        console.log(error.message)
+        console.error(error.message)
     })
     if (qsDocs && !qsDocs.empty) {
         qsDocs.docs.forEach((car) => {
@@ -209,7 +209,7 @@ export const getFields = async (houseId: string, flatId: string, roomId: string)
         `${DB_HOUSES}/${houseId}/${DB_DATA_FLATS_KEY}/${flatId}/${DB_DATA_ROOMS_KEY}/${roomId}/${DB_DATA_FIELDS_KEY}`
     );
     const qsFieldsDocs = await getDocs(FieldsCollectionRef).catch(error => {
-        console.log(error.message)
+        console.error(error.message)
     })
     if (qsFieldsDocs && !qsFieldsDocs.empty) {
         for (const field of qsFieldsDocs.docs) {
@@ -237,7 +237,7 @@ export const getRooms = async (houseId: string, flatId: string) => {
         `${DB_HOUSES}/${houseId}/${DB_DATA_FLATS_KEY}/${flatId}/${DB_DATA_ROOMS_KEY}`
     );
     const qsRoomsDocs = await getDocs(roomsRef).catch(error => {
-        console.log(error.message)
+        console.error(error.message)
     })
     if (qsRoomsDocs && !qsRoomsDocs.empty) {
         for (const room of qsRoomsDocs.docs) {
@@ -263,7 +263,7 @@ export const getFlats = async (houseId: string) => {
     const flats: Flat[] = []
     const flatsRef = collection(db, `${DB_HOUSES}/${houseId}/${DB_DATA_FLATS_KEY}`);
     const qsFlatDocs = await getDocs(flatsRef).catch(error => {
-        console.log(error.message)
+        console.error(error.message)
     })
     if (qsFlatDocs && !qsFlatDocs.empty) {
         for (const flat of qsFlatDocs.docs) {
@@ -289,7 +289,7 @@ export const getHouses = async () => {
     const houses: House[] = []
     const housesRef = collection(db, `${DB_HOUSES}`);
     const qsDocs = await getDocs(housesRef).catch(error => {
-        console.log(error.message)
+        console.error(error.message)
     })
 
     if (qsDocs && !qsDocs.empty) {
@@ -586,7 +586,7 @@ export const updateCarKilometer = async (carName: string, kilometer: number, pre
     } : {
         kilometer: kilometer
     }).then().catch((error: Error) => {
-        console.log(error.message)
+        console.error(error.message)
     })
 }
 
