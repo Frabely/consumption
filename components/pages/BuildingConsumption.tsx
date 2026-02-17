@@ -11,7 +11,7 @@ import de from "@/constants/de.json";
 import {Flat, House} from "@/constants/types";
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
-import {useAppDispatch} from "@/constants/hooks";
+import {useAppDispatch} from "@/store/hooks";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import {loadHouses} from "@/constants/constantData";
 import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
-import {useAppDispatch} from "@/constants/hooks";
+import {useAppDispatch} from "@/store/hooks";
 import {loadMainPageData} from "@/constants/constantData";
 import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setIsLoading} from "@/store/reducer/isLoading";

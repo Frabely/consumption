@@ -9,7 +9,7 @@ import CurrentUserSlice from "@/store/reducer/currentUser";
 import LoadingStationSlice from "@/store/reducer/modal/loadingStationId";
 import CurrentCarSlice from "@/store/reducer/currentCar";
 import DateSlice from "@/store/reducer/modal/date";
-import dimensionSlice from "@/store/reducer/dismension";
+import dimensionSlice from "@/store/reducer/dimension";
 import CurrentHouseSlice from "@/store/reducer/currentHouse";
 import isReloadDataNeededSlice from "@/store/reducer/isReloadDataNeeded";
 import isLoadingSlice from "@/store/reducer/isLoading";

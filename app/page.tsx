@@ -5,9 +5,10 @@ import {RootState} from "@/store/store";
 import {useSelector} from "react-redux";
 import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
-import {setDimension} from "@/store/reducer/dismension";
+import {setDimension} from "@/store/reducer/dimension";
 import {useEffect} from "react";
-import useWindowDimensions, {useAppDispatch} from "@/constants/hooks";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
+import {useAppDispatch} from "@/store/hooks";
 import Home from "@/components/pages/Home";
 import {Page} from "@/constants/enums";
 import BuildingConsumption from "@/components/pages/BuildingConsumption";
@@ -18,9 +19,8 @@ export default function App() {
     const dimension = useWindowDimensions()
 
     useEffect(() => {
-        if (window)
-            dispatch(setDimension(dimension))
-    })
+        dispatch(setDimension(dimension));
+    }, [dimension, dispatch]);
 
 
     return (
