@@ -16,14 +16,14 @@
     gap: 0.3rem;
     padding: 0.34rem 0.34rem 0.4rem;
     border-radius: 12px;
-    background: rgba(252, 248, 241, 0.95);
-    border: 1px solid rgba(210, 189, 167, 0.5);
+    background: var(--surface-strong);
+    border: 1px solid var(--border-color);
 }
 
 .fieldLabel {
     margin-left: 0.32rem;
     width: 100%;
-    color: #4b4037;
+    color: var(--text-color-muted);
     font-weight: 700;
     font-size: 0.96rem;
     line-height: 1;
@@ -51,8 +51,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #3f3228;
-    background: rgba(238, 228, 218, 0.95);
+    color: var(--text-color);
+    background: var(--surface-soft);
     cursor: pointer;
     transition: filter 0.15s ease, transform 0.15s ease;
 }
@@ -63,7 +63,7 @@
 }
 
 .actionIconDisabled {
-    color: rgba(123, 106, 92, 0.46);
+    color: rgba(99, 116, 107, 0.5);
     cursor: not-allowed;
     filter: none;
     transform: none;

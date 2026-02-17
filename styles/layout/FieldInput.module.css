@@ -8,18 +8,18 @@
     padding: 0.15rem 0.2rem 0.15rem 0.82rem;
     border-radius: 14px;
     gap: 0.55rem;
-    background: rgba(252, 248, 241, 0.95);
-    border: 1px solid rgba(210, 189, 167, 0.5);
+    background: var(--surface-strong);
+    border: 1px solid var(--border-color);
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .inputContainer:hover {
-    background: rgba(255, 252, 247, 0.98);
+    background: var(--secondary-color-light);
 }
 
 .inputContainer:focus-within {
-    border-color: rgba(170, 126, 88, 0.85);
-    box-shadow: 0 0 0 3px rgba(170, 126, 88, 0.22);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .inputInvalid {
@@ -52,7 +52,7 @@
     background: none;
     border: none;
     width: 100%;
-    color: #3f3329;
+    color: var(--text-color);
     font-size: 0.95rem;
 }
 

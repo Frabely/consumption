@@ -8,7 +8,7 @@ import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setId} from "@/store/reducer/modal/id";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {Language, LoadingStation} from "@/constants/types";
-import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
+import {getDateString} from "@/constants/globalFunctions";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch} from "@/store/hooks";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -17,8 +17,7 @@ import {faBolt} from "@fortawesome/free-solid-svg-icons";
 export default function ListItem({kilometer, name, power, date, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
     const language: Language = de
     const dispatch = useAppDispatch()
-    const localDateString: string = getDateString(date)
-    const UTCDateString: string = getUTCDateString(date)
+    const [localDate, localTime] = getDateString(date).split(" ")
     let timeOut: ReturnType<typeof setTimeout> | undefined
     const touchStart = () => {
         timeOut = setTimeout(() => {
@@ -59,8 +58,8 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
                         <FontAwesomeIcon icon={faBolt} className={styles.icon}/>
                     </div>
                     <div className={styles.dateColumn}>
-                        <div className={styles.primaryDate}>{localDateString}</div>
-                        <div className={styles.secondaryDate}>{UTCDateString}</div>
+                        <div className={styles.primaryDate}>{localDate}</div>
+                        <div className={styles.secondaryDate}>{localTime}</div>
                     </div>
                 </div>
                 <div className={styles.valueColumn}>

@@ -1,10 +1,13 @@
 .monthPicker {
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     padding: 0.72rem 0.85rem;
     border-radius: 14px;
-    border: 1px solid rgba(210, 189, 167, 0.5);
-    background: rgba(252, 248, 241, 0.95);
-    color: #3f3329;
+    border: 1px solid var(--border-color);
+    background: var(--surface-strong);
+    color: var(--text-color);
     font-family: inherit;
     font-size: 0.94rem;
     font-weight: 600;
@@ -13,11 +16,22 @@
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
+.monthPicker[type="month"] {
+    appearance: none;
+}
+
 .monthPicker:focus {
-    border-color: rgba(170, 126, 88, 0.85);
-    box-shadow: 0 0 0 3px rgba(170, 126, 88, 0.22);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .monthPicker:hover {
-    background: rgba(255, 252, 247, 0.98);
+    background: var(--secondary-color-light);
+}
+
+@media (max-width: 640px) {
+    .monthPicker {
+        padding: 0.68rem 0.78rem;
+        font-size: 0.9rem;
+    }
 }
