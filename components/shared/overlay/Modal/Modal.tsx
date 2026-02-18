@@ -1,6 +1,6 @@
 'use client'
 
-import styles from "../../styles/layout/Modal.module.css"
+import styles from "./Modal.module.css"
 import {useAppDispatch} from "@/store/hooks";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClose} from "@fortawesome/free-solid-svg-icons";

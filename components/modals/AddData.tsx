@@ -8,7 +8,7 @@ import {setPower} from "@/store/reducer/modal/power";
 import {addDataSetToCollection, changeDataSetInCollection, updateCarKilometer} from "@/firebase/functions";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {ChangeEvent, useEffect, useState} from "react";
-import Modal from "@/components/layout/Modal";
+import Modal from "@/components/shared/overlay/Modal";
 import {DEFAULT_LOADING_STATION, loadingStations} from "@/constants/constantData";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {Language} from "@/constants/types";

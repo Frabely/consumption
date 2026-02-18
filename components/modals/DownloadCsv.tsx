@@ -1,6 +1,6 @@
 import styles from '../../styles/modals/DownloadCsv.module.css'
 import globalStyles from "@/styles/GlobalStyles.module.css";
-import Modal from "@/components/layout/Modal";
+import Modal from "@/components/shared/overlay/Modal";
 import {ChangeEvent, useState} from "react";
 import deJson from '../../constants/de.json'
 import {getFullDataSet} from "@/firebase/functions";

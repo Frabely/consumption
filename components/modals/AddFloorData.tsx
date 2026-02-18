@@ -1,7 +1,7 @@
 'use client'
 
 import de from '../../constants/de.json'
-import Modal from "@/components/layout/Modal";
+import Modal from "@/components/shared/overlay/Modal";
 import {FieldValue, Flat, Room} from "@/constants/types";
 import styles from "@/styles/modals/AddFloorData.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";

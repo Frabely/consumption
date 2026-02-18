@@ -1,5 +1,5 @@
 import React, {ChangeEvent, CSSProperties, MouseEvent, useState} from 'react';
-import Modal from "@/components/layout/Modal";
+import Modal from "@/components/shared/overlay/Modal";
 import styles from "@/styles/modals/AddFloor.module.css";
 import de from "@/constants/de.json";
 import {Field, Flat, Room} from "@/constants/types";
