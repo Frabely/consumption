@@ -8,7 +8,7 @@ import globalStyles from "@/styles/GlobalStyles.module.css";
 import {ChangeEvent, CSSProperties, useEffect, useState} from "react";
 import {faSave, faBan} from "@fortawesome/free-solid-svg-icons";
 import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import FieldInput from "@/components/layout/FieldInput";
+import FieldInput from "@/components/shared/forms/FieldInput";
 import {deleteFieldValue, getFieldValues, setFieldValue} from "@/firebase/functions";
 import CustomSelect from "@/components/shared/forms/CustomSelect";
 import {ModalState} from "@/constants/enums";

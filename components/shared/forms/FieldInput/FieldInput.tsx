@@ -1,5 +1,5 @@
 import React, {ChangeEvent, CSSProperties, useEffect, useRef, useState} from 'react';
-import styles from "@/styles/layout/FieldInput.module.css";
+import styles from "./FieldInput.module.css";
 import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMicrophone} from "@fortawesome/free-solid-svg-icons";
 
