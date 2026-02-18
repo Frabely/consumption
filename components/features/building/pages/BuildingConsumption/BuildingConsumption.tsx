@@ -1,10 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {ModalState, Page, Role} from "@/constants/enums";
+import {ModalState, Page} from "@/constants/enums";
 import Loading from "@/components/features/home/Loading";
 import MenuBuilding from "@/components/features/building/MenuBuilding";
 import AddFloorData from "@/components/features/building/modals/AddFloorData";
 import AddFloor from "@/components/features/building/modals/AddFloor";
-import styles from "@/styles/pages/BuildingConsumption.module.css";
+import styles from "./BuildingConsumption.module.css";
 import de from "@/constants/de.json";
 import {Flat, House} from "@/constants/types";
 import {useAppDispatch} from "@/store/hooks";
@@ -23,6 +23,12 @@ import {
     selectIsReloadDataNeeded,
     selectModalState
 } from "@/store/selectors";
+import {
+    canAccessBuildingConsumption,
+    resolveBackLabel,
+    resolveCurrentHouseByName,
+    resolveFloorModalState
+} from "@/components/features/building/pages/BuildingConsumption/BuildingConsumption.logic";
 
 export default function BuildingConsumption({}: BuildingConsumptionProps) {
     const [currentFlat, setCurrentFlat] = useState<Flat | undefined>()
@@ -43,9 +49,10 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
             loadHouses()
                 .then((houses) => {
                     dispatch(setIsReloadHousesNeeded(false))
-                    dispatch(setCurrentHouse(
-                        houses.filter((house) => currentSelectedHouseName === house.name)[0])
-                    )
+                    const currentHouseAfterReload = resolveCurrentHouseByName(houses, currentSelectedHouseName)
+                    if (currentHouseAfterReload) {
+                        dispatch(setCurrentHouse(currentHouseAfterReload))
+                    }
                     setHouseNames(houses)
                     dispatch(setIsLoading(false))
                 })
@@ -77,15 +84,13 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
     }
 
     const onFloorClickHandler = (isFloorFliedChange: boolean) => {
-        isFloorFliedChange ?
-            dispatch(setModalState(ModalState.ChangeFloorFields)) :
-            dispatch(setModalState(ModalState.AddFloorData))
+        dispatch(setModalState(resolveFloorModalState(isFloorFliedChange)))
     }
 
     return (
         <>
             {
-                currentUser.key && currentUser.role === Role.Admin ?
+                canAccessBuildingConsumption(currentUser.key, currentUser.role) ?
                     (
                         <>
                             {isLoading ? <Loading/> : null }
@@ -125,9 +130,10 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                         className={styles.backToLoginButton} onClick={() => {
                         dispatch(setPage(Page.Home))
                     }}>
-                        {currentUser.key ?
-                            de.displayLabels.backToLogin :
-                            de.displayLabels.back}
+                        {resolveBackLabel(currentUser.key, {
+                            back: de.displayLabels.back,
+                            backToLogin: de.displayLabels.backToLogin
+                        })}
                     </button>
             }
         </>

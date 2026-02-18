@@ -9,7 +9,7 @@ import useWindowDimensions from "@/hooks/useWindowDimensions";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import Home from "@/components/features/home/pages/Home";
 import {Page} from "@/constants/enums";
-import BuildingConsumption from "@/components/pages/BuildingConsumption";
+import BuildingConsumption from "@/components/features/building/pages/BuildingConsumption";
 import {selectCurrentPage} from "@/store/selectors";
 
 export default function App() {
