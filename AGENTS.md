@@ -59,6 +59,8 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Tippfehler in Namen vermeiden (z. B. `dimension` statt inkonsistenter Varianten).
 - Eine Datei sollte ein klares Hauptthema haben.
 - Keine toten Hilfsfunktionen oder alte Codepfade liegen lassen.
+- Neue Features und neue Komponenten direkt in Feature-/Co-Location-Struktur anlegen (`<Feature>.tsx`, `<Feature>.module.css`, `<Feature>.spec.ts(x)` im selben Feature-Ordner).
+- Umstrukturierungen von Komponenten in Richtung Feature-/Co-Location-Struktur im File `RESTRUCTURING_STATUS.md` dokumentieren und nach jedem einzelnen Schritt aktualisieren.
 
 ## 8. Fehlerbehandlung und Logging
 - Fehler nicht verschlucken; aussagekraeftige Meldungen erzeugen.

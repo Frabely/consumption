@@ -199,3 +199,4 @@ next-env.d.ts
 /_static/server/webpack-runtime.js
 /.serena/
 /.firebase/
+/RESTRUCTURING_STATUS.md
