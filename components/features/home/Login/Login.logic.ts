@@ -24,8 +24,14 @@ export const isCompleteLoginInput = (input: string): boolean => input.length ===
 export const resolveLoginCar = (
     user: User,
     availableCars: Car[] = cars
-): Car | undefined =>
-    availableCars.find((car) => car.name === user.defaultCar || car.name === CarNames.Zoe);
+): Car | undefined => {
+    const defaultCar = availableCars.find((car) => car.name === user.defaultCar);
+    if (defaultCar) {
+        return defaultCar;
+    }
+
+    return availableCars.find((car) => car.name === CarNames.Zoe);
+};
 
 export const handleLoginInput = async ({
     input,

@@ -6,7 +6,7 @@ import {
     mapDataSetToListItems,
     shouldLoadDataSet,
     syncKilometer
-} from "@/components/Display/Display.logic";
+} from "@/components/features/home/Display/Display.logic";
 import {setDataSetArray} from "@/store/reducer/currentDataSet";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import {setKilometer} from "@/store/reducer/modal/kilometer";

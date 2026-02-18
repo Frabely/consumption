@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Loading.module.css'
 import de from "@/constants/de.json";
-import {buildLoadingText} from "@/components/Loading/Loading.logic";
+import {buildLoadingText} from "@/components/features/home/Loading/Loading.logic";
 
 export default function Loading({}: LoadingProps) {
     return (

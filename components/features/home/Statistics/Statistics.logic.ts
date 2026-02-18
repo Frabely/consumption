@@ -21,7 +21,7 @@ export const getCurrentYearMonth = (date: Date = new Date()): YearMonth => {
 };
 
 export const isPriceMultiplierValid = (value: string): boolean => {
-    const number = Number.parseFloat(value);
+    const number = Number.parseFloat(value.replace(",", "."));
     return !Number.isNaN(number) && number < 100 && number > 0;
 };
 

@@ -4,15 +4,15 @@ import {useAppSelector} from "@/store/hooks";
 import {loadMainPageData} from "@/constants/constantData";
 import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setIsLoading} from "@/store/reducer/isLoading";
-import Loading from "@/components/Loading";
+import Loading from "@/components/features/home/Loading";
 import Menu from "@/components/layout/menus/Menu";
 import {ModalState} from "@/constants/enums";
 import AddData from "@/components/modals/AddData";
 import DownloadCsv from "@/components/modals/DownloadCsv";
-import Display from "@/components/Display";
-import Login from "@/components/Login";
+import Display from "@/components/features/home/Display";
+import Login from "@/components/features/home/Login";
 import CustomTab from "@/components/layout/CustomTab";
-import Statistics from "@/components/Statistics";
+import Statistics from "@/components/features/home/Statistics";
 import de from "@/constants/de.json"
 import styles from "@/styles/pages/Home.module.css";
 import {

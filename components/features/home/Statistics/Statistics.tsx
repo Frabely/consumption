@@ -11,7 +11,7 @@ import {
     getCurrentYearMonth,
     isPriceMultiplierValid,
     summarizeConsumptionDocs
-} from "@/components/Statistics/Statistics.logic";
+} from "@/components/features/home/Statistics/Statistics.logic";
 
 export default function Statistics({}: StatisticsProps) {
     const currentCarName: string | undefined = useAppSelector((state) => state.currentCar.name);

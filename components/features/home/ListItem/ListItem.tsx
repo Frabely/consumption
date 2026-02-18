@@ -1,12 +1,12 @@
 import styles from './ListItem.module.css'
-import de from '../../constants/de.json'
+import de from "@/constants/de.json"
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {Language, LoadingStation} from "@/constants/types";
 import {getDateString} from "@/constants/globalFunctions";
 import {useAppDispatch} from "@/store/hooks";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBolt} from "@fortawesome/free-solid-svg-icons";
-import {dispatchChangeDataActions, isChangeCarDataAllowed} from "@/components/ListItem/ListItem.logic";
+import {dispatchChangeDataActions, isChangeCarDataAllowed} from "@/components/features/home/ListItem/ListItem.logic";
 
 export default function ListItem({kilometer, name, power, date, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
     const language: Language = de

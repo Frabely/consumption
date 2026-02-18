@@ -2,7 +2,7 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 import {cars} from "@/constants/constantData";
 import {CarNames} from "@/constants/enums";
 import {User} from "@/constants/types";
-import {handleLoginInput, isCompleteLoginInput, resolveLoginCar} from "@/components/Login/Login.logic";
+import {handleLoginInput, isCompleteLoginInput, resolveLoginCar} from "@/components/features/home/Login/Login.logic";
 import {setCurrentCar} from "@/store/reducer/currentCar";
 import {setCurrentUser} from "@/store/reducer/currentUser";
 
@@ -26,7 +26,7 @@ describe("login", () => {
         const userWithDefault: User = {defaultCar: CarNames.BMW};
         const userWithoutDefault: User = {defaultCar: "Unknown"};
 
-        expect(resolveLoginCar(userWithDefault, availableCars)).toEqual(zoe);
+        expect(resolveLoginCar(userWithDefault, availableCars)).toEqual(bmw);
         expect(resolveLoginCar(userWithoutDefault, availableCars)).toEqual(zoe);
     });
 
@@ -52,7 +52,7 @@ describe("login", () => {
         await handleLoginInput({input: "1234", dispatch, checkUserIdFn});
 
         expect(checkUserIdFn).toHaveBeenCalledWith("1234");
-        expect(dispatch).toHaveBeenNthCalledWith(1, setCurrentCar(zoe));
+        expect(dispatch).toHaveBeenNthCalledWith(1, setCurrentCar(bmw));
         expect(dispatch).toHaveBeenNthCalledWith(2, setCurrentUser(user));
     });
 

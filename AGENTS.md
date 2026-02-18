@@ -60,6 +60,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Eine Datei sollte ein klares Hauptthema haben.
 - Keine toten Hilfsfunktionen oder alte Codepfade liegen lassen.
 - Neue Features und neue Komponenten direkt in Feature-/Co-Location-Struktur anlegen (`<Feature>.tsx`, `<Feature>.module.css`, `<Feature>.spec.ts(x)` im selben Feature-Ordner).
+- Feature-Komponenten unter `components/features/<Bereich>/<Feature>/` gruppieren (z. B. `components/features/home/Login/`), damit zusammengehoerige Komponenten klar gebuendelt sind.
 - Feature-nahe Logik im jeweiligen Feature-Ordner halten (z. B. `<Feature>.logic.ts`); `domain/` nur fuer geteilte, UI-unabhaengige Fachlogik verwenden.
 - Umstrukturierungen von Komponenten in Richtung Feature-/Co-Location-Struktur im File `RESTRUCTURING_STATUS.md` dokumentieren und nach jedem einzelnen Schritt aktualisieren.
 

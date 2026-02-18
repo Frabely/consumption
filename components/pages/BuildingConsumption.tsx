@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {ModalState, Page, Role} from "@/constants/enums";
-import Loading from "@/components/Loading";
+import Loading from "@/components/features/home/Loading";
 import MenuBuilding from "@/components/layout/menus/MenuBuilding";
 import AddFloorData from "@/components/modals/AddFloorData";
 import AddFloor from "@/components/modals/AddFloor";

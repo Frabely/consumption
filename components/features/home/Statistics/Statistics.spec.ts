@@ -4,7 +4,7 @@ import {
     getCurrentYearMonth,
     isPriceMultiplierValid,
     summarizeConsumptionDocs
-} from "@/components/Statistics/Statistics.logic";
+} from "@/components/features/home/Statistics/Statistics.logic";
 
 describe("Statistics logic", () => {
     it("returns current year-month with zero-padded month", () => {
@@ -20,15 +20,16 @@ describe("Statistics logic", () => {
 
     it("validates price multiplier boundaries", () => {
         expect(isPriceMultiplierValid("0.1")).toBe(true);
+        expect(isPriceMultiplierValid("0,3")).toBe(true);
         expect(isPriceMultiplierValid("99.99")).toBe(true);
         expect(isPriceMultiplierValid("0")).toBe(false);
         expect(isPriceMultiplierValid("100")).toBe(false);
         expect(isPriceMultiplierValid("abc")).toBe(false);
     });
 
-    it("calculates price and falls back to 1 for invalid multiplier inputs", () => {
+    it("calculates price and supports comma decimal separator", () => {
         expect(calculatePriceToPay(10, "0.2")).toBe(2);
-        expect(calculatePriceToPay(10, "0,3")).toBe(10);
+        expect(calculatePriceToPay(10, "0,3")).toBe(3);
         expect(calculatePriceToPay(10, "invalid")).toBe(10);
     });
 

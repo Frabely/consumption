@@ -1,10 +1,10 @@
 import styles from './Login.module.css'
-import de from '../../constants/de.json'
+import de from "@/constants/de.json"
 import {ChangeEvent, useState} from "react";
 import {useAppDispatch} from "@/store/hooks";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
-import {handleLoginInput} from "@/components/Login/Login.logic";
+import {handleLoginInput} from "@/components/features/home/Login/Login.logic";
 
 export default function Login({}: LoginProps) {
     const dispatch = useAppDispatch()

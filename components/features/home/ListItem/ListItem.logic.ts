@@ -33,7 +33,7 @@ export const isChangeCarDataAllowed = ({
     const diffMinutes =
         Math.floor(now.getTime() / MILLISECONDS_TO_MINUTES) -
         Math.floor(dataSetDate.getTime() / MILLISECONDS_TO_MINUTES);
-    return isFirstElement && diffMinutes < 5;
+    return isFirstElement && diffMinutes >= 0 && diffMinutes < 5;
 };
 
 export const dispatchChangeDataActions = ({

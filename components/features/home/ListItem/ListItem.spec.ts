@@ -1,5 +1,5 @@
 import {describe, expect, it, vi} from "vitest";
-import {dispatchChangeDataActions, isChangeCarDataAllowed} from "@/components/ListItem/ListItem.logic";
+import {dispatchChangeDataActions, isChangeCarDataAllowed} from "@/components/features/home/ListItem/ListItem.logic";
 import {setDate} from "@/store/reducer/modal/date";
 import {setId} from "@/store/reducer/modal/id";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
@@ -13,10 +13,12 @@ describe("ListItem logic", () => {
         const now = new Date("2026-02-18T12:05:00.000Z");
         const recentDate = new Date("2026-02-18T12:02:00.000Z");
         const oldDate = new Date("2026-02-18T11:58:00.000Z");
+        const futureDate = new Date("2026-02-18T12:06:00.000Z");
 
         expect(isChangeCarDataAllowed({isFirstElement: true, dataSetDate: recentDate, now})).toBe(true);
         expect(isChangeCarDataAllowed({isFirstElement: false, dataSetDate: recentDate, now})).toBe(false);
         expect(isChangeCarDataAllowed({isFirstElement: true, dataSetDate: oldDate, now})).toBe(false);
+        expect(isChangeCarDataAllowed({isFirstElement: true, dataSetDate: futureDate, now})).toBe(false);
     });
 
     it("dispatches all change-data actions in the expected order", () => {

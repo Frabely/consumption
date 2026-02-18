@@ -1,5 +1,5 @@
 import styles from './Display.module.css'
-import ListItem from "@/components/ListItem";
+import ListItem from "@/components/features/home/ListItem";
 import {useEffect} from "react";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {
@@ -13,7 +13,7 @@ import {
     mapDataSetToListItems,
     shouldLoadDataSet,
     syncKilometer
-} from "@/components/Display/Display.logic";
+} from "@/components/features/home/Display/Display.logic";
 
 export default function Display({}: DisplayProps) {
     const modalState = useAppSelector(selectModalState)
