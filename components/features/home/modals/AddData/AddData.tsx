@@ -1,7 +1,7 @@
 'use client'
 
-import styles from "../../styles/modals/AddData.module.css"
-import de from '../../constants/de.json'
+import styles from "./AddData.module.css"
+import de from '@/constants/de.json'
 import {setModalStateNone} from "@/store/reducer/modalState";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";

@@ -7,7 +7,7 @@ import {setIsLoading} from "@/store/reducer/isLoading";
 import Loading from "@/components/features/home/Loading";
 import Menu from "@/components/features/home/Menu";
 import {ModalState} from "@/constants/enums";
-import AddData from "@/components/modals/AddData";
+import AddData from "@/components/features/home/modals/AddData";
 import DownloadCsv from "@/components/modals/DownloadCsv";
 import Display from "@/components/features/home/Display";
 import Login from "@/components/features/home/Login";
