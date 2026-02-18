@@ -197,3 +197,5 @@ next-env.d.ts
 /_static/static/webpack/webpack.fbca23b989b58a8c.hot-update.js
 /_static/static/chunks/webpack.js
 /_static/server/webpack-runtime.js
+/.serena/
+/.firebase/
