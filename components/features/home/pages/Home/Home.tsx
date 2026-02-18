@@ -6,7 +6,6 @@ import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import Loading from "@/components/features/home/Loading";
 import Menu from "@/components/features/home/Menu";
-import {ModalState} from "@/constants/enums";
 import AddData from "@/components/features/home/modals/AddData";
 import DownloadCsv from "@/components/features/home/modals/DownloadCsv";
 import Display from "@/components/features/home/Display";
@@ -14,13 +13,19 @@ import Login from "@/components/features/home/Login";
 import CustomTab from "@/components/shared/navigation/CustomTab";
 import Statistics from "@/components/features/home/Statistics";
 import de from "@/constants/de.json"
-import styles from "@/styles/pages/Home.module.css";
+import styles from "./Home.module.css";
 import {
     selectCurrentCar,
     selectCurrentUser,
     selectIsLoading,
     selectModalState
 } from "@/store/selectors";
+import {
+    isAddDataModalOpen,
+    isDownloadCsvModalOpen,
+    isEvaluationTabSelected,
+    resolvePrevKilometers
+} from "@/components/features/home/pages/Home/Home.logic";
 
 export default function Home({}: HomeProps) {
     const isLoading = useAppSelector(selectIsLoading)
@@ -29,7 +34,7 @@ export default function Home({}: HomeProps) {
     const currentCar = useAppSelector(selectCurrentCar)
     const dispatch = useAppDispatch()
     const [selected, setSelected] = useState(0)
-    const isEvaluationTab = selected === 1
+    const isEvaluationTab = isEvaluationTabSelected(selected)
 
     useEffect(() => {
         loadMainPageData().then(() => {
@@ -54,11 +59,11 @@ export default function Home({}: HomeProps) {
             {currentUser.key ?
                 <>
                     <Menu/>
-                    {modalState === ModalState.AddCarData || modalState === ModalState.ChangeCarData ? (
+                    {isAddDataModalOpen(modalState) ? (
                         <AddData
-                            prevKilometers={currentCar.prevKilometer ? currentCar.prevKilometer : 0}/>
+                            prevKilometers={resolvePrevKilometers(currentCar.prevKilometer)}/>
                     ) : null}
-                    {modalState === ModalState.DownloadCsv ? (
+                    {isDownloadCsvModalOpen(modalState) ? (
                         <DownloadCsv/>
                     ) : null}
                     <div className={styles.homeViewport}>
