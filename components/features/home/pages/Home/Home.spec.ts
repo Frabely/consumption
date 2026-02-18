@@ -1,4 +1,4 @@
-import {describe, expect, it} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 import {ModalState} from "@/constants/enums";
 import {
     isAddDataModalOpen,
@@ -25,5 +25,30 @@ describe("Home logic", () => {
     it("resolves previous kilometers fallback", () => {
         expect(resolvePrevKilometers(123)).toBe(123);
         expect(resolvePrevKilometers(undefined)).toBe(0);
+    });
+
+    it("renders login view when no user is active", async () => {
+        vi.resetModules();
+        vi.doMock("@/store/hooks", () => {
+            const values = [
+                false,
+                {},
+                ModalState.None,
+                {prevKilometer: 0}
+            ];
+            return {
+                useAppDispatch: () => vi.fn(),
+                useAppSelector: () => values.shift()
+            };
+        });
+        vi.doMock("@/components/features/home/Login", () => ({default: () => "LOGIN_VIEW"}));
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: Home} = await import("./Home");
+
+        const html = renderToStaticMarkup(createElement(Home));
+
+        expect(html).toContain("LOGIN_VIEW");
     });
 });

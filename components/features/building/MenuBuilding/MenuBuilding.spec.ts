@@ -39,4 +39,28 @@ describe("MenuBuilding logic", () => {
         expect(resolveDefaultHouseName(undefined, houses)).toBe("H1");
         expect(resolveDefaultHouseName(undefined, [])).toBe("");
     });
+
+    it("renders building menu actions in component", async () => {
+        vi.resetModules();
+        vi.doMock("@/store/hooks", () => ({
+            useAppDispatch: () => vi.fn(),
+            useAppSelector: () => "Haus 1"
+        }));
+        vi.doMock("@/components/shared/navigation/ActionMenu", () => ({
+            default: ({actions}: {actions: Array<{id: string}>}) => actions.map((action) => action.id).join("|")
+        }));
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: MenuBuilding} = await import("./MenuBuilding");
+
+        const html = renderToStaticMarkup(createElement(MenuBuilding, {
+            houses: [{id: "1", name: "Haus 1", flats: []}],
+            onAddFloor: vi.fn()
+        }));
+
+        expect(html).toContain("home");
+        expect(html).toContain("logout");
+        expect(html).toContain("downloadBuildingCsv");
+    });
 });

@@ -43,4 +43,29 @@ describe("ListItem logic", () => {
         expect(dispatch).toHaveBeenNthCalledWith(6, setLoadingStation(loadingStation));
     });
 
+    it("renders list item values in the component", async () => {
+        vi.resetModules();
+        vi.doMock("@/store/hooks", () => ({
+            useAppDispatch: () => vi.fn()
+        }));
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: ListItem} = await import("./ListItem");
+
+        const html = renderToStaticMarkup(createElement(ListItem, {
+            isLight: true,
+            date: new Date("2026-02-18T12:00:00.000Z"),
+            kilometer: 1234,
+            power: 45.6,
+            name: "Tester",
+            id: "id-1",
+            loadingStation: {id: "ls-1", name: "carport"},
+            isFirstElement: true
+        }));
+
+        expect(html).toContain("Tester");
+        expect(html).toContain("1234");
+    });
+
 });

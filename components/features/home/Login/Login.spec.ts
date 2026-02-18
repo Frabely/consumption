@@ -68,4 +68,20 @@ describe("login", () => {
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch).toHaveBeenNthCalledWith(1, setCurrentUser(user));
     });
+
+    it("renders login component with password input", async () => {
+        vi.resetModules();
+        vi.doMock("@/store/hooks", () => ({
+            useAppDispatch: () => vi.fn()
+        }));
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: Login} = await import("./Login");
+
+        const html = renderToStaticMarkup(createElement(Login));
+
+        expect(html).toContain('type="password"');
+        expect(html).toContain("Passwort anzeigen");
+    });
 });

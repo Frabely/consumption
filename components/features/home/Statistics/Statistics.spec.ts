@@ -1,4 +1,4 @@
-import {describe, expect, it} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 import {
     calculatePriceToPay,
     getCurrentYearMonth,
@@ -47,5 +47,21 @@ describe("Statistics logic", () => {
             kwhFueled: 0,
             kilometersDriven: 0
         });
+    });
+
+    it("renders selected car and kpi cards", async () => {
+        vi.resetModules();
+        vi.doMock("@/store/hooks", () => ({
+            useAppSelector: () => "Zoe"
+        }));
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: Statistics} = await import("./Statistics");
+
+        const html = renderToStaticMarkup(createElement(Statistics));
+
+        expect(html).toContain("Zoe");
+        expect(html).toContain("kWh");
     });
 });

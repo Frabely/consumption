@@ -1,4 +1,4 @@
-import {describe, expect, it} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 import {buildDownloadBuildingCsvText} from "@/components/features/building/modals/DownloadBuildingCsv/DownloadBuildingCsv.logic";
 
 describe("DownloadBuildingCsv logic", () => {
@@ -28,5 +28,24 @@ describe("DownloadBuildingCsv logic", () => {
 
         expect(text).toContain("House;Flat;Room;Field;Value;Day");
         expect(text).toContain("House;Flat;Room;Water;12,3;3;");
+    });
+
+    it("renders current house and actions in the modal", async () => {
+        vi.resetModules();
+        vi.doMock("@/store/hooks", () => ({
+            useAppDispatch: () => vi.fn(),
+            useAppSelector: () => ({name: "Haus 1"})
+        }));
+        vi.doMock("@/components/shared/overlay/Modal", () => ({
+            default: ({children}: {children: unknown}) => children
+        }));
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: DownloadBuildingCsv} = await import("./DownloadBuildingCsv");
+
+        const html = renderToStaticMarkup(createElement(DownloadBuildingCsv));
+
+        expect(html).toContain("Haus 1");
     });
 });

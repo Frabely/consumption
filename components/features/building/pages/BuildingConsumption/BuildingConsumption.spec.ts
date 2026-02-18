@@ -1,4 +1,4 @@
-import {describe, expect, it} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 import {ModalState, Role} from "@/constants/enums";
 import {
     canAccessBuildingConsumption,
@@ -32,5 +32,30 @@ describe("BuildingConsumption logic", () => {
 
         expect(resolveCurrentHouseByName(houses, "H2")).toEqual({id: "2", name: "H2", flats: []});
         expect(resolveCurrentHouseByName(houses, "Unknown")).toBeUndefined();
+    });
+
+    it("renders back button when user has no building access", async () => {
+        vi.resetModules();
+        vi.doMock("@/store/hooks", () => {
+            const values = [
+                {name: "H1", flats: []},
+                {},
+                false,
+                ModalState.None,
+                {isReloadHousesNeeded: false}
+            ];
+            return {
+                useAppDispatch: () => vi.fn(),
+                useAppSelector: () => values.shift()
+            };
+        });
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: BuildingConsumption} = await import("./BuildingConsumption");
+
+        const html = renderToStaticMarkup(createElement(BuildingConsumption));
+
+        expect(html).toContain("button");
     });
 });

@@ -50,4 +50,28 @@ describe("Menu logic", () => {
         expect(resolveDefaultCarName(undefined, cars)).toBe("Zoe");
         expect(resolveDefaultCarName(undefined, [])).toBe("");
     });
+
+    it("renders action labels for admin users", async () => {
+        vi.resetModules();
+        vi.doMock("@/store/hooks", () => {
+            const values = [Role.Admin, "Zoe"];
+            return {
+                useAppDispatch: () => vi.fn(),
+                useAppSelector: () => values.shift()
+            };
+        });
+        vi.doMock("@/components/shared/navigation/ActionMenu", () => ({
+            default: ({actions}: {actions: Array<{id: string}>}) => actions.map((action) => action.id).join("|")
+        }));
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: Menu} = await import("./Menu");
+
+        const html = renderToStaticMarkup(createElement(Menu));
+
+        expect(html).toContain("logout");
+        expect(html).toContain("downloadCsv");
+        expect(html).toContain("buildingConsumption");
+    });
 });

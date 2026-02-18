@@ -77,4 +77,31 @@ describe("Display domain", () => {
         expect(dispatch).toHaveBeenNthCalledWith(2, setDataSetArray([]));
         expect(dispatch).toHaveBeenNthCalledWith(3, setIsLoading(false));
     });
+
+    it("renders mapped list items for the current data set", async () => {
+        vi.resetModules();
+        vi.doMock("@/store/hooks", () => {
+            const values = [
+                ModalState.None,
+                {name: "Zoe", kilometer: 1200},
+                dataSet
+            ];
+            return {
+                useAppDispatch: () => vi.fn(),
+                useAppSelector: () => values.shift()
+            };
+        });
+        vi.doMock("@/components/features/home/ListItem", () => ({
+            default: ({name}: {name: string}) => name
+        }));
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: Display} = await import("./Display");
+
+        const html = renderToStaticMarkup(createElement(Display));
+
+        expect(html).toContain("A");
+        expect(html).toContain("B");
+    });
 });
