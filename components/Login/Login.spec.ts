@@ -2,7 +2,7 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 import {cars} from "@/constants/constantData";
 import {CarNames} from "@/constants/enums";
 import {User} from "@/constants/types";
-import {handleLoginInput, isCompleteLoginInput, resolveLoginCar} from "@/domain/login";
+import {handleLoginInput, isCompleteLoginInput, resolveLoginCar} from "@/components/Login/Login.logic";
 import {setCurrentCar} from "@/store/reducer/currentCar";
 import {setCurrentUser} from "@/store/reducer/currentUser";
 
