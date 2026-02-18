@@ -1,6 +1,6 @@
 'use client'
 
-import {faAdd, faFileCsv, faHouseFire, faPowerOff} from '@fortawesome/free-solid-svg-icons'
+import {faAdd} from '@fortawesome/free-solid-svg-icons'
 import {setModalState, setModalStateNone} from "@/store/reducer/modalState";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setCurrentUser} from "@/store/reducer/currentUser";
@@ -14,7 +14,12 @@ import {ModalState, Page, Role} from "@/constants/enums";
 import {setDataSetArray} from "@/store/reducer/currentDataSet";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import de from "@/constants/de.json";
-import ActionMenu, {ActionMenuItem} from "@/components/shared/navigation/ActionMenu";
+import ActionMenu from "@/components/shared/navigation/ActionMenu";
+import {
+    buildHomeMenuActions,
+    resolveDefaultCarName,
+    resolveSelectedCar
+} from "@/components/features/home/Menu/Menu.logic";
 
 export default function Menu({}: MenuProps) {
     const language = de
@@ -44,7 +49,10 @@ export default function Menu({}: MenuProps) {
     const onCarChangeHandler = (value: string) => {
         getCars().then((result) => {
             if (result) {
-                dispatch(setCurrentCar(result.filter(car => car.name === value)[0]))
+                const selectedCar = resolveSelectedCar(result, value)
+                if (selectedCar) {
+                    dispatch(setCurrentCar(selectedCar))
+                }
             }
         }).catch((error: Error) => {
             console.error(error.message)
@@ -55,36 +63,24 @@ export default function Menu({}: MenuProps) {
         dispatch(setPage(Page.BuildingConsumption))
     }
 
-    const menuActions: ActionMenuItem[] = [
-        {
-            id: "logout",
-            label: language.buttonLabels.logout,
-            icon: faPowerOff,
-            onClick: onLogoutHandler
+    const menuActions = buildHomeMenuActions({
+        role: currentUserRole,
+        labels: {
+            logout: language.buttonLabels.logout,
+            downloadCsv: language.buttonLabels.downloadCsv,
+            buildingConsumption: language.buttonLabels.buildingConsumption
         },
-        {
-            id: "downloadCsv",
-            label: language.buttonLabels.downloadCsv,
-            icon: faFileCsv,
-            onClick: onExportAsCsvClickHandler
-        }
-    ]
-
-    if (currentUserRole === Role.Admin) {
-        menuActions.push({
-            id: "buildingConsumption",
-            label: language.buttonLabels.buildingConsumption,
-            icon: faHouseFire,
-            onClick: onBuildingConsumptionClickHandler
-        })
-    }
+        onLogout: onLogoutHandler,
+        onExportCsv: onExportAsCsvClickHandler,
+        onBuildingConsumption: onBuildingConsumptionClickHandler
+    })
 
     return (
         <ActionMenu
             actions={menuActions}
             selectConfig={{
                 onChange: onCarChangeHandler,
-                defaultValue: currentCarName ?? cars[0]?.name ?? "",
+                defaultValue: resolveDefaultCarName(currentCarName, cars),
                 options: cars.map((car) => car.name),
                 direction: "up"
             }}

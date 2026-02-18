@@ -1,6 +1,6 @@
 import React from 'react';
 import {RootState} from "@/store/store";
-import {faPowerOff, faHouse, faFileCsv, faAdd} from "@fortawesome/free-solid-svg-icons";
+import {faAdd} from "@fortawesome/free-solid-svg-icons";
 import {setCurrentUser} from "@/store/reducer/currentUser";
 import {setModalState, setModalStateNone} from "@/store/reducer/modalState";
 import {setCurrentHouse} from "@/store/reducer/currentHouse";
@@ -11,7 +11,12 @@ import {setPage} from "@/store/reducer/currentPage";
 import {ModalState, Page} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import de from "@/constants/de.json";
-import ActionMenu, {ActionMenuItem} from "@/components/shared/navigation/ActionMenu";
+import ActionMenu from "@/components/shared/navigation/ActionMenu";
+import {
+    buildBuildingMenuActions,
+    resolveDefaultHouseName,
+    resolveSelectedHouse
+} from "@/components/features/building/MenuBuilding/MenuBuilding.logic";
 
 export default function MenuBuilding({houses, onAddFloor}: MenuBuildingProps) {
     const language = de
@@ -31,7 +36,10 @@ export default function MenuBuilding({houses, onAddFloor}: MenuBuildingProps) {
     }
 
     const onHouseChangeHandler = (value: string) => {
-        dispatch(setCurrentHouse(houses.filter(house => house.name === value)[0]))
+        const selectedHouse = resolveSelectedHouse(houses, value)
+        if (selectedHouse) {
+            dispatch(setCurrentHouse(selectedHouse))
+        }
     }
 
     const onExportAsCsvClickHandler = () => {
@@ -39,33 +47,23 @@ export default function MenuBuilding({houses, onAddFloor}: MenuBuildingProps) {
         dispatch(setModalState(ModalState.DownloadBuildingCsv))
     }
 
-    const menuActions: ActionMenuItem[] = [
-        {
-            id: "home",
-            label: language.buttonLabels.home,
-            icon: faHouse,
-            onClick: onHomePageClickHandler
+    const menuActions = buildBuildingMenuActions({
+        labels: {
+            home: language.buttonLabels.home,
+            logout: language.buttonLabels.logout,
+            downloadCsv: language.buttonLabels.downloadCsv
         },
-        {
-            id: "logout",
-            label: language.buttonLabels.logout,
-            icon: faPowerOff,
-            onClick: onLogoutHandler
-        },
-        {
-            id: "downloadBuildingCsv",
-            label: language.buttonLabels.downloadCsv,
-            icon: faFileCsv,
-            onClick: onExportAsCsvClickHandler
-        }
-    ]
+        onHome: onHomePageClickHandler,
+        onLogout: onLogoutHandler,
+        onExportCsv: onExportAsCsvClickHandler
+    })
 
     return (
         <ActionMenu
             actions={menuActions}
             selectConfig={{
                 onChange: onHouseChangeHandler,
-                defaultValue: currentHouseName ?? houses[0]?.name ?? "",
+                defaultValue: resolveDefaultHouseName(currentHouseName, houses),
                 options: houses.map((house) => house.name),
                 direction: "up"
             }}
