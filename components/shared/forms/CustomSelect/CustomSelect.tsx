@@ -1,5 +1,5 @@
 import React, {CSSProperties, KeyboardEvent, useEffect, useRef, useState} from "react";
-import styles from "@/styles/layout/CustomSelect.module.css";
+import styles from "./CustomSelect.module.css";
 
 export default function CustomSelect({
                                          onChange,

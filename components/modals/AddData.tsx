@@ -15,7 +15,7 @@ import {Language} from "@/constants/types";
 import {updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
 import {setDate} from "@/store/reducer/modal/date";
 import {ModalState} from "@/constants/enums";
-import CustomSelect from "@/components/layout/CustomSelect";
+import CustomSelect from "@/components/shared/forms/CustomSelect";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBolt, faCarSide} from "@fortawesome/free-solid-svg-icons";

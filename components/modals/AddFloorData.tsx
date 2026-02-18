@@ -10,7 +10,7 @@ import {faSave, faBan} from "@fortawesome/free-solid-svg-icons";
 import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FieldInput from "@/components/layout/FieldInput";
 import {deleteFieldValue, getFieldValues, setFieldValue} from "@/firebase/functions";
-import CustomSelect from "@/components/layout/CustomSelect";
+import CustomSelect from "@/components/shared/forms/CustomSelect";
 import {ModalState} from "@/constants/enums";
 import {useAppSelector} from "@/store/hooks";
 import {selectCurrentHouse} from "@/store/selectors";
