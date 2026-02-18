@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../styles/layout/CustomTab.module.css'
+import styles from './CustomTab.module.css'
 
 
 export default function CustomTab({tabNames, setSelected, selected}: CustomTabProps) {

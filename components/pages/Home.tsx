@@ -11,7 +11,7 @@ import AddData from "@/components/modals/AddData";
 import DownloadCsv from "@/components/modals/DownloadCsv";
 import Display from "@/components/features/home/Display";
 import Login from "@/components/features/home/Login";
-import CustomTab from "@/components/layout/CustomTab";
+import CustomTab from "@/components/shared/navigation/CustomTab";
 import Statistics from "@/components/features/home/Statistics";
 import de from "@/constants/de.json"
 import styles from "@/styles/pages/Home.module.css";
