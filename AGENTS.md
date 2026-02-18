@@ -8,6 +8,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Korrigiere Ursachen, nicht nur Symptome.
 - Keine stillen "quick fixes", die technische Schulden erhoehen.
 - Halte Verhalten stabil, ausser eine Verhaltensaenderung ist explizit gewuenscht.
+- Neue Branches immer von `master` ableiten.
 - Nutze Serena (MCP) so oft wie moeglich fuer Analyse, Navigation und Code-Aenderungen im Projekt.
 - Bewerte Architektur, Lesbarkeit, Wartbarkeit und Risikomanagement konsequent aus Senior-Developer-Sicht.
 - Wende SOLID- und DRY-Prinzipien konsequent an.
