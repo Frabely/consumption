@@ -1,31 +1,33 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
-import styles from "../styles/Statistics.module.css";
+import styles from "./Statistics.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {YearMonth} from "@/constants/types";
 import {loadAllConsumptionDocsBetween} from "@/firebase/functions";
 import de from "@/constants/de.json";
 import {useAppSelector} from "@/store/hooks";
 import {parseYearMonthInput} from "@/domain/fieldValueMapping";
+import {
+    calculatePriceToPay,
+    getCurrentYearMonth,
+    isPriceMultiplierValid,
+    summarizeConsumptionDocs
+} from "@/components/Statistics/Statistics.logic";
 
 export default function Statistics({}: StatisticsProps) {
     const currentCarName: string | undefined = useAppSelector((state) => state.currentCar.name);
-
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const monthString: string = month < 10 ? `0${month}` : month.toString();
+    const currentYearMonth = getCurrentYearMonth();
 
     const [kilometersDriven, setKilometersDriven] = useState(0);
     const [kwhFueled, setKwhFueled] = useState(0);
     const [priceMultiplier, setPriceMultiplier] = useState("0.2");
     const [priceToPay, setPriceToPay] = useState(0);
     const [fromDateValue, setFromDateValue] = useState<YearMonth>({
-        year: year.toString(),
-        month: monthString
+        year: currentYearMonth.year,
+        month: currentYearMonth.month
     });
     const [toDateValue, setToDateValue] = useState<YearMonth>({
-        year: year.toString(),
-        month: monthString
+        year: currentYearMonth.year,
+        month: currentYearMonth.month
     });
 
     useEffect(() => {
@@ -38,12 +40,9 @@ export default function Statistics({}: StatisticsProps) {
         loadAllConsumptionDocsBetween(fromDateValue, toDateValue, currentCarName)
             .then((result) => {
                 if (result && result.length > 0) {
-                    const kwh = result.reduce(
-                        (sum, item) => sum + Number(item.data.power),
-                        0
-                    );
-                    setKwhFueled(kwh);
-                    setKilometersDriven(result[result.length - 1].data.kilometer - result[0].data.kilometer);
+                    const summary = summarizeConsumptionDocs(result);
+                    setKwhFueled(summary.kwhFueled);
+                    setKilometersDriven(summary.kilometersDriven);
                 } else {
                     setKwhFueled(0);
                     setKilometersDriven(0);
@@ -53,11 +52,7 @@ export default function Statistics({}: StatisticsProps) {
     }, [currentCarName, fromDateValue, toDateValue]);
 
     useEffect(() => {
-        const multiplier = isPriceMultiplierValid(priceMultiplier)
-            ? Number(String(priceMultiplier).replace(",", "."))
-            : 1;
-
-        setPriceToPay(kwhFueled * multiplier);
+        setPriceToPay(calculatePriceToPay(kwhFueled, priceMultiplier));
     }, [kwhFueled, priceMultiplier]);
 
     const onFromDateInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -76,11 +71,6 @@ export default function Statistics({}: StatisticsProps) {
                 setToDateValue(yearMonth);
             }
         }
-    };
-
-    const isPriceMultiplierValid = (power: string): boolean => {
-        const powerNumber = Number.parseFloat(power);
-        return !Number.isNaN(powerNumber) && powerNumber < 100 && powerNumber > 0;
     };
 
     return (
