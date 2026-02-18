@@ -1,9 +1,9 @@
 'use client'
 
-import de from '../../constants/de.json'
+import de from '@/constants/de.json'
 import Modal from "@/components/shared/overlay/Modal";
 import {FieldValue, Flat, Room} from "@/constants/types";
-import styles from "@/styles/modals/AddFloorData.module.css";
+import styles from "./AddFloorData.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {ChangeEvent, CSSProperties, useEffect, useState} from "react";
 import {faSave, faBan} from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +15,10 @@ import {ModalState} from "@/constants/enums";
 import {useAppSelector} from "@/store/hooks";
 import {selectCurrentHouse} from "@/store/selectors";
 import {filterFieldValuesByRoom, parseYearMonthInput} from "@/domain/fieldValueMapping";
+import {
+    isFieldValueValid,
+    resolveRoomByName
+} from "@/components/features/building/modals/AddFloorData/AddFloorData.logic";
 
 export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const currentHouse = useAppSelector(selectCurrentHouse)
@@ -93,7 +97,10 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     }
 
     const onRoomChangeHandler = (value: string) => {
-        const changedRoom = flat.rooms.filter(room => room.name === value)[0]
+        const changedRoom = resolveRoomByName(flat.rooms, value)
+        if (!changedRoom) {
+            return
+        }
         setCurrentRoom(changedRoom)
         setCurrentFieldValues(filterFieldValuesByRoom(flat, changedRoom.id, allFieldValues))
     }
@@ -122,7 +129,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                     style={{width: "100%"}}
                 />
                 {currentFieldValues.map((fieldValue, index: number) => {
-                    const isValueValid = !!fieldValue.value && !isNaN(Number(fieldValue.value))
+                    const isValueValid = isFieldValueValid(fieldValue.value)
                     return (
                         <div
                             className={styles.inputContainer}

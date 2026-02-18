@@ -2,8 +2,8 @@ import React, {useEffect, useRef, useState} from 'react';
 import {ModalState, Page, Role} from "@/constants/enums";
 import Loading from "@/components/features/home/Loading";
 import MenuBuilding from "@/components/features/building/MenuBuilding";
-import AddFloorData from "@/components/modals/AddFloorData";
-import AddFloor from "@/components/modals/AddFloor";
+import AddFloorData from "@/components/features/building/modals/AddFloorData";
+import AddFloor from "@/components/features/building/modals/AddFloor";
 import styles from "@/styles/pages/BuildingConsumption.module.css";
 import de from "@/constants/de.json";
 import {Flat, House} from "@/constants/types";
@@ -15,7 +15,7 @@ import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setCurrentHouse} from "@/store/reducer/currentHouse";
 import {setModalState} from "@/store/reducer/modalState";
 import {setPage} from "@/store/reducer/currentPage";
-import DownloadBuildingCsv from "@/components/modals/DownloadBuildingCsv";
+import DownloadBuildingCsv from "@/components/features/building/modals/DownloadBuildingCsv";
 import {
     selectCurrentHouse,
     selectCurrentUser,

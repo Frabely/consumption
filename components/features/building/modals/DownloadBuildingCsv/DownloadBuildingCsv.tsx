@@ -1,8 +1,8 @@
-import styles from '@/components/features/home/modals/DownloadCsv/DownloadCsv.module.css'
+import styles from './DownloadBuildingCsv.module.css'
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import Modal from "@/components/shared/overlay/Modal";
 import {ChangeEvent, useState} from "react";
-import deJson from '../../constants/de.json'
+import deJson from '@/constants/de.json'
 import {getFieldValuesForExport} from "@/firebase/functions";
 import {DownloadBuildingCsvDto} from "@/constants/types";
 import {setModalStateNone} from "@/store/reducer/modalState";
@@ -10,6 +10,7 @@ import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentHouse} from "@/store/selectors";
 import {parseYearMonthInput} from "@/domain/fieldValueMapping";
+import {buildDownloadBuildingCsvText} from "@/components/features/building/modals/DownloadBuildingCsv/DownloadBuildingCsv.logic";
 
 export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
     const currentHouse = useAppSelector(selectCurrentHouse)
@@ -37,28 +38,6 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
         }
     }
 
-    const fieldsToTxt = (fieldValuesForExport: DownloadBuildingCsvDto[]): string => {
-        let txtContent: string =
-            `${deJson.displayLabels.house};` +
-            `${deJson.displayLabels.flat};` +
-            `${deJson.displayLabels.room};` +
-            `${deJson.inputLabels.fieldName};` +
-            `${deJson.displayLabels.fieldValue};` +
-            `${deJson.displayLabels.day}\n`
-        fieldValuesForExport.forEach((fieldValueForExport) => {
-            txtContent +=
-                `${fieldValueForExport.house.name};` +
-                `${fieldValueForExport.flat.name};` +
-                `${fieldValueForExport.room.name};` +
-                `${fieldValueForExport.fieldValue.field.name};` +
-                `${fieldValueForExport.fieldValue.value};` +
-                `${fieldValueForExport.fieldValue.day ? 
-                    fieldValueForExport.fieldValue.day.getUTCDate().toString() : 
-                    "-"};\n`
-        })
-        return txtContent.replace('.', ',')
-    }
-
     const onDownloadCsvClickHandler = () => {
         dispatch(setModalStateNone())
         if (currentHouse.name) {
@@ -66,7 +45,17 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
                 .then((fieldValuesForExport) => {
                 if (fieldValuesForExport.length > 0) {
                     const BOM = "\uFEFF";
-                    const csvContent = BOM + fieldsToTxt(fieldValuesForExport);
+                    const csvContent = BOM + buildDownloadBuildingCsvText(
+                        fieldValuesForExport as DownloadBuildingCsvDto[],
+                        {
+                            house: deJson.displayLabels.house,
+                            flat: deJson.displayLabels.flat,
+                            room: deJson.displayLabels.room,
+                            fieldName: deJson.inputLabels.fieldName,
+                            fieldValue: deJson.displayLabels.fieldValue,
+                            day: deJson.displayLabels.day
+                        }
+                    );
                     const blob = new Blob([csvContent], {type: "text/csv;charset=utf-8;"});
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement("a");

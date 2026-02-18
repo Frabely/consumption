@@ -1,6 +1,6 @@
 import React, {ChangeEvent, CSSProperties, MouseEvent, useState} from 'react';
 import Modal from "@/components/shared/overlay/Modal";
-import styles from "@/styles/modals/AddFloor.module.css";
+import styles from "./AddFloor.module.css";
 import de from "@/constants/de.json";
 import {Field, Flat, Room} from "@/constants/types";
 import {createFlat, updateFlat} from "@/firebase/functions";
@@ -13,6 +13,7 @@ import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
 import CustomButton from "@/components/shared/ui/CustomButton";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentHouse, selectModalState} from "@/store/selectors";
+import {canAddFieldByName, canAddRoomByName} from "@/components/features/building/modals/AddFloor/AddFloor.logic";
 
 export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: AddFloorModalProps) {
     const currentHouse = useAppSelector(selectCurrentHouse)
@@ -191,10 +192,8 @@ export default function AddFloor({currentFlat: currentFlat, newFlatPosition}: Ad
         }
     }
 
-    const canAddRoom = roomNameInput.length > 0 && rooms.filter(room => room.name === roomNameInput).length === 0
-    const canAddField = fieldNameInput.length > 0 &&
-        !!currentSelectedRoom &&
-        currentSelectedRoom.fields.filter(field => field.name === fieldNameInput).length === 0
+    const canAddRoom = canAddRoomByName(roomNameInput, rooms)
+    const canAddField = canAddFieldByName(fieldNameInput, currentSelectedRoom)
     return (
         <>
 
