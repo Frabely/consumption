@@ -1,8 +1,8 @@
-import styles from '../../styles/modals/DownloadCsv.module.css'
+import styles from './DownloadCsv.module.css'
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import Modal from "@/components/shared/overlay/Modal";
 import {ChangeEvent, useState} from "react";
-import deJson from '../../constants/de.json'
+import deJson from '@/constants/de.json'
 import {getFullDataSet} from "@/firebase/functions";
 import {DataSet, Language} from "@/constants/types";
 import {getDateString, getUTCDateString} from "@/constants/globalFunctions";

@@ -1,4 +1,4 @@
-import styles from '../../styles/modals/DownloadCsv.module.css'
+import styles from '@/components/features/home/modals/DownloadCsv/DownloadCsv.module.css'
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import Modal from "@/components/shared/overlay/Modal";
 import {ChangeEvent, useState} from "react";
