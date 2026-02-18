@@ -14,7 +14,7 @@ import {ModalState, Page, Role} from "@/constants/enums";
 import {setDataSetArray} from "@/store/reducer/currentDataSet";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import de from "@/constants/de.json";
-import ActionMenu, {ActionMenuItem} from "@/components/layout/menus/ActionMenu";
+import ActionMenu, {ActionMenuItem} from "@/components/shared/navigation/ActionMenu";
 
 export default function Menu({}: MenuProps) {
     const language = de

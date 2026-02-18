@@ -11,7 +11,7 @@ import {setPage} from "@/store/reducer/currentPage";
 import {ModalState, Page} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import de from "@/constants/de.json";
-import ActionMenu, {ActionMenuItem} from "@/components/layout/menus/ActionMenu";
+import ActionMenu, {ActionMenuItem} from "@/components/shared/navigation/ActionMenu";
 
 export default function MenuBuilding({houses, onAddFloor}: MenuBuildingProps) {
     const language = de

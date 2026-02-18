@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {IconDefinition} from "@fortawesome/fontawesome-svg-core";
 import {faEllipsis, faXmark} from "@fortawesome/free-solid-svg-icons";
 import CustomSelect from "@/components/shared/forms/CustomSelect";
-import globalMenuStyles from "@/styles/layout/menus/globalMenu.module.css";
+import globalMenuStyles from "./ActionMenu.module.css";
 
 export default function ActionMenu({
     actions,

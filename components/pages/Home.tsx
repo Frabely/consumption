@@ -5,7 +5,7 @@ import {loadMainPageData} from "@/constants/constantData";
 import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import Loading from "@/components/features/home/Loading";
-import Menu from "@/components/layout/menus/Menu";
+import Menu from "@/components/features/home/Menu";
 import {ModalState} from "@/constants/enums";
 import AddData from "@/components/modals/AddData";
 import DownloadCsv from "@/components/modals/DownloadCsv";

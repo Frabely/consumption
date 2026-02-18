@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {ModalState, Page, Role} from "@/constants/enums";
 import Loading from "@/components/features/home/Loading";
-import MenuBuilding from "@/components/layout/menus/MenuBuilding";
+import MenuBuilding from "@/components/features/building/MenuBuilding";
 import AddFloorData from "@/components/modals/AddFloorData";
 import AddFloor from "@/components/modals/AddFloor";
 import styles from "@/styles/pages/BuildingConsumption.module.css";
