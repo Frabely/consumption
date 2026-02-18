@@ -10,7 +10,7 @@ import {setModalStateNone} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import {setIsReloadHousesNeeded} from "@/store/reducer/isReloadDataNeeded";
-import CustomButton from "@/components/layout/CustomButton";
+import CustomButton from "@/components/shared/ui/CustomButton";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentHouse, selectModalState} from "@/store/selectors";
 

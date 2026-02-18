@@ -1,5 +1,5 @@
 import React, {CSSProperties} from 'react';
-import styles from "@/styles/layout/CustomButton.module.css";
+import styles from "./CustomButton.module.css";
 
 export default function CustomButton({onClick, disabled, style, label}: CustomButtonProps) {
     return (
