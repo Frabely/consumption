@@ -12,6 +12,25 @@ Status-Legende:
 - Diese Datei dient nur der aktiven Umsetzung und wird nach Abschluss wieder geloescht.
 - Kein Persistieren sensibler Geheimnisse im Browser-Storage (nur notwendige Session-Metadaten).
 
+## Entscheidungsfragen und Antworten
+
+| ID | Frage | Entscheidung | Status |
+|---|---|---|---|
+| D1 | Session-Typ (nur lokal persistiert vs. serverseitig validiert bei Start) | Lokale Session + Validierung beim App-Start | entschieden |
+| D2 | Session-Dauer (z. B. 7/14/30 Tage) | 90 Tage | entschieden |
+| D3 | Expiry-Strategie (fix ab Login vs. rolling bei Aktivitaet) | Rolling Expiry bei Nutzung | entschieden |
+| D4 | Verhalten bei abgelaufener Session (sofort Logout vs. Grace-Period) | Sofort Logout + Login-Screen | entschieden |
+| D5 | Verhalten bei Offline-Start mit vorhandener Session | Temporaer erlauben, bei naechster Konnektivitaet validieren | entschieden |
+| D6 | Persistenz-Scope (nur User+Role+DefaultCar vs. mehr) | Minimal: userId, role, defaultCar, expiresAt, schemaVersion | entschieden |
+| D7 | Rehydration-Validierung (strict verwerfen bei kleinsten Fehlern vs. tolerant) | Strict: bei Fehler Session verwerfen | entschieden |
+| D8 | Cross-Tab-Verhalten (Logout in allen Tabs sofort) | Logout/Reset in allen Tabs sofort synchronisieren | entschieden |
+| D9 | Guard-Verhalten fuer BuildingConsumption bei Rollenwechsel | Bei Role-Downgrade sofort aus BuildingConsumption heraus | entschieden |
+| D10 | Feature-Flag fuer Rollout (ja/nein) | Ja, mit gestaffeltem Rollout | entschieden |
+| D11 | Session-Speicherort (`localStorage` vs. `sessionStorage`) | localStorage | entschieden |
+| D12 | Logging/Monitoring-Tiefe (minimal vs. erweitert) | Erweitert: Events + Errors | entschieden |
+| D13 | PIN-UX bei Fehlern (generisch vs. genaue Fehlermeldung) | Generische Fehlermeldung | entschieden |
+| D14 | Sicherheitsregel bei manipulierten Session-Daten | Sofort verwerfen + Logout + Warn-Log | entschieden |
+
 ## Schrittplan
 
 | Nr. | Schritt | Status | Umsetzung/Notizen |
