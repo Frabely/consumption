@@ -76,13 +76,24 @@ Status-Legende:
   - Migrations-Entry-Point von Legacy v0 (`key`) auf v1 (`userId`).
   - Einheitlicher Parse-Flow mit Validierungsresultat fuer die nachfolgende Rehydration.
 
+## Ergebnis Schritt 3: Auth-Status im Store (verbindlich)
+- Implementiert in:
+  - `store/reducer/authStatus.tsx`
+  - `store/reducer/authStatus.spec.ts`
+  - `store/store.tsx`
+  - `store/selectors.ts`
+- Enthalten:
+  - Neuer zentraler `authStatus` Slice mit den Statuswerten `unknown`, `authenticated`, `unauthenticated`.
+  - Explizite Actions zum Setzen der Stati (`setAuthStatus*`).
+  - Zentraler Selector `selectAuthStatus` fuer nachfolgende Rehydration-/Guard-Implementierung.
+
 ## Schrittplan
 
 | Nr. | Schritt | Status | Umsetzung/Notizen |
 |---|---|---|---|
 | 1 | Auth-Zielbild finalisieren: Session-Verhalten, Ablaufzeit, Logout-Regeln, Fehlerfaelle | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 1: Auth-Zielbild (verbindlich)" und `docs/login-auth-target-state.md`. |
 | 2 | Session-Contract definieren (`schemaVersion`, Felder, TTL, Validierungsregeln, Migrationsregeln) | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 2: Session-Contract (verbindlich)". |
-| 3 | Auth-Status im Store definieren (`unknown`, `authenticated`, `unauthenticated`) | offen | Noch offen |
+| 3 | Auth-Status im Store definieren (`unknown`, `authenticated`, `unauthenticated`) | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 3: Auth-Status im Store (verbindlich)". |
 | 4 | Session-Persistenz einbauen (z. B. `localStorage` mit `user`, `expiresAt`, `version`) | offen | Noch offen |
 | 5 | Versionierte Rehydration inkl. Fallback: ungueltige/alte Session verwerfen und neu einloggen | offen | Noch offen |
 | 6 | Session-Rehydration beim App-Start einbauen (vor Render von Login/Home) | offen | Noch offen |
@@ -113,4 +124,5 @@ Status-Legende:
 - 2026-02-19: Datei erstellt.
 - 2026-02-19: Schritt 1 als verbindliche technische Spezifikation in `docs/login-auth-target-state.md` festgehalten.
 - 2026-02-19: Schritt 2 als Code-Artefakt mit Validator/Migration in `domain/authSessionContract.ts` umgesetzt.
+- 2026-02-19: Schritt 3 mit zentralem `authStatus` Slice/Selector im Store umgesetzt.
 

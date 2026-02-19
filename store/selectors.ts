@@ -15,3 +15,4 @@ export const selectLoadingStation = (state: RootState) => state.loadingStation;
 export const selectDate = (state: RootState) => state.date;
 export const selectId = (state: RootState) => state.id;
 export const selectIsChangingData = (state: RootState) => state.isChangingData;
+export const selectAuthStatus = (state: RootState) => state.authStatus;
