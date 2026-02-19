@@ -83,8 +83,7 @@ describe("CustomSelect component", () => {
         const mouseHandler = addEventListener.mock.calls.find((call) => call[0] === "mousedown")?.[1] as ((event: {target: unknown}) => void);
         mouseHandler?.({target: {}});
         expect(setIsExpanded).toHaveBeenCalledWith(false);
-
-        const cleanup = removeEventListener.mock.calls.find((call) => call[0] === "mousedown");
-        expect(cleanup).toBeUndefined();
+        expect(addEventListener).toHaveBeenCalledWith("mousedown", expect.any(Function));
+        expect(removeEventListener).not.toHaveBeenCalled();
     });
 });

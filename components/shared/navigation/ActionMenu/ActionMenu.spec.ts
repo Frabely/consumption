@@ -30,6 +30,25 @@ function findElements(node: unknown, predicate: (element: ReactElementLike) => b
 }
 
 describe("ActionMenu component", () => {
+    it("renders closed state by default", async () => {
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: ActionMenu} = await import("./ActionMenu");
+
+        const html = renderToStaticMarkup(createElement(ActionMenu, {
+            actions: [
+                {id: "home", label: "Home", icon: faArrowRight, onClick: () => undefined}
+            ],
+            primaryAction: {
+                icon: faAdd,
+                onClick: () => undefined
+            }
+        }));
+
+        expect(html).toContain("aria-expanded=\"false\"");
+        expect(html).not.toContain("Home");
+    });
+
     it("toggles menu, executes actions and forwards primary/select actions", async () => {
         vi.resetModules();
         const setMenuOpen = vi.fn();

@@ -129,16 +129,11 @@ describe("DownloadBuildingCsv logic", () => {
         const {
             element,
             dispatch,
-            setCurrentDateValue,
             getFieldValuesForExport,
             createObjectURL,
             createElement,
             anchor
         } = await buildComponent();
-
-        const monthInput = findElements(element, (currentElement) => currentElement.type === "input" && currentElement.props?.type === "month")[0];
-        monthInput?.props?.onChange?.({target: {value: "2025-12"}});
-        expect(setCurrentDateValue).toHaveBeenCalledWith({year: "2025", month: "12"});
 
         const buttons = findElements(element, (currentElement) => currentElement.type === "button");
         buttons[0]?.props?.onClick?.();
@@ -158,5 +153,12 @@ describe("DownloadBuildingCsv logic", () => {
         noDataDownload?.props?.onClick?.();
         await Promise.resolve();
         expect(globalThis.alert).toHaveBeenCalled();
+    });
+
+    it("updates date state when a valid month is selected", async () => {
+        const {element, setCurrentDateValue} = await buildComponent();
+        const monthInput = findElements(element, (currentElement) => currentElement.type === "input" && currentElement.props?.type === "month")[0];
+        monthInput?.props?.onChange?.({target: {value: "2025-12"}});
+        expect(setCurrentDateValue).toHaveBeenCalledWith({year: "2025", month: "12"});
     });
 });

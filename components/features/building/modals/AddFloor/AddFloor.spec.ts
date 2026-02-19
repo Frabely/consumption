@@ -55,6 +55,9 @@ function findElements(node: unknown, predicate: (element: ReactElementLike) => b
 async function buildComponent({
     modalState = ModalState.AddFloor,
     currentFlat,
+    roomNameInput = "",
+    fieldNameInput = "",
+    currentSelectedRoom,
     canAddRoom = false,
     canAddField = false,
     createFlatRejects = false,
@@ -67,6 +70,9 @@ async function buildComponent({
         position: number;
         rooms: Array<{ id: string; name: string; position: number; fields: Array<{ id: string; name: string; position: number }> }>;
     };
+    roomNameInput?: string;
+    fieldNameInput?: string;
+    currentSelectedRoom?: { id: string; name: string; position: number; fields: Array<{ id: string; name: string; position: number }> } | undefined;
     canAddRoom?: boolean;
     canAddField?: boolean;
     createFlatRejects?: boolean;
@@ -85,31 +91,34 @@ async function buildComponent({
     const CustomButtonMock = function CustomButtonMock() {
         return null;
     };
+    const setFlatName = vi.fn();
+    const setRoomNameInput = vi.fn();
+    const setRooms = vi.fn();
+    const setFieldNameInput = vi.fn();
+    const setCurrentSelectedRoom = vi.fn();
     vi.doMock("react", async () => {
         const actual = await vi.importActual<typeof import("react")>("react");
         const flatName = currentFlat?.name ?? "";
-        const roomNameInput = "";
         const rooms = currentFlat?.rooms ?? [];
-        const fieldNameInput = "";
-        const selectedRoom = currentFlat?.rooms?.[0];
+        const selectedRoom = currentSelectedRoom ?? currentFlat?.rooms?.[0];
         let stateCall = 0;
         return {
             ...actual,
             useState: () => {
                 stateCall += 1;
                 if (stateCall === 1) {
-                    return [flatName, vi.fn()] as const;
+                    return [flatName, setFlatName] as const;
                 }
                 if (stateCall === 2) {
-                    return [roomNameInput, vi.fn()] as const;
+                    return [roomNameInput, setRoomNameInput] as const;
                 }
                 if (stateCall === 3) {
-                    return [rooms, vi.fn()] as const;
+                    return [rooms, setRooms] as const;
                 }
                 if (stateCall === 4) {
-                    return [fieldNameInput, vi.fn()] as const;
+                    return [fieldNameInput, setFieldNameInput] as const;
                 }
-                return [selectedRoom, vi.fn()] as const;
+                return [selectedRoom, setCurrentSelectedRoom] as const;
             }
         };
     });
@@ -152,7 +161,10 @@ async function buildComponent({
         dispatch,
         createFlat,
         updateFlat,
-        CustomButtonMock
+        CustomButtonMock,
+        setRooms,
+        setCurrentSelectedRoom,
+        setRoomNameInput
     };
 }
 
@@ -227,6 +239,7 @@ describe("AddFloor logic", () => {
 
     it("prevents field add when no room is selected", async () => {
         const {element} = await buildComponent({
+            currentSelectedRoom: undefined,
             canAddField: true
         });
 
@@ -239,5 +252,29 @@ describe("AddFloor logic", () => {
         addFieldButton?.props?.onClick?.({preventDefault: vi.fn()});
 
         expect(globalThis.alert).toHaveBeenCalledWith(de.messages.selectARoom);
+    });
+
+    it("adds room when room input is valid and add-room is enabled", async () => {
+        const {element, setRooms, setCurrentSelectedRoom, setRoomNameInput} = await buildComponent({
+            roomNameInput: "Office",
+            canAddRoom: true
+        });
+
+        const addButtons = findElements(element, (currentElement) => {
+            const className = currentElement.props?.className;
+            return typeof className === "string" && className.includes("addIconButton");
+        });
+
+        addButtons[0]?.props?.onClick?.({preventDefault: vi.fn()});
+        expect(setRooms).toHaveBeenCalledWith([
+            {id: "", name: "Office", fields: [], position: 0}
+        ]);
+        expect(setCurrentSelectedRoom).toHaveBeenCalledWith({
+            id: "",
+            name: "Office",
+            fields: [],
+            position: 0
+        });
+        expect(setRoomNameInput).toHaveBeenCalledWith("");
     });
 });

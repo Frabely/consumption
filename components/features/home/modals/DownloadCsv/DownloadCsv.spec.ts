@@ -138,16 +138,11 @@ describe("DownloadCsv component", () => {
         const {
             element,
             dispatch,
-            setCurrentDateValue,
             getFullDataSet,
             createObjectURL,
             createElement,
             anchor
         } = await buildComponent();
-
-        const monthInput = findElement(element, (currentElement) => currentElement.type === "input" && currentElement.props?.type === "month");
-        monthInput?.props?.onChange?.({target: {value: "2025-12"}});
-        expect(setCurrentDateValue).toHaveBeenCalledWith({year: "2025", month: "12"});
 
         const buttons = findElements(element, (currentElement) => currentElement.type === "button");
         const abortButton = buttons[0];
@@ -164,6 +159,13 @@ describe("DownloadCsv component", () => {
         expect(anchor.download).toBe("2026-02.csv");
         expect(anchor.href).toBe("blob:test");
         expect(anchor.click).toHaveBeenCalled();
+    });
+
+    it("updates date state when a valid month value is selected", async () => {
+        const {element, setCurrentDateValue} = await buildComponent();
+        const monthInput = findElement(element, (currentElement) => currentElement.type === "input" && currentElement.props?.type === "month");
+        monthInput?.props?.onChange?.({target: {value: "2025-12"}});
+        expect(setCurrentDateValue).toHaveBeenCalledWith({year: "2025", month: "12"});
     });
 
     it("shows no-data alert when dataset result is empty", async () => {
