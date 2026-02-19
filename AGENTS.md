@@ -73,6 +73,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 ## 9. Tests und Verifikation
 - Fuer neue Features, Bugfixes und Refactorings sollen passende Tests erstellt oder bestehende Tests erweitert werden.
 - Bei Logik-Aenderungen mindestens die betroffenen Flows lokal pruefen.
+- Bevorzuge in Component-Tests reale Render-/Interaction-Tests (echte User-Pfade) statt starkem Hook-Mocking; Hook-Mocking nur gezielt und minimal einsetzen, wenn ein Flow anders nicht sinnvoll testbar ist.
 - Vor Abschluss mindestens:
   - Type-Check/Lint erfolgreich
   - Relevante Build-/Run-Pfade getestet
