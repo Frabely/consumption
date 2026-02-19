@@ -20,7 +20,7 @@ It is the implementation artifact for roadmap step 1 and is the source of truth 
 3. If invalid: clear session, set auth state to `unauthenticated`.
 4. If valid: hydrate store, set auth state to `authenticated`.
 5. If online: run backend/Firebase validation.
-6. If offline: allow temporary session usage and re-validate when connectivity returns.
+6. If offline and a login/network request fails: do not log in, keep state `unauthenticated`, and show a clear "connection required" message.
 
 ## Security Rules
 - Do not persist secrets/tokens beyond required session metadata.
@@ -45,6 +45,5 @@ It is the implementation artifact for roadmap step 1 and is the source of truth 
 
 ## Acceptance Criteria for Step 1
 - Target behavior is documented and agreed.
-- Rules for startup, expiry, logout, offline fallback, and guard behavior are explicit.
+- Rules for startup, expiry, logout, offline login handling, and guard behavior are explicit.
 - Next implementation steps can reference this file without ambiguity.
-

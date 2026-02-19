@@ -20,7 +20,7 @@ Status-Legende:
 | D2 | Session-Dauer (z. B. 7/14/30 Tage) | 90 Tage | entschieden |
 | D3 | Expiry-Strategie (fix ab Login vs. rolling bei Aktivitaet) | Rolling Expiry bei Nutzung | entschieden |
 | D4 | Verhalten bei abgelaufener Session (sofort Logout vs. Grace-Period) | Sofort Logout + Login-Screen | entschieden |
-| D5 | Verhalten bei Offline-Start mit vorhandener Session | Temporaer erlauben, bei naechster Konnektivitaet validieren | entschieden |
+| D5 | Verhalten bei Offline-Start / Offline-Login-Request | Phase 1: kein Login bei Offline/Netzwerkfehler; klare Meldung an Nutzer | entschieden |
 | D6 | Persistenz-Scope (nur User+Role+DefaultCar vs. mehr) | Minimal: userId, role, defaultCar, expiresAt, schemaVersion | entschieden |
 | D7 | Rehydration-Validierung (strict verwerfen bei kleinsten Fehlern vs. tolerant) | Strict: bei Fehler Session verwerfen | entschieden |
 | D8 | Cross-Tab-Verhalten (Logout in allen Tabs sofort) | Logout/Reset in allen Tabs sofort synchronisieren | entschieden |
@@ -41,7 +41,8 @@ Status-Legende:
   - Bei ungueltiger Session: Session loeschen, Status `unauthenticated`.
 - Start-Validierung gegen Backend/Firebase:
   - Bei Online-Verfuegbarkeit Session validieren.
-  - Bei Offline-Start temporaer erlauben, Validierung nachholen sobald wieder online.
+  - Phase 1: Bei Offline/Netzwerkfehler kein Login; stattdessen klare Meldung anzeigen.
+  - Spaetere Ausbaustufe: Offline-Session-Verhalten erneut einfuehren, sobald technisch freigegeben.
 
 ### Ablaufzeit / Expiry
 - Session-Dauer: 90 Tage.
@@ -58,7 +59,7 @@ Status-Legende:
   - Sofort verwerfen, ausloggen, Warn-Log schreiben.
 - Backend-Validierung faellt fehl:
   - Session nicht blind behalten; bei harter Invalidierung ausloggen.
-  - Bei temporarem Netzfehler im Offline-Fallback bleiben und spaeter erneut validieren.
+  - Bei temporarem Netzfehler im Login-Flow nicht einloggen und Nutzer eindeutig informieren.
 - Rollenwechsel:
   - Bei Role-Downgrade sofort aus geschuetzten Bereichen (z. B. BuildingConsumption) herausfuehren.
 

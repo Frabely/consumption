@@ -1,8 +1,9 @@
 import {ModalState, Role} from "@/constants/enums";
 import {House} from "@/constants/types";
+import {canAccessBuildingConsumptionForRole} from "@/domain/authTargetState";
 
 export const canAccessBuildingConsumption = (userKey: string | undefined, userRole: Role | undefined): boolean =>
-    !!userKey && userRole === Role.Admin;
+    !!userKey && canAccessBuildingConsumptionForRole(userRole);
 
 export const resolveFloorModalState = (isFloorFieldChange: boolean): ModalState =>
     isFloorFieldChange ? ModalState.ChangeFloorFields : ModalState.AddFloorData;
