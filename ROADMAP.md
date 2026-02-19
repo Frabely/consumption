@@ -34,8 +34,6 @@
   - Kurzfristige Regel (Phase 1):
     - Kein Login bei Offline/Netzwerkfehlern.
     - Nutzer bekommt eine klare Meldung, dass Login ohne Verbindung aktuell nicht moeglich ist.
-  - Geplanter spaeterer Umbau (Phase 2):
-    - Offline-Verhalten im Login erneut aufgreifen und auf ein robustes Session-/Offline-Modell umstellen, sobald die technischen Voraussetzungen dafuer vorhanden sind.
 
 ### 3.2 Building Consumption Overhaul
 - Ziele:
