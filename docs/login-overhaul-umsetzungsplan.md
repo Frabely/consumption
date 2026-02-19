@@ -1,4 +1,4 @@
-# Login Overhaul Umsetzungsplan
+﻿# Login Overhaul Umsetzungsplan
 
 Ziel: Nutzer sollen beim Start der App in der Regel eingeloggt bleiben und nicht jedes Mal die PIN erneut eingeben muessen.
 
@@ -65,14 +65,23 @@ Status-Legende:
 
 ### UI/UX-Ziel
 - Nutzer bleibt in der Regel eingeloggt und muss beim normalen Start nicht erneut PIN eingeben.
-- Fehlermeldungen bleiben generisch (keine unnötige Detailpreisgabe).
+- Fehlermeldungen bleiben generisch (keine unnÃ¶tige Detailpreisgabe).
+
+## Ergebnis Schritt 2: Session-Contract (verbindlich)
+- Implementiert in:
+  - `domain/authSessionContract.ts`
+  - `domain/authSessionContract.spec.ts`
+- Enthalten:
+  - Strikte Validierung des Persistenz-Schemas (Version, Pflichtfelder, Typen).
+  - Migrations-Entry-Point von Legacy v0 (`key`) auf v1 (`userId`).
+  - Einheitlicher Parse-Flow mit Validierungsresultat fuer die nachfolgende Rehydration.
 
 ## Schrittplan
 
 | Nr. | Schritt | Status | Umsetzung/Notizen |
 |---|---|---|---|
 | 1 | Auth-Zielbild finalisieren: Session-Verhalten, Ablaufzeit, Logout-Regeln, Fehlerfaelle | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 1: Auth-Zielbild (verbindlich)" und `docs/login-auth-target-state.md`. |
-| 2 | Session-Contract definieren (`schemaVersion`, Felder, TTL, Validierungsregeln, Migrationsregeln) | offen | Noch offen |
+| 2 | Session-Contract definieren (`schemaVersion`, Felder, TTL, Validierungsregeln, Migrationsregeln) | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 2: Session-Contract (verbindlich)". |
 | 3 | Auth-Status im Store definieren (`unknown`, `authenticated`, `unauthenticated`) | offen | Noch offen |
 | 4 | Session-Persistenz einbauen (z. B. `localStorage` mit `user`, `expiresAt`, `version`) | offen | Noch offen |
 | 5 | Versionierte Rehydration inkl. Fallback: ungueltige/alte Session verwerfen und neu einloggen | offen | Noch offen |
@@ -103,3 +112,5 @@ Status-Legende:
 ## Aenderungslog
 - 2026-02-19: Datei erstellt.
 - 2026-02-19: Schritt 1 als verbindliche technische Spezifikation in `docs/login-auth-target-state.md` festgehalten.
+- 2026-02-19: Schritt 2 als Code-Artefakt mit Validator/Migration in `domain/authSessionContract.ts` umgesetzt.
+
