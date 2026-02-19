@@ -160,6 +160,17 @@ Status-Legende:
   - Logout setzt `authStatus=unauthenticated` und navigiert nach Home.
   - Optionaler Dataset-Reset fuer Home-Logout ist zentral steuerbar.
 
+## Ergebnis Schritt 10: Session-Validierung mit Fehler-Fallback (verbindlich)
+
+- Implementiert in:
+  - `domain/authSessionValidation.ts`
+  - `domain/authSessionValidation.spec.ts`
+  - `app/page.tsx`
+- Enthalten:
+  - Aktive Session wird gegen Backend/Firebase validiert.
+  - Harte Invalidierung fuehrt zu Session-Cleanup und `authStatus=unauthenticated`.
+  - Temporaere Validierungsfehler liefern einen definierten `unavailable`-Fallback ohne harten Logout.
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -173,7 +184,7 @@ Status-Legende:
 | 7   | Start-Flow absichern: solange Status `unknown` nur Loader/Splash rendern                            | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 7: Startup-Flow-Absicherung mit Loader (verbindlich)".                 |
 | 8   | Login-Flow anpassen: bei Erfolg Session schreiben, Store konsistent setzen                          | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 8: Login-Flow mit Session-Persistenz (verbindlich)".                   |
 | 9   | Logout-Flow anpassen: Session sicher entfernen, Store resetten, sauber redirecten                   | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 9: Logout-Flow mit Session-Cleanup (verbindlich)".                     |
-| 10  | Session-Validierung ergaenzen (leichtgewichtig gegen Backend/Firebase), inkl. Fallback bei Fehlern  | offen     | Noch offen                                                                                               |
+| 10  | Session-Validierung ergaenzen (leichtgewichtig gegen Backend/Firebase), inkl. Fallback bei Fehlern  | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 10: Session-Validierung mit Fehler-Fallback (verbindlich)".            |
 | 11  | Session-Ablauf behandeln (abgelaufen -> Logout/Relogin)                                             | offen     | Noch offen                                                                                               |
 | 12  | Guarding fuer geschuetzte Bereiche vereinheitlichen (Home/BuildingConsumption)                      | offen     | Noch offen                                                                                               |
 | 13  | Cross-Tab-Sync ergaenzen (Logout/Session-Reset via `storage`-Event)                                 | offen     | Noch offen                                                                                               |
@@ -206,3 +217,4 @@ Status-Legende:
 - 2026-02-19: Schritt 7 mit Loader-Gating fuer `authStatus=unknown` in `app/page.tsx` umgesetzt.
 - 2026-02-19: Schritt 8 mit Login-Session-Persistenz und `authStatus`-Setzen umgesetzt.
 - 2026-02-19: Schritt 9 mit zentralem Logout-Cleanup in `domain/authLogout.ts` umgesetzt.
+- 2026-02-19: Schritt 10 mit Backend-Session-Validierung/Fallback in `domain/authSessionValidation.ts` umgesetzt.

@@ -10,14 +10,21 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import Home from "@/components/features/home/pages/Home";
 import { Page } from "@/constants/enums";
 import BuildingConsumption from "@/components/features/building/pages/BuildingConsumption";
-import { selectAuthStatus, selectCurrentPage } from "@/store/selectors";
+import {
+  selectAuthStatus,
+  selectCurrentPage,
+  selectCurrentUser,
+} from "@/store/selectors";
 import { restoreAuthOnAppStart } from "@/domain/authStartup";
 import Loading from "@/components/features/home/Loading";
 import { shouldRenderAuthBootLoader } from "@/domain/authBootGuard";
+import { AUTH_STATUS } from "@/domain/authTargetState";
+import { validateAndApplyActiveSession } from "@/domain/authSessionValidation";
 
 export default function App() {
   const currentPage = useAppSelector(selectCurrentPage);
   const authStatus = useAppSelector(selectAuthStatus);
+  const currentUser = useAppSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
   const dimension = useWindowDimensions();
 
@@ -28,6 +35,13 @@ export default function App() {
   useEffect(() => {
     restoreAuthOnAppStart({ dispatch });
   }, [dispatch]);
+
+  useEffect(() => {
+    if (authStatus !== AUTH_STATUS.AUTHENTICATED || !currentUser.key) {
+      return;
+    }
+    void validateAndApplyActiveSession({ userId: currentUser.key, dispatch });
+  }, [authStatus, currentUser.key, dispatch]);
 
   const showAuthBootLoader = shouldRenderAuthBootLoader(authStatus);
 
