@@ -20,7 +20,13 @@ import Loading from "@/components/features/home/Loading";
 import { shouldRenderAuthBootLoader } from "@/domain/authBootGuard";
 import { AUTH_STATUS } from "@/domain/authTargetState";
 import { validateAndApplyActiveSession } from "@/domain/authSessionValidation";
+import { startSessionExpiryWatcher } from "@/domain/authSessionExpiry";
+import { performAuthLogout } from "@/domain/authLogout";
 
+/**
+ * Bootstraps auth/session state and renders the correct top-level application page.
+ * @returns Rendered application root element.
+ */
 export default function App() {
   const currentPage = useAppSelector(selectCurrentPage);
   const authStatus = useAppSelector(selectAuthStatus);
@@ -42,6 +48,16 @@ export default function App() {
     }
     void validateAndApplyActiveSession({ userId: currentUser.key, dispatch });
   }, [authStatus, currentUser.key, dispatch]);
+
+  useEffect(() => {
+    if (authStatus !== AUTH_STATUS.AUTHENTICATED) {
+      return;
+    }
+
+    return startSessionExpiryWatcher({
+      onExpire: () => performAuthLogout({ dispatch, resetDataSet: true }),
+    });
+  }, [authStatus, dispatch]);
 
   const showAuthBootLoader = shouldRenderAuthBootLoader(authStatus);
 

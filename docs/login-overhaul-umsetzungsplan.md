@@ -171,6 +171,17 @@ Status-Legende:
   - Harte Invalidierung fuehrt zu Session-Cleanup und `authStatus=unauthenticated`.
   - Temporaere Validierungsfehler liefern einen definierten `unavailable`-Fallback ohne harten Logout.
 
+## Ergebnis Schritt 11: Session-Ablaufbehandlung zur Laufzeit (verbindlich)
+
+- Implementiert in:
+  - `domain/authSessionExpiry.ts`
+  - `domain/authSessionExpiry.spec.ts`
+  - `app/page.tsx`
+- Enthalten:
+  - Persistierte Session wird waehrend laufender App periodisch auf Ablauf geprueft.
+  - Bei Ablauf erfolgt automatischer Logout mit Session-Cleanup und Redirect.
+  - Ablauf-Trigger ist idempotent (einmalig pro Ablaufzustand).
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -185,7 +196,7 @@ Status-Legende:
 | 8   | Login-Flow anpassen: bei Erfolg Session schreiben, Store konsistent setzen                          | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 8: Login-Flow mit Session-Persistenz (verbindlich)".                   |
 | 9   | Logout-Flow anpassen: Session sicher entfernen, Store resetten, sauber redirecten                   | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 9: Logout-Flow mit Session-Cleanup (verbindlich)".                     |
 | 10  | Session-Validierung ergaenzen (leichtgewichtig gegen Backend/Firebase), inkl. Fallback bei Fehlern  | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 10: Session-Validierung mit Fehler-Fallback (verbindlich)".            |
-| 11  | Session-Ablauf behandeln (abgelaufen -> Logout/Relogin)                                             | offen     | Noch offen                                                                                               |
+| 11  | Session-Ablauf behandeln (abgelaufen -> Logout/Relogin)                                             | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 11: Session-Ablaufbehandlung zur Laufzeit (verbindlich)".              |
 | 12  | Guarding fuer geschuetzte Bereiche vereinheitlichen (Home/BuildingConsumption)                      | offen     | Noch offen                                                                                               |
 | 13  | Cross-Tab-Sync ergaenzen (Logout/Session-Reset via `storage`-Event)                                 | offen     | Noch offen                                                                                               |
 | 14  | Feature-Flag fuer Rollout einbauen (schneller Rollback ohne Hotfix-Refactor)                        | offen     | Noch offen                                                                                               |
@@ -218,3 +229,4 @@ Status-Legende:
 - 2026-02-19: Schritt 8 mit Login-Session-Persistenz und `authStatus`-Setzen umgesetzt.
 - 2026-02-19: Schritt 9 mit zentralem Logout-Cleanup in `domain/authLogout.ts` umgesetzt.
 - 2026-02-19: Schritt 10 mit Backend-Session-Validierung/Fallback in `domain/authSessionValidation.ts` umgesetzt.
+- 2026-02-19: Schritt 11 mit Session-Expiry-Watcher und Auto-Logout in `domain/authSessionExpiry.ts` umgesetzt.
