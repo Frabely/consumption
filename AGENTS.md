@@ -13,7 +13,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Bewerte Architektur, Lesbarkeit, Wartbarkeit und Risikomanagement konsequent aus Senior-Developer-Sicht.
 - Wende SOLID- und DRY-Prinzipien konsequent an.
 - Bevorzuge eine klare, gut erweiterbare Architektur mit sauber getrennten Verantwortlichkeiten.
-- Git-Workflow: `git fetch` und `git pull` duerfen immer ohne Rueckfrage ausgefuehrt werden. `git push` darf ebenfalls ohne Rueckfrage ausgefuehrt werden, ausser auf den Branches `master` und `production` (dort nur mit expliziter User-Anweisung).
+- Git-Workflow: `git fetch`, `git pull` und `git commit` duerfen immer ohne Rueckfrage ausgefuehrt werden (auch wenn im Chat nicht explizit zum Commit aufgefordert wurde). `git push` darf ebenfalls ohne Rueckfrage ausgefuehrt werden, ausser auf den Branches `master` und `production` (dort nur mit expliziter User-Anweisung).
 
 ## 2. TypeScript-Standards
 - `strict` bleibt aktiv; keine Aufweichung in `tsconfig.json`.
