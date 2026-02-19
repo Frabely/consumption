@@ -58,7 +58,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     useEffect(() => {
         if (modalState === ModalState.AddCarData) {
             dispatch(setPower(""));
-            if (currentCar.kilometer) {
+            if (currentCar.kilometer !== undefined) {
                 dispatch(setKilometer(currentCar.kilometer.toString()));
             }
             dispatch(setIsChangingData(false));
@@ -71,7 +71,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     }, [currentCar.kilometer, dispatch, modalState]);
 
     useEffect(() => {
-        if (currentCar.kilometer) {
+        if (currentCar.kilometer !== undefined) {
             dispatch(setKilometer(currentCar.kilometer.toString()))
         }
     }, [currentCar.kilometer, dispatch])
@@ -84,7 +84,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 
     const setModalToDefault = () => {
         dispatch(setPower(''))
-        if (currentCar.kilometer)
+        if (currentCar.kilometer !== undefined)
             dispatch(setKilometer(currentCar.kilometer.toString()))
         dispatch(setIsChangingData(false))
         dispatch(setLoadingStation(DEFAULT_LOADING_STATION))
@@ -96,7 +96,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 
     const onAddDataClickHandler = () => {
         const kilometerValue = parseIntegerOrNull(kilometer)
-        if (currentCar.kilometer && currentCar.name && kilometerValue !== null && currentCar.kilometer < kilometerValue) {
+        if (currentCar.kilometer !== undefined && currentCar.name && kilometerValue !== null && currentCar.kilometer < kilometerValue) {
             const dateNow = new Date()
             dispatch(setDate(dateNow))
             const carKilometersPreUpdate = currentCar.kilometer
@@ -123,7 +123,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 
     const onChangeDataClickHandler = () => {
         const kilometerValue = parseIntegerOrNull(kilometer)
-        if (currentCar.kilometer && currentCar.name && currentCar.prevKilometer && kilometerValue !== null && currentCar.prevKilometer < kilometerValue) {
+        if (currentCar.kilometer !== undefined && currentCar.name && currentCar.prevKilometer !== undefined && kilometerValue !== null && currentCar.prevKilometer < kilometerValue) {
             dispatch(updateCarKilometers(kilometerValue))
             changeDataSetInCollection(currentCar.name,
                 date,
@@ -216,7 +216,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                         value={kilometer}
                         className={styles.innerInput}
                         type={"number"}
-                        min={currentCar.kilometer ? changingData ? prevKilometers + 1 : currentCar.kilometer : currentCar.kilometer}
+                        min={currentCar.kilometer !== undefined ? changingData ? prevKilometers + 1 : currentCar.kilometer : currentCar.kilometer}
                         max={999999}
                         step={1.0}
                         onChange={onKilometerChange}

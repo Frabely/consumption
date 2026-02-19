@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useAppDispatch} from "@/store/hooks";
 import {useAppSelector} from "@/store/hooks";
-import {loadMainPageData} from "@/constants/constantData";
+import {cars, loadMainPageData} from "@/constants/constantData";
 import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setIsLoading} from "@/store/reducer/isLoading";
 import Loading from "@/components/features/home/Loading";
@@ -24,8 +24,10 @@ import {
     isAddDataModalOpen,
     isDownloadCsvModalOpen,
     isEvaluationTabSelected,
+    resolveHydratedCurrentCar,
     resolvePrevKilometers
 } from "@/components/features/home/pages/Home/Home.logic";
+import {setCurrentCar} from "@/store/reducer/currentCar";
 
 export default function Home({}: HomeProps) {
     const isLoading = useAppSelector(selectIsLoading)
@@ -50,6 +52,28 @@ export default function Home({}: HomeProps) {
             console.error(error.message)
         })
     }, [dispatch]);
+
+    useEffect(() => {
+        if (isLoading) {
+            return
+        }
+        if (!currentUser.key) {
+            return
+        }
+        if (currentCar.kilometer !== undefined) {
+            return
+        }
+
+        const hydratedCurrentCar = resolveHydratedCurrentCar({
+            carsList: cars,
+            currentCarName: currentCar.name,
+            defaultCarName: currentUser.defaultCar
+        })
+        if (!hydratedCurrentCar) {
+            return
+        }
+        dispatch(setCurrentCar(hydratedCurrentCar))
+    }, [currentCar.kilometer, currentCar.name, currentUser.defaultCar, currentUser.key, dispatch, isLoading]);
 
 
 
