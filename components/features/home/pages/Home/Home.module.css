@@ -36,8 +36,12 @@
 }
 
 .tabContentAuto {
-    flex: 0 0 auto;
-    overflow: visible;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 @media (min-width: 900px) {
