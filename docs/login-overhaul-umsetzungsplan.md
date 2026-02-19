@@ -127,6 +127,17 @@ Status-Legende:
   - Bei gueltiger Session werden `currentUser`, `currentCar` und `authStatus=authenticated` gesetzt.
   - Bei fehlender/ungueltiger Session wird auf `authStatus=unauthenticated` gesetzt.
 
+## Ergebnis Schritt 7: Startup-Flow-Absicherung mit Loader (verbindlich)
+
+- Implementiert in:
+  - `domain/authBootGuard.ts`
+  - `domain/authBootGuard.spec.ts`
+  - `app/page.tsx`
+- Enthalten:
+  - Solange `authStatus=unknown`, wird ein dedizierter Boot-Loader gerendert.
+  - Home/Login werden erst nach Abschluss des Startup-Restore-Flows gerendert.
+  - Verhindert Login-Flicker waehrend der initialen Session-Wiederherstellung.
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -137,7 +148,7 @@ Status-Legende:
 | 4   | Session-Persistenz einbauen (z. B. `localStorage` mit `user`, `expiresAt`, `version`)               | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 4: Session-Persistenz (verbindlich)".                                  |
 | 5   | Versionierte Rehydration inkl. Fallback: ungueltige/alte Session verwerfen und neu einloggen        | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 5: Versionierte Rehydration mit Fallback (verbindlich)".               |
 | 6   | Session-Rehydration beim App-Start einbauen (vor Render von Login/Home)                             | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 6: Session-Restore beim App-Start (verbindlich)".                      |
-| 7   | Start-Flow absichern: solange Status `unknown` nur Loader/Splash rendern                            | offen     | Noch offen                                                                                               |
+| 7   | Start-Flow absichern: solange Status `unknown` nur Loader/Splash rendern                            | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 7: Startup-Flow-Absicherung mit Loader (verbindlich)".                 |
 | 8   | Login-Flow anpassen: bei Erfolg Session schreiben, Store konsistent setzen                          | offen     | Noch offen                                                                                               |
 | 9   | Logout-Flow anpassen: Session sicher entfernen, Store resetten, sauber redirecten                   | offen     | Noch offen                                                                                               |
 | 10  | Session-Validierung ergaenzen (leichtgewichtig gegen Backend/Firebase), inkl. Fallback bei Fehlern  | offen     | Noch offen                                                                                               |
@@ -170,3 +181,4 @@ Status-Legende:
 - 2026-02-19: Schritt 4 mit persistenter Session-Storage-Logik in `domain/authSessionStorage.ts` umgesetzt.
 - 2026-02-19: Schritt 5 mit versionierter Restore/Fallback-Entscheidung in `domain/authSessionRestore.ts` umgesetzt.
 - 2026-02-19: Schritt 6 mit App-Start-Restore in `domain/authStartup.ts` und `app/page.tsx` umgesetzt.
+- 2026-02-19: Schritt 7 mit Loader-Gating fuer `authStatus=unknown` in `app/page.tsx` umgesetzt.
