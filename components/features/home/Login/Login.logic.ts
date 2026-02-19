@@ -9,7 +9,6 @@ import {
   buildPersistedAuthSession,
   persistAuthSession,
 } from "@/utils/authentication/session/sessionStorage";
-import { isAuthSessionRolloutEnabled } from "@/utils/authentication/session/featureFlag";
 import {
   createAuthTelemetryEvent,
   emitAuthTelemetryEvent,
@@ -37,7 +36,6 @@ export type HandleLoginInputParams = {
   checkUserIdFn?: CheckUserIdFn;
   buildPersistedAuthSessionFn?: BuildPersistedAuthSessionFn;
   persistAuthSessionFn?: PersistAuthSessionFn;
-  isSessionRolloutEnabledFn?: () => boolean;
   emitTelemetryEvent?: typeof emitAuthTelemetryEvent;
 };
 
@@ -116,7 +114,6 @@ export const handleLoginInput = async ({
   checkUserIdFn = checkUserId,
   buildPersistedAuthSessionFn = buildPersistedAuthSession,
   persistAuthSessionFn = persistAuthSession,
-  isSessionRolloutEnabledFn = isAuthSessionRolloutEnabled,
   emitTelemetryEvent = emitAuthTelemetryEvent,
 }: HandleLoginInputParams): Promise<LoginAttemptResult> => {
   if (!isCompleteLoginInput(input)) {
@@ -155,11 +152,9 @@ export const handleLoginInput = async ({
     ...user,
     defaultCar: car?.name ?? user.defaultCar,
   };
-  if (isSessionRolloutEnabledFn()) {
-    const session = buildPersistedAuthSessionFn(sessionUser);
-    if (session) {
-      persistAuthSessionFn({ session });
-    }
+  const session = buildPersistedAuthSessionFn(sessionUser);
+  if (session) {
+    persistAuthSessionFn({ session });
   }
 
   dispatch(setCurrentUser(sessionUser));

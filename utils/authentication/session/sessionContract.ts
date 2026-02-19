@@ -17,13 +17,6 @@ export type AuthSessionValidationResult = {
   issues: AuthSessionValidationIssue[];
 };
 
-type LegacyAuthSessionV0 = {
-  key?: unknown;
-  role?: unknown;
-  defaultCar?: unknown;
-  expiresAt?: unknown;
-};
-
 /**
  * Returns true when a value is a non-null object record.
  * @param value Value to inspect.
@@ -77,37 +70,6 @@ const hasValidBaseFields = (
 };
 
 /**
- * Migrates raw persisted session payloads to the current schema version when possible.
- * @param raw Raw persisted session payload.
- * @returns Migrated session payload or null when migration is not possible.
- */
-export const migrateAuthSessionToCurrentSchema = (
-  raw: unknown,
-): PersistedAuthSession | null => {
-  if (!isObjectRecord(raw)) {
-    return null;
-  }
-
-  if (raw.schemaVersion === AUTH_SESSION_SCHEMA_VERSION) {
-    return raw as PersistedAuthSession;
-  }
-
-  // Legacy v0 support: { key, role, defaultCar, expiresAt } -> v1
-  const legacy = raw as LegacyAuthSessionV0;
-  if (!("schemaVersion" in raw) && typeof legacy.key === "string") {
-    return {
-      schemaVersion: AUTH_SESSION_SCHEMA_VERSION,
-      userId: legacy.key,
-      role: legacy.role as Role,
-      defaultCar: legacy.defaultCar as string,
-      expiresAt: legacy.expiresAt as number,
-    };
-  }
-
-  return null;
-};
-
-/**
  * Validates that a session payload matches the current contract requirements.
  * @param raw Raw persisted session payload.
  * @returns Validation result including issue details.
@@ -138,21 +100,9 @@ export const parsePersistedAuthSession = (
   session: PersistedAuthSession | null;
   validation: AuthSessionValidationResult;
 } => {
-  const migrated = migrateAuthSessionToCurrentSchema(raw);
-  if (!migrated) {
-    const validation = validateAuthSessionContract(raw);
-    return {
-      session: null,
-      validation,
-    };
-  }
-
-  const validation = validateAuthSessionContract(migrated);
+  const validation = validateAuthSessionContract(raw);
   return {
-    session: validation.isValid ? migrated : null,
+    session: validation.isValid ? (raw as PersistedAuthSession) : null,
     validation,
   };
 };
-
-
-

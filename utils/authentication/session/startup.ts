@@ -35,6 +35,15 @@ export type AuthSessionRestoreFailureReason =
   | "invalid_session"
   | "expired_session";
 
+export const AUTH_SESSION_RESTORE_FAILURE_REASONS: Record<
+  Uppercase<AuthSessionRestoreFailureReason>,
+  AuthSessionRestoreFailureReason
+> = {
+  MISSING_SESSION: "missing_session",
+  INVALID_SESSION: "invalid_session",
+  EXPIRED_SESSION: "expired_session",
+};
+
 export type AuthSessionRestoreDecision = {
   status: AuthStatus;
   session: PersistedAuthSession | null;
@@ -57,7 +66,7 @@ export const decideAuthSessionRestore = (
       status: AUTH_STATUS.UNAUTHENTICATED,
       session: null,
       shouldClearPersistedSession: false,
-      reason: "missing_session",
+      reason: AUTH_SESSION_RESTORE_FAILURE_REASONS.MISSING_SESSION,
     };
   }
 
@@ -67,7 +76,7 @@ export const decideAuthSessionRestore = (
       status: AUTH_STATUS.UNAUTHENTICATED,
       session: null,
       shouldClearPersistedSession: true,
-      reason: "invalid_session",
+      reason: AUTH_SESSION_RESTORE_FAILURE_REASONS.INVALID_SESSION,
     };
   }
 
@@ -76,7 +85,7 @@ export const decideAuthSessionRestore = (
       status: AUTH_STATUS.UNAUTHENTICATED,
       session: null,
       shouldClearPersistedSession: true,
-      reason: "expired_session",
+      reason: AUTH_SESSION_RESTORE_FAILURE_REASONS.EXPIRED_SESSION,
     };
   }
 

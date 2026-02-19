@@ -178,36 +178,6 @@ describe("login", () => {
     expect(result.status).toBe("success");
   });
 
-  it("does not persist session when auth-session rollout is disabled", async () => {
-    const dispatch = vi.fn();
-    const user: User = {
-      key: "1234",
-      name: "Test",
-      role: Role.User,
-      defaultCar: CarNames.BMW,
-    };
-    const checkUserIdFn = vi.fn().mockResolvedValue(user);
-    const buildPersistedAuthSessionFn = vi.fn();
-    const persistAuthSessionFn = vi.fn();
-    const emitTelemetryEvent = vi.fn();
-
-    const result = await handleLoginInput({
-      input: "1234",
-      dispatch,
-      checkUserIdFn,
-      buildPersistedAuthSessionFn,
-      persistAuthSessionFn,
-      isSessionRolloutEnabledFn: () => false,
-      emitTelemetryEvent,
-    });
-
-    expect(buildPersistedAuthSessionFn).not.toHaveBeenCalled();
-    expect(persistAuthSessionFn).not.toHaveBeenCalled();
-    expect(dispatch).toHaveBeenCalledWith(setAuthStatusAuthenticated());
-    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
-    expect(result.status).toBe("success");
-  });
-
   it("emits rejected telemetry when user lookup returns no user", async () => {
     const dispatch = vi.fn();
     const checkUserIdFn = vi.fn().mockResolvedValue(undefined);

@@ -8,6 +8,7 @@ import {
 import { setCurrentUser } from "@/store/reducer/currentUser";
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import {
+  AUTH_SESSION_RESTORE_FAILURE_REASONS,
   applyAuthStartupDecision,
   decideAuthSessionRestore,
   restoreAuthOnAppStart,
@@ -62,7 +63,7 @@ describe("authStartup", () => {
       status: AUTH_STATUS.UNAUTHENTICATED,
       session: null,
       shouldClearPersistedSession: false,
-      reason: "missing_session",
+      reason: AUTH_SESSION_RESTORE_FAILURE_REASONS.MISSING_SESSION,
     };
 
     applyAuthStartupDecision({ decision, dispatch, emitTelemetryEvent });
@@ -103,14 +104,16 @@ describe("authStartup", () => {
       status: AUTH_STATUS.UNAUTHENTICATED,
       session: null,
       shouldClearPersistedSession: false,
-      reason: "missing_session",
+      reason: AUTH_SESSION_RESTORE_FAILURE_REASONS.MISSING_SESSION,
     });
   });
 
   it("returns unauthenticated and clear flag for invalid session", () => {
     const result = decideAuthSessionRestore({ schemaVersion: 999 });
     expect(result.status).toBe(AUTH_STATUS.UNAUTHENTICATED);
-    expect(result.reason).toBe("invalid_session");
+    expect(result.reason).toBe(
+      AUTH_SESSION_RESTORE_FAILURE_REASONS.INVALID_SESSION,
+    );
     expect(result.shouldClearPersistedSession).toBe(true);
   });
 
@@ -120,7 +123,9 @@ describe("authStartup", () => {
       1_700_000_000_001,
     );
     expect(result.status).toBe(AUTH_STATUS.UNAUTHENTICATED);
-    expect(result.reason).toBe("expired_session");
+    expect(result.reason).toBe(
+      AUTH_SESSION_RESTORE_FAILURE_REASONS.EXPIRED_SESSION,
+    );
     expect(result.shouldClearPersistedSession).toBe(true);
   });
 
@@ -129,22 +134,6 @@ describe("authStartup", () => {
     expect(result.status).toBe(AUTH_STATUS.AUTHENTICATED);
     expect(result.session).toEqual(validSession);
     expect(result.shouldClearPersistedSession).toBe(false);
-  });
-
-  it("accepts legacy v0 payload via migration path", () => {
-    const result = decideAuthSessionRestore(
-      {
-        key: "1234",
-        role: Role.User,
-        defaultCar: "BMW",
-        expiresAt: 1_900_000_000_000,
-      },
-      1_800_000_000_000,
-    );
-
-    expect(result.status).toBe(AUTH_STATUS.AUTHENTICATED);
-    expect(result.session?.userId).toBe("1234");
-    expect(result.session?.schemaVersion).toBe(1);
   });
 
   it("clears persisted session when decision requires cleanup", () => {
@@ -158,7 +147,9 @@ describe("authStartup", () => {
       clearSession,
     });
 
-    expect(decision.reason).toBe("invalid_session");
+    expect(decision.reason).toBe(
+      AUTH_SESSION_RESTORE_FAILURE_REASONS.INVALID_SESSION,
+    );
     expect(clearSession).toHaveBeenCalledWith(storage);
   });
 });

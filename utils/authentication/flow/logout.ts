@@ -10,7 +10,10 @@ import {
   createAuthTelemetryEvent,
   emitAuthTelemetryEvent,
 } from "@/utils/authentication/telemetry/telemetry";
-import { LogoutReason } from "@/utils/authentication/core/targetState";
+import {
+  LOGOUT_REASONS,
+  LogoutReason,
+} from "@/utils/authentication/core/targetState";
 
 export type AuthLogoutDispatchAction =
   | ReturnType<typeof setCurrentUser>
@@ -30,7 +33,7 @@ export const performAuthLogout = ({
   dispatch,
   clearSessionFn = clearPersistedAuthSession,
   resetDataSet = false,
-  reason = "manual",
+  reason = LOGOUT_REASONS.MANUAL,
   emitTelemetryEvent = emitAuthTelemetryEvent,
 }: {
   dispatch: AuthLogoutDispatch;
@@ -53,6 +56,3 @@ export const performAuthLogout = ({
     }),
   );
 };
-
-
-

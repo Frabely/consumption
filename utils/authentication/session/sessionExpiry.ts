@@ -1,4 +1,7 @@
-﻿import { isSessionExpired } from "@/utils/authentication/core/targetState";
+import {
+  AUTH_SESSION_EXPIRY_CHECK_INTERVAL_MS,
+  isSessionExpired,
+} from "@/utils/authentication/core/targetState";
 import { parsePersistedAuthSession } from "@/utils/authentication/session/sessionContract";
 import {
   readPersistedAuthSession,
@@ -35,7 +38,7 @@ export const hasPersistedSessionExpired = ({
  */
 export const startSessionExpiryWatcher = ({
   onExpire,
-  intervalMs = 60_000,
+  intervalMs = AUTH_SESSION_EXPIRY_CHECK_INTERVAL_MS,
   storage,
   readSession = readPersistedAuthSession,
   nowFn = Date.now,
@@ -74,6 +77,3 @@ export const startSessionExpiryWatcher = ({
 
   return () => clearInterval(timer);
 };
-
-
-

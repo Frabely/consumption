@@ -18,15 +18,16 @@ import {
 import { restoreAuthOnAppStart } from "@/utils/authentication/session/startup";
 import Loading from "@/components/features/home/Loading";
 import { shouldRenderAuthBootLoader } from "@/utils/authentication/guards/bootGuard";
-import { AUTH_STATUS } from "@/utils/authentication/core/targetState";
+import {
+  AUTH_STATUS,
+  LOGOUT_REASONS,
+} from "@/utils/authentication/core/targetState";
 import { validateAndApplyActiveSession } from "@/utils/authentication/session/sessionValidation";
 import { startSessionExpiryWatcher } from "@/utils/authentication/session/sessionExpiry";
 import { performAuthLogout } from "@/utils/authentication/flow/logout";
 import { resolveGuardedPage } from "@/utils/authentication/guards/pageGuard";
 import { setPage } from "@/store/reducer/currentPage";
 import { subscribeToAuthSessionCrossTabSync } from "@/utils/authentication/session/crossTabSync";
-import { isAuthSessionRolloutEnabled } from "@/utils/authentication/session/featureFlag";
-import { setAuthStatusUnauthenticated } from "@/store/reducer/authStatus";
 
 /**
  * Bootstraps auth/session state and renders the correct top-level application page.
@@ -38,35 +39,23 @@ export default function App() {
   const currentUser = useAppSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
   const dimension = useWindowDimensions();
-  const isSessionRolloutEnabled = isAuthSessionRolloutEnabled();
 
   useEffect(() => {
     dispatch(setDimension(dimension));
   }, [dimension, dispatch]);
 
   useEffect(() => {
-    if (!isSessionRolloutEnabled) {
-      dispatch(setAuthStatusUnauthenticated());
-      return;
-    }
-
     restoreAuthOnAppStart({ dispatch });
-  }, [dispatch, isSessionRolloutEnabled]);
+  }, [dispatch]);
 
   useEffect(() => {
-    if (!isSessionRolloutEnabled) {
-      return;
-    }
     if (authStatus !== AUTH_STATUS.AUTHENTICATED || !currentUser.key) {
       return;
     }
     void validateAndApplyActiveSession({ userId: currentUser.key, dispatch });
-  }, [authStatus, currentUser.key, dispatch, isSessionRolloutEnabled]);
+  }, [authStatus, currentUser.key, dispatch]);
 
   useEffect(() => {
-    if (!isSessionRolloutEnabled) {
-      return;
-    }
     if (authStatus !== AUTH_STATUS.AUTHENTICATED) {
       return;
     }
@@ -76,15 +65,12 @@ export default function App() {
         performAuthLogout({
           dispatch,
           resetDataSet: true,
-          reason: "expired",
+          reason: LOGOUT_REASONS.EXPIRED,
         }),
     });
-  }, [authStatus, dispatch, isSessionRolloutEnabled]);
+  }, [authStatus, dispatch]);
 
   useEffect(() => {
-    if (!isSessionRolloutEnabled) {
-      return;
-    }
     if (authStatus !== AUTH_STATUS.AUTHENTICATED) {
       return;
     }
@@ -94,10 +80,10 @@ export default function App() {
         performAuthLogout({
           dispatch,
           resetDataSet: true,
-          reason: "invalid_session",
+          reason: LOGOUT_REASONS.INVALID_SESSION,
         }),
     });
-  }, [authStatus, dispatch, isSessionRolloutEnabled]);
+  }, [authStatus, dispatch]);
 
   const guardedPage = resolveGuardedPage({
     authStatus,
@@ -128,6 +114,3 @@ export default function App() {
     </div>
   );
 }
-
-
-
