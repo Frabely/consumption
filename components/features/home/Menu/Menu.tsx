@@ -20,6 +20,11 @@ import {
 } from "@/components/features/home/Menu/Menu.logic";
 import { performAuthLogout } from "@/domain/authLogout";
 
+/**
+ * Renders the home action menu and coordinates menu-triggered state transitions.
+ * @param props Component props.
+ * @returns Rendered home action menu component.
+ */
 export default function Menu({}: MenuProps) {
   const language = de;
   const dispatch = useAppDispatch();
@@ -30,21 +35,38 @@ export default function Menu({}: MenuProps) {
     (state: RootState) => state.currentCar.name,
   );
 
+  /**
+   * Opens the add-data modal in non-edit mode.
+   * @returns No return value.
+   */
   const onAddDataClickHandler = () => {
     dispatch(setModalStateNone());
     dispatch(setIsChangingData(false));
     dispatch(setModalState(ModalState.AddCarData));
   };
 
+  /**
+   * Logs out the active user from the home context.
+   * @returns No return value.
+   */
   const onLogoutHandler = () => {
     performAuthLogout({ dispatch, resetDataSet: true });
   };
 
+  /**
+   * Opens the CSV export modal for car consumption data.
+   * @returns No return value.
+   */
   const onExportAsCsvClickHandler = () => {
     dispatch(setModalStateNone());
     dispatch(setModalState(ModalState.DownloadCsv));
   };
 
+  /**
+   * Loads cars and switches the current car selection by label value.
+   * @param value Selected car label value.
+   * @returns No return value.
+   */
   const onCarChangeHandler = (value: string) => {
     getCars()
       .then((result) => {
@@ -60,6 +82,10 @@ export default function Menu({}: MenuProps) {
       });
   };
 
+  /**
+   * Navigates from the home area into the building consumption page.
+   * @returns No return value.
+   */
   const onBuildingConsumptionClickHandler = () => {
     dispatch(setPage(Page.BuildingConsumption));
   };

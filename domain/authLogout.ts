@@ -16,6 +16,11 @@ export type AuthLogoutDispatchAction =
 
 export type AuthLogoutDispatch = (action: AuthLogoutDispatchAction) => void;
 
+/**
+ * Executes a full auth logout flow including session cleanup and navigation reset.
+ * @param params Logout execution parameters.
+ * @returns No return value.
+ */
 export const performAuthLogout = ({
   dispatch,
   clearSessionFn = clearPersistedAuthSession,

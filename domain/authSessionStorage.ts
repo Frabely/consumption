@@ -8,6 +8,11 @@ import {
 
 export type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
+/**
+ * Resolves a storage instance for persistence with browser-safe fallback handling.
+ * @param storage Optional injected storage implementation.
+ * @returns Storage instance or null when storage is unavailable.
+ */
 const resolveStorage = (storage?: StorageLike): StorageLike | null => {
   if (storage) {
     return storage;
@@ -20,6 +25,12 @@ const resolveStorage = (storage?: StorageLike): StorageLike | null => {
   return null;
 };
 
+/**
+ * Builds a persistable auth session payload from the current user model.
+ * @param user Current user model.
+ * @param now Current timestamp in milliseconds.
+ * @returns Persistable auth session payload or null when required fields are missing.
+ */
 export const buildPersistedAuthSession = (
   user: User,
   now = Date.now(),
@@ -37,6 +48,11 @@ export const buildPersistedAuthSession = (
   };
 };
 
+/**
+ * Persists a validated auth session payload to storage.
+ * @param params Session payload and optional storage implementation.
+ * @returns True when persistence succeeded.
+ */
 export const persistAuthSession = ({
   session,
   storage,
@@ -53,6 +69,11 @@ export const persistAuthSession = ({
   return true;
 };
 
+/**
+ * Reads and parses the persisted auth session payload from storage.
+ * @param storage Optional injected storage implementation.
+ * @returns Parsed persisted payload or null when unavailable/invalid.
+ */
 export const readPersistedAuthSession = (
   storage?: StorageLike,
 ): unknown | null => {
@@ -73,6 +94,11 @@ export const readPersistedAuthSession = (
   }
 };
 
+/**
+ * Removes the persisted auth session payload from storage.
+ * @param storage Optional injected storage implementation.
+ * @returns True when session cleanup succeeded.
+ */
 export const clearPersistedAuthSession = (storage?: StorageLike): boolean => {
   const targetStorage = resolveStorage(storage);
   if (!targetStorage) {

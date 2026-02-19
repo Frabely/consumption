@@ -23,6 +23,12 @@ export type AuthSessionRestoreDecision = {
   reason?: AuthSessionRestoreFailureReason;
 };
 
+/**
+ * Decides the auth startup state based on a raw persisted session payload.
+ * @param rawSession Raw persisted session payload.
+ * @param now Current timestamp in milliseconds.
+ * @returns Auth startup decision for restore handling.
+ */
 export const decideAuthSessionRestore = (
   rawSession: unknown | null,
   now = Date.now(),
@@ -62,6 +68,11 @@ export const decideAuthSessionRestore = (
   };
 };
 
+/**
+ * Restores auth state from storage and clears persisted session data when required.
+ * @param params Restore execution parameters.
+ * @returns Auth startup decision for restore handling.
+ */
 export const restoreAuthSessionFromStorage = ({
   storage,
   now = Date.now(),

@@ -17,6 +17,11 @@ import {
 } from "@/components/features/building/MenuBuilding/MenuBuilding.logic";
 import { performAuthLogout } from "@/domain/authLogout";
 
+/**
+ * Renders the building menu and handles building-specific navigation actions.
+ * @param props Component props.
+ * @returns Rendered building menu component.
+ */
 export default function MenuBuilding({
   houses,
   onAddFloor,
@@ -27,16 +32,29 @@ export default function MenuBuilding({
     (state: RootState) => state.currentHouse.name,
   );
 
+  /**
+   * Logs out the active user from the building context.
+   * @returns No return value.
+   */
   const onLogoutHandler = () => {
     performAuthLogout({ dispatch });
   };
 
+  /**
+   * Navigates back to home and refreshes loading state.
+   * @returns No return value.
+   */
   const onHomePageClickHandler = () => {
     dispatch(setModalStateNone());
     dispatch(setIsLoading(true));
     dispatch(setPage(Page.Home));
   };
 
+  /**
+   * Updates the selected house in store when selection changes.
+   * @param value Selected house label value.
+   * @returns No return value.
+   */
   const onHouseChangeHandler = (value: string) => {
     const selectedHouse = resolveSelectedHouse(houses, value);
     if (selectedHouse) {
@@ -44,6 +62,10 @@ export default function MenuBuilding({
     }
   };
 
+  /**
+   * Opens the building CSV export modal.
+   * @returns No return value.
+   */
   const onExportAsCsvClickHandler = () => {
     dispatch(setModalStateNone());
     dispatch(setModalState(ModalState.DownloadBuildingCsv));

@@ -34,9 +34,20 @@ export type HandleLoginInputParams = {
   persistAuthSessionFn?: PersistAuthSessionFn;
 };
 
+/**
+ * Returns true when the login PIN input has reached full length.
+ * @param input Raw login PIN input string.
+ * @returns True when the input is complete.
+ */
 export const isCompleteLoginInput = (input: string): boolean =>
   input.length === 4;
 
+/**
+ * Resolves the preferred login car from user preference with a Zoe fallback.
+ * @param user Authenticated user payload.
+ * @param availableCars Available cars for selection.
+ * @returns Selected car or undefined when no fallback exists.
+ */
 export const resolveLoginCar = (
   user: User,
   availableCars: Car[] = cars,
@@ -49,6 +60,11 @@ export const resolveLoginCar = (
   return availableCars.find((car) => car.name === CarNames.Zoe);
 };
 
+/**
+ * Processes login input, resolves user/car, persists session and updates auth state.
+ * @param params Login handling parameters and dependency overrides.
+ * @returns Promise that resolves when login side effects finish.
+ */
 export const handleLoginInput = async ({
   input,
   dispatch,

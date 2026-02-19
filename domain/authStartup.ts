@@ -16,6 +16,11 @@ export type AuthStartupDispatchAction =
 
 export type AuthStartupDispatch = (action: AuthStartupDispatchAction) => void;
 
+/**
+ * Applies the restore decision by synchronizing auth-related slices in the store.
+ * @param params Decision payload and dispatch function.
+ * @returns No return value.
+ */
 export const applyAuthStartupDecision = ({
   decision,
   dispatch,
@@ -40,6 +45,11 @@ export const applyAuthStartupDecision = ({
   dispatch(setAuthStatusUnauthenticated());
 };
 
+/**
+ * Restores persisted auth session state during app bootstrap.
+ * @param params Startup restore parameters.
+ * @returns No return value.
+ */
 export const restoreAuthOnAppStart = ({
   dispatch,
   now = Date.now(),

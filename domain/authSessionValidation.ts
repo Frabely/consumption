@@ -17,6 +17,11 @@ export type SessionValidationResult =
 
 export type CheckUserIdFn = (id: string) => Promise<User | undefined>;
 
+/**
+ * Validates whether the currently active session user is still valid in backend state.
+ * @param params Validation input parameters.
+ * @returns Validation result describing active-session status.
+ */
 export const validateActiveSession = async ({
   userId,
   checkUserIdFn = checkUserId,
@@ -46,6 +51,11 @@ export type SessionValidationDispatch = (
   action: SessionValidationDispatchAction,
 ) => void;
 
+/**
+ * Applies session validation outcomes to store state and persisted session storage.
+ * @param params Validation result and side-effect dependencies.
+ * @returns No return value.
+ */
 export const applySessionValidationResult = ({
   result,
   dispatch,
@@ -78,6 +88,11 @@ export const applySessionValidationResult = ({
   }
 };
 
+/**
+ * Runs active-session validation and directly applies its state side effects.
+ * @param params Validation execution parameters.
+ * @returns Validation result describing active-session status.
+ */
 export const validateAndApplyActiveSession = async ({
   userId,
   dispatch,
