@@ -60,6 +60,8 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Tippfehler in Namen vermeiden (z. B. `dimension` statt inkonsistenter Varianten).
 - Eine Datei sollte ein klares Hauptthema haben.
 - Keine toten Hilfsfunktionen oder alte Codepfade liegen lassen.
+- Sprache: Code, Dateinamen, Bezeichner, Kommentare, Commit-Messages und technische Dokumentation standardmaessig in Englisch verfassen.
+- Ausnahme: Inhalte von Umsetzungs-/Roadmap-Planungsdokumenten duerfen auf Deutsch bleiben.
 - Neue Features und neue Komponenten direkt in Feature-/Co-Location-Struktur anlegen (`<Feature>.tsx`, `<Feature>.module.css`, `<Feature>.spec.ts(x)` im selben Feature-Ordner).
 - Feature-Komponenten unter `components/features/<Bereich>/<Feature>/` gruppieren (z. B. `components/features/home/Login/`), damit zusammengehoerige Komponenten klar gebuendelt sind.
 - Wiederverwendbare, bereichsuebergreifende UI-Bausteine unter `components/shared/<Kategorie>/<Feature>/` gruppieren (z. B. `components/shared/ui/CustomButton/`).
