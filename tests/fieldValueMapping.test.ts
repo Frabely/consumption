@@ -1,5 +1,5 @@
-import {describe, expect, it} from "vitest";
-import {filterFieldValuesByRoom, parseYearMonthInput} from "@/domain/fieldValueMapping";
+﻿import {describe, expect, it} from "vitest";
+import {filterFieldValuesByRoom, parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {FieldValue, Flat} from "@/constants/types";
 
 describe("fieldValueMapping", () => {
@@ -41,3 +41,4 @@ describe("fieldValueMapping", () => {
         expect(parseYearMonthInput("2026")).toBeNull();
     });
 });
+

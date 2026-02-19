@@ -1,5 +1,5 @@
-import {describe, expect, it} from "vitest";
-import {isKilometerValid, isPowerValid, parseIntegerOrNull} from "@/domain/carDataValidation";
+﻿import {describe, expect, it} from "vitest";
+import {isKilometerValid, isPowerValid, parseIntegerOrNull} from "@/utils/validation/carDataValidation";
 
 describe("carDataValidation", () => {
     it("parses integer values or returns null", () => {
@@ -44,3 +44,4 @@ describe("carDataValidation", () => {
         })).toBe(false);
     });
 });
+

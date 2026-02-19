@@ -1,36 +1,116 @@
-'use client'
+﻿"use client";
 
-import styles from '../styles/page.module.css'
+import styles from "../styles/page.module.css";
 import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
-import {setDimension} from "@/store/reducer/dimension";
-import {useEffect} from "react";
+import { setDimension } from "@/store/reducer/dimension";
+import { useEffect } from "react";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
-import {useAppDispatch, useAppSelector} from "@/store/hooks";
-import Home from "@/components/pages/Home";
-import {Page} from "@/constants/enums";
-import BuildingConsumption from "@/components/pages/BuildingConsumption";
-import {selectCurrentPage} from "@/store/selectors";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import Home from "@/components/features/home/pages/Home";
+import { Page } from "@/constants/enums";
+import BuildingConsumption from "@/components/features/building/pages/BuildingConsumption";
+import {
+  selectAuthStatus,
+  selectCurrentPage,
+  selectCurrentUser,
+} from "@/store/selectors";
+import { restoreAuthOnAppStart } from "@/utils/authentication/session/startup";
+import Loading from "@/components/features/home/Loading";
+import { shouldRenderAuthBootLoader } from "@/utils/authentication/guards/bootGuard";
+import {
+  AUTH_STATUS,
+  LOGOUT_REASONS,
+} from "@/utils/authentication/core/targetState";
+import { validateAndApplyActiveSession } from "@/utils/authentication/session/sessionValidation";
+import { startSessionExpiryWatcher } from "@/utils/authentication/session/sessionExpiry";
+import { performAuthLogout } from "@/utils/authentication/flow/logout";
+import { resolveGuardedPage } from "@/utils/authentication/guards/pageGuard";
+import { setPage } from "@/store/reducer/currentPage";
+import { subscribeToAuthSessionCrossTabSync } from "@/utils/authentication/session/crossTabSync";
 
+/**
+ * Bootstraps auth/session state and renders the correct top-level application page.
+ * @returns Rendered application root element.
+ */
 export default function App() {
-    const currentPage = useAppSelector(selectCurrentPage)
-    const dispatch = useAppDispatch()
-    const dimension = useWindowDimensions()
+  const currentPage = useAppSelector(selectCurrentPage);
+  const authStatus = useAppSelector(selectAuthStatus);
+  const currentUser = useAppSelector(selectCurrentUser);
+  const dispatch = useAppDispatch();
+  const dimension = useWindowDimensions();
 
-    useEffect(() => {
-        dispatch(setDimension(dimension));
-    }, [dimension, dispatch]);
+  useEffect(() => {
+    dispatch(setDimension(dimension));
+  }, [dimension, dispatch]);
 
+  useEffect(() => {
+    restoreAuthOnAppStart({ dispatch });
+  }, [dispatch]);
 
-    return (
-        <div className={styles.mainContainer}>
-            <Image className={styles.image} src={img} alt={''}/>
-            <div className={styles.imageFilter}/>
-            {
-                currentPage === Page.Home ?
-                    <Home/> :
-                    <BuildingConsumption/>
-            }
-        </div>
-    )
+  useEffect(() => {
+    if (authStatus !== AUTH_STATUS.AUTHENTICATED || !currentUser.key) {
+      return;
+    }
+    void validateAndApplyActiveSession({ userId: currentUser.key, dispatch });
+  }, [authStatus, currentUser.key, dispatch]);
+
+  useEffect(() => {
+    if (authStatus !== AUTH_STATUS.AUTHENTICATED) {
+      return;
+    }
+
+    return startSessionExpiryWatcher({
+      onExpire: () =>
+        performAuthLogout({
+          dispatch,
+          resetDataSet: true,
+          reason: LOGOUT_REASONS.EXPIRED,
+        }),
+    });
+  }, [authStatus, dispatch]);
+
+  useEffect(() => {
+    if (authStatus !== AUTH_STATUS.AUTHENTICATED) {
+      return;
+    }
+
+    return subscribeToAuthSessionCrossTabSync({
+      onSessionCleared: () =>
+        performAuthLogout({
+          dispatch,
+          resetDataSet: true,
+          reason: LOGOUT_REASONS.INVALID_SESSION,
+        }),
+    });
+  }, [authStatus, dispatch]);
+
+  const guardedPage = resolveGuardedPage({
+    authStatus,
+    requestedPage: currentPage,
+    userKey: currentUser.key,
+    userRole: currentUser.role,
+  });
+
+  useEffect(() => {
+    if (guardedPage !== currentPage) {
+      dispatch(setPage(guardedPage));
+    }
+  }, [currentPage, dispatch, guardedPage]);
+
+  const showAuthBootLoader = shouldRenderAuthBootLoader(authStatus);
+
+  return (
+    <div className={styles.mainContainer}>
+      <Image className={styles.image} src={img} alt={""} />
+      <div className={styles.imageFilter} />
+      {showAuthBootLoader ? (
+        <Loading />
+      ) : guardedPage === Page.Home ? (
+        <Home />
+      ) : (
+        <BuildingConsumption />
+      )}
+    </div>
+  );
 }

@@ -41,6 +41,8 @@ export const setFieldValue = async (
         const fieldQuery = query(
             collection(db, pathValues),
             where("fieldId", "==", field.id),
+            where("flatId", "==", flat.id),
+            where("roomId", "==", room.id),
             limit(1)
         );
 
