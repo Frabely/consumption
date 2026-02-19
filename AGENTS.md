@@ -13,7 +13,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Bewerte Architektur, Lesbarkeit, Wartbarkeit und Risikomanagement konsequent aus Senior-Developer-Sicht.
 - Wende SOLID- und DRY-Prinzipien konsequent an.
 - Bevorzuge eine klare, gut erweiterbare Architektur mit sauber getrennten Verantwortlichkeiten.
-- Git-Workflow: `git fetch` und `git pull` duerfen immer ohne Rueckfrage ausgefuehrt werden. `git push` darf ebenfalls ohne Rueckfrage ausgefuehrt werden, ausser auf den Branches `master` und `production` (dort nur mit expliziter User-Anweisung).
+- Git-Workflow: `git fetch`, `git pull` und `git commit` duerfen immer ohne Rueckfrage ausgefuehrt werden (auch wenn im Chat nicht explizit zum Commit aufgefordert wurde). `git push` darf ebenfalls ohne Rueckfrage ausgefuehrt werden, ausser auf den Branches `master` und `production` (dort nur mit expliziter User-Anweisung).
 
 ## 2. TypeScript-Standards
 - `strict` bleibt aktiv; keine Aufweichung in `tsconfig.json`.
@@ -21,6 +21,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Nutze konkrete Rueckgabetypen fuer exportierte Funktionen.
 - Bevorzuge `type`/`interface` statt impliziter Objektformen in komplexen Datenstrukturen.
 - Keine ungenutzten Variablen, Imports oder Typen einchecken.
+- Auto-Formatting ist verpflichtend: vor Abschluss immer Prettier ausfuehren und die Formatierung uebernehmen.
 
 ## 3. React / Next.js
 - Komponenten als kleine, fokussierte Einheiten bauen.
@@ -60,6 +61,8 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Tippfehler in Namen vermeiden (z. B. `dimension` statt inkonsistenter Varianten).
 - Eine Datei sollte ein klares Hauptthema haben.
 - Keine toten Hilfsfunktionen oder alte Codepfade liegen lassen.
+- Sprache: Code, Dateinamen, Bezeichner, Kommentare, Commit-Messages und technische Dokumentation standardmaessig in Englisch verfassen.
+- Ausnahme: Inhalte von Umsetzungs-/Roadmap-Planungsdokumenten duerfen auf Deutsch bleiben.
 - Neue Features und neue Komponenten direkt in Feature-/Co-Location-Struktur anlegen (`<Feature>.tsx`, `<Feature>.module.css`, `<Feature>.spec.ts(x)` im selben Feature-Ordner).
 - Feature-Komponenten unter `components/features/<Bereich>/<Feature>/` gruppieren (z. B. `components/features/home/Login/`), damit zusammengehoerige Komponenten klar gebuendelt sind.
 - Wiederverwendbare, bereichsuebergreifende UI-Bausteine unter `components/shared/<Kategorie>/<Feature>/` gruppieren (z. B. `components/shared/ui/CustomButton/`).
