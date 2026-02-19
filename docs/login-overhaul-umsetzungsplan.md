@@ -248,13 +248,38 @@ Status-Legende:
   - Persistierte gueltige User-Session -> Restore -> zentraler Guard redirectet auf Home.
   - Persistierte abgelaufene Session -> Restore-Cleanup -> unauthenticated + Home-Fallback.
 
-## Ergebnis Schritt 17: Manuelle QA-Checkliste (vorbereitet)
+## Ergebnis Schritt 17: Manuelle QA-Checkliste (ausgefuehrt)
 
 - Umgesetzte Artefakte:
   - `docs/login-overhaul-qa-checklist.md`
+- Ergebnis:
+  - Checkliste wurde manuell durchgefuehrt und als abgeschlossen rueckgemeldet.
+
+## Ergebnis Schritt 20: Login-UI Mockup (verbindliche Grundlage)
+
+- Umgesetzte Artefakte:
+  - `components/features/home/Login/mockups/login-overhaul-mockup.html`
+- Enthaltene Zustandsvarianten:
+  - Default/Fokus
+  - Invalid PIN
+  - Offline/Backend unavailable
+  - Startup loader
 - Hinweis:
-  - Interaktive Browser-Verifikation ist vorbereitet, aber in der aktuellen CLI-Umgebung nicht direkt ausfuehrbar.
-  - Schritt bleibt bis zur manuellen Ausfuehrung `blockiert`.
+  - Dieses Mockup ist die visuelle Referenz vor der finalen React/CSS-Implementierung.
+
+## Ergebnis Schritt 20b: Login-UI final umgesetzt
+
+- Umgesetzte Artefakte:
+  - `components/features/home/Login/Login.tsx`
+  - `components/features/home/Login/Login.module.css`
+  - `components/features/home/Login/Login.logic.ts`
+  - `components/features/home/Login/Login.spec.ts`
+  - `constants/de.json`
+- Verhalten:
+  - Eingabe ist standardmaessig verdeckt; Eye-Button bleibt fuer Show/Hide erhalten.
+  - Bei 4-stelliger Eingabe wird automatisch der Authentifizierungsversuch gestartet.
+  - UI-Zustaende fuer Login-Reject und temporaere Nichtverfuegbarkeit werden angezeigt.
+  - PIN-Preview (4 Punkte) visualisiert den Eingabefortschritt.
 
 ## Schrittplan
 
@@ -276,10 +301,10 @@ Status-Legende:
 | 14  | Feature-Flag fuer Rollout einbauen (schneller Rollback ohne Hotfix-Refactor)                        | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 14: Feature-Flag fuer Auth-Rollout (verbindlich)".                     |
 | 15  | Logging/Monitoring ergaenzen (Login-Erfolg, Rehydration-Erfolg, Session-Invalidierung, Fehlerquote) | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 15: Auth Logging/Monitoring Events (verbindlich)".                     |
 | 16  | Tests ergaenzen: Persistenz, Rehydration, Expiry, Logout, Guards (Integration priorisiert)          | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 16: Integration-nahe Auth-Flow-Tests (verbindlich)".                   |
-| 17  | Manuelle QA-Checkliste ausfuehren (Reload, Browser-Neustart, Offline/Online, Rollenwechsel)         | blockiert | Checkliste erstellt (`docs/login-overhaul-qa-checklist.md`), manuelle Browserausfuehrung noch offen.     |
+| 17  | Manuelle QA-Checkliste ausfuehren (Reload, Browser-Neustart, Offline/Online, Rollenwechsel)         | umgesetzt | Manuell geprueft; Grundlage in `docs/login-overhaul-qa-checklist.md` dokumentiert.                       |
 | 18  | Dokumentation aktualisieren (kurz in AGENTS/README falls relevant)                                  | umgesetzt | `README.md` um "Auth Session Rollout" inkl. Flag und Doku-Referenzen erweitert.                          |
 | 19  | Abschluss: Diese Datei loeschen, sobald alle Punkte umgesetzt und gemerged sind                     | offen     | Noch offen                                                                                               |
-| 20  | Login-UI ueberarbeiten (inkl. Mockup + responsiver Final-Umsetzung)                                 | offen     | Mockup als Pflichtartefakt vor finaler UI-Implementierung.                                               |
+| 20  | Login-UI ueberarbeiten (inkl. Mockup + responsiver Final-Umsetzung)                                 | umgesetzt | Mockup + finale Umsetzung in `components/features/home/Login/*` abgeschlossen.                           |
 
 ## Definition of Done
 
@@ -321,3 +346,6 @@ Status-Legende:
 - 2026-02-19: Schritt 16 mit integration-nahen Auth-Flow-Tests fuer Persistenz/Restore/Guarding umgesetzt.
 - 2026-02-19: Schritt 17 QA-Checkliste erstellt (`docs/login-overhaul-qa-checklist.md`), manuelle Ausfuehrung ausstehend.
 - 2026-02-19: Schritt 18 Doku-Update in `README.md` mit Auth-Rollout-Flag und Referenzdokumenten umgesetzt.
+- 2026-02-19: Schritt 17 manuell geprueft (laut Rueckmeldung), Status auf umgesetzt gesetzt.
+- 2026-02-19: Schritt-20-Mockup in `components/features/home/Login/mockups/login-overhaul-mockup.html` erstellt.
+- 2026-02-19: Schritt 20 final umgesetzt (neue Login-UI inkl. Auto-Auth bei 4-stelliger PIN und Statusmeldungen).

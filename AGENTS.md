@@ -63,6 +63,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Texte aus den vorhandenen Sprachdateien beziehen, nicht hart codieren.
 - Kontrast und Lesbarkeit muessen in allen Zustaenden passen (normal, hover, focus, disabled, valid/invalid); helle Hintergruende brauchen dunkle Schrift und umgekehrt.
 - Bei Overlays/Modals (z. B. "Daten hinzufuegen") muss die Lesbarkeit immer klar priorisiert werden: ausreichend abgedunkelter Hintergrund und ausreichend opake Foreground-Flaechen, damit Inhalte eindeutig erkennbar bleiben.
+- Vor CSS-Aenderungen immer zuerst die existierenden globalen CSS-Variablen pruefen und ausschliesslich definierte Tokens verwenden (z. B. Highlight-Farbe `--primary-color`, nicht neue/undefinierte Varianten wie `--accent-color`).
 
 ## 7. Benennung und Struktur
 

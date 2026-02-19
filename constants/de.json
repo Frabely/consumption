@@ -91,7 +91,17 @@
     "deleteRoomConfirmation": "Raum '{0}' wirklich löschen?",
     "deleteFieldConfirmation": "Zähler '{0}' wirklich löschen?",
     "databaseError": "Datenbankfehler",
-    "fieldSaved": "Wert: '{valueNumber}' im Zähler '{valueFieldName}' gespeichert."
+    "fieldSaved": "Wert: '{valueNumber}' im Zähler '{valueFieldName}' gespeichert.",
+    "loginTitle": "Login",
+    "loginSubtitle": "Bitte gib deine 4-stellige PIN ein.",
+    "loginRejected": "Login fehlgeschlagen. Bitte PIN prüfen.",
+    "loginUnavailable": "Keine Verbindung. Login ist aktuell nicht verfügbar.",
+    "loginProgressLabel": "Eingegeben:",
+    "forgotPassword": "PIN vergessen?",
+    "showPin": "PIN anzeigen",
+    "loginSlotsAriaLabel": "PIN Eingabe mit vier Stellen",
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort verbergen"
   },
   "loadingStation": {
     "carport": "Carport",
