@@ -1,0 +1,52 @@
+﻿{
+  "extends": "./.eslintrc.json",
+  "plugins": ["jsdoc"],
+  "settings": {
+    "jsdoc": {
+      "mode": "typescript"
+    }
+  },
+  "overrides": [
+    {
+      "files": [
+        "domain/**/*.ts",
+        "app/page.tsx",
+        "components/features/home/Login/Login.logic.ts",
+        "components/features/home/Menu/Menu.tsx",
+        "components/features/building/MenuBuilding/MenuBuilding.tsx",
+        "components/features/building/pages/BuildingConsumption/BuildingConsumption.logic.ts",
+        "store/selectors.ts",
+        "store/reducer/authStatus.tsx"
+      ],
+      "excludedFiles": ["**/*.spec.ts", "**/*.spec.tsx"],
+      "rules": {
+        "jsdoc/require-jsdoc": [
+          "error",
+          {
+            "publicOnly": false,
+            "contexts": [
+              "FunctionDeclaration",
+              "VariableDeclaration > VariableDeclarator > ArrowFunctionExpression"
+            ]
+          }
+        ],
+        "jsdoc/require-description": "error",
+        "jsdoc/match-description": [
+          "error",
+          {
+            "matchDescription": "^[A-Z][\\x20-\\x7E]*$"
+          }
+        ],
+        "jsdoc/require-param": [
+          "error",
+          {
+            "checkDestructured": false
+          }
+        ],
+        "jsdoc/require-param-description": "error",
+        "jsdoc/require-returns": "error",
+        "jsdoc/require-returns-description": "error"
+      }
+    }
+  ]
+}

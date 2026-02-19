@@ -12,12 +12,13 @@ import {
   restoreAuthOnAppStart,
 } from "@/domain/authStartup";
 import * as restoreModule from "@/domain/authSessionRestore";
+import { AuthSessionRestoreDecision } from "@/domain/authSessionRestore";
 
 describe("authStartup", () => {
   it("applies authenticated startup decision", () => {
     const dispatch = vi.fn();
     const decision = {
-      status: AUTH_STATUS.AUTHENTICATED as const,
+      status: AUTH_STATUS.AUTHENTICATED,
       session: {
         schemaVersion: 1,
         userId: "1234",
@@ -44,11 +45,11 @@ describe("authStartup", () => {
 
   it("applies unauthenticated startup decision", () => {
     const dispatch = vi.fn();
-    const decision = {
-      status: AUTH_STATUS.UNAUTHENTICATED as const,
+    const decision: AuthSessionRestoreDecision = {
+      status: AUTH_STATUS.UNAUTHENTICATED,
       session: null,
       shouldClearPersistedSession: false,
-      reason: "missing_session" as const,
+      reason: "missing_session",
     };
 
     applyAuthStartupDecision({ decision, dispatch });
@@ -60,7 +61,7 @@ describe("authStartup", () => {
   it("restores on app start via storage decision", () => {
     const dispatch = vi.fn();
     const decision = {
-      status: AUTH_STATUS.AUTHENTICATED as const,
+      status: AUTH_STATUS.AUTHENTICATED,
       session: {
         schemaVersion: 1,
         userId: "7777",
