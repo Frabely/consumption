@@ -1,9 +1,9 @@
-import { isSessionExpired } from "@/domain/authTargetState";
-import { parsePersistedAuthSession } from "@/domain/authSessionContract";
+﻿import { isSessionExpired } from "@/utils/authentication/core/targetState";
+import { parsePersistedAuthSession } from "@/utils/authentication/session/sessionContract";
 import {
   readPersistedAuthSession,
   StorageLike,
-} from "@/domain/authSessionStorage";
+} from "@/utils/authentication/session/sessionStorage";
 
 /**
  * Checks whether the persisted and parseable session has reached its expiry timestamp.
@@ -74,3 +74,6 @@ export const startSessionExpiryWatcher = ({
 
   return () => clearInterval(timer);
 };
+
+
+

@@ -1,11 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
+﻿import { describe, expect, it, vi } from "vitest";
 import { Role } from "@/constants/enums";
-import { AUTH_STATUS } from "@/domain/authTargetState";
+import { AUTH_STATUS } from "@/utils/authentication/core/targetState";
 import {
   decideAuthSessionRestore,
   restoreAuthSessionFromStorage,
-} from "@/domain/authSessionRestore";
-import { StorageLike } from "@/domain/authSessionStorage";
+} from "@/utils/authentication/session/sessionRestore";
+import { StorageLike } from "@/utils/authentication/session/sessionStorage";
 
 const validSession = {
   schemaVersion: 1,
@@ -81,3 +81,6 @@ describe("authSessionRestore", () => {
     expect(clearSession).toHaveBeenCalledWith(storage);
   });
 });
+
+
+

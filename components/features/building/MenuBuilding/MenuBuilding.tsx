@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { RootState } from "@/store/store";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { setModalState, setModalStateNone } from "@/store/reducer/modalState";
@@ -15,7 +15,7 @@ import {
   resolveDefaultHouseName,
   resolveSelectedHouse,
 } from "@/components/features/building/MenuBuilding/MenuBuilding.logic";
-import { performAuthLogout } from "@/domain/authLogout";
+import { performAuthLogout } from "@/utils/authentication/flow/logout";
 
 /**
  * Renders the building menu and handles building-specific navigation actions.
@@ -103,3 +103,6 @@ export type MenuBuildingProps = {
   houses: House[];
   onAddFloor: () => void;
 };
+
+
+

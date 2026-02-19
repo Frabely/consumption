@@ -1,4 +1,4 @@
-import {describe, expect, it, vi} from "vitest";
+﻿import {describe, expect, it, vi} from "vitest";
 import {ModalState} from "@/constants/enums";
 
 const TEST_LOADING_STATIONS = [
@@ -174,7 +174,7 @@ async function buildComponent({
         DEFAULT_LOADING_STATION: TEST_DEFAULT_LOADING_STATION,
         loadingStations: TEST_LOADING_STATIONS
     }));
-    vi.doMock("@/domain/carDataValidation", () => ({
+    vi.doMock("@/utils/validation/carDataValidation", () => ({
         isKilometerValid,
         isPowerValid,
         parseIntegerOrNull
@@ -340,3 +340,4 @@ describe("AddData component", () => {
         expect(dispatch.mock.calls.length).toBe(callCountBeforeNoKey);
     });
 });
+

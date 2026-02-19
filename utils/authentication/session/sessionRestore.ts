@@ -1,15 +1,15 @@
-import {
+﻿import {
   AUTH_STATUS,
   AuthStatus,
   isSessionExpired,
   PersistedAuthSession,
-} from "@/domain/authTargetState";
-import { parsePersistedAuthSession } from "@/domain/authSessionContract";
+} from "@/utils/authentication/core/targetState";
+import { parsePersistedAuthSession } from "@/utils/authentication/session/sessionContract";
 import {
   clearPersistedAuthSession,
   readPersistedAuthSession,
   StorageLike,
-} from "@/domain/authSessionStorage";
+} from "@/utils/authentication/session/sessionStorage";
 
 export type AuthSessionRestoreFailureReason =
   | "missing_session"
@@ -93,3 +93,6 @@ export const restoreAuthSessionFromStorage = ({
 
   return decision;
 };
+
+
+

@@ -1,5 +1,5 @@
-import { Page, Role } from "@/constants/enums";
-import { AUTH_STATUS, AuthStatus, canAccessBuildingConsumptionForRole } from "@/domain/authTargetState";
+﻿import { Page, Role } from "@/constants/enums";
+import { AUTH_STATUS, AuthStatus, canAccessBuildingConsumptionForRole } from "@/utils/authentication/core/targetState";
 
 export type AuthPageGuardInput = {
   authStatus: AuthStatus;
@@ -32,3 +32,6 @@ export const resolveGuardedPage = ({
 
   return requestedPage;
 };
+
+
+

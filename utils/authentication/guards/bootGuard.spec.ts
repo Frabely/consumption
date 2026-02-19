@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { AUTH_STATUS } from "@/domain/authTargetState";
-import { shouldRenderAuthBootLoader } from "@/domain/authBootGuard";
+﻿import { describe, expect, it } from "vitest";
+import { AUTH_STATUS } from "@/utils/authentication/core/targetState";
+import { shouldRenderAuthBootLoader } from "@/utils/authentication/guards/bootGuard";
 
 describe("authBootGuard", () => {
   it("returns true only for unknown auth status", () => {
@@ -9,3 +9,6 @@ describe("authBootGuard", () => {
     expect(shouldRenderAuthBootLoader(AUTH_STATUS.UNAUTHENTICATED)).toBe(false);
   });
 });
+
+
+

@@ -1,4 +1,4 @@
-import { checkUserId } from "@/firebase/functions";
+﻿import { checkUserId } from "@/firebase/functions";
 import { User } from "@/constants/types";
 import { setCurrentUser } from "@/store/reducer/currentUser";
 import { setCurrentCar } from "@/store/reducer/currentCar";
@@ -7,12 +7,12 @@ import {
   clearPersistedAuthSession,
   buildPersistedAuthSession,
   persistAuthSession,
-} from "@/domain/authSessionStorage";
+} from "@/utils/authentication/session/sessionStorage";
 import { EMPTY_USER } from "@/constants/constantData";
 import {
   createAuthTelemetryEvent,
   emitAuthTelemetryEvent,
-} from "@/domain/authTelemetry";
+} from "@/utils/authentication/telemetry/telemetry";
 
 export type SessionValidationResult =
   | { status: "valid"; user: User }
@@ -126,3 +126,6 @@ export const validateAndApplyActiveSession = async ({
   applySessionValidationResult({ result, dispatch });
   return result;
 };
+
+
+

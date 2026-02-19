@@ -1,4 +1,4 @@
-import { AUTH_STATUS, AuthStatus } from "@/domain/authTargetState";
+﻿import { AUTH_STATUS, AuthStatus } from "@/utils/authentication/core/targetState";
 
 /**
  * Returns true while auth bootstrap is unresolved and a loader should be rendered.
@@ -7,3 +7,6 @@ import { AUTH_STATUS, AuthStatus } from "@/domain/authTargetState";
  */
 export const shouldRenderAuthBootLoader = (authStatus: AuthStatus): boolean =>
   authStatus === AUTH_STATUS.UNKNOWN;
+
+
+

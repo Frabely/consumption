@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 import { Page, Role } from "@/constants/enums";
-import { AUTH_STATUS } from "@/domain/authTargetState";
-import { resolveGuardedPage } from "@/domain/authPageGuard";
+import { AUTH_STATUS } from "@/utils/authentication/core/targetState";
+import { resolveGuardedPage } from "@/utils/authentication/guards/pageGuard";
 
 describe("resolveGuardedPage", () => {
   it("returns home while auth status is unknown", () => {
@@ -59,3 +59,6 @@ describe("resolveGuardedPage", () => {
     ).toBe(Page.Home);
   });
 });
+
+
+

@@ -1,11 +1,11 @@
-import React, {ChangeEvent, useEffect, useState} from "react";
+﻿import React, {ChangeEvent, useEffect, useState} from "react";
 import styles from "./Statistics.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {YearMonth} from "@/constants/types";
 import {loadAllConsumptionDocsBetween} from "@/firebase/functions";
 import de from "@/constants/de.json";
 import {useAppSelector} from "@/store/hooks";
-import {parseYearMonthInput} from "@/domain/fieldValueMapping";
+import {parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {
     calculatePriceToPay,
     getCurrentYearMonth,
@@ -133,3 +133,4 @@ export default function Statistics({}: StatisticsProps) {
 }
 
 export type StatisticsProps = {}
+

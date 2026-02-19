@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+﻿import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   hasPersistedSessionExpired,
   startSessionExpiryWatcher,
-} from "@/domain/authSessionExpiry";
+} from "@/utils/authentication/session/sessionExpiry";
 import { Role } from "@/constants/enums";
 
 describe("authSessionExpiry", () => {
@@ -62,3 +62,6 @@ describe("authSessionExpiry", () => {
     stop();
   });
 });
+
+
+

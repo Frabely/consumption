@@ -1,4 +1,4 @@
-import styles from './DownloadCsv.module.css'
+﻿import styles from './DownloadCsv.module.css'
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import Modal from "@/components/shared/overlay/Modal";
 import {ChangeEvent, useState} from "react";
@@ -10,7 +10,7 @@ import {setModalStateNone} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentCar} from "@/store/selectors";
-import {parseYearMonthInput} from "@/domain/fieldValueMapping";
+import {parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
     const currentCar = useAppSelector(selectCurrentCar)
@@ -108,3 +108,4 @@ export default function DownloadCsv({}: DownloadCsvProps) {
 }
 
 export type DownloadCsvProps = {}
+

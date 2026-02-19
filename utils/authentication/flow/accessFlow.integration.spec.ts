@@ -1,13 +1,13 @@
-import { describe, expect, it, vi } from "vitest";
+﻿import { describe, expect, it, vi } from "vitest";
 import { Page, Role } from "@/constants/enums";
-import { restoreAuthSessionFromStorage } from "@/domain/authSessionRestore";
-import { resolveGuardedPage } from "@/domain/authPageGuard";
-import { AUTH_STATUS } from "@/domain/authTargetState";
-import { applyAuthStartupDecision } from "@/domain/authStartup";
+import { restoreAuthSessionFromStorage } from "@/utils/authentication/session/sessionRestore";
+import { resolveGuardedPage } from "@/utils/authentication/guards/pageGuard";
+import { AUTH_STATUS } from "@/utils/authentication/core/targetState";
+import { applyAuthStartupDecision } from "@/utils/authentication/session/startup";
 import { setAuthStatusAuthenticated } from "@/store/reducer/authStatus";
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import { setCurrentUser } from "@/store/reducer/currentUser";
-import { StorageLike } from "@/domain/authSessionStorage";
+import { StorageLike } from "@/utils/authentication/session/sessionStorage";
 
 const createMemoryStorage = (): StorageLike => {
   const store = new Map<string, string>();
@@ -118,3 +118,6 @@ describe("auth access flow integration", () => {
     expect(guardedPage).toBe(Page.Home);
   });
 });
+
+
+

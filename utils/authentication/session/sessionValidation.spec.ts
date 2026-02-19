@@ -1,10 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
+﻿import { describe, expect, it, vi } from "vitest";
 import { Role } from "@/constants/enums";
 import {
   applySessionValidationResult,
   validateActiveSession,
   validateAndApplyActiveSession,
-} from "@/domain/authSessionValidation";
+} from "@/utils/authentication/session/sessionValidation";
 import { setCurrentUser } from "@/store/reducer/currentUser";
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import { setAuthStatusUnauthenticated } from "@/store/reducer/authStatus";
@@ -107,3 +107,6 @@ describe("authSessionValidation", () => {
     );
   });
 });
+
+
+

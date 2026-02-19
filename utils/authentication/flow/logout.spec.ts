@@ -1,11 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
+﻿import { describe, expect, it, vi } from "vitest";
 import { setCurrentUser } from "@/store/reducer/currentUser";
 import { setModalStateNone } from "@/store/reducer/modalState";
 import { setAuthStatusUnauthenticated } from "@/store/reducer/authStatus";
 import { setDataSetArray } from "@/store/reducer/currentDataSet";
 import { setPage } from "@/store/reducer/currentPage";
 import { Page } from "@/constants/enums";
-import { performAuthLogout } from "@/domain/authLogout";
+import { performAuthLogout } from "@/utils/authentication/flow/logout";
 
 describe("authLogout", () => {
   it("dispatches logout actions and clears session", () => {
@@ -46,3 +46,6 @@ describe("authLogout", () => {
     expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
   });
 });
+
+
+

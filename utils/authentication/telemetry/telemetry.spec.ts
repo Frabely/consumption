@@ -1,8 +1,8 @@
-import { describe, expect, it, vi } from "vitest";
+﻿import { describe, expect, it, vi } from "vitest";
 import {
   createAuthTelemetryEvent,
   emitAuthTelemetryEvent,
-} from "@/domain/authTelemetry";
+} from "@/utils/authentication/telemetry/telemetry";
 
 describe("authTelemetry", () => {
   it("creates normalized telemetry events", () => {
@@ -34,3 +34,6 @@ describe("authTelemetry", () => {
     );
   });
 });
+
+
+

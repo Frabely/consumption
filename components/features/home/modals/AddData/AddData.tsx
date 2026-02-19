@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import styles from "./AddData.module.css"
 import de from '@/constants/de.json'
@@ -30,7 +30,7 @@ import {
     selectModalState,
     selectPower
 } from "@/store/selectors";
-import {isKilometerValid, isPowerValid, parseIntegerOrNull} from "@/domain/carDataValidation";
+import {isKilometerValid, isPowerValid, parseIntegerOrNull} from "@/utils/validation/carDataValidation";
 
 export default function AddData({prevKilometers}: AddDataModalProps) {
     const language: Language = de
@@ -257,3 +257,4 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 export type AddDataModalProps = {
     prevKilometers: number
 }
+

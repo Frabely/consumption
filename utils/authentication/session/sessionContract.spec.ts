@@ -1,11 +1,11 @@
-import {describe, expect, it} from "vitest";
+﻿import {describe, expect, it} from "vitest";
 import {Role} from "@/constants/enums";
-import {AUTH_SESSION_SCHEMA_VERSION} from "@/domain/authTargetState";
+import {AUTH_SESSION_SCHEMA_VERSION} from "@/utils/authentication/core/targetState";
 import {
     migrateAuthSessionToCurrentSchema,
     parsePersistedAuthSession,
     validateAuthSessionContract
-} from "@/domain/authSessionContract";
+} from "@/utils/authentication/session/sessionContract";
 
 describe("authSessionContract", () => {
     const validSession = {
@@ -73,4 +73,7 @@ describe("authSessionContract", () => {
         expect(parsed.validation.issues).toContain("unsupported_schema_version");
     });
 });
+
+
+
 

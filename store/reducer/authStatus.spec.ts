@@ -1,11 +1,11 @@
-import {describe, expect, it} from "vitest";
+﻿import {describe, expect, it} from "vitest";
 import authStatusSlice, {
     setAuthStatus,
     setAuthStatusAuthenticated,
     setAuthStatusUnauthenticated,
     setAuthStatusUnknown
 } from "@/store/reducer/authStatus";
-import {AUTH_STATUS} from "@/domain/authTargetState";
+import {AUTH_STATUS} from "@/utils/authentication/core/targetState";
 
 describe("authStatus slice", () => {
     it("uses unknown as initial state", () => {
@@ -28,4 +28,7 @@ describe("authStatus slice", () => {
         expect(unknown).toBe(AUTH_STATUS.UNKNOWN);
     });
 });
+
+
+
 

@@ -1,4 +1,4 @@
-import {describe, expect, it, vi} from "vitest";
+﻿import {describe, expect, it, vi} from "vitest";
 import {
     calculatePriceToPay,
     getCurrentYearMonth,
@@ -139,8 +139,8 @@ describe("Statistics logic", () => {
         vi.doMock("@/firebase/functions", () => ({
             loadAllConsumptionDocsBetween
         }));
-        vi.doMock("@/domain/fieldValueMapping", async () => {
-            const actual = await vi.importActual<typeof import("@/domain/fieldValueMapping")>("@/domain/fieldValueMapping");
+        vi.doMock("@/utils/building/fieldValueMapping", async () => {
+            const actual = await vi.importActual<typeof import("@/utils/building/fieldValueMapping")>("@/utils/building/fieldValueMapping");
             return {
                 ...actual,
                 parseYearMonthInput: vi.fn((value: string) => value === "2025-12" ? {year: "2025", month: "12"} : undefined)
@@ -180,3 +180,4 @@ describe("Statistics logic", () => {
         expect(setPriceMultiplier).toHaveBeenCalledWith("0.3");
     });
 });
+

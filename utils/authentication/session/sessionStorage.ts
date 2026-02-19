@@ -1,10 +1,10 @@
-import { User } from "@/constants/types";
+﻿import { User } from "@/constants/types";
 import {
   AUTH_SESSION_SCHEMA_VERSION,
   AUTH_SESSION_STORAGE_KEY,
   createRollingExpiryTimestamp,
   PersistedAuthSession,
-} from "@/domain/authTargetState";
+} from "@/utils/authentication/core/targetState";
 
 export type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
@@ -108,3 +108,6 @@ export const clearPersistedAuthSession = (storage?: StorageLike): boolean => {
   targetStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
   return true;
 };
+
+
+

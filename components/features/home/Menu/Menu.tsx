@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { setModalState, setModalStateNone } from "@/store/reducer/modalState";
@@ -18,7 +18,7 @@ import {
   resolveDefaultCarName,
   resolveSelectedCar,
 } from "@/components/features/home/Menu/Menu.logic";
-import { performAuthLogout } from "@/domain/authLogout";
+import { performAuthLogout } from "@/utils/authentication/flow/logout";
 
 /**
  * Renders the home action menu and coordinates menu-triggered state transitions.
@@ -120,3 +120,6 @@ export default function Menu({}: MenuProps) {
 }
 
 export type MenuProps = {};
+
+
+

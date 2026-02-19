@@ -1,5 +1,5 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {AUTH_STATUS, AuthStatus} from "@/domain/authTargetState";
+﻿import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {AUTH_STATUS, AuthStatus} from "@/utils/authentication/core/targetState";
 
 const authStatusSlice = createSlice({
     name: "authStatus",
@@ -20,4 +20,7 @@ export const {
 } = authStatusSlice.actions;
 
 export default authStatusSlice;
+
+
+
 

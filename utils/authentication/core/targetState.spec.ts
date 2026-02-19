@@ -1,4 +1,4 @@
-import {describe, expect, it} from "vitest";
+﻿import {describe, expect, it} from "vitest";
 import {Role} from "@/constants/enums";
 import {
     AUTH_SESSION_SCHEMA_VERSION,
@@ -9,7 +9,7 @@ import {
     canAccessBuildingConsumptionForRole,
     createRollingExpiryTimestamp,
     isSessionExpired
-} from "@/domain/authTargetState";
+} from "@/utils/authentication/core/targetState";
 
 describe("authTargetState", () => {
     it("defines stable session constants", () => {
@@ -43,3 +43,6 @@ describe("authTargetState", () => {
         expect(canAccessBuildingConsumptionForRole(undefined)).toBe(false);
     });
 });
+
+
+

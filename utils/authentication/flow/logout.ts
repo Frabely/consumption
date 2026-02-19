@@ -1,4 +1,4 @@
-import { clearPersistedAuthSession } from "@/domain/authSessionStorage";
+﻿import { clearPersistedAuthSession } from "@/utils/authentication/session/sessionStorage";
 import { setCurrentUser } from "@/store/reducer/currentUser";
 import { setModalStateNone } from "@/store/reducer/modalState";
 import { setPage } from "@/store/reducer/currentPage";
@@ -9,8 +9,8 @@ import { setDataSetArray } from "@/store/reducer/currentDataSet";
 import {
   createAuthTelemetryEvent,
   emitAuthTelemetryEvent,
-} from "@/domain/authTelemetry";
-import { LogoutReason } from "@/domain/authTargetState";
+} from "@/utils/authentication/telemetry/telemetry";
+import { LogoutReason } from "@/utils/authentication/core/targetState";
 
 export type AuthLogoutDispatchAction =
   | ReturnType<typeof setCurrentUser>
@@ -53,3 +53,6 @@ export const performAuthLogout = ({
     }),
   );
 };
+
+
+

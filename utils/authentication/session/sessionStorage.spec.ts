@@ -1,17 +1,17 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 import { Role } from "@/constants/enums";
 import { User } from "@/constants/types";
 import {
   AUTH_SESSION_STORAGE_KEY,
   AUTH_SESSION_TTL_MS,
-} from "@/domain/authTargetState";
+} from "@/utils/authentication/core/targetState";
 import {
   buildPersistedAuthSession,
   clearPersistedAuthSession,
   persistAuthSession,
   readPersistedAuthSession,
   StorageLike,
-} from "@/domain/authSessionStorage";
+} from "@/utils/authentication/session/sessionStorage";
 
 const createMemoryStorage = (): StorageLike => {
   const store = new Map<string, string>();
@@ -93,3 +93,6 @@ describe("authSessionStorage", () => {
     expect(loaded).toBeNull();
   });
 });
+
+
+

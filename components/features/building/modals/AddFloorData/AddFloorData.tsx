@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import de from '@/constants/de.json'
 import Modal from "@/components/shared/overlay/Modal";
@@ -14,7 +14,7 @@ import CustomSelect from "@/components/shared/forms/CustomSelect";
 import {ModalState} from "@/constants/enums";
 import {useAppSelector} from "@/store/hooks";
 import {selectCurrentHouse} from "@/store/selectors";
-import {filterFieldValuesByRoom, parseYearMonthInput} from "@/domain/fieldValueMapping";
+import {filterFieldValuesByRoom, parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {
     isFieldValueValid,
     resolveRoomByName
@@ -194,3 +194,4 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
 export type AddFloorDataModalProps = {
     flat: Flat
 }
+

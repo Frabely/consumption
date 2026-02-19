@@ -1,9 +1,9 @@
-import { describe, expect, it, vi } from "vitest";
-import { AUTH_SESSION_STORAGE_KEY } from "@/domain/authTargetState";
+﻿import { describe, expect, it, vi } from "vitest";
+import { AUTH_SESSION_STORAGE_KEY } from "@/utils/authentication/core/targetState";
 import {
   StorageEventLike,
   subscribeToAuthSessionCrossTabSync,
-} from "@/domain/authCrossTabSync";
+} from "@/utils/authentication/session/crossTabSync";
 
 const createStorageEventTargetMock = () => {
   let listener: ((event: StorageEventLike) => void) | undefined;
@@ -84,3 +84,6 @@ describe("subscribeToAuthSessionCrossTabSync", () => {
     cleanup();
   });
 });
+
+
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import styles from "../styles/page.module.css";
 import img from "@/public/bg_vert.jpg";
@@ -15,17 +15,17 @@ import {
   selectCurrentPage,
   selectCurrentUser,
 } from "@/store/selectors";
-import { restoreAuthOnAppStart } from "@/domain/authStartup";
+import { restoreAuthOnAppStart } from "@/utils/authentication/session/startup";
 import Loading from "@/components/features/home/Loading";
-import { shouldRenderAuthBootLoader } from "@/domain/authBootGuard";
-import { AUTH_STATUS } from "@/domain/authTargetState";
-import { validateAndApplyActiveSession } from "@/domain/authSessionValidation";
-import { startSessionExpiryWatcher } from "@/domain/authSessionExpiry";
-import { performAuthLogout } from "@/domain/authLogout";
-import { resolveGuardedPage } from "@/domain/authPageGuard";
+import { shouldRenderAuthBootLoader } from "@/utils/authentication/guards/bootGuard";
+import { AUTH_STATUS } from "@/utils/authentication/core/targetState";
+import { validateAndApplyActiveSession } from "@/utils/authentication/session/sessionValidation";
+import { startSessionExpiryWatcher } from "@/utils/authentication/session/sessionExpiry";
+import { performAuthLogout } from "@/utils/authentication/flow/logout";
+import { resolveGuardedPage } from "@/utils/authentication/guards/pageGuard";
 import { setPage } from "@/store/reducer/currentPage";
-import { subscribeToAuthSessionCrossTabSync } from "@/domain/authCrossTabSync";
-import { isAuthSessionRolloutEnabled } from "@/domain/authFeatureFlag";
+import { subscribeToAuthSessionCrossTabSync } from "@/utils/authentication/session/crossTabSync";
+import { isAuthSessionRolloutEnabled } from "@/utils/authentication/session/featureFlag";
 import { setAuthStatusUnauthenticated } from "@/store/reducer/authStatus";
 
 /**
@@ -128,3 +128,6 @@ export default function App() {
     </div>
   );
 }
+
+
+

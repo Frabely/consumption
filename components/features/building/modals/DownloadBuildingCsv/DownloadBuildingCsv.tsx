@@ -1,4 +1,4 @@
-import styles from './DownloadBuildingCsv.module.css'
+﻿import styles from './DownloadBuildingCsv.module.css'
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import Modal from "@/components/shared/overlay/Modal";
 import {ChangeEvent, useState} from "react";
@@ -9,7 +9,7 @@ import {setModalStateNone} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentHouse} from "@/store/selectors";
-import {parseYearMonthInput} from "@/domain/fieldValueMapping";
+import {parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {buildDownloadBuildingCsvText} from "@/components/features/building/modals/DownloadBuildingCsv/DownloadBuildingCsv.logic";
 
 export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
@@ -99,3 +99,4 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
 }
 
 export type DownloadBuildingCsvProps = {}
+

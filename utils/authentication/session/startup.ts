@@ -1,5 +1,5 @@
-import { AUTH_STATUS } from "@/domain/authTargetState";
-import { restoreAuthSessionFromStorage } from "@/domain/authSessionRestore";
+﻿import { AUTH_STATUS } from "@/utils/authentication/core/targetState";
+import { restoreAuthSessionFromStorage } from "@/utils/authentication/session/sessionRestore";
 import {
   setAuthStatusAuthenticated,
   setAuthStatusUnauthenticated,
@@ -10,7 +10,7 @@ import { EMPTY_USER } from "@/constants/constantData";
 import {
   createAuthTelemetryEvent,
   emitAuthTelemetryEvent,
-} from "@/domain/authTelemetry";
+} from "@/utils/authentication/telemetry/telemetry";
 
 export type AuthStartupDispatchAction =
   | ReturnType<typeof setAuthStatusAuthenticated>
@@ -76,3 +76,6 @@ export const restoreAuthOnAppStart = ({
   const decision = restoreAuthSessionFromStorage({ now });
   applyAuthStartupDecision({ decision, dispatch });
 };
+
+
+

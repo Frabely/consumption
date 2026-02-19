@@ -1,8 +1,8 @@
-import { Role } from "@/constants/enums";
+﻿import { Role } from "@/constants/enums";
 import {
   AUTH_SESSION_SCHEMA_VERSION,
   PersistedAuthSession,
-} from "@/domain/authTargetState";
+} from "@/utils/authentication/core/targetState";
 
 type AuthSessionValidationIssue =
   | "not_an_object"
@@ -153,3 +153,6 @@ export const parsePersistedAuthSession = (
     validation,
   };
 };
+
+
+

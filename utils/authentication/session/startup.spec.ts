@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+﻿import { describe, expect, it, vi } from "vitest";
 import { Role } from "@/constants/enums";
-import { AUTH_STATUS } from "@/domain/authTargetState";
+import { AUTH_STATUS } from "@/utils/authentication/core/targetState";
 import {
   setAuthStatusAuthenticated,
   setAuthStatusUnauthenticated,
@@ -10,9 +10,9 @@ import { setCurrentCar } from "@/store/reducer/currentCar";
 import {
   applyAuthStartupDecision,
   restoreAuthOnAppStart,
-} from "@/domain/authStartup";
-import * as restoreModule from "@/domain/authSessionRestore";
-import { AuthSessionRestoreDecision } from "@/domain/authSessionRestore";
+} from "@/utils/authentication/session/startup";
+import * as restoreModule from "@/utils/authentication/session/sessionRestore";
+import { AuthSessionRestoreDecision } from "@/utils/authentication/session/sessionRestore";
 
 describe("authStartup", () => {
   it("applies authenticated startup decision", () => {
@@ -87,3 +87,6 @@ describe("authStartup", () => {
     spy.mockRestore();
   });
 });
+
+
+

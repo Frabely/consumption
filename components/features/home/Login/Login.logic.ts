@@ -1,4 +1,4 @@
-import { cars } from "@/constants/constantData";
+﻿import { cars } from "@/constants/constantData";
 import { CarNames } from "@/constants/enums";
 import { Car, User } from "@/constants/types";
 import { checkUserId } from "@/firebase/functions";
@@ -8,12 +8,12 @@ import { setAuthStatusAuthenticated } from "@/store/reducer/authStatus";
 import {
   buildPersistedAuthSession,
   persistAuthSession,
-} from "@/domain/authSessionStorage";
-import { isAuthSessionRolloutEnabled } from "@/domain/authFeatureFlag";
+} from "@/utils/authentication/session/sessionStorage";
+import { isAuthSessionRolloutEnabled } from "@/utils/authentication/session/featureFlag";
 import {
   createAuthTelemetryEvent,
   emitAuthTelemetryEvent,
-} from "@/domain/authTelemetry";
+} from "@/utils/authentication/telemetry/telemetry";
 
 export type LoginDispatchAction =
   | ReturnType<typeof setCurrentCar>
@@ -171,3 +171,6 @@ export const handleLoginInput = async ({
   );
   return { status: "success" };
 };
+
+
+

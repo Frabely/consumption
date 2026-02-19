@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { isAuthSessionRolloutEnabled } from "@/domain/authFeatureFlag";
+﻿import { describe, expect, it } from "vitest";
+import { isAuthSessionRolloutEnabled } from "@/utils/authentication/session/featureFlag";
 
 describe("isAuthSessionRolloutEnabled", () => {
   it("defaults to enabled when no value is provided", () => {
@@ -24,3 +24,6 @@ describe("isAuthSessionRolloutEnabled", () => {
     expect(isAuthSessionRolloutEnabled("unexpected")).toBe(true);
   });
 });
+
+
+

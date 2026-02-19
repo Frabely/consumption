@@ -1,4 +1,4 @@
-import { AUTH_SESSION_STORAGE_KEY } from "@/domain/authTargetState";
+﻿import { AUTH_SESSION_STORAGE_KEY } from "@/utils/authentication/core/targetState";
 
 export type StorageEventLike = Pick<StorageEvent, "key" | "newValue">;
 
@@ -77,3 +77,6 @@ export const subscribeToAuthSessionCrossTabSync = ({
     window.removeEventListener("storage", onStorage);
   };
 };
+
+
+
