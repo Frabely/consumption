@@ -8,10 +8,12 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Korrigiere Ursachen, nicht nur Symptome.
 - Keine stillen "quick fixes", die technische Schulden erhoehen.
 - Halte Verhalten stabil, ausser eine Verhaltensaenderung ist explizit gewuenscht.
+- Neue Branches immer von `master` ableiten.
 - Nutze Serena (MCP) so oft wie moeglich fuer Analyse, Navigation und Code-Aenderungen im Projekt.
 - Bewerte Architektur, Lesbarkeit, Wartbarkeit und Risikomanagement konsequent aus Senior-Developer-Sicht.
 - Wende SOLID- und DRY-Prinzipien konsequent an.
 - Bevorzuge eine klare, gut erweiterbare Architektur mit sauber getrennten Verantwortlichkeiten.
+- Git-Workflow: `git fetch` und `git pull` duerfen immer ohne Rueckfrage ausgefuehrt werden. `git push` darf ebenfalls ohne Rueckfrage ausgefuehrt werden, ausser auf den Branches `master` und `production` (dort nur mit expliziter User-Anweisung).
 
 ## 2. TypeScript-Standards
 - `strict` bleibt aktiv; keine Aufweichung in `tsconfig.json`.
@@ -58,6 +60,11 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Tippfehler in Namen vermeiden (z. B. `dimension` statt inkonsistenter Varianten).
 - Eine Datei sollte ein klares Hauptthema haben.
 - Keine toten Hilfsfunktionen oder alte Codepfade liegen lassen.
+- Neue Features und neue Komponenten direkt in Feature-/Co-Location-Struktur anlegen (`<Feature>.tsx`, `<Feature>.module.css`, `<Feature>.spec.ts(x)` im selben Feature-Ordner).
+- Feature-Komponenten unter `components/features/<Bereich>/<Feature>/` gruppieren (z. B. `components/features/home/Login/`), damit zusammengehoerige Komponenten klar gebuendelt sind.
+- Wiederverwendbare, bereichsuebergreifende UI-Bausteine unter `components/shared/<Kategorie>/<Feature>/` gruppieren (z. B. `components/shared/ui/CustomButton/`).
+- Feature-nahe Logik im jeweiligen Feature-Ordner halten (z. B. `<Feature>.logic.ts`); `domain/` nur fuer geteilte, UI-unabhaengige Fachlogik verwenden.
+- Umstrukturierungen von Komponenten in Richtung Feature-/Co-Location-Struktur im File `RESTRUCTURING_STATUS.md` dokumentieren und nach jedem einzelnen Schritt aktualisieren.
 
 ## 8. Fehlerbehandlung und Logging
 - Fehler nicht verschlucken; aussagekraeftige Meldungen erzeugen.
@@ -67,6 +74,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 ## 9. Tests und Verifikation
 - Fuer neue Features, Bugfixes und Refactorings sollen passende Tests erstellt oder bestehende Tests erweitert werden.
 - Bei Logik-Aenderungen mindestens die betroffenen Flows lokal pruefen.
+- Bevorzuge in Component-Tests reale Render-/Interaction-Tests (echte User-Pfade) statt starkem Hook-Mocking; Hook-Mocking nur gezielt und minimal einsetzen, wenn ein Flow anders nicht sinnvoll testbar ist.
 - Vor Abschluss mindestens:
   - Type-Check/Lint erfolgreich
   - Relevante Build-/Run-Pfade getestet
