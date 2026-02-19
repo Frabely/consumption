@@ -66,6 +66,7 @@ export type SessionValidationDispatch = (
 export const applySessionValidationResult = ({
   result,
   dispatch,
+  currentCarName,
   clearSessionFn = clearPersistedAuthSession,
   buildSessionFn = buildPersistedAuthSession,
   persistSessionFn = persistAuthSession,
@@ -73,6 +74,7 @@ export const applySessionValidationResult = ({
 }: {
   result: SessionValidationResult;
   dispatch: SessionValidationDispatch;
+  currentCarName?: string;
   clearSessionFn?: () => boolean;
   buildSessionFn?: typeof buildPersistedAuthSession;
   persistSessionFn?: typeof persistAuthSession;
@@ -101,7 +103,10 @@ export const applySessionValidationResult = ({
 
   if (result.status === "valid") {
     dispatch(setCurrentUser(result.user));
-    if (result.user.defaultCar) {
+    if (
+      result.user.defaultCar &&
+      currentCarName !== result.user.defaultCar
+    ) {
       dispatch(setCurrentCar({ name: result.user.defaultCar }));
     }
     const session = buildSessionFn(result.user);
@@ -119,13 +124,15 @@ export const applySessionValidationResult = ({
 export const validateAndApplyActiveSession = async ({
   userId,
   dispatch,
+  currentCarName,
   checkUserIdFn = checkUserId,
 }: {
   userId: string;
   dispatch: SessionValidationDispatch;
+  currentCarName?: string;
   checkUserIdFn?: CheckUserIdFn;
 }): Promise<SessionValidationResult> => {
   const result = await validateActiveSession({ userId, checkUserIdFn });
-  applySessionValidationResult({ result, dispatch });
+  applySessionValidationResult({ result, dispatch, currentCarName });
   return result;
 };

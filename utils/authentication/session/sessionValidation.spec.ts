@@ -89,6 +89,32 @@ describe("authSessionValidation", () => {
     expect(persistSessionFn).toHaveBeenCalledTimes(1);
   });
 
+  it("does not overwrite hydrated current car when default car name is unchanged", () => {
+    const dispatch = vi.fn();
+    const persistSessionFn = vi.fn(() => true);
+    const buildSessionFn = vi.fn().mockReturnValue({
+      schemaVersion: 1,
+      userId: "1234",
+      role: Role.Admin,
+      defaultCar: "Zoe",
+      expiresAt: 2_000_000_000_000,
+    });
+    const user = { key: "1234", role: Role.Admin, defaultCar: "Zoe" };
+
+    applySessionValidationResult({
+      result: { status: "valid", user },
+      dispatch,
+      currentCarName: "Zoe",
+      buildSessionFn,
+      persistSessionFn,
+    });
+
+    expect(dispatch).toHaveBeenCalledWith(setCurrentUser(user));
+    expect(dispatch).not.toHaveBeenCalledWith(setCurrentCar({ name: "Zoe" }));
+    expect(buildSessionFn).toHaveBeenCalledWith(user);
+    expect(persistSessionFn).toHaveBeenCalledTimes(1);
+  });
+
   it("validateAndApplyActiveSession validates and applies", async () => {
     const dispatch = vi.fn();
     const checkUserIdFn = vi
