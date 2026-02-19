@@ -1,0 +1,34 @@
+import { describe, expect, it, vi } from "vitest";
+import { setCurrentUser } from "@/store/reducer/currentUser";
+import { setModalStateNone } from "@/store/reducer/modalState";
+import { setAuthStatusUnauthenticated } from "@/store/reducer/authStatus";
+import { setDataSetArray } from "@/store/reducer/currentDataSet";
+import { setPage } from "@/store/reducer/currentPage";
+import { Page } from "@/constants/enums";
+import { performAuthLogout } from "@/domain/authLogout";
+
+describe("authLogout", () => {
+  it("dispatches logout actions and clears session", () => {
+    const dispatch = vi.fn();
+    const clearSessionFn = vi.fn(() => true);
+
+    performAuthLogout({ dispatch, clearSessionFn, resetDataSet: true });
+
+    expect(dispatch).toHaveBeenCalledWith(setCurrentUser({}));
+    expect(dispatch).toHaveBeenCalledWith(setModalStateNone());
+    expect(dispatch).toHaveBeenCalledWith(setAuthStatusUnauthenticated());
+    expect(dispatch).toHaveBeenCalledWith(setDataSetArray([]));
+    expect(dispatch).toHaveBeenCalledWith(setPage(Page.Home));
+    expect(clearSessionFn).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not reset dataset when not requested", () => {
+    const dispatch = vi.fn();
+    const clearSessionFn = vi.fn(() => true);
+
+    performAuthLogout({ dispatch, clearSessionFn, resetDataSet: false });
+
+    expect(dispatch).not.toHaveBeenCalledWith(setDataSetArray([]));
+    expect(dispatch).toHaveBeenCalledWith(setPage(Page.Home));
+  });
+});

@@ -148,6 +148,18 @@ Status-Legende:
   - Login-Flow setzt danach `authStatus=authenticated` explizit.
   - Session-Write ist testbar entkoppelt (`buildPersistedAuthSessionFn`, `persistAuthSessionFn`).
 
+## Ergebnis Schritt 9: Logout-Flow mit Session-Cleanup (verbindlich)
+
+- Implementiert in:
+  - `domain/authLogout.ts`
+  - `domain/authLogout.spec.ts`
+  - `components/features/home/Menu/Menu.tsx`
+  - `components/features/building/MenuBuilding/MenuBuilding.tsx`
+- Enthalten:
+  - Zentraler Logout-Flow entfernt persistierte Session-Daten.
+  - Logout setzt `authStatus=unauthenticated` und navigiert nach Home.
+  - Optionaler Dataset-Reset fuer Home-Logout ist zentral steuerbar.
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -160,7 +172,7 @@ Status-Legende:
 | 6   | Session-Rehydration beim App-Start einbauen (vor Render von Login/Home)                             | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 6: Session-Restore beim App-Start (verbindlich)".                      |
 | 7   | Start-Flow absichern: solange Status `unknown` nur Loader/Splash rendern                            | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 7: Startup-Flow-Absicherung mit Loader (verbindlich)".                 |
 | 8   | Login-Flow anpassen: bei Erfolg Session schreiben, Store konsistent setzen                          | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 8: Login-Flow mit Session-Persistenz (verbindlich)".                   |
-| 9   | Logout-Flow anpassen: Session sicher entfernen, Store resetten, sauber redirecten                   | offen     | Noch offen                                                                                               |
+| 9   | Logout-Flow anpassen: Session sicher entfernen, Store resetten, sauber redirecten                   | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 9: Logout-Flow mit Session-Cleanup (verbindlich)".                     |
 | 10  | Session-Validierung ergaenzen (leichtgewichtig gegen Backend/Firebase), inkl. Fallback bei Fehlern  | offen     | Noch offen                                                                                               |
 | 11  | Session-Ablauf behandeln (abgelaufen -> Logout/Relogin)                                             | offen     | Noch offen                                                                                               |
 | 12  | Guarding fuer geschuetzte Bereiche vereinheitlichen (Home/BuildingConsumption)                      | offen     | Noch offen                                                                                               |
@@ -193,3 +205,4 @@ Status-Legende:
 - 2026-02-19: Schritt 6 mit App-Start-Restore in `domain/authStartup.ts` und `app/page.tsx` umgesetzt.
 - 2026-02-19: Schritt 7 mit Loader-Gating fuer `authStatus=unknown` in `app/page.tsx` umgesetzt.
 - 2026-02-19: Schritt 8 mit Login-Session-Persistenz und `authStatus`-Setzen umgesetzt.
+- 2026-02-19: Schritt 9 mit zentralem Logout-Cleanup in `domain/authLogout.ts` umgesetzt.
