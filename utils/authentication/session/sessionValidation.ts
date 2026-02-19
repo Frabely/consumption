@@ -8,6 +8,7 @@ import {
   buildPersistedAuthSession,
   persistAuthSession,
 } from "@/utils/authentication/session/sessionStorage";
+import { SESSION_VALIDATION_ERROR_CODES } from "@/utils/authentication/constants/errorCodes";
 import { EMPTY_USER } from "@/constants/constantData";
 import {
   createAuthTelemetryEvent,
@@ -41,7 +42,9 @@ export const validateActiveSession = async ({
     return { status: "valid", user };
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "session_validation_unavailable";
+      error instanceof Error
+        ? error.message
+        : SESSION_VALIDATION_ERROR_CODES.SESSION_VALIDATION_UNAVAILABLE;
     return { status: "unavailable", message };
   }
 };
@@ -81,7 +84,7 @@ export const applySessionValidationResult = ({
     dispatch(setAuthStatusUnauthenticated());
     emitTelemetryEvent(
       createAuthTelemetryEvent("session_invalidated", {
-        reason: "backend_user_missing",
+        reason: SESSION_VALIDATION_ERROR_CODES.BACKEND_USER_MISSING,
       }),
     );
     return;
@@ -126,6 +129,3 @@ export const validateAndApplyActiveSession = async ({
   applySessionValidationResult({ result, dispatch });
   return result;
 };
-
-
-

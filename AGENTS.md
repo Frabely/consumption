@@ -23,6 +23,8 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Nutze konkrete Rueckgabetypen fuer exportierte Funktionen.
 - Bevorzuge `type`/`interface` statt impliziter Objektformen in komplexen Datenstrukturen.
 - Keine ungenutzten Variablen, Imports oder Typen einchecken.
+- Keine Magic Numbers: numerische oder zeitbasierte Fachwerte immer als benannte `const` mit sprechendem Namen auslagern.
+- Konstanten (`const`) nicht inline in Feature-/Logic-Dateien definieren, wenn sie wiederverwendbar oder fachlich relevant sind; stattdessen in separaten Constant-Dateien mit klarer Ordnerstruktur ablegen (z. B. `constants/`, `utils/<domain>/constants/`).
 - Keine ungueltigen `as const` Assertions auf nicht-literalen Ausdruecken verwenden; stattdessen Zieltypen explizit annotieren.
 - In Test-Hilfstypen fuer Component-Props keine `{}`-Funktionsplatzhalter verwenden; Callback-Props immer als aufrufbare Signatur typisieren (z. B. `(...args: unknown[]) => void`).
 
@@ -86,6 +88,8 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Fehler nicht verschlucken; aussagekraeftige Meldungen erzeugen.
 - `console.log` nur fuer gezieltes Debugging und vor Merge entfernen.
 - Nutzerkritische Fehlerpfade im UI sichtbar machen (z. B. Lade-/Fehlerzustand).
+- Error-Codes niemals als harte String-Literale streuen: immer zentral ueber benannte `const` referenzieren.
+- Error-Code-Namen muessen im UPPER_SNAKE_CASE-Schema vorliegen, z. B. `THIS_IS_A_ERRORCODE`.
 
 ## 9. Tests und Verifikation
 

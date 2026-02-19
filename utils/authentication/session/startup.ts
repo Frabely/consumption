@@ -6,6 +6,10 @@ import {
 } from "@/utils/authentication/core/targetState";
 import { parsePersistedAuthSession } from "@/utils/authentication/session/sessionContract";
 import {
+  AUTH_SESSION_RESTORE_FAILURE_REASONS,
+  AuthSessionRestoreFailureReason,
+} from "@/utils/authentication/constants/errorCodes";
+import {
   clearPersistedAuthSession,
   readPersistedAuthSession,
   StorageLike,
@@ -29,20 +33,6 @@ export type AuthStartupDispatchAction =
   | ReturnType<typeof setCurrentCar>;
 
 export type AuthStartupDispatch = (action: AuthStartupDispatchAction) => void;
-
-export type AuthSessionRestoreFailureReason =
-  | "missing_session"
-  | "invalid_session"
-  | "expired_session";
-
-export const AUTH_SESSION_RESTORE_FAILURE_REASONS: Record<
-  Uppercase<AuthSessionRestoreFailureReason>,
-  AuthSessionRestoreFailureReason
-> = {
-  MISSING_SESSION: "missing_session",
-  INVALID_SESSION: "invalid_session",
-  EXPIRED_SESSION: "expired_session",
-};
 
 export type AuthSessionRestoreDecision = {
   status: AuthStatus;

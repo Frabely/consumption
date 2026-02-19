@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { Role } from "@/constants/enums";
 import { AUTH_SESSION_SCHEMA_VERSION } from "@/utils/authentication/core/targetState";
+import { AUTH_SESSION_CONTRACT_ISSUES } from "@/utils/authentication/constants/errorCodes";
 import {
   parsePersistedAuthSession,
   validateAuthSessionContract,
@@ -26,13 +27,15 @@ describe("authSessionContract", () => {
       schemaVersion: 999,
     });
     expect(result.isValid).toBe(false);
-    expect(result.issues).toContain("unsupported_schema_version");
+    expect(result.issues).toContain(
+      AUTH_SESSION_CONTRACT_ISSUES.UNSUPPORTED_SCHEMA_VERSION,
+    );
   });
 
   it("rejects invalid role values", () => {
     const result = validateAuthSessionContract({ ...validSession, role: 77 });
     expect(result.isValid).toBe(false);
-    expect(result.issues).toContain("invalid_role");
+    expect(result.issues).toContain(AUTH_SESSION_CONTRACT_ISSUES.INVALID_ROLE);
   });
 
   it("parses valid payload to session", () => {
@@ -48,7 +51,9 @@ describe("authSessionContract", () => {
     });
     expect(parsed.session).toBeNull();
     expect(parsed.validation.isValid).toBe(false);
-    expect(parsed.validation.issues).toContain("unsupported_schema_version");
+    expect(parsed.validation.issues).toContain(
+      AUTH_SESSION_CONTRACT_ISSUES.UNSUPPORTED_SCHEMA_VERSION,
+    );
   });
 
   it("parses legacy payload as invalid", () => {

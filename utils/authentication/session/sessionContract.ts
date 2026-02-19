@@ -1,16 +1,12 @@
-﻿import { Role } from "@/constants/enums";
+import { Role } from "@/constants/enums";
 import {
   AUTH_SESSION_SCHEMA_VERSION,
   PersistedAuthSession,
 } from "@/utils/authentication/core/targetState";
-
-type AuthSessionValidationIssue =
-  | "not_an_object"
-  | "unsupported_schema_version"
-  | "invalid_user_id"
-  | "invalid_role"
-  | "invalid_default_car"
-  | "invalid_expires_at";
+import {
+  AUTH_SESSION_CONTRACT_ISSUES,
+  AuthSessionValidationIssue,
+} from "@/utils/authentication/constants/errorCodes";
 
 export type AuthSessionValidationResult = {
   isValid: boolean;
@@ -47,23 +43,23 @@ const hasValidBaseFields = (
     typeof session.userId !== "string" ||
     session.userId.trim().length === 0
   ) {
-    issues.push("invalid_user_id");
+    issues.push(AUTH_SESSION_CONTRACT_ISSUES.INVALID_USER_ID);
   }
   if (!isRoleValue(session.role)) {
-    issues.push("invalid_role");
+    issues.push(AUTH_SESSION_CONTRACT_ISSUES.INVALID_ROLE);
   }
   if (
     typeof session.defaultCar !== "string" ||
     session.defaultCar.trim().length === 0
   ) {
-    issues.push("invalid_default_car");
+    issues.push(AUTH_SESSION_CONTRACT_ISSUES.INVALID_DEFAULT_CAR);
   }
   if (
     typeof session.expiresAt !== "number" ||
     !Number.isFinite(session.expiresAt) ||
     session.expiresAt <= 0
   ) {
-    issues.push("invalid_expires_at");
+    issues.push(AUTH_SESSION_CONTRACT_ISSUES.INVALID_EXPIRES_AT);
   }
 
   return issues;
@@ -78,11 +74,17 @@ export const validateAuthSessionContract = (
   raw: unknown,
 ): AuthSessionValidationResult => {
   if (!isObjectRecord(raw)) {
-    return { isValid: false, issues: ["not_an_object"] };
+    return {
+      isValid: false,
+      issues: [AUTH_SESSION_CONTRACT_ISSUES.NOT_AN_OBJECT],
+    };
   }
 
   if (raw.schemaVersion !== AUTH_SESSION_SCHEMA_VERSION) {
-    return { isValid: false, issues: ["unsupported_schema_version"] };
+    return {
+      isValid: false,
+      issues: [AUTH_SESSION_CONTRACT_ISSUES.UNSUPPORTED_SCHEMA_VERSION],
+    };
   }
 
   const issues = hasValidBaseFields(raw);

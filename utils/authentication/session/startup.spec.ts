@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { Role } from "@/constants/enums";
 import { AUTH_STATUS } from "@/utils/authentication/core/targetState";
+import { AUTH_SESSION_RESTORE_FAILURE_REASONS } from "@/utils/authentication/constants/errorCodes";
 import {
   setAuthStatusAuthenticated,
   setAuthStatusUnauthenticated,
@@ -8,7 +9,6 @@ import {
 import { setCurrentUser } from "@/store/reducer/currentUser";
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import {
-  AUTH_SESSION_RESTORE_FAILURE_REASONS,
   applyAuthStartupDecision,
   decideAuthSessionRestore,
   restoreAuthOnAppStart,

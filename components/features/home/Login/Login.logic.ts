@@ -9,6 +9,7 @@ import {
   buildPersistedAuthSession,
   persistAuthSession,
 } from "@/utils/authentication/session/sessionStorage";
+import { LOGIN_ERROR_CODES } from "@/utils/authentication/constants/errorCodes";
 import {
   createAuthTelemetryEvent,
   emitAuthTelemetryEvent,
@@ -125,7 +126,9 @@ export const handleLoginInput = async ({
     user = await checkUserIdFn(input);
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "login_unavailable";
+      error instanceof Error
+        ? error.message
+        : LOGIN_ERROR_CODES.LOGIN_UNAVAILABLE;
     emitTelemetryEvent(
       createAuthTelemetryEvent("session_validation_unavailable", {
         message,
@@ -137,7 +140,7 @@ export const handleLoginInput = async ({
   if (!user) {
     emitTelemetryEvent(
       createAuthTelemetryEvent("login_rejected", {
-        reason: "user_not_found",
+        reason: LOGIN_ERROR_CODES.USER_NOT_FOUND,
       }),
     );
     return { status: "rejected" };

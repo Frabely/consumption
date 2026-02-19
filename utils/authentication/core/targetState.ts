@@ -1,19 +1,27 @@
 import { Role } from "@/constants/enums";
+import {
+  AUTH_SESSION_EXPIRY_CHECK_INTERVAL_MS,
+  AUTH_SESSION_SCHEMA_VERSION,
+  AUTH_SESSION_STORAGE_KEY,
+  AUTH_SESSION_TTL_DAYS,
+  AUTH_SESSION_TTL_MS,
+} from "@/utils/authentication/constants/sessionConfig";
+import {
+  LOGOUT_REASONS,
+  LogoutReason,
+} from "@/utils/authentication/constants/logoutReasons";
 
-export const AUTH_SESSION_STORAGE_KEY = "consumption.auth.session";
-export const AUTH_SESSION_SCHEMA_VERSION = 1;
-export const AUTH_SESSION_TTL_DAYS = 90;
-export const AUTH_SESSION_TTL_MS = AUTH_SESSION_TTL_DAYS * 24 * 60 * 60 * 1000;
-export const AUTH_SESSION_EXPIRY_CHECK_INTERVAL_MS = 60_000;
+export {
+  AUTH_SESSION_EXPIRY_CHECK_INTERVAL_MS,
+  AUTH_SESSION_SCHEMA_VERSION,
+  AUTH_SESSION_STORAGE_KEY,
+  AUTH_SESSION_TTL_DAYS,
+  AUTH_SESSION_TTL_MS,
+  LOGOUT_REASONS,
+};
+export type { LogoutReason };
 
 export type AuthStatus = "unknown" | "authenticated" | "unauthenticated";
-
-export type LogoutReason = "manual" | "expired" | "invalid_session";
-export const LOGOUT_REASONS: Record<Uppercase<LogoutReason>, LogoutReason> = {
-  MANUAL: "manual",
-  EXPIRED: "expired",
-  INVALID_SESSION: "invalid_session",
-};
 
 export type PersistedAuthSession = {
   schemaVersion: number;
