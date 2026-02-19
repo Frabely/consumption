@@ -248,6 +248,14 @@ Status-Legende:
   - Persistierte gueltige User-Session -> Restore -> zentraler Guard redirectet auf Home.
   - Persistierte abgelaufene Session -> Restore-Cleanup -> unauthenticated + Home-Fallback.
 
+## Ergebnis Schritt 17: Manuelle QA-Checkliste (vorbereitet)
+
+- Umgesetzte Artefakte:
+  - `docs/login-overhaul-qa-checklist.md`
+- Hinweis:
+  - Interaktive Browser-Verifikation ist vorbereitet, aber in der aktuellen CLI-Umgebung nicht direkt ausfuehrbar.
+  - Schritt bleibt bis zur manuellen Ausfuehrung `blockiert`.
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -268,8 +276,8 @@ Status-Legende:
 | 14  | Feature-Flag fuer Rollout einbauen (schneller Rollback ohne Hotfix-Refactor)                        | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 14: Feature-Flag fuer Auth-Rollout (verbindlich)".                     |
 | 15  | Logging/Monitoring ergaenzen (Login-Erfolg, Rehydration-Erfolg, Session-Invalidierung, Fehlerquote) | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 15: Auth Logging/Monitoring Events (verbindlich)".                     |
 | 16  | Tests ergaenzen: Persistenz, Rehydration, Expiry, Logout, Guards (Integration priorisiert)          | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 16: Integration-nahe Auth-Flow-Tests (verbindlich)".                   |
-| 17  | Manuelle QA-Checkliste ausfuehren (Reload, Browser-Neustart, Offline/Online, Rollenwechsel)         | offen     | Noch offen                                                                                               |
-| 18  | Dokumentation aktualisieren (kurz in AGENTS/README falls relevant)                                  | offen     | Noch offen                                                                                               |
+| 17  | Manuelle QA-Checkliste ausfuehren (Reload, Browser-Neustart, Offline/Online, Rollenwechsel)         | blockiert | Checkliste erstellt (`docs/login-overhaul-qa-checklist.md`), manuelle Browserausfuehrung noch offen.     |
+| 18  | Dokumentation aktualisieren (kurz in AGENTS/README falls relevant)                                  | umgesetzt | `README.md` um "Auth Session Rollout" inkl. Flag und Doku-Referenzen erweitert.                          |
 | 19  | Abschluss: Diese Datei loeschen, sobald alle Punkte umgesetzt und gemerged sind                     | offen     | Noch offen                                                                                               |
 | 20  | Login-UI ueberarbeiten (inkl. Mockup + responsiver Final-Umsetzung)                                 | offen     | Mockup als Pflichtartefakt vor finaler UI-Implementierung.                                               |
 
@@ -311,3 +319,5 @@ Status-Legende:
 - 2026-02-19: Schritt 14 mit Feature-Flag-gesteuertem Auth-Rollout (`NEXT_PUBLIC_AUTH_SESSION_ROLLOUT_ENABLED`) umgesetzt.
 - 2026-02-19: Schritt 15 mit standardisierten Auth-Telemetry-Events fuer Login/Rehydration/Invalidierung/Logout umgesetzt.
 - 2026-02-19: Schritt 16 mit integration-nahen Auth-Flow-Tests fuer Persistenz/Restore/Guarding umgesetzt.
+- 2026-02-19: Schritt 17 QA-Checkliste erstellt (`docs/login-overhaul-qa-checklist.md`), manuelle Ausfuehrung ausstehend.
+- 2026-02-19: Schritt 18 Doku-Update in `README.md` mit Auth-Rollout-Flag und Referenzdokumenten umgesetzt.

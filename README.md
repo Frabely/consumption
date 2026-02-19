@@ -18,6 +18,19 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
+## Auth Session Rollout
+
+The login/session overhaul is controlled by a runtime feature flag:
+
+- `NEXT_PUBLIC_AUTH_SESSION_ROLLOUT_ENABLED=true` (default): enables session persistence, startup rehydration, session validation, expiry watcher, and cross-tab logout sync.
+- `NEXT_PUBLIC_AUTH_SESSION_ROLLOUT_ENABLED=false`: disables session persistence/rehydration for rollback-safe behavior.
+
+Related implementation docs:
+
+- `docs/login-overhaul-umsetzungsplan.md`
+- `docs/login-overhaul-qa-checklist.md`
+- `docs/login-auth-target-state.md`
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
