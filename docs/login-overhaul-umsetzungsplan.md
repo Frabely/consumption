@@ -182,6 +182,19 @@ Status-Legende:
   - Bei Ablauf erfolgt automatischer Logout mit Session-Cleanup und Redirect.
   - Ablauf-Trigger ist idempotent (einmalig pro Ablaufzustand).
 
+## Ergebnis Schritt 12: Guards fuer geschuetzte Bereiche vereinheitlicht (verbindlich)
+
+- Umgesetzte Artefakte:
+  - `domain/authPageGuard.ts`
+  - `domain/authPageGuard.spec.ts`
+  - `app/page.tsx`
+  - `components/features/building/pages/BuildingConsumption/BuildingConsumption.tsx`
+- Verhalten:
+  - Zentrale Guard-Entscheidung auf App-Ebene fuer Top-Level-Seiten.
+  - Nicht-authentifizierte Nutzer werden immer auf `Page.Home` gefuehrt.
+  - `Page.BuildingConsumption` ist nur fuer authentifizierte Admins erreichbar.
+  - `BuildingConsumption` enthaelt keinen separaten Seitenzugriffs-Guard mehr; die Zugriffskontrolle erfolgt einheitlich zentral.
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -197,7 +210,7 @@ Status-Legende:
 | 9   | Logout-Flow anpassen: Session sicher entfernen, Store resetten, sauber redirecten                   | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 9: Logout-Flow mit Session-Cleanup (verbindlich)".                     |
 | 10  | Session-Validierung ergaenzen (leichtgewichtig gegen Backend/Firebase), inkl. Fallback bei Fehlern  | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 10: Session-Validierung mit Fehler-Fallback (verbindlich)".            |
 | 11  | Session-Ablauf behandeln (abgelaufen -> Logout/Relogin)                                             | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 11: Session-Ablaufbehandlung zur Laufzeit (verbindlich)".              |
-| 12  | Guarding fuer geschuetzte Bereiche vereinheitlichen (Home/BuildingConsumption)                      | offen     | Noch offen                                                                                               |
+| 12  | Guarding fuer geschuetzte Bereiche vereinheitlichen (Home/BuildingConsumption)                      | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 12: Guards fuer geschuetzte Bereiche vereinheitlicht (verbindlich)". |
 | 13  | Cross-Tab-Sync ergaenzen (Logout/Session-Reset via `storage`-Event)                                 | offen     | Noch offen                                                                                               |
 | 14  | Feature-Flag fuer Rollout einbauen (schneller Rollback ohne Hotfix-Refactor)                        | offen     | Noch offen                                                                                               |
 | 15  | Logging/Monitoring ergaenzen (Login-Erfolg, Rehydration-Erfolg, Session-Invalidierung, Fehlerquote) | offen     | Noch offen                                                                                               |
@@ -230,3 +243,4 @@ Status-Legende:
 - 2026-02-19: Schritt 9 mit zentralem Logout-Cleanup in `domain/authLogout.ts` umgesetzt.
 - 2026-02-19: Schritt 10 mit Backend-Session-Validierung/Fallback in `domain/authSessionValidation.ts` umgesetzt.
 - 2026-02-19: Schritt 11 mit Session-Expiry-Watcher und Auto-Logout in `domain/authSessionExpiry.ts` umgesetzt.
+- 2026-02-19: Schritt 12 mit zentraler Page-Guard-Logik in `domain/authPageGuard.ts` und App-Integration umgesetzt.

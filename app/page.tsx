@@ -22,6 +22,8 @@ import { AUTH_STATUS } from "@/domain/authTargetState";
 import { validateAndApplyActiveSession } from "@/domain/authSessionValidation";
 import { startSessionExpiryWatcher } from "@/domain/authSessionExpiry";
 import { performAuthLogout } from "@/domain/authLogout";
+import { resolveGuardedPage } from "@/domain/authPageGuard";
+import { setPage } from "@/store/reducer/currentPage";
 
 /**
  * Bootstraps auth/session state and renders the correct top-level application page.
@@ -59,6 +61,19 @@ export default function App() {
     });
   }, [authStatus, dispatch]);
 
+  const guardedPage = resolveGuardedPage({
+    authStatus,
+    requestedPage: currentPage,
+    userKey: currentUser.key,
+    userRole: currentUser.role,
+  });
+
+  useEffect(() => {
+    if (guardedPage !== currentPage) {
+      dispatch(setPage(guardedPage));
+    }
+  }, [currentPage, dispatch, guardedPage]);
+
   const showAuthBootLoader = shouldRenderAuthBootLoader(authStatus);
 
   return (
@@ -67,7 +82,7 @@ export default function App() {
       <div className={styles.imageFilter} />
       {showAuthBootLoader ? (
         <Loading />
-      ) : currentPage === Page.Home ? (
+      ) : guardedPage === Page.Home ? (
         <Home />
       ) : (
         <BuildingConsumption />
