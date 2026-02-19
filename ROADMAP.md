@@ -1,6 +1,7 @@
 # Produkt-Roadmap
 
 ## 1. Bugfixes
+- High Priority: Home-Loading-Spinner wird hinter den Display-Items gerendert; Spinner muss im Home-View immer klar sichtbar im Vordergrund liegen.
 - AddFloor: Interaktionen (Add/Edit/Remove/Reorder) robuster machen und gezielt auf Edge Cases testen.
 - Modal/Select: Keyboard- und Focus-Verhalten (Escape, Enter, Outside-Click, Tab-Reihenfolge) vereinheitlichen.
 - CSV-Downloads: Datumswechsel und No-Data-Handling in beiden Flows (`DownloadCsv`, `DownloadBuildingCsv`) konsistent behandeln.
