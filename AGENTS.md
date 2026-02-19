@@ -4,6 +4,7 @@ Diese Datei definiert verbindliche Arbeitsregeln fuer dieses Repository.
 Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 
 ## 1. Grundprinzipien
+
 - Bevorzuge kleine, klar getrennte Aenderungen pro Thema.
 - Korrigiere Ursachen, nicht nur Symptome.
 - Keine stillen "quick fixes", die technische Schulden erhoehen.
@@ -16,14 +17,18 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Git-Workflow: `git fetch`, `git pull` und `git commit` duerfen immer ohne Rueckfrage ausgefuehrt werden (auch wenn im Chat nicht explizit zum Commit aufgefordert wurde). `git push` darf ebenfalls ohne Rueckfrage ausgefuehrt werden, ausser auf den Branches `master` und `production` (dort nur mit expliziter User-Anweisung).
 
 ## 2. TypeScript-Standards
+
 - `strict` bleibt aktiv; keine Aufweichung in `tsconfig.json`.
 - Keine neuen `any`-Typen. Falls unvermeidbar: lokal kapseln und begruenden.
 - Nutze konkrete Rueckgabetypen fuer exportierte Funktionen.
 - Bevorzuge `type`/`interface` statt impliziter Objektformen in komplexen Datenstrukturen.
 - Keine ungenutzten Variablen, Imports oder Typen einchecken.
-- Auto-Formatting ist verpflichtend: vor Abschluss immer Prettier ausfuehren und die Formatierung uebernehmen.
+- Fuer neue und bearbeitete Funktionen sind englische Docstrings (`/** ... */`) verpflichtend.
+- Jeder Docstring muss englische `@param`-Eintraege (falls Parameter vorhanden) und einen englischen `@returns`-Eintrag (falls Rueckgabewert vorhanden) enthalten.
+- Die Einhaltung wird ueber Linting (`npm run lint:docstrings`) geprueft.
 
 ## 3. React / Next.js
+
 - Komponenten als kleine, fokussierte Einheiten bauen.
 - `useEffect` immer mit korrekter Dependency-Liste; keine unbeabsichtigten Endlosschleifen.
 - Keine Side-Effects waehrend Render.
@@ -32,18 +37,21 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Fuer Listen stabile Schluessel bevorzugen (keine Index-Keys, wenn vermeidbar).
 
 ## 4. Redux Toolkit
+
 - Nur serialisierbare Daten im Store, ausser es gibt einen expliziten Ausnahmegrund.
 - Reducer rein und deterministisch halten.
 - Typed Hooks (`useAppDispatch`, `useAppSelector`) bevorzugen.
 - Asynchrone Logik sauber kapseln (z. B. in Service/Firebase-Layer), nicht im UI verstreuen.
 
 ## 5. Firebase / Datenzugriff
+
 - Datenzugriffe in `firebase/` zentralisieren; UI-Komponenten sollen keine Query-Details kennen.
 - Fehler immer explizit behandeln (kein leeres `catch`).
 - Bei Schreiboperationen klare Erfolgs-/Fehlerpfade definieren.
 - Keine doppelten Queries in Render-Zyklen ausloesen.
 
 ## 6. Styling und UI
+
 - Bestehende CSS-Module-Struktur beibehalten.
 - Keine Inline-Styles fuer komplexe Layout-Logik, ausser fuer dynamische Kleinigkeiten.
 - Auf mobile und desktop Layout achten.
@@ -57,6 +65,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Bei Overlays/Modals (z. B. "Daten hinzufuegen") muss die Lesbarkeit immer klar priorisiert werden: ausreichend abgedunkelter Hintergrund und ausreichend opake Foreground-Flaechen, damit Inhalte eindeutig erkennbar bleiben.
 
 ## 7. Benennung und Struktur
+
 - Dateinamen und Exporte klar und konsistent benennen.
 - Tippfehler in Namen vermeiden (z. B. `dimension` statt inkonsistenter Varianten).
 - Eine Datei sollte ein klares Hauptthema haben.
@@ -72,11 +81,13 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Wenn bestehende Ordner-/Dateistrukturen nicht den Zielstandards entsprechen, neue Komponenten/Dateien trotzdem direkt in der besseren Zielstruktur anlegen (keine Fortfuehrung veralteter Strukturmuster).
 
 ## 8. Fehlerbehandlung und Logging
+
 - Fehler nicht verschlucken; aussagekraeftige Meldungen erzeugen.
 - `console.log` nur fuer gezieltes Debugging und vor Merge entfernen.
 - Nutzerkritische Fehlerpfade im UI sichtbar machen (z. B. Lade-/Fehlerzustand).
 
 ## 9. Tests und Verifikation
+
 - Fuer neue Features, Bugfixes und Refactorings sollen passende Tests erstellt oder bestehende Tests erweitert werden.
 - Bei Logik-Aenderungen mindestens die betroffenen Flows lokal pruefen.
 - Bevorzuge in Component-Tests reale Render-/Interaction-Tests (echte User-Pfade) statt starkem Hook-Mocking; Hook-Mocking nur gezielt und minimal einsetzen, wenn ein Flow anders nicht sinnvoll testbar ist.
@@ -87,6 +98,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Wenn keine Tests vorhanden sind: manuelle Testschritte kurz dokumentieren.
 
 ## 10. Review-Checkliste vor Abschluss
+
 - Vor jedem Commit ist eine kurze Selbst-Review verpflichtend (Diff, Risiken, Regressionen, offene Punkte).
 - Ist die Loesung die einfachste robuste Variante?
 - Sind Edge Cases und Fehlerpfade abgedeckt?
@@ -95,6 +107,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Sind keine unnoetigen Abhaengigkeiten eingefuehrt worden?
 
 ## 11. Nicht tun
+
 - Keine grossflaechigen Refactorings ohne Auftrag.
 - Keine API-/Schema-Aenderungen ohne Abstimmung.
 - Keine verdeckten Breaking Changes.
