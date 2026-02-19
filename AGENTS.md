@@ -82,6 +82,10 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Umstrukturierungen von Komponenten in Richtung Feature-/Co-Location-Struktur im File `RESTRUCTURING_STATUS.md` dokumentieren und nach jedem einzelnen Schritt aktualisieren.
 - Vor dem Anlegen neuer Komponenten/Dateien immer aktiv den besten Zielort in der Projektstruktur pruefen; bei Unsicherheit vorab im Chat nachfragen.
 - Wenn bestehende Ordner-/Dateistrukturen nicht den Zielstandards entsprechen, neue Komponenten/Dateien trotzdem direkt in der besseren Zielstruktur anlegen (keine Fortfuehrung veralteter Strukturmuster).
+- Konstanten nach Nutzungskontext platzieren: lokal im Feature/Modul, wenn nur dort genutzt; domain-spezifisch unter `utils/<domain>/constants/`, wenn mehrere Dateien derselben Domain sie teilen.
+- Globale `constants/` nur fuer wirklich app-weite Werte verwenden; keine pauschale Ablage aller Konstanten im globalen Ordner.
+- Konstanten thematisch trennen (z. B. `errorCodes.ts`, `sessionConfig.ts`, `eventNames.ts`) statt grosse Sammeldateien (`constants.ts`) aufzubauen.
+- Keine \"God constants file\": mehrere kleine, fokussierte Constant-Dateien bevorzugen.
 
 ## 8. Fehlerbehandlung und Logging
 
@@ -90,6 +94,8 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Nutzerkritische Fehlerpfade im UI sichtbar machen (z. B. Lade-/Fehlerzustand).
 - Error-Codes niemals als harte String-Literale streuen: immer zentral ueber benannte `const` referenzieren.
 - Error-Code-Namen muessen im UPPER_SNAKE_CASE-Schema vorliegen, z. B. `THIS_IS_A_ERRORCODE`.
+- Error-Codes konsistent strukturieren: entweder als `*_ERROR_CODE`-Konstanten oder gebuendelt in einem `ERROR_CODES`-Objekt mit `as const` und abgeleiteten Union-Typen.
+- Error-Code-Konstanten muessen im UPPER_SNAKE_CASE-Schema mit Suffix `_ERROR_CODE` benannt werden (z. B. `SESSION_VALIDATION_UNAVAILABLE_ERROR_CODE`), waehrend der zugehoerige String-Wert in `snake_case` bleibt (z. B. `"session_validation_unavailable"`).
 
 ## 9. Tests und Verifikation
 
