@@ -13,6 +13,7 @@
 - Verbesserte Lade-/Leerstates mit klaren Handlungsoptionen.
 - Inline-Hilfen und Validation-Feedback in komplexen Dialogen.
 - Accessibility-Polish: bessere Screenreader-Texte, Tastaturbedienung und Fokus-Management.
+- CSS-Variablen-Check und Konsolidierung: pruefen, dass Designwerte (insb. Farben/Spacing/Typografie) nicht hart codiert sind, um spaetere Color-Schema-Aenderungen zentral steuern zu koennen.
 
 ## 3. Grosse Features
 
