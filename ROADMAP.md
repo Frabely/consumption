@@ -16,6 +16,8 @@
 - CSS-Variablen-Check und Konsolidierung: pruefen, dass Designwerte (insb. Farben/Spacing/Typografie) nicht hart codiert sind, um spaetere Color-Schema-Aenderungen zentral steuern zu koennen.
 - Filter-UX verbessern: Filtermoeglichkeiten in einen Header-Bereich mit Zuklapp-Funktion verschieben (insb. fuer mobile mehr Platz fuer Inhalte).
 - Menu-UX verbessern: Beim Auswaehlen eines Autos das Menu sofort automatisch schliessen.
+- Spinner-UX verbessern: Loading-Spinner visuell und funktional ueberarbeiten (klarer Status, ruhigeres Verhalten, konsistente Groessen/Abstaende).
+- WebApp-Layout verbessern: Im installierten WebApp-Modus den Bereich oben (statt URL-/Browser-Header) mit dem App-Hintergrund gestalten, damit der Übergang nahtlos wirkt.
 
 ## 3. Grosse Features
 
