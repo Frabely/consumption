@@ -15,6 +15,7 @@
 - Accessibility-Polish: bessere Screenreader-Texte, Tastaturbedienung und Fokus-Management.
 - CSS-Variablen-Check und Konsolidierung: pruefen, dass Designwerte (insb. Farben/Spacing/Typografie) nicht hart codiert sind, um spaetere Color-Schema-Aenderungen zentral steuern zu koennen.
 - Filter-UX verbessern: Filtermoeglichkeiten in einen Header-Bereich mit Zuklapp-Funktion verschieben (insb. fuer mobile mehr Platz fuer Inhalte).
+- Menu-UX verbessern: Beim Auswaehlen eines Autos das Menu sofort automatisch schliessen.
 
 ## 3. Grosse Features
 
