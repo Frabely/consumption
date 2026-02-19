@@ -15,6 +15,8 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Wende SOLID- und DRY-Prinzipien konsequent an.
 - Bevorzuge eine klare, gut erweiterbare Architektur mit sauber getrennten Verantwortlichkeiten.
 - Git-Workflow: `git fetch`, `git pull` und `git commit` duerfen immer ohne Rueckfrage ausgefuehrt werden (auch wenn im Chat nicht explizit zum Commit aufgefordert wurde). `git push` darf ebenfalls ohne Rueckfrage ausgefuehrt werden, ausser auf den Branches `master` und `production` (dort nur mit expliziter User-Anweisung).
+- Vor neuen Feature-Vorschlaegen zuerst Cleanup-Tasks priorisieren und aktiv vorschlagen.
+- Feature-Vorschlaege erst nach erledigtem oder bewusst dokumentiert zurueckgestelltem Cleanup machen.
 
 ## 2. TypeScript-Standards
 
@@ -27,6 +29,9 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Konstanten (`const`) nicht inline in Feature-/Logic-Dateien definieren, wenn sie wiederverwendbar oder fachlich relevant sind; stattdessen in separaten Constant-Dateien mit klarer Ordnerstruktur ablegen (z. B. `constants/`, `utils/<domain>/constants/`).
 - Keine ungueltigen `as const` Assertions auf nicht-literalen Ausdruecken verwenden; stattdessen Zieltypen explizit annotieren.
 - In Test-Hilfstypen fuer Component-Props keine `{}`-Funktionsplatzhalter verwenden; Callback-Props immer als aufrufbare Signatur typisieren (z. B. `(...args: unknown[]) => void`).
+- Fuer neue und bearbeitete Funktionen sind englische Docstrings (`/** ... */`) verpflichtend.
+- Jeder Docstring muss englische `@param`-Eintraege (falls Parameter vorhanden) und einen englischen `@returns`-Eintrag (falls Rueckgabewert vorhanden) enthalten.
+- Die Einhaltung wird ueber Linting (`npm run lint:docstrings`) geprueft.
 
 ## 3. React / Next.js
 

@@ -13,6 +13,8 @@
 - Verbesserte Lade-/Leerstates mit klaren Handlungsoptionen.
 - Inline-Hilfen und Validation-Feedback in komplexen Dialogen.
 - Accessibility-Polish: bessere Screenreader-Texte, Tastaturbedienung und Fokus-Management.
+- CSS-Variablen-Check und Konsolidierung: pruefen, dass Designwerte (insb. Farben/Spacing/Typografie) nicht hart codiert sind, um spaetere Color-Schema-Aenderungen zentral steuern zu koennen.
+- Filter-UX verbessern: Filtermoeglichkeiten in einen Header-Bereich mit Zuklapp-Funktion verschieben (insb. fuer mobile mehr Platz fuer Inhalte).
 
 ## 3. Grosse Features
 
@@ -88,6 +90,7 @@
 
 ## 4. Infrastructure
 - Test-Infrastruktur weiter haerten (weniger fragiles Hook-Mocking, mehr stabile Interaction-Tests).
+- Orchestrierungs-Tests fuer `app/page.tsx` ergaenzen: Rollout-off-Verhalten, Session-Expiry-Logout, Cross-Tab-Logout und Guard-Redirects explizit als Komponententests absichern.
 - Coverage-Gates pro kritischem Bereich definieren (mind. Branch-Coverage fuer Kernfluesse).
 - CI-Pipeline erweitern:
   - verpflichtender Lint + Test + Coverage-Report pro PR
