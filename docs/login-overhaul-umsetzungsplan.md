@@ -206,6 +206,20 @@ Status-Legende:
   - Sync greift nur im authentifizierten Zustand.
   - Listener wird sauber registriert und per Cleanup entfernt.
 
+## Ergebnis Schritt 14: Feature-Flag fuer Auth-Rollout (verbindlich)
+
+- Umgesetzte Artefakte:
+  - `domain/authFeatureFlag.ts`
+  - `domain/authFeatureFlag.spec.ts`
+  - `app/page.tsx`
+  - `components/features/home/Login/Login.logic.ts`
+  - `components/features/home/Login/Login.spec.ts`
+- Verhalten:
+  - Neues Flag `NEXT_PUBLIC_AUTH_SESSION_ROLLOUT_ENABLED` steuert den Session-Rollout.
+  - Bei deaktiviertem Flag wird Startup-Rehydration uebersprungen und `authStatus=unauthenticated` gesetzt.
+  - Session-Validierung, Expiry-Watcher und Cross-Tab-Sync laufen nur bei aktivem Flag.
+  - Login persistiert Sessions nur bei aktivem Flag.
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -223,12 +237,13 @@ Status-Legende:
 | 11  | Session-Ablauf behandeln (abgelaufen -> Logout/Relogin)                                             | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 11: Session-Ablaufbehandlung zur Laufzeit (verbindlich)".              |
 | 12  | Guarding fuer geschuetzte Bereiche vereinheitlichen (Home/BuildingConsumption)                      | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 12: Guards fuer geschuetzte Bereiche vereinheitlicht (verbindlich)". |
 | 13  | Cross-Tab-Sync ergaenzen (Logout/Session-Reset via `storage`-Event)                                 | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 13: Cross-Tab-Sync fuer Session-Reset (verbindlich)".                |
-| 14  | Feature-Flag fuer Rollout einbauen (schneller Rollback ohne Hotfix-Refactor)                        | offen     | Noch offen                                                                                               |
+| 14  | Feature-Flag fuer Rollout einbauen (schneller Rollback ohne Hotfix-Refactor)                        | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 14: Feature-Flag fuer Auth-Rollout (verbindlich)".                   |
 | 15  | Logging/Monitoring ergaenzen (Login-Erfolg, Rehydration-Erfolg, Session-Invalidierung, Fehlerquote) | offen     | Noch offen                                                                                               |
 | 16  | Tests ergaenzen: Persistenz, Rehydration, Expiry, Logout, Guards (Integration priorisiert)          | offen     | Noch offen                                                                                               |
 | 17  | Manuelle QA-Checkliste ausfuehren (Reload, Browser-Neustart, Offline/Online, Rollenwechsel)         | offen     | Noch offen                                                                                               |
 | 18  | Dokumentation aktualisieren (kurz in AGENTS/README falls relevant)                                  | offen     | Noch offen                                                                                               |
 | 19  | Abschluss: Diese Datei loeschen, sobald alle Punkte umgesetzt und gemerged sind                     | offen     | Noch offen                                                                                               |
+| 20  | Login-UI ueberarbeiten (inkl. Mockup + responsiver Final-Umsetzung)                                 | offen     | Mockup als Pflichtartefakt vor finaler UI-Implementierung.                                               |
 
 ## Definition of Done
 
@@ -239,6 +254,15 @@ Status-Legende:
 - Rollout ist ueber Feature-Flag kontrollierbar und schnell deaktivierbar.
 - Kritische Flows sind durch Tests abgedeckt.
 - Keine Regressionen in Navigation und Rollen-Logik.
+
+## Cleanup-First Regel (verbindlich)
+
+- Bevor neue Features vorgeschlagen oder umgesetzt werden, werden zuerst offene Cleanup-Tasks aktiv priorisiert und als erster Vorschlag kommuniziert.
+- Neue Feature-Vorschlaege erfolgen erst, wenn die relevanten Cleanup-Punkte fuer den betroffenen Bereich abgearbeitet oder bewusst zurueckgestellt und dokumentiert sind.
+- Auth-Rollout-Flag-Cleanup:
+  - `NEXT_PUBLIC_AUTH_SESSION_ROLLOUT_ENABLED` ist ein temporaeres Rollout-Sicherheitsnetz.
+  - Sobald der Login-Overhaul ausreichend getestet und stabil in Produktion verifiziert ist, wird das Flag inkl. Dead-Branch-Logik wieder entfernt.
+  - Entfernen umfasst: Flag-Resolver, bedingte Codepfade, zugehoerige Tests und Doku-Hinweise.
 
 ## Aenderungslog
 
@@ -256,3 +280,4 @@ Status-Legende:
 - 2026-02-19: Schritt 11 mit Session-Expiry-Watcher und Auto-Logout in `domain/authSessionExpiry.ts` umgesetzt.
 - 2026-02-19: Schritt 12 mit zentraler Page-Guard-Logik in `domain/authPageGuard.ts` und App-Integration umgesetzt.
 - 2026-02-19: Schritt 13 mit `storage`-basiertem Cross-Tab-Sync in `domain/authCrossTabSync.ts` umgesetzt.
+- 2026-02-19: Schritt 14 mit Feature-Flag-gesteuertem Auth-Rollout (`NEXT_PUBLIC_AUTH_SESSION_ROLLOUT_ENABLED`) umgesetzt.

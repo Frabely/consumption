@@ -25,6 +25,8 @@ import { performAuthLogout } from "@/domain/authLogout";
 import { resolveGuardedPage } from "@/domain/authPageGuard";
 import { setPage } from "@/store/reducer/currentPage";
 import { subscribeToAuthSessionCrossTabSync } from "@/domain/authCrossTabSync";
+import { isAuthSessionRolloutEnabled } from "@/domain/authFeatureFlag";
+import { setAuthStatusUnauthenticated } from "@/store/reducer/authStatus";
 
 /**
  * Bootstraps auth/session state and renders the correct top-level application page.
@@ -36,23 +38,35 @@ export default function App() {
   const currentUser = useAppSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
   const dimension = useWindowDimensions();
+  const isSessionRolloutEnabled = isAuthSessionRolloutEnabled();
 
   useEffect(() => {
     dispatch(setDimension(dimension));
   }, [dimension, dispatch]);
 
   useEffect(() => {
+    if (!isSessionRolloutEnabled) {
+      dispatch(setAuthStatusUnauthenticated());
+      return;
+    }
+
     restoreAuthOnAppStart({ dispatch });
-  }, [dispatch]);
+  }, [dispatch, isSessionRolloutEnabled]);
 
   useEffect(() => {
+    if (!isSessionRolloutEnabled) {
+      return;
+    }
     if (authStatus !== AUTH_STATUS.AUTHENTICATED || !currentUser.key) {
       return;
     }
     void validateAndApplyActiveSession({ userId: currentUser.key, dispatch });
-  }, [authStatus, currentUser.key, dispatch]);
+  }, [authStatus, currentUser.key, dispatch, isSessionRolloutEnabled]);
 
   useEffect(() => {
+    if (!isSessionRolloutEnabled) {
+      return;
+    }
     if (authStatus !== AUTH_STATUS.AUTHENTICATED) {
       return;
     }
@@ -60,9 +74,12 @@ export default function App() {
     return startSessionExpiryWatcher({
       onExpire: () => performAuthLogout({ dispatch, resetDataSet: true }),
     });
-  }, [authStatus, dispatch]);
+  }, [authStatus, dispatch, isSessionRolloutEnabled]);
 
   useEffect(() => {
+    if (!isSessionRolloutEnabled) {
+      return;
+    }
     if (authStatus !== AUTH_STATUS.AUTHENTICATED) {
       return;
     }
@@ -70,7 +87,7 @@ export default function App() {
     return subscribeToAuthSessionCrossTabSync({
       onSessionCleared: () => performAuthLogout({ dispatch, resetDataSet: true }),
     });
-  }, [authStatus, dispatch]);
+  }, [authStatus, dispatch, isSessionRolloutEnabled]);
 
   const guardedPage = resolveGuardedPage({
     authStatus,

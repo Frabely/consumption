@@ -119,6 +119,32 @@ describe("login", () => {
     expect(dispatch).toHaveBeenCalledWith(setAuthStatusAuthenticated());
   });
 
+  it("does not persist session when auth-session rollout is disabled", async () => {
+    const dispatch = vi.fn();
+    const user: User = {
+      key: "1234",
+      name: "Test",
+      role: Role.User,
+      defaultCar: CarNames.BMW,
+    };
+    const checkUserIdFn = vi.fn().mockResolvedValue(user);
+    const buildPersistedAuthSessionFn = vi.fn();
+    const persistAuthSessionFn = vi.fn();
+
+    await handleLoginInput({
+      input: "1234",
+      dispatch,
+      checkUserIdFn,
+      buildPersistedAuthSessionFn,
+      persistAuthSessionFn,
+      isSessionRolloutEnabledFn: () => false,
+    });
+
+    expect(buildPersistedAuthSessionFn).not.toHaveBeenCalled();
+    expect(persistAuthSessionFn).not.toHaveBeenCalled();
+    expect(dispatch).toHaveBeenCalledWith(setAuthStatusAuthenticated());
+  });
+
   it("renders login component with password input", async () => {
     vi.resetModules();
     vi.doMock("@/store/hooks", () => ({

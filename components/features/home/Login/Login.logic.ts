@@ -9,6 +9,7 @@ import {
   buildPersistedAuthSession,
   persistAuthSession,
 } from "@/domain/authSessionStorage";
+import { isAuthSessionRolloutEnabled } from "@/domain/authFeatureFlag";
 
 export type LoginDispatchAction =
   | ReturnType<typeof setCurrentCar>
@@ -32,6 +33,7 @@ export type HandleLoginInputParams = {
   checkUserIdFn?: CheckUserIdFn;
   buildPersistedAuthSessionFn?: BuildPersistedAuthSessionFn;
   persistAuthSessionFn?: PersistAuthSessionFn;
+  isSessionRolloutEnabledFn?: () => boolean;
 };
 
 /**
@@ -71,6 +73,7 @@ export const handleLoginInput = async ({
   checkUserIdFn = checkUserId,
   buildPersistedAuthSessionFn = buildPersistedAuthSession,
   persistAuthSessionFn = persistAuthSession,
+  isSessionRolloutEnabledFn = isAuthSessionRolloutEnabled,
 }: HandleLoginInputParams): Promise<void> => {
   if (!isCompleteLoginInput(input)) {
     return;
@@ -90,9 +93,11 @@ export const handleLoginInput = async ({
     ...user,
     defaultCar: car?.name ?? user.defaultCar,
   };
-  const session = buildPersistedAuthSessionFn(sessionUser);
-  if (session) {
-    persistAuthSessionFn({ session });
+  if (isSessionRolloutEnabledFn()) {
+    const session = buildPersistedAuthSessionFn(sessionUser);
+    if (session) {
+      persistAuthSessionFn({ session });
+    }
   }
 
   dispatch(setCurrentUser(user));
