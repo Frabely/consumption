@@ -220,6 +220,25 @@ Status-Legende:
   - Session-Validierung, Expiry-Watcher und Cross-Tab-Sync laufen nur bei aktivem Flag.
   - Login persistiert Sessions nur bei aktivem Flag.
 
+## Ergebnis Schritt 15: Auth Logging/Monitoring Events (verbindlich)
+
+- Umgesetzte Artefakte:
+  - `domain/authTelemetry.ts`
+  - `domain/authTelemetry.spec.ts`
+  - `components/features/home/Login/Login.logic.ts`
+  - `components/features/home/Login/Login.spec.ts`
+  - `domain/authStartup.ts`
+  - `domain/authStartup.spec.ts`
+  - `domain/authSessionValidation.ts`
+  - `domain/authSessionValidation.spec.ts`
+  - `domain/authLogout.ts`
+  - `domain/authLogout.spec.ts`
+- Verhalten:
+  - Login-Erfolg und Login-Reject erzeugen standardisierte Auth-Telemetry-Events.
+  - Rehydration-Erfolg und Rehydration-Fallback werden als Events emittiert.
+  - Session-Invalidierung und Validation-Unavailable werden als Events emittiert.
+  - Logout-Events enthalten Grundinformationen (`manual`, `expired`, `invalid_session`).
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -235,10 +254,10 @@ Status-Legende:
 | 9   | Logout-Flow anpassen: Session sicher entfernen, Store resetten, sauber redirecten                   | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 9: Logout-Flow mit Session-Cleanup (verbindlich)".                     |
 | 10  | Session-Validierung ergaenzen (leichtgewichtig gegen Backend/Firebase), inkl. Fallback bei Fehlern  | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 10: Session-Validierung mit Fehler-Fallback (verbindlich)".            |
 | 11  | Session-Ablauf behandeln (abgelaufen -> Logout/Relogin)                                             | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 11: Session-Ablaufbehandlung zur Laufzeit (verbindlich)".              |
-| 12  | Guarding fuer geschuetzte Bereiche vereinheitlichen (Home/BuildingConsumption)                      | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 12: Guards fuer geschuetzte Bereiche vereinheitlicht (verbindlich)". |
-| 13  | Cross-Tab-Sync ergaenzen (Logout/Session-Reset via `storage`-Event)                                 | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 13: Cross-Tab-Sync fuer Session-Reset (verbindlich)".                |
-| 14  | Feature-Flag fuer Rollout einbauen (schneller Rollback ohne Hotfix-Refactor)                        | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 14: Feature-Flag fuer Auth-Rollout (verbindlich)".                   |
-| 15  | Logging/Monitoring ergaenzen (Login-Erfolg, Rehydration-Erfolg, Session-Invalidierung, Fehlerquote) | offen     | Noch offen                                                                                               |
+| 12  | Guarding fuer geschuetzte Bereiche vereinheitlichen (Home/BuildingConsumption)                      | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 12: Guards fuer geschuetzte Bereiche vereinheitlicht (verbindlich)".   |
+| 13  | Cross-Tab-Sync ergaenzen (Logout/Session-Reset via `storage`-Event)                                 | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 13: Cross-Tab-Sync fuer Session-Reset (verbindlich)".                  |
+| 14  | Feature-Flag fuer Rollout einbauen (schneller Rollback ohne Hotfix-Refactor)                        | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 14: Feature-Flag fuer Auth-Rollout (verbindlich)".                     |
+| 15  | Logging/Monitoring ergaenzen (Login-Erfolg, Rehydration-Erfolg, Session-Invalidierung, Fehlerquote) | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 15: Auth Logging/Monitoring Events (verbindlich)".                     |
 | 16  | Tests ergaenzen: Persistenz, Rehydration, Expiry, Logout, Guards (Integration priorisiert)          | offen     | Noch offen                                                                                               |
 | 17  | Manuelle QA-Checkliste ausfuehren (Reload, Browser-Neustart, Offline/Online, Rollenwechsel)         | offen     | Noch offen                                                                                               |
 | 18  | Dokumentation aktualisieren (kurz in AGENTS/README falls relevant)                                  | offen     | Noch offen                                                                                               |
@@ -281,3 +300,4 @@ Status-Legende:
 - 2026-02-19: Schritt 12 mit zentraler Page-Guard-Logik in `domain/authPageGuard.ts` und App-Integration umgesetzt.
 - 2026-02-19: Schritt 13 mit `storage`-basiertem Cross-Tab-Sync in `domain/authCrossTabSync.ts` umgesetzt.
 - 2026-02-19: Schritt 14 mit Feature-Flag-gesteuertem Auth-Rollout (`NEXT_PUBLIC_AUTH_SESSION_ROLLOUT_ENABLED`) umgesetzt.
+- 2026-02-19: Schritt 15 mit standardisierten Auth-Telemetry-Events fuer Login/Rehydration/Invalidierung/Logout umgesetzt.

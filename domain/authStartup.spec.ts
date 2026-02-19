@@ -17,6 +17,7 @@ import { AuthSessionRestoreDecision } from "@/domain/authSessionRestore";
 describe("authStartup", () => {
   it("applies authenticated startup decision", () => {
     const dispatch = vi.fn();
+    const emitTelemetryEvent = vi.fn();
     const decision = {
       status: AUTH_STATUS.AUTHENTICATED,
       session: {
@@ -29,7 +30,7 @@ describe("authStartup", () => {
       shouldClearPersistedSession: false,
     };
 
-    applyAuthStartupDecision({ decision, dispatch });
+    applyAuthStartupDecision({ decision, dispatch, emitTelemetryEvent });
 
     expect(dispatch).toHaveBeenNthCalledWith(
       1,
@@ -41,10 +42,12 @@ describe("authStartup", () => {
     );
     expect(dispatch).toHaveBeenNthCalledWith(2, setCurrentCar({ name: "Zoe" }));
     expect(dispatch).toHaveBeenNthCalledWith(3, setAuthStatusAuthenticated());
+    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
   });
 
   it("applies unauthenticated startup decision", () => {
     const dispatch = vi.fn();
+    const emitTelemetryEvent = vi.fn();
     const decision: AuthSessionRestoreDecision = {
       status: AUTH_STATUS.UNAUTHENTICATED,
       session: null,
@@ -52,10 +55,11 @@ describe("authStartup", () => {
       reason: "missing_session",
     };
 
-    applyAuthStartupDecision({ decision, dispatch });
+    applyAuthStartupDecision({ decision, dispatch, emitTelemetryEvent });
 
     expect(dispatch).toHaveBeenCalledWith(setAuthStatusUnauthenticated());
     expect(dispatch).toHaveBeenCalledWith(setCurrentUser({}));
+    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
   });
 
   it("restores on app start via storage decision", () => {

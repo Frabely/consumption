@@ -11,8 +11,14 @@ describe("authLogout", () => {
   it("dispatches logout actions and clears session", () => {
     const dispatch = vi.fn();
     const clearSessionFn = vi.fn(() => true);
+    const emitTelemetryEvent = vi.fn();
 
-    performAuthLogout({ dispatch, clearSessionFn, resetDataSet: true });
+    performAuthLogout({
+      dispatch,
+      clearSessionFn,
+      resetDataSet: true,
+      emitTelemetryEvent,
+    });
 
     expect(dispatch).toHaveBeenCalledWith(setCurrentUser({}));
     expect(dispatch).toHaveBeenCalledWith(setModalStateNone());
@@ -20,15 +26,23 @@ describe("authLogout", () => {
     expect(dispatch).toHaveBeenCalledWith(setDataSetArray([]));
     expect(dispatch).toHaveBeenCalledWith(setPage(Page.Home));
     expect(clearSessionFn).toHaveBeenCalledTimes(1);
+    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
   });
 
   it("does not reset dataset when not requested", () => {
     const dispatch = vi.fn();
     const clearSessionFn = vi.fn(() => true);
+    const emitTelemetryEvent = vi.fn();
 
-    performAuthLogout({ dispatch, clearSessionFn, resetDataSet: false });
+    performAuthLogout({
+      dispatch,
+      clearSessionFn,
+      resetDataSet: false,
+      emitTelemetryEvent,
+    });
 
     expect(dispatch).not.toHaveBeenCalledWith(setDataSetArray([]));
     expect(dispatch).toHaveBeenCalledWith(setPage(Page.Home));
+    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
   });
 });

@@ -72,7 +72,12 @@ export default function App() {
     }
 
     return startSessionExpiryWatcher({
-      onExpire: () => performAuthLogout({ dispatch, resetDataSet: true }),
+      onExpire: () =>
+        performAuthLogout({
+          dispatch,
+          resetDataSet: true,
+          reason: "expired",
+        }),
     });
   }, [authStatus, dispatch, isSessionRolloutEnabled]);
 
@@ -85,7 +90,12 @@ export default function App() {
     }
 
     return subscribeToAuthSessionCrossTabSync({
-      onSessionCleared: () => performAuthLogout({ dispatch, resetDataSet: true }),
+      onSessionCleared: () =>
+        performAuthLogout({
+          dispatch,
+          resetDataSet: true,
+          reason: "invalid_session",
+        }),
     });
   }, [authStatus, dispatch, isSessionRolloutEnabled]);
 

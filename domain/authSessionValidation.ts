@@ -9,6 +9,10 @@ import {
   persistAuthSession,
 } from "@/domain/authSessionStorage";
 import { EMPTY_USER } from "@/constants/constantData";
+import {
+  createAuthTelemetryEvent,
+  emitAuthTelemetryEvent,
+} from "@/domain/authTelemetry";
 
 export type SessionValidationResult =
   | { status: "valid"; user: User }
@@ -62,17 +66,33 @@ export const applySessionValidationResult = ({
   clearSessionFn = clearPersistedAuthSession,
   buildSessionFn = buildPersistedAuthSession,
   persistSessionFn = persistAuthSession,
+  emitTelemetryEvent = emitAuthTelemetryEvent,
 }: {
   result: SessionValidationResult;
   dispatch: SessionValidationDispatch;
   clearSessionFn?: () => boolean;
   buildSessionFn?: typeof buildPersistedAuthSession;
   persistSessionFn?: typeof persistAuthSession;
+  emitTelemetryEvent?: typeof emitAuthTelemetryEvent;
 }): void => {
   if (result.status === "invalid") {
     clearSessionFn();
     dispatch(setCurrentUser(EMPTY_USER));
     dispatch(setAuthStatusUnauthenticated());
+    emitTelemetryEvent(
+      createAuthTelemetryEvent("session_invalidated", {
+        reason: "backend_user_missing",
+      }),
+    );
+    return;
+  }
+
+  if (result.status === "unavailable") {
+    emitTelemetryEvent(
+      createAuthTelemetryEvent("session_validation_unavailable", {
+        message: result.message,
+      }),
+    );
     return;
   }
 

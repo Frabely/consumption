@@ -59,12 +59,14 @@ describe("login", () => {
     const dispatch = vi.fn();
     const checkUserIdFn = vi.fn().mockResolvedValue(user);
     const persistAuthSessionFn = vi.fn();
+    const emitTelemetryEvent = vi.fn();
 
     await handleLoginInput({
       input: "1234",
       dispatch,
       checkUserIdFn,
       persistAuthSessionFn,
+      emitTelemetryEvent,
     });
 
     expect(checkUserIdFn).toHaveBeenCalledWith("1234");
@@ -72,6 +74,7 @@ describe("login", () => {
     expect(dispatch).toHaveBeenNthCalledWith(2, setCurrentUser(user));
     expect(dispatch).toHaveBeenNthCalledWith(3, setAuthStatusAuthenticated());
     expect(persistAuthSessionFn).toHaveBeenCalledTimes(1);
+    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
   });
 
   it("dispatches only user when no matching car is available", async () => {
@@ -86,18 +89,21 @@ describe("login", () => {
     const dispatch = vi.fn();
     const checkUserIdFn = vi.fn().mockResolvedValue(user);
     const persistAuthSessionFn = vi.fn();
+    const emitTelemetryEvent = vi.fn();
 
     await handleLoginInput({
       input: "1234",
       dispatch,
       checkUserIdFn,
       persistAuthSessionFn,
+      emitTelemetryEvent,
     });
 
     expect(dispatch).toHaveBeenCalledTimes(2);
     expect(dispatch).toHaveBeenNthCalledWith(1, setCurrentUser(user));
     expect(dispatch).toHaveBeenNthCalledWith(2, setAuthStatusAuthenticated());
     expect(persistAuthSessionFn).toHaveBeenCalledTimes(1);
+    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
   });
 
   it("does not persist session if build function returns null", async () => {
@@ -106,6 +112,7 @@ describe("login", () => {
     const checkUserIdFn = vi.fn().mockResolvedValue(user);
     const buildPersistedAuthSessionFn = vi.fn().mockReturnValue(null);
     const persistAuthSessionFn = vi.fn();
+    const emitTelemetryEvent = vi.fn();
 
     await handleLoginInput({
       input: "1234",
@@ -113,10 +120,12 @@ describe("login", () => {
       checkUserIdFn,
       buildPersistedAuthSessionFn,
       persistAuthSessionFn,
+      emitTelemetryEvent,
     });
 
     expect(persistAuthSessionFn).not.toHaveBeenCalled();
     expect(dispatch).toHaveBeenCalledWith(setAuthStatusAuthenticated());
+    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
   });
 
   it("does not persist session when auth-session rollout is disabled", async () => {
@@ -130,6 +139,7 @@ describe("login", () => {
     const checkUserIdFn = vi.fn().mockResolvedValue(user);
     const buildPersistedAuthSessionFn = vi.fn();
     const persistAuthSessionFn = vi.fn();
+    const emitTelemetryEvent = vi.fn();
 
     await handleLoginInput({
       input: "1234",
@@ -138,11 +148,29 @@ describe("login", () => {
       buildPersistedAuthSessionFn,
       persistAuthSessionFn,
       isSessionRolloutEnabledFn: () => false,
+      emitTelemetryEvent,
     });
 
     expect(buildPersistedAuthSessionFn).not.toHaveBeenCalled();
     expect(persistAuthSessionFn).not.toHaveBeenCalled();
     expect(dispatch).toHaveBeenCalledWith(setAuthStatusAuthenticated());
+    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
+  });
+
+  it("emits rejected telemetry when user lookup returns no user", async () => {
+    const dispatch = vi.fn();
+    const checkUserIdFn = vi.fn().mockResolvedValue(undefined);
+    const emitTelemetryEvent = vi.fn();
+
+    await handleLoginInput({
+      input: "1234",
+      dispatch,
+      checkUserIdFn,
+      emitTelemetryEvent,
+    });
+
+    expect(dispatch).not.toHaveBeenCalled();
+    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
   });
 
   it("renders login component with password input", async () => {

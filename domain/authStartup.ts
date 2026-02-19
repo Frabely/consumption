@@ -7,6 +7,10 @@ import {
 import { setCurrentUser } from "@/store/reducer/currentUser";
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import { EMPTY_USER } from "@/constants/constantData";
+import {
+  createAuthTelemetryEvent,
+  emitAuthTelemetryEvent,
+} from "@/domain/authTelemetry";
 
 export type AuthStartupDispatchAction =
   | ReturnType<typeof setAuthStatusAuthenticated>
@@ -24,9 +28,11 @@ export type AuthStartupDispatch = (action: AuthStartupDispatchAction) => void;
 export const applyAuthStartupDecision = ({
   decision,
   dispatch,
+  emitTelemetryEvent = emitAuthTelemetryEvent,
 }: {
   decision: ReturnType<typeof restoreAuthSessionFromStorage>;
   dispatch: AuthStartupDispatch;
+  emitTelemetryEvent?: typeof emitAuthTelemetryEvent;
 }): void => {
   if (decision.status === AUTH_STATUS.AUTHENTICATED && decision.session) {
     dispatch(
@@ -38,11 +44,21 @@ export const applyAuthStartupDecision = ({
     );
     dispatch(setCurrentCar({ name: decision.session.defaultCar }));
     dispatch(setAuthStatusAuthenticated());
+    emitTelemetryEvent(
+      createAuthTelemetryEvent("rehydration_success", {
+        userId: decision.session.userId,
+      }),
+    );
     return;
   }
 
   dispatch(setCurrentUser(EMPTY_USER));
   dispatch(setAuthStatusUnauthenticated());
+  emitTelemetryEvent(
+    createAuthTelemetryEvent("rehydration_fallback", {
+      reason: decision.reason,
+    }),
+  );
 };
 
 /**

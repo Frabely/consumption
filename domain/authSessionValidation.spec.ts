@@ -35,16 +35,33 @@ describe("authSessionValidation", () => {
   it("applies invalid result by clearing auth state", () => {
     const dispatch = vi.fn();
     const clearSessionFn = vi.fn(() => true);
+    const emitTelemetryEvent = vi.fn();
 
     applySessionValidationResult({
       result: { status: "invalid" },
       dispatch,
       clearSessionFn,
+      emitTelemetryEvent,
     });
 
     expect(clearSessionFn).toHaveBeenCalledTimes(1);
     expect(dispatch).toHaveBeenCalledWith(setCurrentUser({}));
     expect(dispatch).toHaveBeenCalledWith(setAuthStatusUnauthenticated());
+    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
+  });
+
+  it("emits telemetry for unavailable validation result", () => {
+    const dispatch = vi.fn();
+    const emitTelemetryEvent = vi.fn();
+
+    applySessionValidationResult({
+      result: { status: "unavailable", message: "network down" },
+      dispatch,
+      emitTelemetryEvent,
+    });
+
+    expect(dispatch).not.toHaveBeenCalled();
+    expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
   });
 
   it("applies valid result by syncing user/car and persisting refreshed session", () => {

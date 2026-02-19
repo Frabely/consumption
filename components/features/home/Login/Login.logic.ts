@@ -10,6 +10,10 @@ import {
   persistAuthSession,
 } from "@/domain/authSessionStorage";
 import { isAuthSessionRolloutEnabled } from "@/domain/authFeatureFlag";
+import {
+  createAuthTelemetryEvent,
+  emitAuthTelemetryEvent,
+} from "@/domain/authTelemetry";
 
 export type LoginDispatchAction =
   | ReturnType<typeof setCurrentCar>
@@ -34,6 +38,7 @@ export type HandleLoginInputParams = {
   buildPersistedAuthSessionFn?: BuildPersistedAuthSessionFn;
   persistAuthSessionFn?: PersistAuthSessionFn;
   isSessionRolloutEnabledFn?: () => boolean;
+  emitTelemetryEvent?: typeof emitAuthTelemetryEvent;
 };
 
 /**
@@ -74,6 +79,7 @@ export const handleLoginInput = async ({
   buildPersistedAuthSessionFn = buildPersistedAuthSession,
   persistAuthSessionFn = persistAuthSession,
   isSessionRolloutEnabledFn = isAuthSessionRolloutEnabled,
+  emitTelemetryEvent = emitAuthTelemetryEvent,
 }: HandleLoginInputParams): Promise<void> => {
   if (!isCompleteLoginInput(input)) {
     return;
@@ -81,6 +87,11 @@ export const handleLoginInput = async ({
 
   const user = await checkUserIdFn(input);
   if (!user) {
+    emitTelemetryEvent(
+      createAuthTelemetryEvent("login_rejected", {
+        reason: "user_not_found",
+      }),
+    );
     return;
   }
 
@@ -102,4 +113,9 @@ export const handleLoginInput = async ({
 
   dispatch(setCurrentUser(user));
   dispatch(setAuthStatusAuthenticated());
+  emitTelemetryEvent(
+    createAuthTelemetryEvent("login_success", {
+      userId: user.key,
+    }),
+  );
 };
