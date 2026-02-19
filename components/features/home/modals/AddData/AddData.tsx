@@ -63,6 +63,10 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             }
             dispatch(setIsChangingData(false));
             dispatch(setLoadingStation(DEFAULT_LOADING_STATION));
+            setIsInputValid({
+                kilometer: false,
+                power: false
+            });
         }
     }, [currentCar.kilometer, dispatch, modalState]);
 
@@ -84,6 +88,10 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             dispatch(setKilometer(currentCar.kilometer.toString()))
         dispatch(setIsChangingData(false))
         dispatch(setLoadingStation(DEFAULT_LOADING_STATION))
+        setIsInputValid({
+            kilometer: false,
+            power: false
+        })
     }
 
     const onAddDataClickHandler = () => {
