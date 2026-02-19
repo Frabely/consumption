@@ -138,6 +138,16 @@ Status-Legende:
   - Home/Login werden erst nach Abschluss des Startup-Restore-Flows gerendert.
   - Verhindert Login-Flicker waehrend der initialen Session-Wiederherstellung.
 
+## Ergebnis Schritt 8: Login-Flow mit Session-Persistenz (verbindlich)
+
+- Implementiert in:
+  - `components/features/home/Login/Login.logic.ts`
+  - `components/features/home/Login/Login.spec.ts`
+- Enthalten:
+  - Bei erfolgreichem Login wird eine persistierbare Session gebaut und gespeichert.
+  - Login-Flow setzt danach `authStatus=authenticated` explizit.
+  - Session-Write ist testbar entkoppelt (`buildPersistedAuthSessionFn`, `persistAuthSessionFn`).
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -149,7 +159,7 @@ Status-Legende:
 | 5   | Versionierte Rehydration inkl. Fallback: ungueltige/alte Session verwerfen und neu einloggen        | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 5: Versionierte Rehydration mit Fallback (verbindlich)".               |
 | 6   | Session-Rehydration beim App-Start einbauen (vor Render von Login/Home)                             | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 6: Session-Restore beim App-Start (verbindlich)".                      |
 | 7   | Start-Flow absichern: solange Status `unknown` nur Loader/Splash rendern                            | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 7: Startup-Flow-Absicherung mit Loader (verbindlich)".                 |
-| 8   | Login-Flow anpassen: bei Erfolg Session schreiben, Store konsistent setzen                          | offen     | Noch offen                                                                                               |
+| 8   | Login-Flow anpassen: bei Erfolg Session schreiben, Store konsistent setzen                          | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 8: Login-Flow mit Session-Persistenz (verbindlich)".                   |
 | 9   | Logout-Flow anpassen: Session sicher entfernen, Store resetten, sauber redirecten                   | offen     | Noch offen                                                                                               |
 | 10  | Session-Validierung ergaenzen (leichtgewichtig gegen Backend/Firebase), inkl. Fallback bei Fehlern  | offen     | Noch offen                                                                                               |
 | 11  | Session-Ablauf behandeln (abgelaufen -> Logout/Relogin)                                             | offen     | Noch offen                                                                                               |
@@ -182,3 +192,4 @@ Status-Legende:
 - 2026-02-19: Schritt 5 mit versionierter Restore/Fallback-Entscheidung in `domain/authSessionRestore.ts` umgesetzt.
 - 2026-02-19: Schritt 6 mit App-Start-Restore in `domain/authStartup.ts` und `app/page.tsx` umgesetzt.
 - 2026-02-19: Schritt 7 mit Loader-Gating fuer `authStatus=unknown` in `app/page.tsx` umgesetzt.
+- 2026-02-19: Schritt 8 mit Login-Session-Persistenz und `authStatus`-Setzen umgesetzt.
