@@ -1,6 +1,6 @@
-﻿import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { Page, Role } from "@/constants/enums";
-import { restoreAuthSessionFromStorage } from "@/utils/authentication/session/sessionRestore";
+import { restoreAuthSessionFromStorage } from "@/utils/authentication/session/startup";
 import { resolveGuardedPage } from "@/utils/authentication/guards/pageGuard";
 import { AUTH_STATUS } from "@/utils/authentication/core/targetState";
 import { applyAuthStartupDecision } from "@/utils/authentication/session/startup";
@@ -118,6 +118,3 @@ describe("auth access flow integration", () => {
     expect(guardedPage).toBe(Page.Home);
   });
 });
-
-
-
