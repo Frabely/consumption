@@ -8,6 +8,45 @@ import {setPower} from "@/store/reducer/modal/power";
 import {setModalState} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
 
+type ReactElementLike = {
+    type: unknown;
+    props?: {
+        children?: unknown;
+        onMouseDown?: (...args: unknown[]) => void;
+        onMouseUp?: (...args: unknown[]) => void;
+        onTouchStart?: (...args: unknown[]) => void;
+        onTouchEnd?: (...args: unknown[]) => void;
+        className?: string;
+        [key: string]: unknown;
+    };
+};
+
+function isElementLike(node: unknown): node is ReactElementLike {
+    return Boolean(node) && typeof node === "object" && "type" in (node as object);
+}
+
+function findElement(node: unknown, predicate: (element: ReactElementLike) => boolean): ReactElementLike | undefined {
+    if (!node) {
+        return undefined;
+    }
+    if (Array.isArray(node)) {
+        for (const child of node) {
+            const found = findElement(child, predicate);
+            if (found) {
+                return found;
+            }
+        }
+        return undefined;
+    }
+    if (!isElementLike(node)) {
+        return undefined;
+    }
+    if (predicate(node)) {
+        return node;
+    }
+    return findElement(node.props?.children, predicate);
+}
+
 describe("ListItem logic", () => {
     it("allows change mode only for first element within five minutes", () => {
         const now = new Date("2026-02-18T12:05:00.000Z");
@@ -66,6 +105,46 @@ describe("ListItem logic", () => {
 
         expect(html).toContain("Tester");
         expect(html).toContain("1234");
+    });
+
+    it("triggers change actions on long press and clears timeout on release", async () => {
+        vi.useFakeTimers();
+        vi.resetModules();
+        const dispatch = vi.fn();
+        const dispatchChangeDataActionsMock = vi.fn();
+        vi.doMock("@/store/hooks", () => ({
+            useAppDispatch: () => dispatch
+        }));
+        vi.doMock("@/components/features/home/ListItem/ListItem.logic", async () => {
+            const actual = await vi.importActual<typeof import("./ListItem.logic")>("./ListItem.logic");
+            return {
+                ...actual,
+                isChangeCarDataAllowed: () => true,
+                dispatchChangeDataActions: dispatchChangeDataActionsMock
+            };
+        });
+
+        const {default: ListItem} = await import("./ListItem");
+        const element = ListItem({
+            isLight: true,
+            date: new Date("2026-02-18T12:00:00.000Z"),
+            kilometer: 1234,
+            power: 45.6,
+            name: "Tester",
+            id: "id-1",
+            loadingStation: {id: "ls-1", name: "carport"},
+            isFirstElement: true
+        });
+        const root = findElement(element, (currentElement) => typeof currentElement.props?.onMouseDown === "function");
+        root?.props?.onMouseDown?.();
+        vi.advanceTimersByTime(501);
+        expect(dispatch).toHaveBeenCalledWith({type: "isChangingData/setIsChangingData", payload: true});
+        expect(dispatchChangeDataActionsMock).toHaveBeenCalled();
+
+        root?.props?.onMouseUp?.();
+        root?.props?.onTouchStart?.();
+        root?.props?.onTouchEnd?.();
+        vi.useRealTimers();
     });
 
 });
