@@ -31,11 +31,46 @@ Status-Legende:
 | D13 | PIN-UX bei Fehlern (generisch vs. genaue Fehlermeldung) | Generische Fehlermeldung | entschieden |
 | D14 | Sicherheitsregel bei manipulierten Session-Daten | Sofort verwerfen + Logout + Warn-Log | entschieden |
 
+## Ergebnis Schritt 1: Auth-Zielbild (verbindlich)
+
+### Session-Verhalten
+- App-Start:
+  - Session aus `localStorage` lesen.
+  - Lokal strikt validieren (Schema, Pflichtfelder, Typen, Ablauf).
+  - Bei gueltiger Session: Store hydrieren, Status `authenticated`.
+  - Bei ungueltiger Session: Session loeschen, Status `unauthenticated`.
+- Start-Validierung gegen Backend/Firebase:
+  - Bei Online-Verfuegbarkeit Session validieren.
+  - Bei Offline-Start temporaer erlauben, Validierung nachholen sobald wieder online.
+
+### Ablaufzeit / Expiry
+- Session-Dauer: 90 Tage.
+- Strategie: Rolling Expiry bei Nutzung.
+- Abgelaufene Session: sofort Logout und Login-Screen.
+
+### Logout-Regeln
+- Logout loescht lokale Session-Daten vollstaendig.
+- Redux/Auth-State wird auf definierten Ausgangszustand zurueckgesetzt.
+- Logout wird per Cross-Tab-Sync auf allen offenen Tabs gespiegelt.
+
+### Fehlerfaelle und Sicherheitsverhalten
+- Manipulierte/ungueltige Session-Daten:
+  - Sofort verwerfen, ausloggen, Warn-Log schreiben.
+- Backend-Validierung faellt fehl:
+  - Session nicht blind behalten; bei harter Invalidierung ausloggen.
+  - Bei temporarem Netzfehler im Offline-Fallback bleiben und spaeter erneut validieren.
+- Rollenwechsel:
+  - Bei Role-Downgrade sofort aus geschuetzten Bereichen (z. B. BuildingConsumption) herausfuehren.
+
+### UI/UX-Ziel
+- Nutzer bleibt in der Regel eingeloggt und muss beim normalen Start nicht erneut PIN eingeben.
+- Fehlermeldungen bleiben generisch (keine unnötige Detailpreisgabe).
+
 ## Schrittplan
 
 | Nr. | Schritt | Status | Umsetzung/Notizen |
 |---|---|---|---|
-| 1 | Auth-Zielbild finalisieren: Session-Verhalten, Ablaufzeit, Logout-Regeln, Fehlerfaelle | offen | Noch offen |
+| 1 | Auth-Zielbild finalisieren: Session-Verhalten, Ablaufzeit, Logout-Regeln, Fehlerfaelle | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 1: Auth-Zielbild (verbindlich)". |
 | 2 | Session-Contract definieren (`schemaVersion`, Felder, TTL, Validierungsregeln, Migrationsregeln) | offen | Noch offen |
 | 3 | Auth-Status im Store definieren (`unknown`, `authenticated`, `unauthenticated`) | offen | Noch offen |
 | 4 | Session-Persistenz einbauen (z. B. `localStorage` mit `user`, `expiresAt`, `version`) | offen | Noch offen |
