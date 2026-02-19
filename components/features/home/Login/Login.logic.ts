@@ -162,7 +162,7 @@ export const handleLoginInput = async ({
     }
   }
 
-  dispatch(setCurrentUser(user));
+  dispatch(setCurrentUser(sessionUser));
   dispatch(setAuthStatusAuthenticated());
   emitTelemetryEvent(
     createAuthTelemetryEvent("login_success", {
@@ -171,6 +171,3 @@ export const handleLoginInput = async ({
   );
   return { status: "success" };
 };
-
-
-

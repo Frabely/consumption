@@ -112,7 +112,10 @@ describe("login", () => {
 
     expect(checkUserIdFn).toHaveBeenCalledWith("1234");
     expect(dispatch).toHaveBeenNthCalledWith(1, setCurrentCar(bmw));
-    expect(dispatch).toHaveBeenNthCalledWith(2, setCurrentUser(user));
+    expect(dispatch).toHaveBeenNthCalledWith(
+      2,
+      setCurrentUser({ ...user, defaultCar: CarNames.BMW }),
+    );
     expect(dispatch).toHaveBeenNthCalledWith(3, setAuthStatusAuthenticated());
     expect(persistAuthSessionFn).toHaveBeenCalledTimes(1);
     expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
@@ -142,7 +145,10 @@ describe("login", () => {
     });
 
     expect(dispatch).toHaveBeenCalledTimes(2);
-    expect(dispatch).toHaveBeenNthCalledWith(1, setCurrentUser(user));
+    expect(dispatch).toHaveBeenNthCalledWith(
+      1,
+      setCurrentUser({ ...user, defaultCar: CarNames.BMW }),
+    );
     expect(dispatch).toHaveBeenNthCalledWith(2, setAuthStatusAuthenticated());
     expect(persistAuthSessionFn).toHaveBeenCalledTimes(1);
     expect(emitTelemetryEvent).toHaveBeenCalledTimes(1);
