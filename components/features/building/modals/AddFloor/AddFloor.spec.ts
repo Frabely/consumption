@@ -61,7 +61,8 @@ async function buildComponent({
     canAddRoom = false,
     canAddField = false,
     createFlatRejects = false,
-    updateFlatRejects = false
+    updateFlatRejects = false,
+    confirmResult = true
 }: {
     modalState?: ModalState;
     currentFlat?: {
@@ -77,11 +78,13 @@ async function buildComponent({
     canAddField?: boolean;
     createFlatRejects?: boolean;
     updateFlatRejects?: boolean;
+    confirmResult?: boolean;
 } = {}) {
     vi.resetModules();
     vi.restoreAllMocks();
     vi.stubGlobal("alert", vi.fn());
-    vi.stubGlobal("window", {confirm: vi.fn(() => true)});
+    const confirm = vi.fn(() => confirmResult);
+    vi.stubGlobal("window", {confirm});
 
     const dispatch = vi.fn();
     const createFlat = createFlatRejects ? vi.fn().mockRejectedValue(new Error("create failed")) : vi.fn().mockResolvedValue(undefined);
@@ -164,7 +167,8 @@ async function buildComponent({
         CustomButtonMock,
         setRooms,
         setCurrentSelectedRoom,
-        setRoomNameInput
+        setRoomNameInput,
+        confirm
     };
 }
 
@@ -276,5 +280,86 @@ describe("AddFloor logic", () => {
             position: 0
         });
         expect(setRoomNameInput).toHaveBeenCalledWith("");
+    });
+
+    it("reorders rooms when arrow controls are used", async () => {
+        const currentFlat = {
+            id: "flat-1",
+            name: "Flat A",
+            position: 1,
+            rooms: [
+                {id: "room-1", name: "Kitchen", position: 0, fields: []},
+                {id: "room-2", name: "Living", position: 1, fields: []}
+            ]
+        };
+        const {element, setRooms} = await buildComponent({currentFlat});
+        const arrowButtons = findElements(element, (currentElement) => {
+            const className = currentElement.props?.className;
+            return typeof className === "string" && className.includes("arrowButton");
+        });
+
+        arrowButtons[0]?.props?.onClick?.();
+        expect(setRooms).toHaveBeenCalledWith([
+            {id: "room-2", name: "Living", position: 0, fields: []},
+            {id: "room-1", name: "Kitchen", position: 1, fields: []}
+        ]);
+    });
+
+    it("removes selected room only after confirmation", async () => {
+        const currentFlat = {
+            id: "flat-1",
+            name: "Flat A",
+            position: 1,
+            rooms: [
+                {id: "room-1", name: "Kitchen", position: 0, fields: []},
+                {id: "room-2", name: "Living", position: 1, fields: []}
+            ]
+        };
+
+        const confirmed = await buildComponent({currentFlat, confirmResult: true});
+        const deleteButtonsConfirmed = findElements(confirmed.element, (currentElement) => {
+            const className = currentElement.props?.className;
+            return typeof className === "string" && className.includes("deleteButton");
+        });
+        deleteButtonsConfirmed[0]?.props?.onClick?.();
+        expect(confirmed.confirm).toHaveBeenCalled();
+        expect(confirmed.setRooms).toHaveBeenCalledWith([
+            {id: "room-2", name: "Living", position: 0, fields: []}
+        ]);
+        expect(confirmed.setCurrentSelectedRoom).toHaveBeenCalledWith(undefined);
+
+        const declined = await buildComponent({currentFlat, confirmResult: false});
+        const deleteButtonsDeclined = findElements(declined.element, (currentElement) => {
+            const className = currentElement.props?.className;
+            return typeof className === "string" && className.includes("deleteButton");
+        });
+        deleteButtonsDeclined[0]?.props?.onClick?.();
+        expect(declined.confirm).toHaveBeenCalled();
+        expect(declined.setRooms).not.toHaveBeenCalled();
+    });
+
+    it("updates room name via room input change", async () => {
+        const currentFlat = {
+            id: "flat-1",
+            name: "Flat A",
+            position: 1,
+            rooms: [{id: "room-1", name: "Kitchen", position: 0, fields: []}]
+        };
+        const {element, setRooms, setCurrentSelectedRoom} = await buildComponent({currentFlat});
+        const roomInputs = findElements(element, (currentElement) => {
+            const className = currentElement.props?.className;
+            return typeof className === "string" && className.includes("roomInput");
+        });
+
+        roomInputs[0]?.props?.onChange?.({target: {value: "Office"}});
+        expect(setRooms).toHaveBeenCalledWith([
+            {id: "room-1", name: "Office", position: 0, fields: []}
+        ]);
+        expect(setCurrentSelectedRoom).toHaveBeenCalledWith({
+            id: "room-1",
+            name: "Office",
+            position: 0,
+            fields: []
+        });
     });
 });
