@@ -106,6 +106,27 @@ Status-Legende:
   - Speichern/Lesen/Loeschen der Session in `localStorage` (testbar ueber `StorageLike`).
   - Defensives Verhalten bei fehlender Storage-Umgebung und kaputten JSON-Payloads.
 
+## Ergebnis Schritt 5: Versionierte Rehydration mit Fallback (verbindlich)
+
+- Implementiert in:
+  - `domain/authSessionRestore.ts`
+  - `domain/authSessionRestore.spec.ts`
+- Enthalten:
+  - Einheitliche Rehydration-Entscheidung aus persisted Session (`authenticated` / `unauthenticated`).
+  - Fallback-Verhalten fuer Legacy/ungueltige/abgelaufene Sessions.
+  - Invalid/Expired Sessions werden explizit als Cleanup-Fall markiert und geloescht.
+
+## Ergebnis Schritt 6: Session-Restore beim App-Start (verbindlich)
+
+- Implementiert in:
+  - `domain/authStartup.ts`
+  - `domain/authStartup.spec.ts`
+  - `app/page.tsx`
+- Enthalten:
+  - App-Start-Flow liest Session-Decision und setzt den Store fruehzeitig.
+  - Bei gueltiger Session werden `currentUser`, `currentCar` und `authStatus=authenticated` gesetzt.
+  - Bei fehlender/ungueltiger Session wird auf `authStatus=unauthenticated` gesetzt.
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -114,8 +135,8 @@ Status-Legende:
 | 2   | Session-Contract definieren (`schemaVersion`, Felder, TTL, Validierungsregeln, Migrationsregeln)    | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 2: Session-Contract (verbindlich)".                                    |
 | 3   | Auth-Status im Store definieren (`unknown`, `authenticated`, `unauthenticated`)                     | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 3: Auth-Status im Store (verbindlich)".                                |
 | 4   | Session-Persistenz einbauen (z. B. `localStorage` mit `user`, `expiresAt`, `version`)               | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 4: Session-Persistenz (verbindlich)".                                  |
-| 5   | Versionierte Rehydration inkl. Fallback: ungueltige/alte Session verwerfen und neu einloggen        | offen     | Noch offen                                                                                               |
-| 6   | Session-Rehydration beim App-Start einbauen (vor Render von Login/Home)                             | offen     | Noch offen                                                                                               |
+| 5   | Versionierte Rehydration inkl. Fallback: ungueltige/alte Session verwerfen und neu einloggen        | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 5: Versionierte Rehydration mit Fallback (verbindlich)".               |
+| 6   | Session-Rehydration beim App-Start einbauen (vor Render von Login/Home)                             | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 6: Session-Restore beim App-Start (verbindlich)".                      |
 | 7   | Start-Flow absichern: solange Status `unknown` nur Loader/Splash rendern                            | offen     | Noch offen                                                                                               |
 | 8   | Login-Flow anpassen: bei Erfolg Session schreiben, Store konsistent setzen                          | offen     | Noch offen                                                                                               |
 | 9   | Logout-Flow anpassen: Session sicher entfernen, Store resetten, sauber redirecten                   | offen     | Noch offen                                                                                               |
@@ -147,3 +168,5 @@ Status-Legende:
 - 2026-02-19: Schritt 2 als Code-Artefakt mit Validator/Migration in `domain/authSessionContract.ts` umgesetzt.
 - 2026-02-19: Schritt 3 mit zentralem `authStatus` Slice/Selector im Store umgesetzt.
 - 2026-02-19: Schritt 4 mit persistenter Session-Storage-Logik in `domain/authSessionStorage.ts` umgesetzt.
+- 2026-02-19: Schritt 5 mit versionierter Restore/Fallback-Entscheidung in `domain/authSessionRestore.ts` umgesetzt.
+- 2026-02-19: Schritt 6 mit App-Start-Restore in `domain/authStartup.ts` und `app/page.tsx` umgesetzt.
