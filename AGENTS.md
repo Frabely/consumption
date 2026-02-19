@@ -25,6 +25,10 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Nutze konkrete Rueckgabetypen fuer exportierte Funktionen.
 - Bevorzuge `type`/`interface` statt impliziter Objektformen in komplexen Datenstrukturen.
 - Keine ungenutzten Variablen, Imports oder Typen einchecken.
+- Keine Magic Numbers: numerische oder zeitbasierte Fachwerte immer als benannte `const` mit sprechendem Namen auslagern.
+- Konstanten (`const`) nicht inline in Feature-/Logic-Dateien definieren, wenn sie wiederverwendbar oder fachlich relevant sind; stattdessen in separaten Constant-Dateien mit klarer Ordnerstruktur ablegen (z. B. `constants/`, `utils/<domain>/constants/`).
+- Keine ungueltigen `as const` Assertions auf nicht-literalen Ausdruecken verwenden; stattdessen Zieltypen explizit annotieren.
+- In Test-Hilfstypen fuer Component-Props keine `{}`-Funktionsplatzhalter verwenden; Callback-Props immer als aufrufbare Signatur typisieren (z. B. `(...args: unknown[]) => void`).
 - Fuer neue und bearbeitete Funktionen sind englische Docstrings (`/** ... */`) verpflichtend.
 - Jeder Docstring muss englische `@param`-Eintraege (falls Parameter vorhanden) und einen englischen `@returns`-Eintrag (falls Rueckgabewert vorhanden) enthalten.
 - Die Einhaltung wird ueber Linting (`npm run lint:docstrings`) geprueft.
@@ -37,6 +41,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Props und State minimal halten; abgeleitete Werte per `useMemo` nur wenn noetig.
 - Bei Client Components nur dann `'use client'`, wenn Hooks/Browser-APIs gebraucht werden.
 - Fuer Listen stabile Schluessel bevorzugen (keine Index-Keys, wenn vermeidbar).
+- Next.js `metadata` Exporte in `app/*/layout.tsx` und `app/*/page.tsx` immer explizit als `Metadata` aus `next` typisieren.
 
 ## 4. Redux Toolkit
 
@@ -65,6 +70,7 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Texte aus den vorhandenen Sprachdateien beziehen, nicht hart codieren.
 - Kontrast und Lesbarkeit muessen in allen Zustaenden passen (normal, hover, focus, disabled, valid/invalid); helle Hintergruende brauchen dunkle Schrift und umgekehrt.
 - Bei Overlays/Modals (z. B. "Daten hinzufuegen") muss die Lesbarkeit immer klar priorisiert werden: ausreichend abgedunkelter Hintergrund und ausreichend opake Foreground-Flaechen, damit Inhalte eindeutig erkennbar bleiben.
+- Vor CSS-Aenderungen immer zuerst die existierenden globalen CSS-Variablen pruefen und ausschliesslich definierte Tokens verwenden (z. B. Highlight-Farbe `--primary-color`, nicht neue/undefinierte Varianten wie `--accent-color`).
 
 ## 7. Benennung und Struktur
 
@@ -81,12 +87,20 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Umstrukturierungen von Komponenten in Richtung Feature-/Co-Location-Struktur im File `RESTRUCTURING_STATUS.md` dokumentieren und nach jedem einzelnen Schritt aktualisieren.
 - Vor dem Anlegen neuer Komponenten/Dateien immer aktiv den besten Zielort in der Projektstruktur pruefen; bei Unsicherheit vorab im Chat nachfragen.
 - Wenn bestehende Ordner-/Dateistrukturen nicht den Zielstandards entsprechen, neue Komponenten/Dateien trotzdem direkt in der besseren Zielstruktur anlegen (keine Fortfuehrung veralteter Strukturmuster).
+- Konstanten nach Nutzungskontext platzieren: lokal im Feature/Modul, wenn nur dort genutzt; domain-spezifisch unter `utils/<domain>/constants/`, wenn mehrere Dateien derselben Domain sie teilen.
+- Globale `constants/` nur fuer wirklich app-weite Werte verwenden; keine pauschale Ablage aller Konstanten im globalen Ordner.
+- Konstanten thematisch trennen (z. B. `errorCodes.ts`, `sessionConfig.ts`, `eventNames.ts`) statt grosse Sammeldateien (`constants.ts`) aufzubauen.
+- Keine \"God constants file\": mehrere kleine, fokussierte Constant-Dateien bevorzugen.
 
 ## 8. Fehlerbehandlung und Logging
 
 - Fehler nicht verschlucken; aussagekraeftige Meldungen erzeugen.
 - `console.log` nur fuer gezieltes Debugging und vor Merge entfernen.
 - Nutzerkritische Fehlerpfade im UI sichtbar machen (z. B. Lade-/Fehlerzustand).
+- Error-Codes niemals als harte String-Literale streuen: immer zentral ueber benannte `const` referenzieren.
+- Error-Code-Namen muessen im UPPER_SNAKE_CASE-Schema vorliegen, z. B. `THIS_IS_A_ERRORCODE`.
+- Error-Codes konsistent strukturieren: entweder als `*_ERROR_CODE`-Konstanten oder gebuendelt in einem `ERROR_CODES`-Objekt mit `as const` und abgeleiteten Union-Typen.
+- Error-Code-Konstanten muessen im UPPER_SNAKE_CASE-Schema mit Suffix `_ERROR_CODE` benannt werden (z. B. `SESSION_VALIDATION_UNAVAILABLE_ERROR_CODE`), waehrend der zugehoerige String-Wert in `snake_case` bleibt (z. B. `"session_validation_unavailable"`).
 
 ## 9. Tests und Verifikation
 
@@ -95,6 +109,9 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Bevorzuge in Component-Tests reale Render-/Interaction-Tests (echte User-Pfade) statt starkem Hook-Mocking; Hook-Mocking nur gezielt und minimal einsetzen, wenn ein Flow anders nicht sinnvoll testbar ist.
 - Vor Abschluss mindestens:
   - Type-Check/Lint erfolgreich
+  - `npx tsc --noEmit` erfolgreich (keine TS-Fehler in App, Komponenten und Tests)
+  - `npm run lint` erfolgreich
+  - `npm run lint:docstrings` erfolgreich
   - Relevante Build-/Run-Pfade getestet
   - Keine unbeabsichtigten Nebenwirkungen im Store/UI
 - Wenn keine Tests vorhanden sind: manuelle Testschritte kurz dokumentieren.

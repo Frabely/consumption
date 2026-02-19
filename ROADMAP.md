@@ -28,6 +28,11 @@
   - Auth-Service-Layer staerken (Retry/Timeout/Error-Mapping).
   - Rollenlogik und Navigation nach Login konsolidieren.
   - Tests fuer Happy Path + Failure Path + Session Restore erweitern.
+  - Kurzfristige Regel (Phase 1):
+    - Kein Login bei Offline/Netzwerkfehlern.
+    - Nutzer bekommt eine klare Meldung, dass Login ohne Verbindung aktuell nicht moeglich ist.
+  - Geplanter spaeterer Umbau (Phase 2):
+    - Offline-Verhalten im Login erneut aufgreifen und auf ein robustes Session-/Offline-Modell umstellen, sobald die technischen Voraussetzungen dafuer vorhanden sind.
 
 ### 3.2 Building Consumption Overhaul
 - Ziele:
@@ -56,6 +61,32 @@
   - Schritt 7: Rollout in Inkrementen
     - Erst kritische Dialoge/Flows, dann Restbereiche.
     - Nach jedem Inkrement: Regressionstest + UX-Abnahme.
+
+### 3.3 Offline AddData & Sync Queue
+- Ziele:
+  - AddData auch ohne Internet nutzbar machen.
+  - Eintraege lokal zwischenspeichern und spaeter automatisch synchronisieren.
+  - Datenverluste und stille Fehlschlaege bei Offline-Nutzung vermeiden.
+- Schrittweise Umsetzung:
+  - Schritt 1: Outbox-Architektur definieren
+    - Lokales Persistenzmodell fuer pending Eintraege festlegen (`IndexedDB` bevorzugt).
+    - Felder fuer Idempotenz/Status definieren (`clientMutationId`, `pending/synced/failed/conflict`).
+  - Schritt 2: Save-Flow in AddData entkoppeln
+    - Einheitlichen `saveCarData`-Flow einfuehren (online direkt, offline in Outbox).
+    - Klare Fehlerpfade fuer Netzwerk-/Validierungsfehler trennen.
+  - Schritt 3: Hintergrund-Sync aufbauen
+    - Sync bei App-Start, Reconnect (`online`-Event) und optional periodisch anstossen.
+    - Retry mit Backoff fuer temporäre Fehler implementieren.
+  - Schritt 4: Konfliktlogik definieren
+    - Kilometerstand-Konflikte beim spaeten Sync erkennen.
+    - Konflikte als `conflict` markieren und bearbeitbar machen statt still zu verwerfen.
+  - Schritt 5: UX fuer Offline/Pending ausbauen
+    - Pending/Synced/Failed sichtbar im UI kennzeichnen.
+    - Ausstehende Eintraege im Menu/Screen zaehlen und nutzerfreundlich erklaeren.
+    - Aktionen fuer `Erneut senden` / `Bearbeiten` / `Verwerfen` anbieten.
+  - Schritt 6: Tests und Rollout
+    - Integrationstests fuer Offline-Save, Reconnect-Sync, Duplicate-Schutz und Konflikte.
+    - Rollout hinter Feature-Flag, danach stufenweise Aktivierung und Monitoring.
 
 ## 4. Infrastructure
 - Test-Infrastruktur weiter haerten (weniger fragiles Hook-Mocking, mehr stabile Interaction-Tests).

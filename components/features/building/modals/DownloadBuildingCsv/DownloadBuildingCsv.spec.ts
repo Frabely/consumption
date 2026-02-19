@@ -1,4 +1,4 @@
-import {describe, expect, it, vi} from "vitest";
+﻿import {describe, expect, it, vi} from "vitest";
 import {buildDownloadBuildingCsvText} from "@/components/features/building/modals/DownloadBuildingCsv/DownloadBuildingCsv.logic";
 
 type ReactElementLike = {
@@ -83,8 +83,8 @@ async function buildComponent({
     vi.doMock("@/store/reducer/modalState", () => ({
         setModalStateNone: () => ({type: "setModalStateNone"})
     }));
-    vi.doMock("@/domain/fieldValueMapping", async () => {
-        const actual = await vi.importActual<typeof import("@/domain/fieldValueMapping")>("@/domain/fieldValueMapping");
+    vi.doMock("@/utils/building/fieldValueMapping", async () => {
+        const actual = await vi.importActual<typeof import("@/utils/building/fieldValueMapping")>("@/utils/building/fieldValueMapping");
         return {
             ...actual,
             parseYearMonthInput: vi.fn((value: string) => value === "2025-12" ? {year: "2025", month: "12"} : undefined)
@@ -162,3 +162,4 @@ describe("DownloadBuildingCsv logic", () => {
         expect(setCurrentDateValue).toHaveBeenCalledWith({year: "2025", month: "12"});
     });
 });
+

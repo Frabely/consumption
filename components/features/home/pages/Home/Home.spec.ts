@@ -4,6 +4,7 @@ import {
     isAddDataModalOpen,
     isDownloadCsvModalOpen,
     isEvaluationTabSelected,
+    resolveHydratedCurrentCar,
     resolvePrevKilometers
 } from "@/components/features/home/pages/Home/Home.logic";
 
@@ -25,6 +26,45 @@ describe("Home logic", () => {
     it("resolves previous kilometers fallback", () => {
         expect(resolvePrevKilometers(123)).toBe(123);
         expect(resolvePrevKilometers(undefined)).toBe(0);
+    });
+
+    it("hydrates current car by selected car name", () => {
+        const resolvedCar = resolveHydratedCurrentCar({
+            carsList: [
+                {name: "A", kilometer: 10, prevKilometer: 5},
+                {name: "B", kilometer: 20, prevKilometer: 15}
+            ],
+            currentCarName: "B",
+            defaultCarName: "A"
+        });
+
+        expect(resolvedCar).toEqual({name: "B", kilometer: 20, prevKilometer: 15});
+    });
+
+    it("hydrates current car by default car when selected name is unavailable", () => {
+        const resolvedCar = resolveHydratedCurrentCar({
+            carsList: [
+                {name: "A", kilometer: 10, prevKilometer: 5},
+                {name: "B", kilometer: 20, prevKilometer: 15}
+            ],
+            currentCarName: "Missing",
+            defaultCarName: "A"
+        });
+
+        expect(resolvedCar).toEqual({name: "A", kilometer: 10, prevKilometer: 5});
+    });
+
+    it("hydrates current car with first available fallback", () => {
+        const resolvedCar = resolveHydratedCurrentCar({
+            carsList: [
+                {name: "A", kilometer: 10, prevKilometer: 5},
+                {name: "B", kilometer: 20, prevKilometer: 15}
+            ],
+            currentCarName: "Missing",
+            defaultCarName: "AlsoMissing"
+        });
+
+        expect(resolvedCar).toEqual({name: "A", kilometer: 10, prevKilometer: 5});
     });
 
     it("renders login view when no user is active", async () => {

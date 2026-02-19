@@ -14,6 +14,7 @@ import CurrentHouseSlice from "@/store/reducer/currentHouse";
 import isReloadDataNeededSlice from "@/store/reducer/isReloadDataNeeded";
 import isLoadingSlice from "@/store/reducer/isLoading";
 import currentPageSlice from "@/store/reducer/currentPage";
+import authStatusSlice from "@/store/reducer/authStatus";
 
 export const store = configureStore({
     reducer: {
@@ -32,6 +33,7 @@ export const store = configureStore({
         [isReloadDataNeededSlice.name]: isReloadDataNeededSlice.reducer,
         [isLoadingSlice.name]: isLoadingSlice.reducer,
         [currentPageSlice.name]: currentPageSlice.reducer,
+        [authStatusSlice.name]: authStatusSlice.reducer
     },
     devTools: true,
     middleware: getDefaultMiddleware => getDefaultMiddleware({

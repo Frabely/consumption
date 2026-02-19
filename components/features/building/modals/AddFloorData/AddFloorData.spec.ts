@@ -1,4 +1,4 @@
-import {describe, expect, it, vi} from "vitest";
+﻿import {describe, expect, it, vi} from "vitest";
 import {
     isFieldValueValid,
     resolveRoomByName
@@ -138,8 +138,8 @@ async function buildComponent({
             isFieldValueValid: () => isValueValid
         };
     });
-    vi.doMock("@/domain/fieldValueMapping", async () => {
-        const actual = await vi.importActual<typeof import("@/domain/fieldValueMapping")>("@/domain/fieldValueMapping");
+    vi.doMock("@/utils/building/fieldValueMapping", async () => {
+        const actual = await vi.importActual<typeof import("@/utils/building/fieldValueMapping")>("@/utils/building/fieldValueMapping");
         return {
             ...actual,
             parseYearMonthInput: vi.fn((value: string) => {
@@ -267,3 +267,4 @@ describe("AddFloorData logic", () => {
         );
     });
 });
+
