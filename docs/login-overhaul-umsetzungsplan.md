@@ -239,6 +239,15 @@ Status-Legende:
   - Session-Invalidierung und Validation-Unavailable werden als Events emittiert.
   - Logout-Events enthalten Grundinformationen (`manual`, `expired`, `invalid_session`).
 
+## Ergebnis Schritt 16: Integration-nahe Auth-Flow-Tests (verbindlich)
+
+- Umgesetzte Artefakte:
+  - `domain/authAccessFlow.integration.spec.ts`
+- Abgedeckte Kernpfade:
+  - Persistierte gueltige Admin-Session -> Restore -> Startup-Apply -> Zugriff auf BuildingConsumption.
+  - Persistierte gueltige User-Session -> Restore -> zentraler Guard redirectet auf Home.
+  - Persistierte abgelaufene Session -> Restore-Cleanup -> unauthenticated + Home-Fallback.
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -258,7 +267,7 @@ Status-Legende:
 | 13  | Cross-Tab-Sync ergaenzen (Logout/Session-Reset via `storage`-Event)                                 | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 13: Cross-Tab-Sync fuer Session-Reset (verbindlich)".                  |
 | 14  | Feature-Flag fuer Rollout einbauen (schneller Rollback ohne Hotfix-Refactor)                        | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 14: Feature-Flag fuer Auth-Rollout (verbindlich)".                     |
 | 15  | Logging/Monitoring ergaenzen (Login-Erfolg, Rehydration-Erfolg, Session-Invalidierung, Fehlerquote) | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 15: Auth Logging/Monitoring Events (verbindlich)".                     |
-| 16  | Tests ergaenzen: Persistenz, Rehydration, Expiry, Logout, Guards (Integration priorisiert)          | offen     | Noch offen                                                                                               |
+| 16  | Tests ergaenzen: Persistenz, Rehydration, Expiry, Logout, Guards (Integration priorisiert)          | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 16: Integration-nahe Auth-Flow-Tests (verbindlich)".                   |
 | 17  | Manuelle QA-Checkliste ausfuehren (Reload, Browser-Neustart, Offline/Online, Rollenwechsel)         | offen     | Noch offen                                                                                               |
 | 18  | Dokumentation aktualisieren (kurz in AGENTS/README falls relevant)                                  | offen     | Noch offen                                                                                               |
 | 19  | Abschluss: Diese Datei loeschen, sobald alle Punkte umgesetzt und gemerged sind                     | offen     | Noch offen                                                                                               |
@@ -301,3 +310,4 @@ Status-Legende:
 - 2026-02-19: Schritt 13 mit `storage`-basiertem Cross-Tab-Sync in `domain/authCrossTabSync.ts` umgesetzt.
 - 2026-02-19: Schritt 14 mit Feature-Flag-gesteuertem Auth-Rollout (`NEXT_PUBLIC_AUTH_SESSION_ROLLOUT_ENABLED`) umgesetzt.
 - 2026-02-19: Schritt 15 mit standardisierten Auth-Telemetry-Events fuer Login/Rehydration/Invalidierung/Logout umgesetzt.
+- 2026-02-19: Schritt 16 mit integration-nahen Auth-Flow-Tests fuer Persistenz/Restore/Guarding umgesetzt.
