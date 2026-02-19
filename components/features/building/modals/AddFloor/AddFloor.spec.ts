@@ -1,6 +1,160 @@
 import {describe, expect, it, vi} from "vitest";
 import {canAddFieldByName, canAddRoomByName} from "@/components/features/building/modals/AddFloor/AddFloor.logic";
 import de from "@/constants/de.json";
+import {ModalState} from "@/constants/enums";
+
+type ReactElementLike = {
+    type: unknown;
+    props?: {
+        children?: unknown;
+        onClick?: (...args: unknown[]) => void;
+        [key: string]: unknown;
+    };
+};
+
+function isElementLike(node: unknown): node is ReactElementLike {
+    return Boolean(node) && typeof node === "object" && "type" in (node as object);
+}
+
+function findElement(node: unknown, predicate: (element: ReactElementLike) => boolean): ReactElementLike | undefined {
+    if (!node) {
+        return undefined;
+    }
+    if (Array.isArray(node)) {
+        for (const child of node) {
+            const found = findElement(child, predicate);
+            if (found) {
+                return found;
+            }
+        }
+        return undefined;
+    }
+    if (!isElementLike(node)) {
+        return undefined;
+    }
+    if (predicate(node)) {
+        return node;
+    }
+    return findElement(node.props?.children, predicate);
+}
+
+function findElements(node: unknown, predicate: (element: ReactElementLike) => boolean): ReactElementLike[] {
+    if (!node) {
+        return [];
+    }
+    if (Array.isArray(node)) {
+        return node.flatMap((child) => findElements(child, predicate));
+    }
+    if (!isElementLike(node)) {
+        return [];
+    }
+    const own = predicate(node) ? [node] : [];
+    return [...own, ...findElements(node.props?.children, predicate)];
+}
+
+async function buildComponent({
+    modalState = ModalState.AddFloor,
+    currentFlat,
+    canAddRoom = false,
+    canAddField = false,
+    createFlatRejects = false,
+    updateFlatRejects = false
+}: {
+    modalState?: ModalState;
+    currentFlat?: {
+        id: string;
+        name: string;
+        position: number;
+        rooms: Array<{ id: string; name: string; position: number; fields: Array<{ id: string; name: string; position: number }> }>;
+    };
+    canAddRoom?: boolean;
+    canAddField?: boolean;
+    createFlatRejects?: boolean;
+    updateFlatRejects?: boolean;
+} = {}) {
+    vi.resetModules();
+    vi.restoreAllMocks();
+    vi.stubGlobal("alert", vi.fn());
+    vi.stubGlobal("window", {confirm: vi.fn(() => true)});
+
+    const dispatch = vi.fn();
+    const createFlat = createFlatRejects ? vi.fn().mockRejectedValue(new Error("create failed")) : vi.fn().mockResolvedValue(undefined);
+    const updateFlat = updateFlatRejects ? vi.fn().mockRejectedValue(new Error("update failed")) : vi.fn().mockResolvedValue(undefined);
+    const canAddRoomByName = vi.fn(() => canAddRoom);
+    const canAddFieldByName = vi.fn(() => canAddField);
+    const CustomButtonMock = function CustomButtonMock() {
+        return null;
+    };
+    vi.doMock("react", async () => {
+        const actual = await vi.importActual<typeof import("react")>("react");
+        const flatName = currentFlat?.name ?? "";
+        const roomNameInput = "";
+        const rooms = currentFlat?.rooms ?? [];
+        const fieldNameInput = "";
+        const selectedRoom = currentFlat?.rooms?.[0];
+        let stateCall = 0;
+        return {
+            ...actual,
+            useState: () => {
+                stateCall += 1;
+                if (stateCall === 1) {
+                    return [flatName, vi.fn()] as const;
+                }
+                if (stateCall === 2) {
+                    return [roomNameInput, vi.fn()] as const;
+                }
+                if (stateCall === 3) {
+                    return [rooms, vi.fn()] as const;
+                }
+                if (stateCall === 4) {
+                    return [fieldNameInput, vi.fn()] as const;
+                }
+                return [selectedRoom, vi.fn()] as const;
+            }
+        };
+    });
+
+    vi.doMock("@/store/hooks", () => {
+        const values = [
+            {name: "House 1", flats: []},
+            modalState
+        ];
+        return {
+            useAppDispatch: () => dispatch,
+            useAppSelector: () => values.shift()
+        };
+    });
+    vi.doMock("@/components/shared/overlay/Modal", () => ({
+        default: function ModalMock() {
+            return null;
+        }
+    }));
+    vi.doMock("@/components/shared/ui/CustomButton", () => ({
+        default: CustomButtonMock
+    }));
+    vi.doMock("@/firebase/functions", () => ({
+        createFlat,
+        updateFlat
+    }));
+    vi.doMock("@/components/features/building/modals/AddFloor/AddFloor.logic", () => ({
+        canAddRoomByName,
+        canAddFieldByName
+    }));
+    vi.doMock("@/store/reducer/modalState", () => ({setModalStateNone: () => ({type: "setModalStateNone"})}));
+    vi.doMock("@/store/reducer/isLoading", () => ({setIsLoading: (payload: boolean) => ({type: "setIsLoading", payload})}));
+    vi.doMock("@/store/reducer/isReloadDataNeeded", () => ({setIsReloadHousesNeeded: (payload: boolean) => ({type: "setIsReloadHousesNeeded", payload})}));
+
+    const {default: AddFloor} = await import("./AddFloor");
+    const element = AddFloor({currentFlat, newFlatPosition: 2});
+
+    return {
+        element,
+        dispatch,
+        createFlat,
+        updateFlat,
+        CustomButtonMock
+    };
+}
 
 describe("AddFloor logic", () => {
     it("validates room names for add action", () => {
@@ -20,31 +174,70 @@ describe("AddFloor logic", () => {
         expect(canAddFieldByName("Strom", undefined)).toBe(false);
     });
 
-    it("renders modal content for floor editing", async () => {
-        vi.resetModules();
-        vi.doMock("@/store/hooks", () => {
-            const values = [
-                {name: "House 1", flats: []},
-                "None"
-            ];
-            return {
-                useAppDispatch: () => vi.fn(),
-                useAppSelector: () => values.shift()
-            };
+    it("creates a flat in add mode and dispatches completion actions", async () => {
+        const {element, createFlat, dispatch, CustomButtonMock} = await buildComponent({
+            modalState: ModalState.AddFloor,
+            currentFlat: undefined
         });
-        vi.doMock("@/components/shared/overlay/Modal", () => ({
-            default: ({children}: {children: unknown}) => children
-        }));
-        vi.doMock("@/components/shared/ui/CustomButton", () => ({
-            default: ({label}: {label: string}) => label
-        }));
 
-        const {createElement} = await import("react");
-        const {renderToStaticMarkup} = await import("react-dom/server");
-        const {default: AddFloor} = await import("./AddFloor");
+        const saveButton = findElement(element, (currentElement) => currentElement.type === CustomButtonMock);
+        const event = {preventDefault: vi.fn()};
+        await saveButton?.props?.onClick?.(event);
 
-        const html = renderToStaticMarkup(createElement(AddFloor, {newFlatPosition: 0}));
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(createFlat).toHaveBeenCalledWith(
+            expect.objectContaining({name: "", rooms: [], position: 2}),
+            "House 1"
+        );
+        expect(dispatch).toHaveBeenCalledWith({type: "setModalStateNone"});
+        expect(dispatch).toHaveBeenCalledWith({type: "setIsReloadHousesNeeded", payload: true});
+    });
 
-        expect(html).toContain(de.buttonLabels.save);
+    it("updates existing flat in change mode", async () => {
+        const currentFlat = {
+            id: "flat-1",
+            name: "Flat A",
+            position: 1,
+            rooms: [{id: "room-1", name: "Kitchen", position: 0, fields: []}]
+        };
+        const {element, updateFlat, CustomButtonMock} = await buildComponent({
+            modalState: ModalState.ChangeFloorFields,
+            currentFlat
+        });
+
+        const saveButton = findElement(element, (currentElement) => currentElement.type === CustomButtonMock);
+        await saveButton?.props?.onClick?.({preventDefault: vi.fn()});
+
+        expect(updateFlat).toHaveBeenCalledWith(
+            "House 1",
+            expect.objectContaining({id: "flat-1", name: "Flat A", position: 1})
+        );
+    });
+
+    it("shows database error message when save fails", async () => {
+        const {element, CustomButtonMock} = await buildComponent({
+            modalState: ModalState.AddFloor,
+            createFlatRejects: true
+        });
+        const saveButton = findElement(element, (currentElement) => currentElement.type === CustomButtonMock);
+        await saveButton?.props?.onClick?.({preventDefault: vi.fn()});
+
+        expect(globalThis.alert).toHaveBeenCalledWith(de.messages.databaseError);
+    });
+
+    it("prevents field add when no room is selected", async () => {
+        const {element} = await buildComponent({
+            canAddField: true
+        });
+
+        const addButtons = findElements(element, (currentElement) => {
+            const className = currentElement.props?.className;
+            return typeof className === "string" && className.includes("addIconButton");
+        });
+
+        const addFieldButton = addButtons[1];
+        addFieldButton?.props?.onClick?.({preventDefault: vi.fn()});
+
+        expect(globalThis.alert).toHaveBeenCalledWith(de.messages.selectARoom);
     });
 });
