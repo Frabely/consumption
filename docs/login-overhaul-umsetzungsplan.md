@@ -195,6 +195,17 @@ Status-Legende:
   - `Page.BuildingConsumption` ist nur fuer authentifizierte Admins erreichbar.
   - `BuildingConsumption` enthaelt keinen separaten Seitenzugriffs-Guard mehr; die Zugriffskontrolle erfolgt einheitlich zentral.
 
+## Ergebnis Schritt 13: Cross-Tab-Sync fuer Session-Reset (verbindlich)
+
+- Umgesetzte Artefakte:
+  - `domain/authCrossTabSync.ts`
+  - `domain/authCrossTabSync.spec.ts`
+  - `app/page.tsx`
+- Verhalten:
+  - Bei `storage`-Events fuer `consumption.auth.session` mit `newValue=null` wird tab-uebergreifend Logout ausgeloesst.
+  - Sync greift nur im authentifizierten Zustand.
+  - Listener wird sauber registriert und per Cleanup entfernt.
+
 ## Schrittplan
 
 | Nr. | Schritt                                                                                             | Status    | Umsetzung/Notizen                                                                                        |
@@ -211,7 +222,7 @@ Status-Legende:
 | 10  | Session-Validierung ergaenzen (leichtgewichtig gegen Backend/Firebase), inkl. Fallback bei Fehlern  | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 10: Session-Validierung mit Fehler-Fallback (verbindlich)".            |
 | 11  | Session-Ablauf behandeln (abgelaufen -> Logout/Relogin)                                             | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 11: Session-Ablaufbehandlung zur Laufzeit (verbindlich)".              |
 | 12  | Guarding fuer geschuetzte Bereiche vereinheitlichen (Home/BuildingConsumption)                      | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 12: Guards fuer geschuetzte Bereiche vereinheitlicht (verbindlich)". |
-| 13  | Cross-Tab-Sync ergaenzen (Logout/Session-Reset via `storage`-Event)                                 | offen     | Noch offen                                                                                               |
+| 13  | Cross-Tab-Sync ergaenzen (Logout/Session-Reset via `storage`-Event)                                 | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 13: Cross-Tab-Sync fuer Session-Reset (verbindlich)".                |
 | 14  | Feature-Flag fuer Rollout einbauen (schneller Rollback ohne Hotfix-Refactor)                        | offen     | Noch offen                                                                                               |
 | 15  | Logging/Monitoring ergaenzen (Login-Erfolg, Rehydration-Erfolg, Session-Invalidierung, Fehlerquote) | offen     | Noch offen                                                                                               |
 | 16  | Tests ergaenzen: Persistenz, Rehydration, Expiry, Logout, Guards (Integration priorisiert)          | offen     | Noch offen                                                                                               |
@@ -244,3 +255,4 @@ Status-Legende:
 - 2026-02-19: Schritt 10 mit Backend-Session-Validierung/Fallback in `domain/authSessionValidation.ts` umgesetzt.
 - 2026-02-19: Schritt 11 mit Session-Expiry-Watcher und Auto-Logout in `domain/authSessionExpiry.ts` umgesetzt.
 - 2026-02-19: Schritt 12 mit zentraler Page-Guard-Logik in `domain/authPageGuard.ts` und App-Integration umgesetzt.
+- 2026-02-19: Schritt 13 mit `storage`-basiertem Cross-Tab-Sync in `domain/authCrossTabSync.ts` umgesetzt.

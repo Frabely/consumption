@@ -24,6 +24,7 @@ import { startSessionExpiryWatcher } from "@/domain/authSessionExpiry";
 import { performAuthLogout } from "@/domain/authLogout";
 import { resolveGuardedPage } from "@/domain/authPageGuard";
 import { setPage } from "@/store/reducer/currentPage";
+import { subscribeToAuthSessionCrossTabSync } from "@/domain/authCrossTabSync";
 
 /**
  * Bootstraps auth/session state and renders the correct top-level application page.
@@ -58,6 +59,16 @@ export default function App() {
 
     return startSessionExpiryWatcher({
       onExpire: () => performAuthLogout({ dispatch, resetDataSet: true }),
+    });
+  }, [authStatus, dispatch]);
+
+  useEffect(() => {
+    if (authStatus !== AUTH_STATUS.AUTHENTICATED) {
+      return;
+    }
+
+    return subscribeToAuthSessionCrossTabSync({
+      onSessionCleared: () => performAuthLogout({ dispatch, resetDataSet: true }),
     });
   }, [authStatus, dispatch]);
 
