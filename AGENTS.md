@@ -65,6 +65,8 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Wiederverwendbare, bereichsuebergreifende UI-Bausteine unter `components/shared/<Kategorie>/<Feature>/` gruppieren (z. B. `components/shared/ui/CustomButton/`).
 - Feature-nahe Logik im jeweiligen Feature-Ordner halten (z. B. `<Feature>.logic.ts`); `domain/` nur fuer geteilte, UI-unabhaengige Fachlogik verwenden.
 - Umstrukturierungen von Komponenten in Richtung Feature-/Co-Location-Struktur im File `RESTRUCTURING_STATUS.md` dokumentieren und nach jedem einzelnen Schritt aktualisieren.
+- Vor dem Anlegen neuer Komponenten/Dateien immer aktiv den besten Zielort in der Projektstruktur pruefen; bei Unsicherheit vorab im Chat nachfragen.
+- Wenn bestehende Ordner-/Dateistrukturen nicht den Zielstandards entsprechen, neue Komponenten/Dateien trotzdem direkt in der besseren Zielstruktur anlegen (keine Fortfuehrung veralteter Strukturmuster).
 
 ## 8. Fehlerbehandlung und Logging
 - Fehler nicht verschlucken; aussagekraeftige Meldungen erzeugen.
