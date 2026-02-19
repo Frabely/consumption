@@ -70,7 +70,7 @@ Status-Legende:
 
 | Nr. | Schritt | Status | Umsetzung/Notizen |
 |---|---|---|---|
-| 1 | Auth-Zielbild finalisieren: Session-Verhalten, Ablaufzeit, Logout-Regeln, Fehlerfaelle | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 1: Auth-Zielbild (verbindlich)". |
+| 1 | Auth-Zielbild finalisieren: Session-Verhalten, Ablaufzeit, Logout-Regeln, Fehlerfaelle | umgesetzt | Siehe Abschnitt "Ergebnis Schritt 1: Auth-Zielbild (verbindlich)" und `docs/login-auth-target-state.md`. |
 | 2 | Session-Contract definieren (`schemaVersion`, Felder, TTL, Validierungsregeln, Migrationsregeln) | offen | Noch offen |
 | 3 | Auth-Status im Store definieren (`unknown`, `authenticated`, `unauthenticated`) | offen | Noch offen |
 | 4 | Session-Persistenz einbauen (z. B. `localStorage` mit `user`, `expiresAt`, `version`) | offen | Noch offen |
@@ -101,3 +101,4 @@ Status-Legende:
 
 ## Aenderungslog
 - 2026-02-19: Datei erstellt.
+- 2026-02-19: Schritt 1 als verbindliche technische Spezifikation in `docs/login-auth-target-state.md` festgehalten.
