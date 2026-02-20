@@ -4,8 +4,9 @@ export const buildLoadingText = (language: Language): string => `${language.disp
 
 export const LOADING_SLOT_COUNT = 8;
 export const LOADING_INITIAL_VISIBLE_SLOT_COUNT = 5;
+export const LOADING_VISIBILITY_DELAY_MS = 200;
 export const LOADING_START_ANGLE_RAD = Math.PI * 0.34;
-export const LOADING_ORBIT_SPEED_RAD_PER_SEC = 1.8;
+export const LOADING_ORBIT_SPEED_RAD_PER_SEC = 3.6;
 export const LOADING_EAT_THRESHOLD_RAD = 0.17;
 export const LOADING_RESPAWN_DELAY_MS = 90;
 

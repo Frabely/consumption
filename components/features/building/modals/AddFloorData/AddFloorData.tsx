@@ -12,16 +12,18 @@ import FieldInput from "@/components/shared/forms/FieldInput";
 import {deleteFieldValue, getFieldValues, setFieldValue} from "@/firebase/functions";
 import CustomSelect from "@/components/shared/forms/CustomSelect";
 import {ModalState} from "@/constants/enums";
-import {useAppSelector} from "@/store/hooks";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentHouse} from "@/store/selectors";
 import {filterFieldValuesByRoom, parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {
     isFieldValueValid,
     resolveRoomByName
 } from "@/components/features/building/modals/AddFloorData/AddFloorData.logic";
+import {setIsLoading} from "@/store/reducer/isLoading";
 
 export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const currentHouse = useAppSelector(selectCurrentHouse)
+    const dispatch = useAppDispatch()
     const date = new Date()
     const year = date.getFullYear()
     const month = date.getMonth() + 1
@@ -35,6 +37,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const [currentFieldValues, setCurrentFieldValues] = useState<FieldValue[]>([])
 
     useEffect(() => {
+        dispatch(setIsLoading(true))
         getFieldValues(
             currentDateValue.year,
             currentDateValue.month,
@@ -45,8 +48,10 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
             }
         }).catch((error) => {
             console.error(error.message)
+        }).finally(() => {
+            dispatch(setIsLoading(false))
         })
-    }, [currentDateValue, currentRoom, flat]);
+    }, [currentDateValue, currentRoom, dispatch, flat]);
 
     const onFieldPairValueChange = (value: string, id: string) => {
         const fieldValues = [...currentFieldValues]
@@ -60,6 +65,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
 
     const onSaveFieldClickHandler = async (fieldValue: FieldValue) => {
         if (fieldValue.value && !isNaN(Number(fieldValue.value))) {
+            dispatch(setIsLoading(true))
             setFieldValue(
                 currentHouse.name,
                 flat,
@@ -73,11 +79,15 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                         .replace("{valueFieldName}", fieldValue.field.name)
                         .replace("{valueNumber}", fieldValue.value ? fieldValue.value.toString() : "undefined"))
                 })
+                .finally(() => {
+                    dispatch(setIsLoading(false))
+                })
         }
     }
 
     const onDeleteFieldClickHandler = async (fieldValueToDelete: FieldValue) => {
         if (fieldValueToDelete.value !== null) {
+            dispatch(setIsLoading(true))
             const fieldValues = [...currentFieldValues]
             fieldValues.map((field) => {
                 if (field.field.id === fieldValueToDelete.field.id) {
@@ -93,6 +103,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                 currentDateValue.year,
                 currentDateValue.month)
                 .catch((ex) => console.error(ex))
+                .finally(() => dispatch(setIsLoading(false)))
         }
     }
 

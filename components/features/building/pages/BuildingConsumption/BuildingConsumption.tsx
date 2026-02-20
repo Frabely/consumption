@@ -48,9 +48,9 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
                         dispatch(setCurrentHouse(currentHouseAfterReload))
                     }
                     setHouseNames(houses)
-                    dispatch(setIsLoading(false))
                 })
                 .catch((error) => console.error(error.message))
+                .finally(() => dispatch(setIsLoading(false)))
         }
     }, [currentHouse.name, dispatch, isReloadDataNeeded.isReloadHousesNeeded]);
 

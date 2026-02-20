@@ -4,22 +4,36 @@ import {
     buildInitialLoadingSlots,
     LOADING_ORBIT_SPEED_RAD_PER_SEC,
     LOADING_START_ANGLE_RAD,
+    LOADING_VISIBILITY_DELAY_MS,
     LoadingSlot,
     normalizeAngle,
     updateLoadingSlots
 } from "@/components/features/home/Loading/Loading.logic";
 
 export default function Loading({}: LoadingProps) {
+    const [isVisible, setIsVisible] = useState(false);
     const [carAngleRad, setCarAngleRad] = useState(LOADING_START_ANGLE_RAD);
     const [slots, setSlots] = useState<LoadingSlot[]>(() => buildInitialLoadingSlots());
     const carAngleRef = useRef(LOADING_START_ANGLE_RAD);
     const slotsRef = useRef<LoadingSlot[]>(buildInitialLoadingSlots());
 
     useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            setIsVisible(true);
+        }, LOADING_VISIBILITY_DELAY_MS);
+
+        return () => window.clearTimeout(timeoutId);
+    }, []);
+
+    useEffect(() => {
         slotsRef.current = slots;
     }, [slots]);
 
     useEffect(() => {
+        if (!isVisible) {
+            return;
+        }
+
         let animationFrameId = 0;
         let lastTimestamp = performance.now();
 
@@ -49,7 +63,7 @@ export default function Loading({}: LoadingProps) {
 
         animationFrameId = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(animationFrameId);
-    }, []);
+    }, [isVisible]);
 
     /**
      * Resolves percentage-based orbit coordinates for a given angle.
@@ -66,35 +80,37 @@ export default function Loading({}: LoadingProps) {
 
     return (
         <div className={styles.isLoadingContainer}>
-            <div className={styles.isLoading}>
-                <div className={styles.dotLayer}>
-                    {slots.map((slot) => {
-                        const position = resolveOrbitPosition(slot.angle);
-                        return (
-                            <span
-                                key={slot.index}
-                                className={`${styles.dot} ${slot.isActive ? "" : styles.dotHidden}`}
-                                style={{left: position.left, top: position.top}}
-                            />
-                        );
-                    })}
+            {isVisible ? (
+                <div className={styles.isLoading}>
+                    <div className={styles.dotLayer}>
+                        {slots.map((slot) => {
+                            const position = resolveOrbitPosition(slot.angle);
+                            return (
+                                <span
+                                    key={slot.index}
+                                    className={`${styles.dot} ${slot.isActive ? "" : styles.dotHidden}`}
+                                    style={{left: position.left, top: position.top}}
+                                />
+                            );
+                        })}
+                    </div>
+                    <div
+                        className={styles.car}
+                        style={{
+                            left: carPosition.left,
+                            top: carPosition.top,
+                            transform: `translate(-50%, -50%) rotate(${carRotationDeg}deg)`
+                        }}
+                    >
+                        <div className={styles.carShadow}></div>
+                        <div className={styles.carRoof}></div>
+                        <div className={styles.carWindowSplit}></div>
+                        <div className={styles.carBody}></div>
+                        <div className={`${styles.wheel} ${styles.wheelLeft}`}></div>
+                        <div className={`${styles.wheel} ${styles.wheelRight}`}></div>
+                    </div>
                 </div>
-                <div
-                    className={styles.car}
-                    style={{
-                        left: carPosition.left,
-                        top: carPosition.top,
-                        transform: `translate(-50%, -50%) rotate(${carRotationDeg}deg)`
-                    }}
-                >
-                    <div className={styles.carShadow}></div>
-                    <div className={styles.carRoof}></div>
-                    <div className={styles.carWindowSplit}></div>
-                    <div className={styles.carBody}></div>
-                    <div className={`${styles.wheel} ${styles.wheelLeft}`}></div>
-                    <div className={`${styles.wheel} ${styles.wheelRight}`}></div>
-                </div>
-            </div>
+            ) : null}
         </div>
     );
 }

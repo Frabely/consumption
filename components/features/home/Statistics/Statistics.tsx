@@ -4,7 +4,7 @@ import globalStyles from "@/styles/GlobalStyles.module.css";
 import {YearMonth} from "@/constants/types";
 import {loadAllConsumptionDocsBetween} from "@/firebase/functions";
 import de from "@/constants/de.json";
-import {useAppSelector} from "@/store/hooks";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {
     calculatePriceToPay,
@@ -12,8 +12,10 @@ import {
     isPriceMultiplierValid,
     summarizeConsumptionDocs
 } from "@/components/features/home/Statistics/Statistics.logic";
+import {setIsLoading} from "@/store/reducer/isLoading";
 
 export default function Statistics({}: StatisticsProps) {
+    const dispatch = useAppDispatch();
     const currentCarName: string | undefined = useAppSelector((state) => state.currentCar.name);
     const currentYearMonth = getCurrentYearMonth();
 
@@ -34,9 +36,11 @@ export default function Statistics({}: StatisticsProps) {
         if (!currentCarName) {
             setKwhFueled(0);
             setKilometersDriven(0);
+            dispatch(setIsLoading(false));
             return;
         }
 
+        dispatch(setIsLoading(true));
         loadAllConsumptionDocsBetween(fromDateValue, toDateValue, currentCarName)
             .then((result) => {
                 if (result && result.length > 0) {
@@ -48,8 +52,9 @@ export default function Statistics({}: StatisticsProps) {
                     setKilometersDriven(0);
                 }
             })
-            .catch((ex) => console.error(ex));
-    }, [currentCarName, fromDateValue, toDateValue]);
+            .catch((ex) => console.error(ex))
+            .finally(() => dispatch(setIsLoading(false)));
+    }, [currentCarName, dispatch, fromDateValue, toDateValue]);
 
     useEffect(() => {
         setPriceToPay(calculatePriceToPay(kwhFueled, priceMultiplier));

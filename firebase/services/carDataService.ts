@@ -77,7 +77,7 @@ export const loadAllConsumptionDocsBetween = async (
     return perMonth.flat().sort((a, b) => a.data.kilometer - b.data.kilometer);
 };
 
-export const addDataSetToCollection = (carName: string, dataSet: DataSetNoId) => {
+export const addDataSetToCollection = async (carName: string, dataSet: DataSetNoId) => {
     const {date, kilometer, power, name, loadingStation} = dataSet;
     const month = date.getMonth() + 1;
     const monthString = (month < 10 ? `0${month}` : month).toString();
@@ -85,18 +85,19 @@ export const addDataSetToCollection = (carName: string, dataSet: DataSetNoId) =>
         `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}/${date.getFullYear().toString()}/${monthString}`
     );
     const decimalPower = (Math.round(power * 100) / 100).toFixed(1);
-    addDoc(consumptionDataRef, {
+    await addDoc(consumptionDataRef, {
         date,
         kilometer,
         power: decimalPower,
         name,
         loadingStationId: loadingStation.id
-    }).then().catch((error: Error) => {
+    }).catch((error: Error) => {
         console.error(error.message);
+        throw error;
     });
 };
 
-export const changeDataSetInCollection = (
+export const changeDataSetInCollection = async (
     carName: string,
     date: Date,
     power: number,
@@ -110,24 +111,26 @@ export const changeDataSetInCollection = (
         `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}/${date.getFullYear().toString()}/${monthString}/${id}`
     );
     const decimalPower = (Math.round(power * 100) / 100).toFixed(1);
-    updateDoc(consumptionDataRef, {
+    await updateDoc(consumptionDataRef, {
         kilometer,
         power: decimalPower,
         loadingStationId: loadingStation.id
-    }).then().catch((error: Error) => {
+    }).catch((error: Error) => {
         console.error(error.message);
+        throw error;
     });
 };
 
 export const updateCarKilometer = async (carName: string, kilometer: number, prevKilometer?: number) => {
     const carsRef = doc(db, `${DB_CARS}/${carName}`);
-    updateDoc(carsRef, prevKilometer ? {
+    await updateDoc(carsRef, prevKilometer ? {
         kilometer,
         prevKilometer
     } : {
         kilometer
-    }).then().catch((error: Error) => {
+    }).catch((error: Error) => {
         console.error(error.message);
+        throw error;
     });
 };
 
