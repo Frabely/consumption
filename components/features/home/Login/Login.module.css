@@ -149,24 +149,31 @@
 }
 
 .inputWrapper {
-  position: fixed;
-  left: -9999px;
-  top: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .input {
-  width: 2px;
-  height: 2px;
-  opacity: 0.01;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
 }
 
 .passwordManagerHint {
-  position: fixed;
-  left: -9999px;
+  position: absolute;
+  left: 0;
   top: 0;
   width: 1px;
   height: 1px;
-  opacity: 0.01;
+  opacity: 0;
 }
 
 .message {
