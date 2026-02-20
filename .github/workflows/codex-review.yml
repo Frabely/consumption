@@ -16,7 +16,9 @@ jobs:
         uses: actions/github-script@v7
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-4.1-mini' }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          OPENAI_MODEL_FAST: ${{ vars.OPENAI_MODEL_FAST || 'gpt-5-mini' }}
+          OPENAI_MODEL_DEEP: ${{ vars.OPENAI_MODEL_DEEP || 'gpt-5' }}
         with:
           script: |
             const marker = "<!-- codex-review -->";
@@ -67,6 +69,20 @@ jobs:
               pull_number,
               per_page: 100
             });
+            const changedFileCount = files.length;
+            const totalChangedLines = files.reduce(
+              (sum, file) => sum + (file.additions || 0) + (file.deletions || 0),
+              0
+            );
+            const touchesCriticalPaths = files.some((file) =>
+              /^(firebase\/|utils\/authentication\/|store\/|app\/)/.test(file.filename)
+            );
+
+            const selectedModel = process.env.OPENAI_MODEL && process.env.OPENAI_MODEL.trim().length > 0
+              ? process.env.OPENAI_MODEL.trim()
+              : (changedFileCount > 25 || totalChangedLines > 800 || touchesCriticalPaths)
+                ? (process.env.OPENAI_MODEL_DEEP || "gpt-5")
+                : (process.env.OPENAI_MODEL_FAST || "gpt-5-mini");
 
             const MAX_PATCH_CHARS_PER_FILE = 4000;
             const MAX_TOTAL_CHARS = 120000;
@@ -144,7 +160,7 @@ jobs:
                 "Content-Type": "application/json"
               },
               body: JSON.stringify({
-                model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+                model: selectedModel,
                 temperature: 0.1,
                 response_format: { type: "json_object" },
                 messages: [
@@ -190,7 +206,14 @@ jobs:
 
             const commentBody = `${marker}
             ## Codex Review
-            **Model:** \`${process.env.OPENAI_MODEL || "gpt-4.1-mini"}\`
+            **Model:** \`${selectedModel}\`
+            **Model reason:** ${
+              process.env.OPENAI_MODEL && process.env.OPENAI_MODEL.trim().length > 0
+                ? "Manual override via OPENAI_MODEL"
+                : (changedFileCount > 25 || totalChangedLines > 800 || touchesCriticalPaths)
+                  ? "Deep review policy (large PR or critical path touched)"
+                  : "Fast review policy (small/non-critical PR)"
+            }
             **Verdict:** ${blocking ? "FAIL (blocking P0/P1 findings)" : "PASS"}
             **Summary:** ${review.summary || "No summary returned."}
 
@@ -199,6 +222,9 @@ jobs:
             - P1: ${p1.length}
             - P2: ${p2.length}
             - P3: ${p3.length}
+            - Files changed: ${changedFileCount}
+            - Lines changed (additions+deletions): ${totalChangedLines}
+            - Critical paths touched: ${touchesCriticalPaths ? "yes" : "no"}
 
             ${findings.length > 0 ? findings.map(renderFinding).join("\n") : "- none"}
 
