@@ -31,9 +31,10 @@ Use Codex as a strict review layer before merge, focusing on:
 ## PR Workflow
 1. Run local checks and tests.
 2. Ask Codex for a review of changed files and risks.
-3. Record findings by severity in the PR template.
-4. Resolve or justify findings.
-5. Complete all items in "Codex Review Gate".
+3. Record findings by severity in the PR template (`P0`..`P3`).
+4. For `P0`/`P1`: either mark `none` explicitly or list concrete findings and keep gate unchecked until fixed.
+5. Resolve or justify findings.
+6. Complete all items in "Codex Review Gate".
 
 ## Suggested Codex Prompt
 Use a prompt similar to:

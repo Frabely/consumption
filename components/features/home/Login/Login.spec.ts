@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { cars } from "@/constants/constantData";
 import { CarNames, Role } from "@/constants/enums";
 import { User } from "@/constants/types";
+import de from "@/constants/de.json";
 import {
   appendPinCharacter,
   handleLoginInput,
@@ -13,6 +14,39 @@ import {
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import { setCurrentUser } from "@/store/reducer/currentUser";
 import { setAuthStatusAuthenticated } from "@/store/reducer/authStatus";
+
+type ElementLike = {
+  type: unknown;
+  props?: Record<string, unknown> & { children?: unknown };
+};
+
+const isElementLike = (node: unknown): node is ElementLike =>
+  Boolean(node) && typeof node === "object" && "type" in (node as object);
+
+const findElement = (
+  node: unknown,
+  predicate: (element: ElementLike) => boolean,
+): ElementLike | undefined => {
+  if (!node) {
+    return undefined;
+  }
+  if (Array.isArray(node)) {
+    for (const child of node) {
+      const found = findElement(child, predicate);
+      if (found) {
+        return found;
+      }
+    }
+    return undefined;
+  }
+  if (!isElementLike(node)) {
+    return undefined;
+  }
+  if (predicate(node)) {
+    return node;
+  }
+  return findElement(node.props?.children, predicate);
+};
 
 describe("login", () => {
   const initialCars = [...cars];
@@ -227,5 +261,132 @@ describe("login", () => {
     expect(html).toContain('type="password"');
     expect(html).toContain("PIN anzeigen");
     expect(html).toContain("Login");
+  });
+
+  it("renders rejected and unavailable status messages", async () => {
+    vi.resetModules();
+    const useStateRejected = vi
+      .fn()
+      .mockReturnValueOnce([false, vi.fn()])
+      .mockReturnValueOnce(["", vi.fn()])
+      .mockReturnValueOnce([{ status: "rejected" }, vi.fn()]);
+    vi.doMock("react", async () => {
+      const actual = await vi.importActual<typeof import("react")>("react");
+      return {
+        ...actual,
+        useState: useStateRejected,
+        useEffect: vi.fn(),
+      };
+    });
+    vi.doMock("@/store/hooks", () => ({
+      useAppDispatch: () => vi.fn(),
+    }));
+
+    const { createElement } = await import("react");
+    const { renderToStaticMarkup } = await import("react-dom/server");
+    const { default: LoginRejected } = await import("./Login");
+    const rejectedHtml = renderToStaticMarkup(createElement(LoginRejected));
+    expect(rejectedHtml).toContain(de.messages.loginRejected);
+
+    vi.resetModules();
+    const useStateUnavailable = vi
+      .fn()
+      .mockReturnValueOnce([false, vi.fn()])
+      .mockReturnValueOnce(["", vi.fn()])
+      .mockReturnValueOnce([{ status: "unavailable", message: "offline" }, vi.fn()]);
+    vi.doMock("react", async () => {
+      const actual = await vi.importActual<typeof import("react")>("react");
+      return {
+        ...actual,
+        useState: useStateUnavailable,
+        useEffect: vi.fn(),
+      };
+    });
+    vi.doMock("@/store/hooks", () => ({
+      useAppDispatch: () => vi.fn(),
+    }));
+
+    const { default: LoginUnavailable } = await import("./Login");
+    const unavailableHtml = renderToStaticMarkup(createElement(LoginUnavailable));
+    expect(unavailableHtml).toContain(de.messages.loginUnavailable);
+  });
+
+  it("handles visibility toggle, backspace, and slot-focus interactions", async () => {
+    vi.resetModules();
+    const setIsPasswordVisible = vi.fn();
+    const setPinInput = vi.fn();
+    const setLoginResult = vi.fn();
+    const focus = vi.fn();
+    const setSelectionRange = vi.fn();
+    const inputRef = { current: { value: "1234", focus, setSelectionRange } };
+
+    vi.stubGlobal(
+      "requestAnimationFrame",
+      vi.fn((callback: (time: number) => void) => {
+        callback(0);
+        return 1;
+      }),
+    );
+
+    const useStateMock = vi
+      .fn()
+      .mockReturnValueOnce([false, setIsPasswordVisible])
+      .mockReturnValueOnce(["1234", setPinInput])
+      .mockReturnValueOnce([{ status: "incomplete" }, setLoginResult]);
+
+    const noopUseCallback = <T extends (...args: never[]) => unknown>(callback: T): T =>
+      callback;
+    const noopUseMemo = <T>(factory: () => T): T => factory();
+    vi.doMock("react", async () => {
+      const actual = await vi.importActual<typeof import("react")>("react");
+      return {
+        ...actual,
+        useState: useStateMock,
+        useRef: vi.fn(() => inputRef),
+        useEffect: vi.fn(),
+        useCallback: noopUseCallback,
+        useMemo: noopUseMemo,
+      };
+    });
+    vi.doMock("@/store/hooks", () => ({
+      useAppDispatch: () => vi.fn(),
+    }));
+
+    const { default: Login } = await import("./Login");
+    const tree = Login({});
+
+    const pinSlotsButton = findElement(
+      tree,
+      (element) => element.type === "button" && element.props?.["aria-label"] === de.messages.loginSlotsAriaLabel,
+    );
+    (pinSlotsButton?.props?.onClick as (() => void) | undefined)?.();
+    expect(focus).toHaveBeenCalled();
+    expect(setSelectionRange).toHaveBeenCalled();
+
+    const visibilityButton = findElement(
+      tree,
+      (element) =>
+        element.type === "button" &&
+        typeof element.props?.["aria-pressed"] === "boolean",
+    );
+    (visibilityButton?.props?.onClick as (() => void) | undefined)?.();
+    expect(setIsPasswordVisible).toHaveBeenCalledWith(true);
+
+    const passwordInput = findElement(
+      tree,
+      (element) => element.type === "input" && element.props?.name === "password",
+    );
+    const preventDefault = vi.fn();
+    await (
+      passwordInput?.props?.onKeyDown as
+        | ((event: { key: string; preventDefault: () => void }) => Promise<void>)
+        | undefined
+    )?.({
+      key: "Backspace",
+      preventDefault,
+    });
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(setPinInput).toHaveBeenCalledWith("123");
+    expect(setLoginResult).toHaveBeenCalledWith({ status: "incomplete" });
   });
 });

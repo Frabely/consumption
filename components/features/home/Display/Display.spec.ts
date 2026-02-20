@@ -78,7 +78,101 @@ describe("Display domain", () => {
         expect(dispatch).toHaveBeenNthCalledWith(3, setIsLoading(false));
     });
 
-    it("renders mapped list items for the current data set", async () => {
+    it("component calls loadDataSetForCar when shouldLoadDataSet is true", async () => {
+        vi.resetModules();
+        const dispatch = vi.fn();
+        const loadDataSetForCarMock = vi.fn();
+        const syncKilometerMock = vi.fn();
+        const shouldLoadDataSetMock = vi.fn().mockReturnValue(true);
+
+        vi.doMock("react", async () => {
+            const actual = await vi.importActual<typeof import("react")>("react");
+            return {
+                ...actual,
+                useEffect: vi.fn((callback: () => void) => {
+                    callback();
+                })
+            };
+        });
+        vi.doMock("@/store/hooks", () => {
+            const values = [ModalState.None, {name: "Zoe", kilometer: 1200}, []];
+            return {
+                useAppDispatch: () => dispatch,
+                useAppSelector: () => values.shift()
+            };
+        });
+        vi.doMock("@/components/features/home/Display/Display.logic", async () => {
+            const actual = await vi.importActual<typeof import("./Display.logic")>("./Display.logic");
+            return {
+                ...actual,
+                shouldLoadDataSet: shouldLoadDataSetMock,
+                loadDataSetForCar: loadDataSetForCarMock,
+                syncKilometer: syncKilometerMock,
+                mapDataSetToListItems: vi.fn().mockReturnValue([])
+            };
+        });
+        vi.doMock("@/components/features/home/ListItem", () => ({
+            default: () => null
+        }));
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: Display} = await import("./Display");
+        renderToStaticMarkup(createElement(Display));
+
+        expect(shouldLoadDataSetMock).toHaveBeenCalledWith(ModalState.None, "Zoe");
+        expect(loadDataSetForCarMock).toHaveBeenCalledWith({carName: "Zoe", dispatch});
+        expect(syncKilometerMock).not.toHaveBeenCalled();
+    });
+
+    it("component calls syncKilometer when shouldLoadDataSet is false", async () => {
+        vi.resetModules();
+        const dispatch = vi.fn();
+        const loadDataSetForCarMock = vi.fn();
+        const syncKilometerMock = vi.fn();
+        const shouldLoadDataSetMock = vi.fn().mockReturnValue(false);
+
+        vi.doMock("react", async () => {
+            const actual = await vi.importActual<typeof import("react")>("react");
+            return {
+                ...actual,
+                useEffect: vi.fn((callback: () => void) => {
+                    callback();
+                })
+            };
+        });
+        vi.doMock("@/store/hooks", () => {
+            const values = [ModalState.ChangeCarData, {name: "Zoe", kilometer: 1200}, []];
+            return {
+                useAppDispatch: () => dispatch,
+                useAppSelector: () => values.shift()
+            };
+        });
+        vi.doMock("@/components/features/home/Display/Display.logic", async () => {
+            const actual = await vi.importActual<typeof import("./Display.logic")>("./Display.logic");
+            return {
+                ...actual,
+                shouldLoadDataSet: shouldLoadDataSetMock,
+                loadDataSetForCar: loadDataSetForCarMock,
+                syncKilometer: syncKilometerMock,
+                mapDataSetToListItems: vi.fn().mockReturnValue([])
+            };
+        });
+        vi.doMock("@/components/features/home/ListItem", () => ({
+            default: () => null
+        }));
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: Display} = await import("./Display");
+        renderToStaticMarkup(createElement(Display));
+
+        expect(shouldLoadDataSetMock).toHaveBeenCalledWith(ModalState.ChangeCarData, "Zoe");
+        expect(syncKilometerMock).toHaveBeenCalledWith(1200, dispatch);
+        expect(loadDataSetForCarMock).not.toHaveBeenCalled();
+    });
+
+    it("renders list container for the current data set", async () => {
         vi.resetModules();
         vi.doMock("@/store/hooks", () => {
             const values = [
@@ -101,7 +195,7 @@ describe("Display domain", () => {
 
         const html = renderToStaticMarkup(createElement(Display));
 
-        expect(html).toContain("A");
-        expect(html).toContain("B");
+        expect(html).toContain("_mainContainer_");
+        expect(html).toContain("_list_");
     });
 });

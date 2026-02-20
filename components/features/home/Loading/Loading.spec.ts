@@ -69,4 +69,41 @@ describe("Loading logic", () => {
         expect(html).toContain("dotLayer");
         expect(html).toContain("carBody");
     });
+
+    it("delays spinner visibility by configured timeout", async () => {
+        vi.useFakeTimers();
+        vi.resetModules();
+        const setIsVisible = vi.fn();
+        vi.stubGlobal("window", {
+            setTimeout,
+            clearTimeout
+        });
+        vi.doMock("react", async () => {
+            const actual = await vi.importActual<typeof import("react")>("react");
+            const useStateMock = vi
+                .fn()
+                .mockReturnValueOnce([false, setIsVisible])
+                .mockReturnValueOnce([0, vi.fn()])
+                .mockReturnValueOnce([[], vi.fn()]);
+
+            return {
+                ...actual,
+                useState: useStateMock,
+                useEffect: vi.fn((callback: () => (() => void) | void) => {
+                    callback();
+                }),
+                useRef: vi.fn(() => ({current: 0}))
+            };
+        });
+
+        const {default: Loading} = await import("./Loading");
+        Loading({});
+
+        vi.advanceTimersByTime(LOADING_VISIBILITY_DELAY_MS - 1);
+        expect(setIsVisible).not.toHaveBeenCalled();
+
+        vi.advanceTimersByTime(1);
+        expect(setIsVisible).toHaveBeenCalledWith(true);
+        vi.useRealTimers();
+    });
 });

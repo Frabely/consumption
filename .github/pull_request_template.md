@@ -18,10 +18,10 @@
 - [ ] `npm run test:e2e` (or explain why skipped)
 
 ## Codex Review Findings
-- P0:
-- P1:
-- P2:
-- P3:
+- P0: none
+- P1: none
+- P2: none
+- P3: none
 
 ## Codex Review Gate
 - [ ] Confirmed no open P0/P1 findings remain
