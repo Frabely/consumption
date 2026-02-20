@@ -92,6 +92,7 @@
 
 ## 4. Infrastructure
 - Test-Infrastruktur weiter haerten (weniger fragiles Hook-Mocking, mehr stabile Interaction-Tests).
+- Dedizierten E2E-Testserver einführen (Mock-Backend/Fixtures zentral, keine verteilten Service-Mocks im Produktivcode).
 - Orchestrierungs-Tests fuer `app/page.tsx` ergaenzen: Rollout-off-Verhalten, Session-Expiry-Logout, Cross-Tab-Logout und Guard-Redirects explizit als Komponententests absichern.
 - Coverage-Gates pro kritischem Bereich definieren (mind. Branch-Coverage fuer Kernfluesse).
 - CI-Pipeline erweitern:

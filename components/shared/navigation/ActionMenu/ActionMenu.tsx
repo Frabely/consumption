@@ -8,7 +8,8 @@ import globalMenuStyles from "./ActionMenu.module.css";
 export default function ActionMenu({
     actions,
     selectConfig,
-    primaryAction
+    primaryAction,
+    onMenuOpen
 }: ActionMenuProps) {
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -17,14 +18,23 @@ export default function ActionMenu({
         setMenuOpen(false);
     };
 
+    const onMenuToggleHandler = () => {
+        const isOpening = !menuOpen;
+        setMenuOpen(isOpening);
+        if (isOpening) {
+            onMenuOpen?.();
+        }
+    };
+
     return (
         <div className={globalMenuStyles.mainContainerHor}>
             <div className={globalMenuStyles.menuAnchor}>
                 <button
                     type={"button"}
                     className={globalMenuStyles.button}
-                    onClick={() => setMenuOpen(!menuOpen)}
+                    onClick={onMenuToggleHandler}
                     aria-expanded={menuOpen}
+                    data-testid={"action-menu-toggle"}
                 >
                     <FontAwesomeIcon icon={menuOpen ? faXmark : faEllipsis}/>
                 </button>
@@ -61,6 +71,7 @@ export default function ActionMenu({
                 type={"button"}
                 className={globalMenuStyles.button}
                 onClick={primaryAction.onClick}
+                data-testid={"action-menu-primary"}
             >
                 <FontAwesomeIcon icon={primaryAction.icon}/>
             </button>
@@ -91,4 +102,5 @@ export type ActionMenuProps = {
     actions: ActionMenuItem[];
     selectConfig?: ActionMenuSelectConfig;
     primaryAction: ActionMenuPrimaryAction;
+    onMenuOpen?: () => void;
 }

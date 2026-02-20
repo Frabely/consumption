@@ -34,6 +34,34 @@ export let loadingStations: LoadingStation[] = []
 export let cars: Car[] = []
 export let houses: House[] = []
 
+export type GetCarsFn = () => Promise<Car[] | undefined>;
+
+/**
+ * Ensures that car data is available in the in-memory cache.
+ * @param params Optional dependency overrides for fetching cars.
+ * @returns Cached car entries after the load attempt.
+ */
+export const ensureCarsLoaded = async ({
+    getCarsFn = getCars
+}: {
+    getCarsFn?: GetCarsFn;
+} = {}): Promise<Car[]> => {
+    if (cars.length > 0) {
+        return cars;
+    }
+
+    const resultCars = await getCarsFn().catch((error: Error) => {
+        console.error(error.message);
+        return undefined;
+    });
+
+    if (resultCars) {
+        cars = resultCars;
+    }
+
+    return cars;
+};
+
 export const loadMainPageData = async () => {
     const resultStations = await getLoadingStations().catch((error: Error) => {
         console.error(error.message)
