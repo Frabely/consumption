@@ -3,8 +3,8 @@ import {
   AUTH_SESSION_STORAGE_KEY,
   E2E_MOCK_STORAGE_KEY,
   E2EAuthSession,
-} from "../../fixtures/e2e/authSession.fixture";
-import { createE2EAuthSession } from "../../factories/e2e/authSession.factory";
+} from "@/tests/fixtures/e2e/authSession.fixture";
+import { createE2EAuthSession } from "@/tests/factories/e2e/authSession.factory";
 
 type InitScriptTarget = Pick<BrowserContext, "addInitScript"> | Pick<Page, "addInitScript">;
 

@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
-import { E2E_HOME_CAR_NAMES } from "../tests/fixtures/e2e/home.fixture";
-import { seedAuthSession } from "../tests/helpers/e2e/authSessionSeed";
-import { openActionMenu, selectCar } from "../tests/helpers/e2e/homeActions";
+import { E2E_HOME_CAR_NAMES } from "@/tests/fixtures/e2e/home.fixture";
+import { seedAuthSession } from "@/tests/helpers/e2e/authSessionSeed";
+import { openActionMenu, selectCar } from "@/tests/helpers/e2e/homeActions";
 
 test("menu select remains usable after browser reopen and can switch cars", async ({ browser }) => {
   const firstContext = await browser.newContext();

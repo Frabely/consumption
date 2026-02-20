@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
-import { E2E_HOME_MENU_LABELS } from "../tests/fixtures/e2e/home.fixture";
-import { seedAuthSession } from "../tests/helpers/e2e/authSessionSeed";
-import { openActionMenu } from "../tests/helpers/e2e/homeActions";
+import { E2E_HOME_MENU_LABELS } from "@/tests/fixtures/e2e/home.fixture";
+import { seedAuthSession } from "@/tests/helpers/e2e/authSessionSeed";
+import { openActionMenu } from "@/tests/helpers/e2e/homeActions";
 
 test("opens and closes CSV download modal from action menu", async ({ browser }) => {
   const context = await browser.newContext();

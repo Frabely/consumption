@@ -2,13 +2,13 @@ import { expect, test } from "@playwright/test";
 import {
   E2E_HOME_CAR_NAMES,
   E2E_HOME_MENU_LABELS,
-} from "../tests/fixtures/e2e/home.fixture";
-import { seedAuthSession } from "../tests/helpers/e2e/authSessionSeed";
+} from "@/tests/fixtures/e2e/home.fixture";
+import { seedAuthSession } from "@/tests/helpers/e2e/authSessionSeed";
 import {
   openActionMenu,
   selectCar,
   openAddDataDialog,
-} from "../tests/helpers/e2e/homeActions";
+} from "@/tests/helpers/e2e/homeActions";
 
 test("add-data uses kilometer of the currently selected car after browser reopen", async ({
   browser,

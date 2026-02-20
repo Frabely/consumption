@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { E2E_HOME_TAB_LABELS } from "../tests/fixtures/e2e/home.fixture";
-import { seedAuthSession } from "../tests/helpers/e2e/authSessionSeed";
+import { E2E_HOME_TAB_LABELS } from "@/tests/fixtures/e2e/home.fixture";
+import { seedAuthSession } from "@/tests/helpers/e2e/authSessionSeed";
 
 test("switches to statistics tab and shows kpi labels", async ({ browser }) => {
   const context = await browser.newContext();

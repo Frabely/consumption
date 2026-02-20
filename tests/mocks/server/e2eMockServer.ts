@@ -1,7 +1,7 @@
 import {
   buildDefaultE2EAuthSession,
   E2EAuthSession,
-} from "../../fixtures/e2e/authSession.fixture";
+} from "@/tests/fixtures/e2e/authSession.fixture";
 
 /**
  * Represents deterministic mock-server data used in e2e and integration tests.
