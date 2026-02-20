@@ -9,8 +9,8 @@ const TEST_DEFAULT_LOADING_STATION = TEST_LOADING_STATIONS[0];
 
 type SelectorState = {
     modalState: ModalState;
-    currentCar: { name: string; kilometer: number; prevKilometer: number };
-    currentUser: { name: string };
+    currentCar: { name: string; kilometer?: number; prevKilometer?: number };
+    currentUser: { name: string; defaultCar?: string };
     kilometer: string;
     power: string;
     loadingStation: { id: string; name: string };
@@ -101,6 +101,10 @@ async function buildComponent({
     });
     const setIsInputValid = vi.fn();
     const setDisabled = vi.fn();
+    const ensureCarsLoaded = vi.fn().mockResolvedValue([
+        {name: "Zoe", kilometer: 100, prevKilometer: 90},
+        {name: "BMW", kilometer: 200, prevKilometer: 180}
+    ]);
     const useEffect = vi.fn((callback: () => void) => {
         if (effectMode === "run") {
             callback();
@@ -172,7 +176,8 @@ async function buildComponent({
     }));
     vi.doMock("@/constants/constantData", () => ({
         DEFAULT_LOADING_STATION: TEST_DEFAULT_LOADING_STATION,
-        loadingStations: TEST_LOADING_STATIONS
+        loadingStations: TEST_LOADING_STATIONS,
+        ensureCarsLoaded
     }));
     vi.doMock("@/utils/validation/carDataValidation", () => ({
         isKilometerValid,
@@ -185,6 +190,7 @@ async function buildComponent({
     vi.doMock("@/store/reducer/isChangingData", () => ({setIsChangingData: createAction("setIsChangingData")}));
     vi.doMock("@/store/reducer/modal/loadingStationId", () => ({setLoadingStation: createAction("setLoadingStation")}));
     vi.doMock("@/store/reducer/currentCar", () => ({
+        setCurrentCar: createAction("setCurrentCar"),
         updateCarKilometers: createAction("updateCarKilometers"),
         updateCarPrevKilometers: createAction("updateCarPrevKilometers")
     }));
@@ -205,7 +211,8 @@ async function buildComponent({
         setIsInputValid,
         setDisabled,
         useEffect,
-        CustomSelectMock
+        CustomSelectMock,
+        ensureCarsLoaded
     };
 }
 
@@ -226,14 +233,32 @@ describe("AddData component", () => {
     });
 
     it("resets modal state via effect when AddCarData modal is active", async () => {
-        const {dispatch, useEffect, setIsInputValid} = await buildComponent({effectMode: "run"});
+        const {dispatch, useEffect, setIsInputValid, ensureCarsLoaded} = await buildComponent({effectMode: "run"});
 
-        expect(useEffect).toHaveBeenCalledTimes(3);
+        expect(useEffect).toHaveBeenCalledTimes(4);
+        expect(ensureCarsLoaded).not.toHaveBeenCalled();
         expect(dispatch).toHaveBeenCalledWith({type: "setPower", payload: ""});
         expect(dispatch).toHaveBeenCalledWith({type: "setKilometer", payload: "100"});
         expect(dispatch).toHaveBeenCalledWith({type: "setIsChangingData", payload: false});
         expect(dispatch).toHaveBeenCalledWith({type: "setLoadingStation", payload: TEST_DEFAULT_LOADING_STATION});
         expect(setIsInputValid).toHaveBeenCalledWith({kilometer: false, power: false});
+    });
+
+    it("loads cars for add/change modal when current car is not hydrated", async () => {
+        const {ensureCarsLoaded, dispatch} = await buildComponent({
+            effectMode: "run",
+            selectorOverrides: {
+                currentCar: {name: "BMW", kilometer: undefined, prevKilometer: 0},
+                modalState: ModalState.ChangeCarData
+            }
+        });
+
+        await Promise.resolve();
+        expect(ensureCarsLoaded).toHaveBeenCalledTimes(1);
+        expect(dispatch).toHaveBeenCalledWith({
+            type: "setCurrentCar",
+            payload: {name: "BMW", kilometer: 200, prevKilometer: 180}
+        });
     });
 
     it("submits new data when add mode is valid", async () => {

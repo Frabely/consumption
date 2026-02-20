@@ -9,10 +9,10 @@ import {addDataSetToCollection, changeDataSetInCollection, updateCarKilometer} f
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {ChangeEvent, useEffect, useState} from "react";
 import Modal from "@/components/shared/overlay/Modal";
-import {DEFAULT_LOADING_STATION, loadingStations} from "@/constants/constantData";
+import {DEFAULT_LOADING_STATION, ensureCarsLoaded, loadingStations} from "@/constants/constantData";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {Language} from "@/constants/types";
-import {updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
+import {setCurrentCar, updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
 import {setDate} from "@/store/reducer/modal/date";
 import {ModalState} from "@/constants/enums";
 import CustomSelect from "@/components/shared/forms/CustomSelect";
@@ -54,6 +54,42 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         power: isPowerValid(power)
     })
     const [disabled, setDisabled] = useState(true);
+
+    useEffect(() => {
+        const isAddOrChangeModal =
+            modalState === ModalState.AddCarData || modalState === ModalState.ChangeCarData
+        if (!isAddOrChangeModal) {
+            return
+        }
+        if (currentCar.kilometer !== undefined) {
+            return
+        }
+
+        /**
+         * Hydrates missing current-car data when add/change dialogs are opened.
+         * @returns Promise resolved when hydration attempt is complete.
+         */
+        const hydrateCurrentCarForModal = async (): Promise<void> => {
+            const loadedCars = await ensureCarsLoaded()
+            if (loadedCars.length === 0) {
+                return
+            }
+            const selectedCar = loadedCars.find((car) => car.name === currentCar.name)
+            if (selectedCar) {
+                dispatch(setCurrentCar(selectedCar))
+                return
+            }
+            if (!currentUser.defaultCar) {
+                return
+            }
+            const defaultCar = loadedCars.find((car) => car.name === currentUser.defaultCar)
+            if (defaultCar) {
+                dispatch(setCurrentCar(defaultCar))
+            }
+        }
+
+        void hydrateCurrentCarForModal()
+    }, [currentCar.kilometer, currentCar.name, currentUser.defaultCar, dispatch, modalState])
 
     useEffect(() => {
         if (modalState === ModalState.AddCarData) {
@@ -213,6 +249,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 <div className={`${styles.inputRow} ${isInputValid.kilometer ? styles.inputValid : styles.inputInvalid}`}>
                     <FontAwesomeIcon className={styles.leadingIcon} icon={faCarSide}/>
                     <input
+                        data-testid={"add-data-kilometer-input"}
                         value={kilometer}
                         className={styles.innerInput}
                         type={"number"}
@@ -228,6 +265,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 <div className={`${styles.inputRow} ${isInputValid.power ? styles.inputValid : styles.inputInvalid}`}>
                     <FontAwesomeIcon className={styles.leadingIcon} icon={faBolt}/>
                     <input
+                        data-testid={"add-data-power-input"}
                         value={power}
                         className={styles.innerInput}
                         type={"number"}

@@ -69,6 +69,7 @@ export default function CustomSelect({
                 role={"button"}
                 tabIndex={0}
                 aria-expanded={isExpanded}
+                data-testid={"custom-select-toggle"}
             >
                 <span className={styles.selectedText}>{selectedValue}</span>
                 <span className={`${styles.chevron} ${isExpanded ? styles.chevronExpanded : ""}`}>⌄</span>
@@ -80,6 +81,7 @@ export default function CustomSelect({
                             className={`${styles.optionContainer} ${selectedValue === option ? styles.optionSelected : ""}`}
                             key={keys ? keys[index] : index}
                             onClick={() => onOptionClickHandler(index)}
+                            data-testid={`custom-select-option-${keys ? keys[index] : option}`}
                         >
                             {option}
                         </div>

@@ -3,8 +3,13 @@ import {Role} from "@/constants/enums";
 import {User} from "@/constants/types";
 import {collection, getDocs, query, where} from "@firebase/firestore";
 import {db} from "@/firebase/db";
+import {createE2EMockUser, isE2EMockModeEnabled} from "@/firebase/services/e2eMockData";
 
 export const checkUserId = async (id: string): Promise<User | undefined> => {
+    if (isE2EMockModeEnabled()) {
+        return createE2EMockUser(id);
+    }
+
     const consumptionDataRef = collection(db, `${DB_USER_COLLECTION_KEY}`);
     const queryUserKey = query(consumptionDataRef, where("key", "==", id));
     return getDocs(queryUserKey).then((result) => {
