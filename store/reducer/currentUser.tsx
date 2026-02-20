@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {User} from "@/constants/types";
+import {User} from "@/common/models";
 import {EMPTY_USER} from "@/constants/constantData";
 
 const CurrentUserSlice = createSlice({
@@ -14,3 +14,4 @@ const CurrentUserSlice = createSlice({
 export const {setCurrentUser} = CurrentUserSlice.actions
 
 export default CurrentUserSlice;
+

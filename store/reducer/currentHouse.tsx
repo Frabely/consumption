@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {House} from "@/constants/types";
+import {House} from "@/common/models";
 import {DEFAULT_HOUSE} from "@/constants/constantData";
 
 const CurrentHouseSlice = createSlice({
@@ -14,3 +14,4 @@ const CurrentHouseSlice = createSlice({
 export const {setCurrentHouse} = CurrentHouseSlice.actions
 
 export default CurrentHouseSlice;
+

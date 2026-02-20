@@ -1,11 +1,12 @@
-﻿import styles from './DownloadCsv.module.css'
+import styles from './DownloadCsv.module.css'
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import Modal from "@/components/shared/overlay/Modal";
 import {ChangeEvent, useState} from "react";
-import deJson from '@/constants/de.json'
+import deJson from '@/i18n'
 import {getFullDataSet} from "@/firebase/functions";
-import {DataSet, Language} from "@/constants/types";
-import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
+import type {DataSet} from "@/common/models";
+import type {Translations} from "@/i18n/types";
+import {getDateString, getUTCDateString} from "@/utils/date/formatDate";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
@@ -16,7 +17,7 @@ import {setIsLoading} from "@/store/reducer/isLoading";
 export default function DownloadCsv({}: DownloadCsvProps) {
     const currentCar = useAppSelector(selectCurrentCar)
     const dispatch = useAppDispatch()
-    const de: Language = deJson
+    const de: Translations = deJson
     //Todo create date input
     const date = new Date()
     const year = date.getFullYear()
@@ -112,4 +113,7 @@ export default function DownloadCsv({}: DownloadCsvProps) {
 }
 
 export type DownloadCsvProps = {}
+
+
+
 

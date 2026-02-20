@@ -1,8 +1,8 @@
-﻿'use client'
+'use client'
 
-import de from '@/constants/de.json'
+import de from '@/i18n'
 import Modal from "@/components/shared/overlay/Modal";
-import {FieldValue, Flat, Room} from "@/constants/types";
+import {FieldValue, Flat, Room} from "@/common/models";
 import styles from "./AddFloorData.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {ChangeEvent, CSSProperties, useEffect, useState} from "react";
@@ -205,4 +205,6 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
 export type AddFloorDataModalProps = {
     flat: Flat
 }
+
+
 

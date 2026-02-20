@@ -1,6 +1,6 @@
-﻿import {describe, expect, it} from "vitest";
+import {describe, expect, it} from "vitest";
 import {filterFieldValuesByRoom, parseYearMonthInput} from "@/utils/building/fieldValueMapping";
-import {FieldValue, Flat} from "@/constants/types";
+import {FieldValue, Flat} from "@/common/models";
 
 describe("fieldValueMapping", () => {
     const flat: Flat = {
@@ -41,4 +41,5 @@ describe("fieldValueMapping", () => {
         expect(parseYearMonthInput("2026")).toBeNull();
     });
 });
+
 

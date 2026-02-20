@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Car} from "@/constants/types";
+import {Car} from "@/common/models";
 import {CarNames} from "@/constants/enums";
 
 
@@ -23,3 +23,4 @@ const CurrentCarSlice = createSlice({
 export const {updateCarKilometers, setCurrentCar, updateCarPrevKilometers} = CurrentCarSlice.actions
 
 export default CurrentCarSlice;
+

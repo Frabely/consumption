@@ -1,17 +1,20 @@
 import styles from './ListItem.module.css'
-import de from "@/constants/de.json"
+import de from "@/i18n"
 import {setIsChangingData} from "@/store/reducer/isChangingData";
-import {Language, LoadingStation} from "@/constants/types";
-import {getDateString} from "@/constants/globalFunctions";
+import type {LoadingStation} from "@/common/models";
+import type {Translations} from "@/i18n/types";
+import {getDateString} from "@/utils/date/formatDate";
 import {useAppDispatch} from "@/store/hooks";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBolt} from "@fortawesome/free-solid-svg-icons";
 import {dispatchChangeDataActions, isChangeCarDataAllowed} from "@/components/features/home/ListItem/ListItem.logic";
 
 export default function ListItem({kilometer, name, power, date, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
-    const language: Language = de
+    const language: Translations = de
     const dispatch = useAppDispatch()
     const [localDate, localTime] = getDateString(date).split(" ")
+    const loadingStationLabel =
+        language.loadingStation[loadingStation.name as keyof typeof language.loadingStation] ?? loadingStation.name
     let timeOut: ReturnType<typeof setTimeout> | undefined
     const touchStart = () => {
         timeOut = setTimeout(() => {
@@ -59,7 +62,7 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
                 </div>
             </div>
             <div className={styles.bottomRow}>
-                <div className={styles.stationValue}>{language.displayLabels.loadingStation}: {language.loadingStation[`${loadingStation.name}`]}</div>
+                <div className={styles.stationValue}>{language.displayLabels.loadingStation}: {loadingStationLabel}</div>
                 <div className={styles.nameValue}>{name}</div>
             </div>
         </div>
@@ -76,3 +79,6 @@ export type ListItemProps = {
     loadingStation: LoadingStation,
     isFirstElement: boolean
 }
+
+
+

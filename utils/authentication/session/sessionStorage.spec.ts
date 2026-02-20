@@ -1,6 +1,6 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { Role } from "@/constants/enums";
-import { User } from "@/constants/types";
+import { User } from "@/common/models";
 import {
   AUTH_SESSION_STORAGE_KEY,
   AUTH_SESSION_TTL_MS,
@@ -93,6 +93,7 @@ describe("authSessionStorage", () => {
     expect(loaded).toBeNull();
   });
 });
+
 
 
 

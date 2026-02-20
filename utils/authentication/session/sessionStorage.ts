@@ -1,4 +1,4 @@
-﻿import { User } from "@/constants/types";
+import { User } from "@/common/models";
 import {
   AUTH_SESSION_SCHEMA_VERSION,
   AUTH_SESSION_STORAGE_KEY,
@@ -108,6 +108,7 @@ export const clearPersistedAuthSession = (storage?: StorageLike): boolean => {
   targetStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
   return true;
 };
+
 
 
 

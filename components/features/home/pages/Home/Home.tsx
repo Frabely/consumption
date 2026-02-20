@@ -12,7 +12,7 @@ import Display from "@/components/features/home/Display";
 import Login from "@/components/features/home/Login";
 import CustomTab from "@/components/shared/navigation/CustomTab";
 import Statistics from "@/components/features/home/Statistics";
-import de from "@/constants/de.json"
+import de from "@/i18n"
 import styles from "./Home.module.css";
 import {
     selectCurrentCar,
@@ -115,3 +115,4 @@ export default function Home({}: HomeProps) {
 export type HomeProps = {
 
 }
+

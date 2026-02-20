@@ -1,6 +1,6 @@
-import {Language} from "@/constants/types";
+import type {Translations} from "@/i18n/types";
 
-export const buildLoadingText = (language: Language): string => `${language.displayLabels.loading}...`;
+export const buildLoadingText = (language: Translations): string => `${language.displayLabels.loading}...`;
 
 export const LOADING_SLOT_COUNT = 8;
 export const LOADING_INITIAL_VISIBLE_SLOT_COUNT = 5;
@@ -119,3 +119,4 @@ export const updateLoadingSlots = ({
 
     return nextSlots;
 };
+

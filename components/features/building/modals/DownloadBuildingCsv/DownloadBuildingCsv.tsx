@@ -1,10 +1,10 @@
-﻿import styles from './DownloadBuildingCsv.module.css'
+import styles from './DownloadBuildingCsv.module.css'
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import Modal from "@/components/shared/overlay/Modal";
 import {ChangeEvent, useState} from "react";
-import deJson from '@/constants/de.json'
+import deJson from '@/i18n'
 import {getFieldValuesForExport} from "@/firebase/functions";
-import {DownloadBuildingCsvDto} from "@/constants/types";
+import type {DownloadBuildingCsvDto} from "@/common/dto";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
@@ -104,4 +104,6 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
 }
 
 export type DownloadBuildingCsvProps = {}
+
+
 

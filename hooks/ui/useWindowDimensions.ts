@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Dimension} from "@/constants/types";
+import type {Dimension} from "@/common/models";
 
 const getWindowDimensions = (): Dimension => {
     if (typeof window === "undefined") {
@@ -18,6 +18,10 @@ const getWindowDimensions = (): Dimension => {
     };
 };
 
+/**
+ * Tracks the current viewport dimensions and orientation state.
+ * @returns Latest viewport dimensions.
+ */
 export default function useWindowDimensions(): Dimension {
     const [windowDimensions, setWindowDimensions] = useState<Dimension>(getWindowDimensions());
 
@@ -34,3 +38,5 @@ export default function useWindowDimensions(): Dimension {
 
     return windowDimensions;
 }
+
+

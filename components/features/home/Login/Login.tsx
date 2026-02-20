@@ -1,5 +1,5 @@
-﻿import styles from "./Login.module.css";
-import de from "@/constants/de.json";
+import styles from "./Login.module.css";
+import de from "@/i18n";
 import {
   ClipboardEvent,
   ChangeEvent,
@@ -242,3 +242,4 @@ export default function Login({}: LoginProps) {
 }
 
 export type LoginProps = {};
+

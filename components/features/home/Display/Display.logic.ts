@@ -1,5 +1,5 @@
 import {ModalState} from "@/constants/enums";
-import {DataSet} from "@/constants/types";
+import {DataSet} from "@/common/models";
 import {getFullDataSet} from "@/firebase/functions";
 import {setDataSetArray} from "@/store/reducer/currentDataSet";
 import {setIsLoading} from "@/store/reducer/isLoading";
@@ -72,3 +72,4 @@ export const loadDataSetForCar = async ({
             dispatch(setIsLoading(false));
         });
 };
+

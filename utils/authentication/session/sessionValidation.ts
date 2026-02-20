@@ -1,5 +1,5 @@
-﻿import { checkUserId } from "@/firebase/functions";
-import { User } from "@/constants/types";
+import { checkUserId } from "@/firebase/functions";
+import { User } from "@/common/models";
 import { setCurrentUser } from "@/store/reducer/currentUser";
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import { setAuthStatusUnauthenticated } from "@/store/reducer/authStatus";
@@ -129,3 +129,4 @@ export const validateAndApplyActiveSession = async ({
   applySessionValidationResult({ result, dispatch });
   return result;
 };
+

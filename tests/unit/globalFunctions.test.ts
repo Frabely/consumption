@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {getDateString, getUTCDateString} from "@/constants/globalFunctions";
+import {getDateString, getUTCDateString} from "@/utils/date/formatDate";
 
 describe("globalFunctions", () => {
     it("formats local dates as dd.mm.yyyy h:mm with zero-padded day/month/minutes", () => {
@@ -12,3 +12,4 @@ describe("globalFunctions", () => {
         expect(getUTCDateString(date)).toBe("09.11.2026 4:03");
     });
 });
+

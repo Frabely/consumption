@@ -1,9 +1,9 @@
-﻿import React, {ChangeEvent, useEffect, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import styles from "./Statistics.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
-import {YearMonth} from "@/constants/types";
+import {YearMonth} from "@/common/models";
 import {loadAllConsumptionDocsBetween} from "@/firebase/functions";
-import de from "@/constants/de.json";
+import de from "@/i18n";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {
@@ -137,4 +137,6 @@ export default function Statistics({}: StatisticsProps) {
 }
 
 export type StatisticsProps = {}
+
+
 

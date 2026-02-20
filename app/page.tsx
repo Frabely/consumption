@@ -4,7 +4,7 @@ import styles from "../styles/page.module.css";
 import Image from "next/image";
 import { setDimension } from "@/store/reducer/dimension";
 import { useEffect } from "react";
-import useWindowDimensions from "@/hooks/useWindowDimensions";
+import useWindowDimensions from "@/hooks/ui/useWindowDimensions";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import Home from "@/components/features/home/pages/Home";
 import { Page } from "@/constants/enums";

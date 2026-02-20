@@ -1,5 +1,5 @@
 import {ModalState} from "@/constants/enums";
-import {LoadingStation} from "@/constants/types";
+import {LoadingStation} from "@/common/models";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {setDate} from "@/store/reducer/modal/date";
 import {setId} from "@/store/reducer/modal/id";
@@ -58,3 +58,4 @@ export const dispatchChangeDataActions = ({
     dispatch(setId(id));
     dispatch(setLoadingStation(loadingStation));
 };
+
