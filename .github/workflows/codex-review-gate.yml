@@ -1,0 +1,39 @@
+name: Codex Review Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+jobs:
+  codex-review-gate:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Validate PR review gate checklist
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body || "";
+            const requiredPatterns = [
+              /\[x\]\s+Confirmed no open P0\/P1 findings remain/i,
+              /\[x\]\s+UI\/UX states checked \(loading, empty, error, disabled, focus, mobile\)/i,
+              /\[x\]\s+User impact and rollback risk documented/i,
+              /\[x\]\s+Tests mapped to changed behavior \(unit\/integration\/e2e or manual reason\)/i,
+            ];
+
+            const missing = requiredPatterns
+              .map((pattern, index) => ({
+                index,
+                ok: pattern.test(body),
+              }))
+              .filter((entry) => !entry.ok)
+              .map((entry) => entry.index + 1);
+
+            if (missing.length > 0) {
+              core.setFailed(
+                `Codex Review Gate is incomplete. Missing checklist items: ${missing.join(", ")}. ` +
+                "Please update the PR template section 'Codex Review Gate'."
+              );
+            }

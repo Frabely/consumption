@@ -131,11 +131,14 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 ## 10. Review-Checkliste vor Abschluss
 
 - Vor jedem Commit ist eine kurze Selbst-Review verpflichtend (Diff, Risiken, Regressionen, offene Punkte).
+- Fuer PRs ist die Vorlage `.github/pull_request_template.md` verpflichtend vollstaendig auszufuellen (inkl. User Impact, Risiken, Test Evidence und Codex Review Findings).
+- Der GitHub-Workflow `.github/workflows/codex-review-gate.yml` ist als Merge-Gate zu behandeln; offene Punkte dort duerfen nicht umgangen werden.
 - Ist die Loesung die einfachste robuste Variante?
 - Sind Edge Cases und Fehlerpfade abgedeckt?
 - Sind Effects/Async-Pfade stabil und ohne doppelte Aufrufe?
 - Ist der Code fuer das Team sofort lesbar?
 - Sind keine unnoetigen Abhaengigkeiten eingefuehrt worden?
+- Findings aus Codex-Reviews sind nach Severity (`P0` bis `P3`) zu dokumentieren und vor Merge abzuarbeiten oder begruendet zu akzeptieren.
 
 ## 11. Nicht tun
 
