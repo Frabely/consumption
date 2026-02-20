@@ -36,7 +36,6 @@ export default function Statistics({}: StatisticsProps) {
         if (!currentCarName) {
             setKwhFueled(0);
             setKilometersDriven(0);
-            dispatch(setIsLoading(false));
             return;
         }
 
