@@ -24,13 +24,6 @@
     overflow: hidden;
 }
 
-.mainInnerContainerTransparent {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0.5rem 0.6rem 0.55rem;
-}
-
 .header {
     display: flex;
     gap: 0.65rem;
@@ -58,24 +51,6 @@
     cursor: pointer;
 }
 
-.iconInner {
-    position: absolute;
-    top: 0.9rem;
-    right: 0.6rem;
-    z-index: 2;
-}
-
-.iconInFlow {
-    position: static;
-}
-
-.innerCloseRow {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0.12rem 0.45rem 0.25rem 0.2rem;
-}
-
 .childPropsContainer {
     width: 100%;
     min-width: 0;
@@ -95,22 +70,9 @@
     overflow: visible;
 }
 
-.childPropsContainerNoScroll {
-    overflow: hidden;
-}
-
-.childPropsContainerWithInnerClose {
-    position: relative;
-    padding-top: 3rem;
-}
-
 .childPropsContainerTransparent {
     background: transparent;
     padding: 0.15rem 0.05rem 0;
-}
-
-.childPropsContainerWithInnerClose.childPropsContainerTransparent {
-    padding-top: 3rem;
 }
 
 .childPropsContainer::-webkit-scrollbar {

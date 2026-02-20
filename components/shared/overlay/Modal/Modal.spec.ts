@@ -56,7 +56,7 @@ describe("Modal component", () => {
     expect(html).toContain("INHALT");
   });
 
-  it("dispatches close action from header and inner close variants", async () => {
+  it("dispatches close action from header close icon", async () => {
     vi.resetModules();
     const dispatch = vi.fn();
     vi.doMock("@/store/hooks", () => ({
@@ -74,29 +74,5 @@ describe("Modal component", () => {
     );
     iconsDefault[0]?.props?.onClick?.();
     expect(dispatch).toHaveBeenCalledWith({ type: "setModalStateNone" });
-
-    const innerElement = Modal({
-      formName: "B",
-      children: "Y",
-      closeInsideContent: true,
-      closeInsideFlow: false,
-    });
-    const iconsInner = findElements(
-      innerElement,
-      (currentElement) => typeof currentElement.props?.onClick === "function",
-    );
-    iconsInner[0]?.props?.onClick?.();
-    expect(dispatch).toHaveBeenCalledWith({ type: "setModalStateNone" });
-
-    const hiddenElement = Modal({
-      formName: "C",
-      children: "Z",
-      hideCloseIcon: true,
-    });
-    const iconsHidden = findElements(
-      hiddenElement,
-      (currentElement) => typeof currentElement.props?.onClick === "function",
-    );
-    expect(iconsHidden.length).toBe(0);
   });
 });
