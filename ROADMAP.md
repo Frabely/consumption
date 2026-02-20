@@ -1,7 +1,6 @@
-# Produkt-Roadmap
+﻿# Produkt-Roadmap
 
 ## 1. Bugfixes
-- High Priority: Home-Loading-Spinner wird hinter den Display-Items gerendert; Spinner muss im Home-View immer klar sichtbar im Vordergrund liegen.
 - AddFloor: Interaktionen (Add/Edit/Remove/Reorder) robuster machen und gezielt auf Edge Cases testen.
 - Modal/Select: Keyboard- und Focus-Verhalten (Escape, Enter, Outside-Click, Tab-Reihenfolge) vereinheitlichen.
 - CSV-Downloads: Datumswechsel und No-Data-Handling in beiden Flows (`DownloadCsv`, `DownloadBuildingCsv`) konsistent behandeln.
@@ -17,8 +16,7 @@
 - CSS-Variablen-Check und Konsolidierung: pruefen, dass Designwerte (insb. Farben/Spacing/Typografie) nicht hart codiert sind, um spaetere Color-Schema-Aenderungen zentral steuern zu koennen.
 - Filter-UX verbessern: Filtermoeglichkeiten in einen Header-Bereich mit Zuklapp-Funktion verschieben (insb. fuer mobile mehr Platz fuer Inhalte).
 - Menu-UX verbessern: Beim Auswaehlen eines Autos das Menu sofort automatisch schliessen.
-- Spinner-UX verbessern: Loading-Spinner visuell und funktional ueberarbeiten (klarer Status, ruhigeres Verhalten, konsistente Groessen/Abstaende).
-- WebApp-Layout verbessern: Im installierten WebApp-Modus den Bereich oben (statt URL-/Browser-Header) mit dem App-Hintergrund gestalten, damit der Übergang nahtlos wirkt.
+- WebApp-Layout verbessern: Im installierten WebApp-Modus den Bereich oben (statt URL-/Browser-Header) mit dem App-Hintergrund gestalten, damit der Ãœbergang nahtlos wirkt.
 
 ## 3. Grosse Features
 
@@ -49,7 +47,7 @@
     - UI-nahe Entscheidungen in `*.logic.ts` verschieben.
     - Seiteneffekte (Firebase/Redux) klar kapseln.
   - Schritt 3: UI in kleine Bausteine schneiden
-    - Große Komponenten in fokussierte Teilkomponenten aufteilen.
+    - GroÃŸe Komponenten in fokussierte Teilkomponenten aufteilen.
     - Einheitliche Dialog- und Formular-Bausteine nutzen.
   - Schritt 4: Interaktionen stabilisieren
     - Long-Press, Selection, Reorder und Validation vereinheitlichen.
@@ -87,7 +85,7 @@
     - Klare Fehlerpfade fuer Netzwerk-/Validierungsfehler trennen.
   - Schritt 3: Hintergrund-Sync aufbauen
     - Sync bei App-Start, Reconnect (`online`-Event) und optional periodisch anstossen.
-    - Retry mit Backoff fuer temporäre Fehler implementieren.
+    - Retry mit Backoff fuer temporÃ¤re Fehler implementieren.
   - Schritt 4: Konfliktlogik definieren
     - Kilometerstand-Konflikte beim spaeten Sync erkennen.
     - Konflikte als `conflict` markieren und bearbeitbar machen statt still zu verwerfen.
@@ -101,7 +99,7 @@
 
 ## 4. Infrastructure
 - Test-Infrastruktur weiter haerten (weniger fragiles Hook-Mocking, mehr stabile Interaction-Tests).
-- Dedizierten E2E-Testserver einführen (Mock-Backend/Fixtures zentral, keine verteilten Service-Mocks im Produktivcode).
+- Dedizierten E2E-Testserver einfÃ¼hren (Mock-Backend/Fixtures zentral, keine verteilten Service-Mocks im Produktivcode).
 - Orchestrierungs-Tests fuer `app/page.tsx` ergaenzen: Rollout-off-Verhalten, Session-Expiry-Logout, Cross-Tab-Logout und Guard-Redirects explizit als Komponententests absichern.
 - Coverage-Gates pro kritischem Bereich definieren (mind. Branch-Coverage fuer Kernfluesse).
 - CI-Pipeline erweitern:

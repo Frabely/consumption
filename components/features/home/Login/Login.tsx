@@ -14,7 +14,6 @@ import { setIsLoading } from "@/store/reducer/isLoading";
 import {
   handleLoginInput,
   LoginAttemptResult,
-  appendPinCharacter,
   removeLastPinCharacter,
   resolveActivePinSlotIndex,
 } from "@/components/features/home/Login/Login.logic";
@@ -27,6 +26,18 @@ export default function Login({}: LoginProps) {
   const [loginResult, setLoginResult] = useState<LoginAttemptResult>({
     status: "incomplete",
   });
+
+  const placeCaretAtEnd = () => {
+    if (!inputRef.current) {
+      return;
+    }
+    const position = inputRef.current.value.length;
+    try {
+      inputRef.current.setSelectionRange(position, position);
+    } catch {
+      // Some mobile browsers can throw when selection is not supported.
+    }
+  };
 
   const applyPinInput = async (nextInput: string): Promise<void> => {
     const normalizedInput = nextInput.slice(0, 4);
@@ -56,11 +67,18 @@ export default function Login({}: LoginProps) {
     } catch {
       inputRef.current.focus();
     }
+    requestAnimationFrame(() => {
+      placeCaretAtEnd();
+    });
   };
 
   useEffect(() => {
     focusPasswordInput();
   }, []);
+
+  useEffect(() => {
+    placeCaretAtEnd();
+  }, [pinInput]);
 
   const filledDots = useMemo(
     () => Array.from({ length: 4 }, (_, index) => index < pinInput.length),
@@ -68,30 +86,21 @@ export default function Login({}: LoginProps) {
   );
   const activeSlotIndex = resolveActivePinSlotIndex(pinInput);
 
-  const onInputChangeHandler = async (e: ChangeEvent<HTMLInputElement>) => {
-    await applyPinInput(e.target.value);
+  const onInputChangeHandler = async (
+    event: ChangeEvent<HTMLInputElement>,
+  ) => {
+    await applyPinInput(event.target.value);
   };
 
   const onInputKeyDownHandler = async (
     event: KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (event.key === "Backspace") {
-      event.preventDefault();
-      await applyPinInput(removeLastPinCharacter(pinInput));
-      return;
-    }
-
-    if (
-      event.ctrlKey ||
-      event.metaKey ||
-      event.altKey ||
-      event.key.length !== 1
-    ) {
+    if (event.key !== "Backspace") {
       return;
     }
 
     event.preventDefault();
-    await applyPinInput(appendPinCharacter(pinInput, event.key));
+    await applyPinInput(removeLastPinCharacter(pinInput));
   };
 
   const onPasteHandler = async (event: ClipboardEvent<HTMLInputElement>) => {
