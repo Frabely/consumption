@@ -124,6 +124,29 @@
     - Relevante E2E-/Integrationstests pro Inkrement ausfuehren.
     - In kleinen, nachvollziehbaren PR-Schritten mergen.
 
+### 3.5 Test Excellence & Reliability Program
+- Ziele:
+  - Teststrategie auf produktionsnahe Zuverlaessigkeit heben (stabil, reproduzierbar, aussagekraeftig).
+  - Kritische Domains mit harten Coverage- und Qualitaets-Gates absichern.
+  - Regressionen frueh erkennen und Flakiness systematisch abbauen.
+- Schrittweise Umsetzung:
+  - Schritt 1: Harte Coverage-Gates pro kritischer Domain
+    - Fuer Auth, AddData, Building und Session/Loading klare Branch-Coverage-Schwellen definieren.
+    - Fail-fast in CI bei Unterschreitung der Grenzwerte.
+  - Schritt 2: E2E-Vervollstaendigung Building-Kernflows
+    - Add/Edit/Delete/Reorder fuer Floors/Rooms/Fields als stabile E2E-Suiten ausbauen.
+    - Building CSV und Validierungs-/Fehlerpfade vollstaendig absichern.
+  - Schritt 3: Nightly Matrix + Flake-Management
+    - Nightly-Laeufe fuer mehrere Browser/Viewport-Klassen einfuehren.
+    - Flake-Reporting, Quarantaene-Label und SLA fuer Reparatur etablieren.
+  - Schritt 4: Dedizierter Mock-Backend-Testserver
+    - Zentralen Testserver mit festen Handlern/Fixtures statt verteilter Service-Mocks aufbauen.
+    - Konsistente API-Vertraege fuer Integration/E2E schaffen.
+  - Schritt 5: Erweiterte Qualitaetstests
+    - Accessibility-Smoke-Tests fuer Kernscreens (Fokus, Tastatur, ARIA-Basics).
+    - Performance-Smoke-Checks fuer Login/Start/Home.
+    - Contract-Tests zwischen Service-Layer und erwarteten Datenformen.
+
 ## 4. Infrastructure
 - Test-Infrastruktur weiter haerten (weniger fragiles Hook-Mocking, mehr stabile Interaction-Tests).
 - Dedizierten E2E-Testserver einfÃ¼hren (Mock-Backend/Fixtures zentral, keine verteilten Service-Mocks im Produktivcode).
