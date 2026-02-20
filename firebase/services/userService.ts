@@ -1,6 +1,6 @@
 import {DB_USER_COLLECTION_KEY} from "@/constants/constantData";
 import {Role} from "@/constants/enums";
-import {User} from "@/constants/types";
+import {User} from "@/common/models";
 import {collection, getDocs, query, where} from "@firebase/firestore";
 import {db} from "@/firebase/db";
 import {createE2EMockUser, isE2EMockModeEnabled} from "@/firebase/services/e2eMockData";
@@ -32,3 +32,4 @@ export const checkUserId = async (id: string): Promise<User | undefined> => {
         return undefined;
     });
 };
+

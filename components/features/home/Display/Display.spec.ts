@@ -1,6 +1,6 @@
 import {describe, expect, it, vi} from "vitest";
 import {ModalState} from "@/constants/enums";
-import {DataSet} from "@/constants/types";
+import {DataSet} from "@/common/models";
 import {
     loadDataSetForCar,
     mapDataSetToListItems,
@@ -199,3 +199,4 @@ describe("Display domain", () => {
         expect(html).toContain("_list_");
     });
 });
+

@@ -1,5 +1,5 @@
 import {describe, expect, it, vi} from "vitest";
-import de from "@/constants/de.json";
+import de from "@/i18n";
 import {
     buildLoadingText,
     LOADING_VISIBILITY_DELAY_MS
@@ -107,3 +107,4 @@ describe("Loading logic", () => {
         vi.useRealTimers();
     });
 });
+

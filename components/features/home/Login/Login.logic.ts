@@ -1,6 +1,6 @@
-﻿import { cars } from "@/constants/constantData";
+import { cars } from "@/constants/constantData";
 import { CarNames } from "@/constants/enums";
-import { Car, User } from "@/constants/types";
+import { Car, User } from "@/common/models";
 import { checkUserId } from "@/firebase/functions";
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import { setCurrentUser } from "@/store/reducer/currentUser";
@@ -169,3 +169,4 @@ export const handleLoginInput = async ({
   );
   return { status: "success" };
 };
+

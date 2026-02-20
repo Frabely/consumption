@@ -1,4 +1,4 @@
-import {Car, House} from "@/constants/types";
+import {Car, House} from "@/common/models";
 import {getCars, getHouses, getLoadingStations} from "@/firebase/functions";
 import {CarNames} from "@/constants/enums";
 import {
@@ -85,3 +85,4 @@ export const loadHouses = async ({
 
     return housesResult;
 };
+

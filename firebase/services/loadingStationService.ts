@@ -1,5 +1,5 @@
 import {DB_LOADING_STATIONS} from "@/constants/constantData";
-import {LoadingStation} from "@/constants/types";
+import {LoadingStation} from "@/common/models";
 import {collection, getDocs} from "@firebase/firestore";
 import {db} from "@/firebase/db";
 import {E2E_MOCK_LOADING_STATIONS, isE2EMockModeEnabled} from "@/firebase/services/e2eMockData";
@@ -25,3 +25,4 @@ export const getLoadingStations = async () => {
         return loadingStations;
     }
 };
+

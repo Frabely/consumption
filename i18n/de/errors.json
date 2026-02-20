@@ -1,0 +1,22 @@
+{
+    "messages":  {
+                     "noDataForFollowMonthAndYearAvailable":  "Keine Daten für den folgendes Jahr und Monat verfügbar",
+                     "selectARoom":  "Raum auswählen!",
+                     "fieldNameEmpty":  "Zählername leer!",
+                     "roomNameEmpty":  "Raumname leer!",
+                     "deleteRoomConfirmation":  "Raum \u0027{0}\u0027 wirklich löschen?",
+                     "deleteFieldConfirmation":  "Zähler \u0027{0}\u0027 wirklich löschen?",
+                     "databaseError":  "Datenbankfehler",
+                     "fieldSaved":  "Wert: \u0027{valueNumber}\u0027 im Zähler \u0027{valueFieldName}\u0027 gespeichert.",
+                     "loginTitle":  "Login",
+                     "loginSubtitle":  "Bitte gib deine 4-stellige PIN ein.",
+                     "loginRejected":  "Login fehlgeschlagen. Bitte PIN prüfen.",
+                     "loginUnavailable":  "Keine Verbindung. Login ist aktuell nicht verfügbar.",
+                     "loginProgressLabel":  "Eingegeben:",
+                     "forgotPassword":  "PIN vergessen?",
+                     "showPin":  "PIN anzeigen",
+                     "loginSlotsAriaLabel":  "PIN Eingabe mit vier Stellen",
+                     "showPassword":  "Passwort anzeigen",
+                     "hidePassword":  "Passwort verbergen"
+                 }
+}

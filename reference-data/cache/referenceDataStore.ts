@@ -1,4 +1,4 @@
-import {Car, House, LoadingStation} from "@/constants/types";
+import {Car, House, LoadingStation} from "@/common/models";
 
 export let DEFAULT_CAR: Car | undefined;
 
@@ -52,3 +52,4 @@ export const resetReferenceDataStore = (): void => {
     setLoadingStations([]);
     setDefaultCar(undefined);
 };
+

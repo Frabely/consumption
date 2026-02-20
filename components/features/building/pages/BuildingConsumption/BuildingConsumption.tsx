@@ -5,7 +5,7 @@ import MenuBuilding from "@/components/features/building/MenuBuilding";
 import AddFloorData from "@/components/features/building/modals/AddFloorData";
 import AddFloor from "@/components/features/building/modals/AddFloor";
 import styles from "./BuildingConsumption.module.css";
-import {Flat, House} from "@/constants/types";
+import {Flat, House} from "@/common/models";
 import {useAppDispatch} from "@/store/hooks";
 import {useAppSelector} from "@/store/hooks";
 import {setIsLoading} from "@/store/reducer/isLoading";
@@ -118,3 +118,4 @@ export default function BuildingConsumption({}: BuildingConsumptionProps) {
 }
 
 export type BuildingConsumptionProps = {}
+

@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { cars } from "@/constants/constantData";
 import { CarNames, Role } from "@/constants/enums";
-import { User } from "@/constants/types";
-import de from "@/constants/de.json";
+import { User } from "@/common/models";
+import de from "@/i18n";
 import {
   appendPinCharacter,
   handleLoginInput,
@@ -390,3 +390,5 @@ describe("login", () => {
     expect(setLoginResult).toHaveBeenCalledWith({ status: "incomplete" });
   });
 });
+
+

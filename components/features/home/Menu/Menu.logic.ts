@@ -1,6 +1,6 @@
 import {faFileCsv, faHouseFire, faPowerOff} from "@fortawesome/free-solid-svg-icons";
 import {Role} from "@/constants/enums";
-import {Car} from "@/constants/types";
+import {Car} from "@/common/models";
 import {ActionMenuItem} from "@/components/shared/navigation/ActionMenu";
 
 export type HomeMenuLabels = {
@@ -54,3 +54,4 @@ export const resolveSelectedCar = (cars: Car[], value: string): Car | undefined 
 
 export const resolveDefaultCarName = (currentCarName: string | undefined, cars: Car[]): string =>
     currentCarName ?? cars[0]?.name ?? "";
+

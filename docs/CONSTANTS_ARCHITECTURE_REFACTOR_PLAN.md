@@ -98,7 +98,7 @@ utils/
 ### Phase 4: i18n hardening
 1. Move `constants/de.json` into `i18n/de/*` per domain.
 2. Introduce typed translation object (`type Translations = typeof deCommon & ...`) and access helper.
-3. Replace direct `import de from "@/constants/de.json"` incrementally.
+3. Replace direct `import de from "@/i18n"` incrementally.
 4. Add lint or tests for missing translation keys.
 
 ### Phase 5: Utility cleanup
@@ -161,3 +161,4 @@ utils/
 - End-user behavior should remain stable during refactor.
 - Prioritize zero regression on login, add-data, and building management.
 - Keep error/loading/empty states unchanged unless explicitly improved in scoped PRs.
+

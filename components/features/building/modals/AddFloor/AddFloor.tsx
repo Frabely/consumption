@@ -1,8 +1,8 @@
 import React, {ChangeEvent, CSSProperties, MouseEvent, useState} from 'react';
 import Modal from "@/components/shared/overlay/Modal";
 import styles from "./AddFloor.module.css";
-import de from "@/constants/de.json";
-import {Field, Flat, Room} from "@/constants/types";
+import de from "@/i18n";
+import {Field, Flat, Room} from "@/common/models";
 import {createFlat, updateFlat} from "@/firebase/functions";
 import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAdd, faMinus, faAnglesUp, faAnglesDown} from "@fortawesome/free-solid-svg-icons";
@@ -396,3 +396,5 @@ export type AddFloorModalProps = {
     currentFlat?: Flat,
     newFlatPosition?: number,
 }
+
+

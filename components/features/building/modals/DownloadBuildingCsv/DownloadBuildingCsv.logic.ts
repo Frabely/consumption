@@ -1,4 +1,4 @@
-import {DownloadBuildingCsvDto} from "@/constants/types";
+import type {DownloadBuildingCsvDto} from "@/common/dto";
 
 export const buildDownloadBuildingCsvText = (
     rows: DownloadBuildingCsvDto[],
@@ -31,3 +31,4 @@ export const buildDownloadBuildingCsvText = (
 
     return txtContent.replace(".", ",");
 };
+

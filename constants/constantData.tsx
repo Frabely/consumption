@@ -1,4 +1,4 @@
-import {House, LoadingStation, User} from "@/constants/types";
+import {House, LoadingStation, User} from "@/common/models";
 import {
     DB_BUILDING_CONSUMPTION,
     DB_CARS,
@@ -63,6 +63,7 @@ export const loadHouses = async (): Promise<House[]> => {
 
 export {cars, DEFAULT_CAR, ensureCarsLoaded, houses, loadingStations, loadMainPageData};
 export type {GetCarsFn};
+
 
 
 

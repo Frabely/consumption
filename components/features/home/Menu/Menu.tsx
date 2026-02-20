@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { setModalState, setModalStateNone } from "@/store/reducer/modalState";
@@ -11,7 +11,7 @@ import { setPage } from "@/store/reducer/currentPage";
 import { getCars } from "@/firebase/functions";
 import { ModalState, Page, Role } from "@/constants/enums";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import de from "@/constants/de.json";
+import de from "@/i18n";
 import ActionMenu from "@/components/shared/navigation/ActionMenu";
 import {
   buildHomeMenuActions,
@@ -147,6 +147,7 @@ export default function Menu({}: MenuProps) {
 }
 
 export type MenuProps = {};
+
 
 
 

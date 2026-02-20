@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {ReloadNeeded} from "@/constants/types";
+import {ReloadNeeded} from "@/common/models";
 
 const initialState: ReloadNeeded = {
     isReloadCarsNeeded: true,
@@ -42,3 +42,4 @@ export const {
     setIsReloadNeeded } = isReloadDataNeededSlice.actions
 
 export default isReloadDataNeededSlice;
+

@@ -1,7 +1,7 @@
-﻿'use client'
+'use client'
 
 import styles from "./AddData.module.css"
-import de from '@/constants/de.json'
+import de from '@/i18n'
 import {setModalStateNone} from "@/store/reducer/modalState";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
@@ -11,7 +11,7 @@ import {ChangeEvent, useEffect, useState} from "react";
 import Modal from "@/components/shared/overlay/Modal";
 import {DEFAULT_LOADING_STATION, ensureCarsLoaded, loadingStations} from "@/constants/constantData";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
-import {Language} from "@/constants/types";
+import type {Translations} from "@/i18n/types";
 import {setCurrentCar, updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
 import {setDate} from "@/store/reducer/modal/date";
 import {ModalState} from "@/constants/enums";
@@ -34,7 +34,7 @@ import {isKilometerValid, isPowerValid, parseIntegerOrNull} from "@/utils/valida
 import {setIsLoading} from "@/store/reducer/isLoading";
 
 export default function AddData({prevKilometers}: AddDataModalProps) {
-    const language: Language = de
+    const language: Translations = de
     const dispatch = useAppDispatch()
     const modalState = useAppSelector(selectModalState)
     const currentCar = useAppSelector(selectCurrentCar)
@@ -55,6 +55,8 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         power: isPowerValid(power)
     })
     const [disabled, setDisabled] = useState(true);
+    const getLoadingStationLabel = (stationName: string): string =>
+        language.loadingStation[stationName as keyof typeof language.loadingStation] ?? stationName;
 
     useEffect(() => {
         const isAddOrChangeModal =
@@ -242,8 +244,8 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     <div className={styles.selectField}>
                         <CustomSelect
                             onChange={onLoadingStationChangeHandler}
-                            defaultValue={changingData ? language.loadingStation[`${loadingStation.name}`] : language.loadingStation[`${DEFAULT_LOADING_STATION.name}`]}
-                            options={loadingStations.map((item) => language.loadingStation[`${item.name}`])}
+                            defaultValue={changingData ? getLoadingStationLabel(loadingStation.name) : getLoadingStationLabel(DEFAULT_LOADING_STATION.name)}
+                            options={loadingStations.map((item) => getLoadingStationLabel(item.name))}
                             keys={loadingStations.map((item) => item.id)}
                             style={{width: "100%"}}
                         />
@@ -300,4 +302,6 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 export type AddDataModalProps = {
     prevKilometers: number
 }
+
+
 
