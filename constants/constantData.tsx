@@ -1,6 +1,20 @@
 import {Car, House, LoadingStation, User} from "@/constants/types";
 import {getCars, getHouses, getLoadingStations} from "@/firebase/functions";
 import {CarNames} from "@/constants/enums";
+import {
+    DB_BUILDING_CONSUMPTION,
+    DB_CARS,
+    DB_DATA_FIELDS_KEY,
+    DB_DATA_FLATS_KEY,
+    DB_DATA_ROOMS_KEY,
+    DB_DATA_SET_COLLECTION_KEY,
+    DB_FIELD_VALUES,
+    DB_FLATS,
+    DB_HOUSES,
+    DB_LOADING_STATIONS,
+    DB_ROOMS,
+    DB_USER_COLLECTION_KEY
+} from "@/constants/db/collectionKeys";
 
 export const DEFAULT_LOADING_STATION: LoadingStation = {
     id: '17498904',
@@ -16,19 +30,20 @@ export let DEFAULT_HOUSE: House = {
 }
 
 export const EMPTY_USER: User = {}
-
-export const DB_DATA_SET_COLLECTION_KEY: string = 'consumptionData'
-export const DB_DATA_FLATS_KEY: string = 'flats'
-export const DB_DATA_ROOMS_KEY: string = 'rooms'
-export const DB_DATA_FIELDS_KEY: string = 'fields'
-export const DB_USER_COLLECTION_KEY: string = 'users'
-export const DB_CARS: string = 'cars'
-export const DB_HOUSES: string = 'houses'
-export const DB_FLATS: string = 'flats'
-export const DB_ROOMS: string = 'rooms'
-export const DB_FIELD_VALUES: string = 'values'
-export const DB_BUILDING_CONSUMPTION: string = 'buildingConsumption'
-export const DB_LOADING_STATIONS: string = 'loadingStations'
+export {
+    DB_BUILDING_CONSUMPTION,
+    DB_CARS,
+    DB_DATA_FIELDS_KEY,
+    DB_DATA_FLATS_KEY,
+    DB_DATA_ROOMS_KEY,
+    DB_DATA_SET_COLLECTION_KEY,
+    DB_FIELD_VALUES,
+    DB_FLATS,
+    DB_HOUSES,
+    DB_LOADING_STATIONS,
+    DB_ROOMS,
+    DB_USER_COLLECTION_KEY
+}
 
 export let loadingStations: LoadingStation[] = []
 export let cars: Car[] = []
