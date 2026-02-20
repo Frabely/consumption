@@ -75,16 +75,14 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 return
             }
             const selectedCar = loadedCars.find((car) => car.name === currentCar.name)
-            if (selectedCar) {
-                dispatch(setCurrentCar(selectedCar))
+            if (!selectedCar) {
+                dispatch(setKilometer(""))
                 return
             }
-            if (!currentUser.defaultCar) {
-                return
-            }
-            const defaultCar = loadedCars.find((car) => car.name === currentUser.defaultCar)
-            if (defaultCar) {
-                dispatch(setCurrentCar(defaultCar))
+
+            dispatch(setCurrentCar(selectedCar))
+            if (selectedCar.kilometer !== undefined) {
+                dispatch(setKilometer(selectedCar.kilometer.toString()))
             }
         }
 

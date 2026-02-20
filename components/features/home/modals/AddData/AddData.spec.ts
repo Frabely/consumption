@@ -259,6 +259,27 @@ describe("AddData component", () => {
             type: "setCurrentCar",
             payload: {name: "BMW", kilometer: 200, prevKilometer: 180}
         });
+        expect(dispatch).toHaveBeenCalledWith({
+            type: "setKilometer",
+            payload: "200"
+        });
+    });
+
+    it("does not hydrate kilometer when selected car is unavailable", async () => {
+        const {dispatch} = await buildComponent({
+            effectMode: "run",
+            selectorOverrides: {
+                currentCar: {name: "MissingCar", kilometer: undefined},
+                currentUser: {name: "Tester", defaultCar: "AlsoMissing"},
+                modalState: ModalState.ChangeCarData
+            }
+        });
+
+        await Promise.resolve();
+        expect(dispatch).toHaveBeenCalledWith({
+            type: "setKilometer",
+            payload: ""
+        });
     });
 
     it("submits new data when add mode is valid", async () => {

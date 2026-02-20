@@ -32,16 +32,21 @@ const seedAuthSession = async (pageContext: {
     });
 };
 
-test("add-data modal hydrates kilometer value after reopen when cars are initially missing", async ({browser}) => {
+test("add-data uses kilometer of the currently selected car after browser reopen", async ({browser}) => {
     const firstContext = await browser.newContext();
     await seedAuthSession(firstContext);
     const firstPage = await firstContext.newPage();
 
     await firstPage.goto("/");
+    await firstPage.getByTestId("action-menu-toggle").dispatchEvent("click");
+    const firstSelectToggle = firstPage.getByTestId("custom-select-toggle");
+    await firstSelectToggle.click();
+    await firstPage.getByTestId("custom-select-option-BMW").click({force: true});
+    await expect(firstSelectToggle).toContainText("BMW");
     await expect(firstPage.getByTestId("action-menu-primary")).toBeVisible();
     await firstPage.getByTestId("action-menu-primary").click();
     await expect(firstPage.getByRole("heading", {name: "Daten hinzufügen"})).toBeVisible();
-    await expect(firstPage.getByTestId("add-data-kilometer-input")).toHaveValue("12000");
+    await expect(firstPage.getByTestId("add-data-kilometer-input")).toHaveValue("45000");
     await firstContext.close();
 
     const secondContext = await browser.newContext();
@@ -49,9 +54,14 @@ test("add-data modal hydrates kilometer value after reopen when cars are initial
     const secondPage = await secondContext.newPage();
 
     await secondPage.goto("/");
+    await secondPage.getByTestId("action-menu-toggle").dispatchEvent("click");
+    const secondSelectToggle = secondPage.getByTestId("custom-select-toggle");
+    await secondSelectToggle.click();
+    await secondPage.getByTestId("custom-select-option-BMW").click({force: true});
+    await expect(secondSelectToggle).toContainText("BMW");
     await expect(secondPage.getByTestId("action-menu-primary")).toBeVisible();
     await secondPage.getByTestId("action-menu-primary").click();
     await expect(secondPage.getByRole("heading", {name: "Daten hinzufügen"})).toBeVisible();
-    await expect(secondPage.getByTestId("add-data-kilometer-input")).toHaveValue("12000");
+    await expect(secondPage.getByTestId("add-data-kilometer-input")).toHaveValue("45000");
     await secondContext.close();
 });

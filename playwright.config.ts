@@ -8,12 +8,12 @@ export default defineConfig({
         timeout: 10_000
     },
     use: {
-        baseURL: "http://127.0.0.1:3000",
+        baseURL: "http://localhost:3000",
         trace: "on-first-retry"
     },
     webServer: {
         command: "npm run dev -- --port 3000",
-        url: "http://127.0.0.1:3000",
+        url: "http://localhost:3000",
         reuseExistingServer: true,
         env: {
             NEXT_PUBLIC_E2E_MOCK_DATA: "1"
