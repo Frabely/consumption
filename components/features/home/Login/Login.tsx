@@ -4,6 +4,7 @@ import {
   ClipboardEvent,
   ChangeEvent,
   KeyboardEvent,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -27,7 +28,7 @@ export default function Login({}: LoginProps) {
     status: "incomplete",
   });
 
-  const placeCaretAtEnd = () => {
+  const placeCaretAtEnd = useCallback(() => {
     if (!inputRef.current) {
       return;
     }
@@ -37,7 +38,7 @@ export default function Login({}: LoginProps) {
     } catch {
       // Some mobile browsers can throw when selection is not supported.
     }
-  };
+  }, []);
 
   const applyPinInput = async (nextInput: string): Promise<void> => {
     const normalizedInput = nextInput.slice(0, 4);
@@ -57,7 +58,7 @@ export default function Login({}: LoginProps) {
     }
   };
 
-  const focusPasswordInput = () => {
+  const focusPasswordInput = useCallback(() => {
     if (!inputRef.current) {
       return;
     }
@@ -70,15 +71,15 @@ export default function Login({}: LoginProps) {
     requestAnimationFrame(() => {
       placeCaretAtEnd();
     });
-  };
+  }, [placeCaretAtEnd]);
 
   useEffect(() => {
     focusPasswordInput();
-  }, []);
+  }, [focusPasswordInput]);
 
   useEffect(() => {
     placeCaretAtEnd();
-  }, [pinInput]);
+  }, [pinInput, placeCaretAtEnd]);
 
   const filledDots = useMemo(
     () => Array.from({ length: 4 }, (_, index) => index < pinInput.length),
