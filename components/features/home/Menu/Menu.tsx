@@ -3,9 +3,9 @@
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { setModalState, setModalStateNone } from "@/store/reducer/modalState";
 import { setIsChangingData } from "@/store/reducer/isChangingData";
-import { cars } from "@/constants/constantData";
+import { cars, ensureCarsLoaded } from "@/constants/constantData";
 import { RootState } from "@/store/store";
-import React from "react";
+import React, { useState } from "react";
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import { setPage } from "@/store/reducer/currentPage";
 import { getCars } from "@/firebase/functions";
@@ -28,6 +28,7 @@ import { performAuthLogout } from "@/utils/authentication/flow/logout";
 export default function Menu({}: MenuProps) {
   const language = de;
   const dispatch = useAppDispatch();
+  const [availableCars, setAvailableCars] = useState(cars);
   const currentUserRole: Role | undefined = useAppSelector(
     (state: RootState) => state.currentUser.role,
   );
@@ -68,13 +69,33 @@ export default function Menu({}: MenuProps) {
    * @returns No return value.
    */
   const onCarChangeHandler = (value: string) => {
-    getCars()
-      .then((result) => {
-        if (result) {
-          const selectedCar = resolveSelectedCar(result, value);
-          if (selectedCar) {
-            dispatch(setCurrentCar(selectedCar));
-          }
+    ensureCarsLoaded({ getCarsFn: getCars })
+      .then((loadedCars) => {
+        if (loadedCars.length > 0) {
+          setAvailableCars([...loadedCars]);
+        }
+        const selectedCar = resolveSelectedCar(loadedCars, value);
+        if (selectedCar) {
+          dispatch(setCurrentCar(selectedCar));
+        }
+      })
+      .catch((error: Error) => {
+        console.error(error.message);
+      });
+  };
+
+  /**
+   * Loads available cars when the action menu popover is opened.
+   * @returns No return value.
+   */
+  const onMenuOpenHandler = () => {
+    if (availableCars.length > 0) {
+      return;
+    }
+    ensureCarsLoaded({ getCarsFn: getCars })
+      .then((loadedCars) => {
+        if (loadedCars.length > 0) {
+          setAvailableCars([...loadedCars]);
         }
       })
       .catch((error: Error) => {
@@ -105,10 +126,11 @@ export default function Menu({}: MenuProps) {
   return (
     <ActionMenu
       actions={menuActions}
+      onMenuOpen={onMenuOpenHandler}
       selectConfig={{
         onChange: onCarChangeHandler,
-        defaultValue: resolveDefaultCarName(currentCarName, cars),
-        options: cars.map((car) => car.name),
+        defaultValue: resolveDefaultCarName(currentCarName, availableCars),
+        options: availableCars.map((car) => car.name),
         direction: "up",
       }}
       primaryAction={{

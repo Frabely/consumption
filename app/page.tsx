@@ -12,7 +12,6 @@ import { Page } from "@/constants/enums";
 import BuildingConsumption from "@/components/features/building/pages/BuildingConsumption";
 import {
   selectAuthStatus,
-  selectCurrentCar,
   selectCurrentPage,
   selectCurrentUser,
 } from "@/store/selectors";
@@ -37,7 +36,6 @@ import { subscribeToAuthSessionCrossTabSync } from "@/utils/authentication/sessi
 export default function App() {
   const currentPage = useAppSelector(selectCurrentPage);
   const authStatus = useAppSelector(selectAuthStatus);
-  const currentCar = useAppSelector(selectCurrentCar);
   const currentUser = useAppSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
   const dimension = useWindowDimensions();
@@ -54,12 +52,8 @@ export default function App() {
     if (authStatus !== AUTH_STATUS.AUTHENTICATED || !currentUser.key) {
       return;
     }
-    void validateAndApplyActiveSession({
-      userId: currentUser.key,
-      dispatch,
-      currentCarName: currentCar.name,
-    });
-  }, [authStatus, currentCar.name, currentUser.key, dispatch]);
+    void validateAndApplyActiveSession({ userId: currentUser.key, dispatch });
+  }, [authStatus, currentUser.key, dispatch]);
 
   useEffect(() => {
     if (authStatus !== AUTH_STATUS.AUTHENTICATED) {

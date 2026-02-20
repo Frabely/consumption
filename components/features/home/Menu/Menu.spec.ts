@@ -79,10 +79,12 @@ describe("Menu logic", () => {
         vi.resetModules();
         const dispatch = vi.fn();
         const getCars = vi.fn().mockResolvedValue([{name: "Zoe"}, {name: "BMW"}]);
+        const ensureCarsLoaded = vi.fn().mockResolvedValue([{name: "Zoe"}, {name: "BMW"}]);
         let capturedProps: {
             actions: Array<{ id: string; onClick?: () => void }>;
             selectConfig: { onChange?: (value: string) => void };
             primaryAction: { onClick?: () => void };
+            onMenuOpen?: () => void;
         } | undefined;
 
         vi.doMock("@/store/hooks", () => ({
@@ -120,7 +122,8 @@ describe("Menu logic", () => {
         }));
         vi.doMock("@/constants/constantData", () => ({
             EMPTY_USER: {name: "", role: Role.None},
-            cars: [{name: "Zoe"}, {name: "BMW"}]
+            cars: [],
+            ensureCarsLoaded
         }));
 
         const {createElement} = await import("react");
@@ -146,9 +149,13 @@ describe("Menu logic", () => {
         building?.onClick?.();
         expect(dispatch).toHaveBeenCalledWith({type: "setPage", payload: Page.BuildingConsumption});
 
+        capturedProps?.onMenuOpen?.();
+        await Promise.resolve();
+        expect(ensureCarsLoaded).toHaveBeenCalledWith({getCarsFn: getCars});
+
         capturedProps?.selectConfig.onChange?.("BMW");
         await Promise.resolve();
-        expect(getCars).toHaveBeenCalled();
+        expect(ensureCarsLoaded).toHaveBeenCalledWith({getCarsFn: getCars});
         expect(dispatch).toHaveBeenCalledWith({type: "setCurrentCar", payload: {name: "BMW"}});
     });
 });

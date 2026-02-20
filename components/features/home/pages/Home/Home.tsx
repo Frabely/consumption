@@ -4,7 +4,6 @@ import {useAppSelector} from "@/store/hooks";
 import {cars, loadMainPageData} from "@/constants/constantData";
 import {setIsReloadNeeded} from "@/store/reducer/isReloadDataNeeded";
 import {setIsLoading} from "@/store/reducer/isLoading";
-import {getCars} from "@/firebase/functions";
 import Loading from "@/components/features/home/Loading";
 import Menu from "@/components/features/home/Menu";
 import AddData from "@/components/features/home/modals/AddData";
@@ -55,52 +54,25 @@ export default function Home({}: HomeProps) {
     }, [dispatch]);
 
     useEffect(() => {
-        let isMounted = true
-
-        /**
-         * Hydrates the current car with kilometer values after auth/session restore.
-         * @returns Promise resolved when hydration finished.
-         */
-        const hydrateCurrentCar = async (): Promise<void> => {
-            if (isLoading) {
-                return
-            }
-            if (!currentUser.key) {
-                return
-            }
-            if (currentCar.kilometer !== undefined) {
-                return
-            }
-
-            let hydratedCurrentCar = resolveHydratedCurrentCar({
-                carsList: cars,
-                currentCarName: currentCar.name,
-                defaultCarName: currentUser.defaultCar
-            })
-
-            if (!hydratedCurrentCar) {
-                const fetchedCars = await getCars().catch((error: Error) => {
-                    console.error(error.message)
-                    return []
-                })
-                hydratedCurrentCar = resolveHydratedCurrentCar({
-                    carsList: fetchedCars,
-                    currentCarName: currentCar.name,
-                    defaultCarName: currentUser.defaultCar
-                })
-            }
-
-            if (!isMounted || !hydratedCurrentCar) {
-                return
-            }
-            dispatch(setCurrentCar(hydratedCurrentCar))
+        if (isLoading) {
+            return
+        }
+        if (!currentUser.key) {
+            return
+        }
+        if (currentCar.kilometer !== undefined) {
+            return
         }
 
-        void hydrateCurrentCar()
-
-        return () => {
-            isMounted = false
+        const hydratedCurrentCar = resolveHydratedCurrentCar({
+            carsList: cars,
+            currentCarName: currentCar.name,
+            defaultCarName: currentUser.defaultCar
+        })
+        if (!hydratedCurrentCar) {
+            return
         }
+        dispatch(setCurrentCar(hydratedCurrentCar))
     }, [currentCar.kilometer, currentCar.name, currentUser.defaultCar, currentUser.key, dispatch, isLoading]);
 
 
