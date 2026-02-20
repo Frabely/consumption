@@ -9,9 +9,12 @@
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:docstrings": "eslint . --ext .ts,.tsx -c .eslintrc.docstrings.json",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test": "vitest run --config vitest.all.config.mjs",
+    "test:unit": "vitest run --config vitest.unit.config.mjs",
+    "test:integration": "vitest run --config vitest.integration.config.mjs",
+    "test:watch": "vitest --config vitest.all.config.mjs",
+    "test:e2e": "playwright test",
+    "test:coverage": "vitest run --config vitest.all.config.mjs --coverage"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",

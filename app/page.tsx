@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import styles from "../styles/page.module.css";
-import img from "@/public/bg_vert.jpg";
 import Image from "next/image";
 import { setDimension } from "@/store/reducer/dimension";
 import { useEffect } from "react";
@@ -102,7 +101,7 @@ export default function App() {
 
   return (
     <div className={styles.mainContainer}>
-      <Image className={styles.image} src={img} alt={""} />
+      <Image className={styles.image} src={"/bg_vert.jpg"} alt={""} fill priority />
       <div className={styles.imageFilter} />
       {showAuthBootLoader ? (
         <Loading />
