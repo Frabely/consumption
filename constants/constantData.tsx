@@ -1,13 +1,35 @@
-import {Car, House, LoadingStation, User} from "@/constants/types";
-import {getCars, getHouses, getLoadingStations} from "@/firebase/functions";
-import {CarNames} from "@/constants/enums";
+import {House, LoadingStation, User} from "@/common/models";
+import {
+    DB_BUILDING_CONSUMPTION,
+    DB_CARS,
+    DB_DATA_FIELDS_KEY,
+    DB_DATA_FLATS_KEY,
+    DB_DATA_ROOMS_KEY,
+    DB_DATA_SET_COLLECTION_KEY,
+    DB_FIELD_VALUES,
+    DB_FLATS,
+    DB_HOUSES,
+    DB_LOADING_STATIONS,
+    DB_ROOMS,
+    DB_USER_COLLECTION_KEY
+} from "@/constants/db/collectionKeys";
+import {
+    cars,
+    DEFAULT_CAR,
+    houses,
+    loadingStations
+} from "@/reference-data/cache/referenceDataStore";
+import {
+    ensureCarsLoaded,
+    loadHouses as loadHousesFromReferenceData,
+    loadMainPageData
+} from "@/reference-data/services/referenceDataLoader";
+import type {GetCarsFn} from "@/reference-data/services/referenceDataLoader";
 
 export const DEFAULT_LOADING_STATION: LoadingStation = {
     id: '17498904',
     name: 'carport'
 }
-
-export let DEFAULT_CAR: Car;
 
 export let DEFAULT_HOUSE: House = {
     id: "",
@@ -16,88 +38,32 @@ export let DEFAULT_HOUSE: House = {
 }
 
 export const EMPTY_USER: User = {}
-
-export const DB_DATA_SET_COLLECTION_KEY: string = 'consumptionData'
-export const DB_DATA_FLATS_KEY: string = 'flats'
-export const DB_DATA_ROOMS_KEY: string = 'rooms'
-export const DB_DATA_FIELDS_KEY: string = 'fields'
-export const DB_USER_COLLECTION_KEY: string = 'users'
-export const DB_CARS: string = 'cars'
-export const DB_HOUSES: string = 'houses'
-export const DB_FLATS: string = 'flats'
-export const DB_ROOMS: string = 'rooms'
-export const DB_FIELD_VALUES: string = 'values'
-export const DB_BUILDING_CONSUMPTION: string = 'buildingConsumption'
-export const DB_LOADING_STATIONS: string = 'loadingStations'
-
-export let loadingStations: LoadingStation[] = []
-export let cars: Car[] = []
-export let houses: House[] = []
-
-export type GetCarsFn = () => Promise<Car[] | undefined>;
+export {
+    DB_BUILDING_CONSUMPTION,
+    DB_CARS,
+    DB_DATA_FIELDS_KEY,
+    DB_DATA_FLATS_KEY,
+    DB_DATA_ROOMS_KEY,
+    DB_DATA_SET_COLLECTION_KEY,
+    DB_FIELD_VALUES,
+    DB_FLATS,
+    DB_HOUSES,
+    DB_LOADING_STATIONS,
+    DB_ROOMS,
+    DB_USER_COLLECTION_KEY
+}
 
 /**
- * Ensures that car data is available in the in-memory cache.
- * @param params Optional dependency overrides for fetching cars.
- * @returns Cached car entries after the load attempt.
+ * Compatibility wrapper that keeps existing house-loading call sites stable.
+ * @returns Loaded houses array, or an empty array when loading fails.
  */
-export const ensureCarsLoaded = async ({
-    getCarsFn = getCars
-}: {
-    getCarsFn?: GetCarsFn;
-} = {}): Promise<Car[]> => {
-    if (cars.length > 0) {
-        return cars;
-    }
-
-    const resultCars = await getCarsFn().catch((error: Error) => {
-        console.error(error.message);
-        return undefined;
-    });
-
-    if (resultCars) {
-        cars = resultCars;
-    }
-
-    return cars;
+export const loadHouses = async (): Promise<House[]> => {
+    return (await loadHousesFromReferenceData()) ?? [];
 };
 
-export const loadMainPageData = async () => {
-    const resultStations = await getLoadingStations().catch((error: Error) => {
-        console.error(error.message)
-    })
-    if (resultStations)
-        loadingStations = resultStations
+export {cars, DEFAULT_CAR, ensureCarsLoaded, houses, loadingStations, loadMainPageData};
+export type {GetCarsFn};
 
-    const resultCars = await getCars().catch((error: Error) => {
-        console.error(error.message)
-    })
-    if (resultCars) {
-        cars = resultCars
-        if (cars.length > 0) {
-            cars.map((car) => {
-                if (car.name === CarNames.Zoe)
-                    DEFAULT_CAR = {
-                        name: car.name,
-                        kilometer: car.kilometer,
-                        prevKilometer: car.prevKilometer,
-                    }
-            })
-            if (!DEFAULT_CAR)
-            DEFAULT_CAR = {
-                name: cars[0].name,
-                kilometer: cars[0].kilometer,
-                prevKilometer: cars[0].prevKilometer,
-            }
-        }
-    }
-}
-
-export const loadHouses = async () => {
-    return getHouses().then((housesResult) => {
-        return housesResult
-    })
-}
 
 
 

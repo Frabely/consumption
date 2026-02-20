@@ -6,7 +6,8 @@ import {
     DB_HOUSES,
     DB_ROOMS
 } from "@/constants/constantData";
-import {DownloadBuildingCsvDto, Field, FieldValue, Flat, Room} from "@/constants/types";
+import type {DownloadBuildingCsvDto} from "@/common/dto";
+import type {Field, FieldValue, Flat, Room} from "@/common/models";
 import {addDoc, collection, doc, getDoc, getDocs, limit, query, Timestamp, updateDoc, where} from "@firebase/firestore";
 import {DocumentReference, QueryFieldFilterConstraint, and} from "firebase/firestore";
 import {db} from "@/firebase/db";
@@ -188,3 +189,4 @@ const addFieldValue = async (
         }
     );
 };
+

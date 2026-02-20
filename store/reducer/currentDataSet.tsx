@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {DataSet} from "@/constants/types";
+import {DataSet} from "@/common/models";
 
 const initialState: DataSet[] = []
 
@@ -16,3 +16,4 @@ export const {
     setDataSetArray} = CurrentDataSetSlice.actions
 
 export default CurrentDataSetSlice;
+

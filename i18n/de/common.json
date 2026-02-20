@@ -1,0 +1,83 @@
+{
+    "head":  {
+                 "title":  "Verbrauch",
+                 "description":  "Anwendungen zum Tracken von Verbrauchsdaten eines Elektrofahrzeuges."
+             },
+    "menu":  {
+                 "addData":  "Datensatz hinzufügen"
+             },
+    "displayLabels":  {
+                          "local":  "Lokal",
+                          "UTC":  "UTC",
+                          "kilometer":  "Kilometer",
+                          "kilometerShort":  "km",
+                          "power":  "Lademenge",
+                          "powerShort":  "kW/h",
+                          "loadingStation":  "Ladestation",
+                          "name":  "Name",
+                          "house":  "Haus",
+                          "flat":  "Wohnung",
+                          "room":  "Raum",
+                          "fieldValue":  "Zählerwert",
+                          "rooms":  "Räume",
+                          "fields":  "Zähler",
+                          "selectedRoom":  "Ausgewählter Raum",
+                          "none":  "-",
+                          "loading":  "Lädt",
+                          "backToLogin":  "Zurück zum Login",
+                          "back":  "Zurück",
+                          "enterNewName":  "Neuen Name eingeben",
+                          "day":  "Tag",
+                          "enteredItems":  "Eintragungen",
+                          "statistics":  "Auswertung",
+                          "kilometersDriven":  "Zurückgelegte Kilometer",
+                          "kwhFueled":  "Geladene Menge",
+                          "currentPriceToPay":  "Aktuell zu zahlender Betrag"
+                      },
+    "inputLabels":  {
+                        "date":  "Datum",
+                        "kilometer":  "Kilometer",
+                        "power":  "Menge kW/h",
+                        "name":  "Name",
+                        "userID":  "Nutzerkürzel",
+                        "flatName":  "Wohnungsname",
+                        "roomName":  "Raumname",
+                        "fieldName":  "Zählername",
+                        "placeholderValue":  "Wert",
+                        "priceMultiplier":  "Preismultiplikator",
+                        "currentSelectedCar":  "Ausgewähltes Auto",
+                        "from":  "Von",
+                        "to":  "Bis"
+                    },
+    "buttonLabels":  {
+                         "addData":  "Daten hinzufügen",
+                         "add":  "Hinzufügen",
+                         "addFloor":  "Wohnung hinzufügen",
+                         "save":  "Speichern",
+                         "addRoom":  "Raum hinzufügen",
+                         "changeData":  "Daten ändern",
+                         "changeFloor":  "Wohnung bearbeiten",
+                         "abort":  "Abbrechen",
+                         "downloadCsv":  "Csv herunterladen",
+                         "logout":  "Logout",
+                         "buildingConsumption":  "Gebäude",
+                         "home":  "Home",
+                         "close":  "Schließen"
+                     },
+    "dataSet":  {
+                    "loadingStationName":  "Ladestation",
+                    "loadingStationId":  "Ladestation (ID)",
+                    "date":  "Datum",
+                    "time":  "Uhrzeit",
+                    "utcDate":  "UTC Datum",
+                    "utcTime":  "UTC Uhrzeit",
+                    "kilometer":  "km",
+                    "power":  "kW/h",
+                    "name":  "Name"
+                },
+    "loadingStation":  {
+                           "carport":  "Carport",
+                           "frontDoor":  "Haustür",
+                           "official":  "Öffentlich"
+                       }
+}

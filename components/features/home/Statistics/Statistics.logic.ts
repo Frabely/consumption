@@ -1,4 +1,4 @@
-import {YearMonth} from "@/constants/types";
+import {YearMonth} from "@/common/models";
 
 export type ConsumptionDoc = {
     data: {
@@ -41,3 +41,4 @@ export const summarizeConsumptionDocs = (docs: ConsumptionDoc[]): StatisticsSumm
 
     return {kwhFueled, kilometersDriven};
 };
+

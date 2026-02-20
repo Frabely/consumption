@@ -1,5 +1,5 @@
 import { ModalState } from "@/constants/enums";
-import { House } from "@/constants/types";
+import { House } from "@/common/models";
 
 /**
  * Resolves which floor modal state should open for the given interaction mode.
@@ -22,3 +22,4 @@ export const resolveCurrentHouseByName = (
   currentSelectedHouseName: string,
 ): House | undefined =>
   houses.find((house) => house.name === currentSelectedHouseName);
+

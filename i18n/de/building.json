@@ -1,0 +1,10 @@
+{
+    "floorLabels":  {
+                        "groundFloorLeft":  "Erdgeschoss links",
+                        "groundFloorRight":  "Erdgeschoss rechts",
+                        "firstFloorLeft":  "1. Stock links",
+                        "firstFloorRight":  "1. Stock rechts",
+                        "SecondFloorLeft":  "2. Stock links",
+                        "SecondFloorRight":  "2. Stock rechts"
+                    }
+}

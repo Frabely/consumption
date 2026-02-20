@@ -1,5 +1,5 @@
 import {Role} from "@/constants/enums";
-import {Car, LoadingStation, User} from "@/constants/types";
+import {Car, LoadingStation, User} from "@/common/models";
 
 const E2E_MOCK_STORAGE_KEY = "consumption.e2e.mock-data";
 const AUTH_SESSION_STORAGE_KEY = "consumption.auth.session";
@@ -63,3 +63,4 @@ export const createE2EMockUser = (userId: string): User => ({
     role: Role.Admin,
     defaultCar: resolveE2EDefaultCarFromSession() ?? "Zoe"
 });
+

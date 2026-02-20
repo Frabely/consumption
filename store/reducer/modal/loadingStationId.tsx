@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {DEFAULT_LOADING_STATION} from "@/constants/constantData";
-import {LoadingStation} from "@/constants/types";
+import {LoadingStation} from "@/common/models";
 
 const LoadingStationSlice = createSlice({
     name: 'loadingStation',
@@ -17,3 +17,4 @@ const LoadingStationSlice = createSlice({
 export const { setLoadingStation } = LoadingStationSlice.actions
 
 export default LoadingStationSlice;
+

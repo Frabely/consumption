@@ -1,14 +1,14 @@
-﻿import React from "react";
+import React from "react";
 import { RootState } from "@/store/store";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { setModalState, setModalStateNone } from "@/store/reducer/modalState";
 import { setCurrentHouse } from "@/store/reducer/currentHouse";
 import { setIsLoading } from "@/store/reducer/isLoading";
-import { House } from "@/constants/types";
+import { House } from "@/common/models";
 import { setPage } from "@/store/reducer/currentPage";
 import { ModalState, Page } from "@/constants/enums";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import de from "@/constants/de.json";
+import de from "@/i18n";
 import ActionMenu from "@/components/shared/navigation/ActionMenu";
 import {
   buildBuildingMenuActions,
@@ -103,6 +103,8 @@ export type MenuBuildingProps = {
   houses: House[];
   onAddFloor: () => void;
 };
+
+
 
 
 

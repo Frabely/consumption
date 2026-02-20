@@ -59,6 +59,7 @@ describe("constantData", () => {
 
     expect(constantData.loadingStations).toEqual(resultStations);
     expect(constantData.cars).toEqual(resultCars);
-    expect(constantData.DEFAULT_CAR.name).toBe("Zoe");
+    expect(constantData.DEFAULT_CAR).toBeDefined();
+    expect(constantData.DEFAULT_CAR?.name).toBe("Zoe");
   });
 });

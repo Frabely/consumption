@@ -1,5 +1,5 @@
 import {faFileCsv, faHouse, faPowerOff} from "@fortawesome/free-solid-svg-icons";
-import {House} from "@/constants/types";
+import {House} from "@/common/models";
 import {ActionMenuItem} from "@/components/shared/navigation/ActionMenu";
 
 export type BuildingMenuLabels = {
@@ -44,3 +44,4 @@ export const resolveSelectedHouse = (houses: House[], value: string): House | un
 
 export const resolveDefaultHouseName = (currentHouseName: string | undefined, houses: House[]): string =>
     currentHouseName ?? houses[0]?.name ?? "";
+

@@ -2,7 +2,7 @@ import {
     DB_CARS,
     DB_DATA_SET_COLLECTION_KEY
 } from "@/constants/constantData";
-import {DataSet, DataSetNoId, LoadingStation, YearMonth} from "@/constants/types";
+import {DataSet, DataSetNoId, LoadingStation, YearMonth} from "@/common/models";
 import {addDoc, collection, doc, getDocs, orderBy, query, updateDoc} from "@firebase/firestore";
 import {Timestamp} from "firebase/firestore";
 import {db} from "@/firebase/db";
@@ -152,3 +152,4 @@ const monthsBetween = (from: YearMonth, to: YearMonth): YearMonth[] => {
     }
     return allMonthsBetween;
 };
+

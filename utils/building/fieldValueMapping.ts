@@ -1,4 +1,4 @@
-import { FieldValue, Flat } from "@/constants/types";
+import { FieldValue, Flat } from "@/common/models";
 
 /**
  * Filters all field values down to the fields of the selected room.
@@ -43,3 +43,4 @@ export const parseYearMonthInput = (
   }
   return { year, month };
 };
+

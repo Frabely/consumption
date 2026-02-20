@@ -1,5 +1,5 @@
 import {DB_CARS} from "@/constants/constantData";
-import {Car} from "@/constants/types";
+import {Car} from "@/common/models";
 import {collection, getDocs} from "@firebase/firestore";
 import {db} from "@/firebase/db";
 import {E2E_MOCK_CARS, isE2EMockModeEnabled} from "@/firebase/services/e2eMockData";
@@ -26,3 +26,4 @@ export const getCars = async () => {
     }
     return cars;
 };
+

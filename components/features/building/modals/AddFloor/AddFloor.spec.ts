@@ -3,7 +3,7 @@ import {
   canAddFieldByName,
   canAddRoomByName,
 } from "@/components/features/building/modals/AddFloor/AddFloor.logic";
-import de from "@/constants/de.json";
+import de from "@/i18n";
 import { ModalState } from "@/constants/enums";
 
 type ReactElementLike = {
@@ -454,3 +454,4 @@ describe("AddFloor logic", () => {
     });
   });
 });
+

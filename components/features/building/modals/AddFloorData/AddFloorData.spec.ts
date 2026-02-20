@@ -1,9 +1,9 @@
-﻿import {describe, expect, it, vi} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 import {
     isFieldValueValid,
     resolveRoomByName
 } from "@/components/features/building/modals/AddFloorData/AddFloorData.logic";
-import de from "@/constants/de.json";
+import de from "@/i18n";
 
 type ReactElementLike = {
     type: unknown;
@@ -268,4 +268,5 @@ describe("AddFloorData logic", () => {
         );
     });
 });
+
 

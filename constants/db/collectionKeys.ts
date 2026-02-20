@@ -1,0 +1,12 @@
+export const DB_DATA_SET_COLLECTION_KEY = "consumptionData";
+export const DB_DATA_FLATS_KEY = "flats";
+export const DB_DATA_ROOMS_KEY = "rooms";
+export const DB_DATA_FIELDS_KEY = "fields";
+export const DB_USER_COLLECTION_KEY = "users";
+export const DB_CARS = "cars";
+export const DB_HOUSES = "houses";
+export const DB_FLATS = "flats";
+export const DB_ROOMS = "rooms";
+export const DB_FIELD_VALUES = "values";
+export const DB_BUILDING_CONSUMPTION = "buildingConsumption";
+export const DB_LOADING_STATIONS = "loadingStations";

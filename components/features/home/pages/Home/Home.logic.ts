@@ -1,5 +1,5 @@
 import {ModalState} from "@/constants/enums";
-import {Car} from "@/constants/types";
+import {Car} from "@/common/models";
 
 export const isEvaluationTabSelected = (selectedTab: number): boolean => selectedTab === 1;
 
@@ -44,3 +44,4 @@ export const resolveHydratedCurrentCar = ({
 
     return carsList[0];
 };
+

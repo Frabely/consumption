@@ -6,7 +6,7 @@ import {
     DB_HOUSES,
     DB_ROOMS
 } from "@/constants/constantData";
-import {Field, Flat, House, Room} from "@/constants/types";
+import {Field, Flat, House, Room} from "@/common/models";
 import {
     addDoc,
     CollectionReference,
@@ -236,3 +236,4 @@ export const updateFields = async (fieldCollectionRef: CollectionReference, fiel
         console.error(error);
     }
 };
+
