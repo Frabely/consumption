@@ -12,13 +12,7 @@ export default function Modal({
     children,
     title,
     contentTransparent = false,
-    containerTransparent = false,
-    closeInsideContent = false,
-    closeInsideFlow = false,
-    closeIconTop,
-    contentAutoHeight = false,
-    hideCloseIcon = false,
-    disableContentScroll = false
+    contentAutoHeight = false
 }: ModalProps) {
     const dispatch = useAppDispatch()
 
@@ -30,34 +24,16 @@ export default function Modal({
         <div className={styles.mainContainer}>
             <form
                 name={formName}
-                className={`${styles.mainInnerContainer} ${containerTransparent ? styles.mainInnerContainerTransparent : ""}`}
+                className={styles.mainInnerContainer}
             >
-                {closeInsideContent || hideCloseIcon ? null : (
-                    <div className={styles.header}>
-                        {title ? <h2 className={styles.headerTitle}>{title}</h2> : null}
-                        <FontAwesomeIcon
-                            className={styles.icon}
-                            onClick={() => onCloseClickHandler()}
-                            icon={faClose}/>
-                    </div>
-                )}
-                <div className={`${styles.childPropsContainer} ${contentTransparent ? styles.childPropsContainerTransparent : ""} ${closeInsideContent && !closeInsideFlow ? styles.childPropsContainerWithInnerClose : ""} ${contentAutoHeight ? styles.childPropsContainerAutoHeight : ""} ${disableContentScroll ? styles.childPropsContainerNoScroll : ""}`}>
-                    {closeInsideContent && !hideCloseIcon ? (
-                        closeInsideFlow ? (
-                            <div className={styles.innerCloseRow}>
-                                <FontAwesomeIcon
-                                    className={`${styles.icon} ${styles.iconInFlow}`}
-                                    onClick={() => onCloseClickHandler()}
-                                    icon={faClose}/>
-                            </div>
-                        ) : (
-                            <FontAwesomeIcon
-                                className={`${styles.icon} ${styles.iconInner}`}
-                                style={closeIconTop ? {top: closeIconTop} : undefined}
-                                onClick={() => onCloseClickHandler()}
-                                icon={faClose}/>
-                        )
-                    ) : null}
+                <div className={styles.header}>
+                    {title ? <h2 className={styles.headerTitle}>{title}</h2> : null}
+                    <FontAwesomeIcon
+                        className={styles.icon}
+                        onClick={() => onCloseClickHandler()}
+                        icon={faClose}/>
+                </div>
+                <div className={`${styles.childPropsContainer} ${contentTransparent ? styles.childPropsContainerTransparent : ""} ${contentAutoHeight ? styles.childPropsContainerAutoHeight : ""}`}>
                     {children}
                 </div>
             </form>
@@ -70,11 +46,5 @@ export type ModalProps = {
     children: ReactNode;
     title?: string;
     contentTransparent?: boolean;
-    containerTransparent?: boolean;
-    closeInsideContent?: boolean;
-    closeInsideFlow?: boolean;
-    closeIconTop?: string;
     contentAutoHeight?: boolean;
-    hideCloseIcon?: boolean;
-    disableContentScroll?: boolean;
 }
