@@ -39,6 +39,7 @@ export default function Home({}: HomeProps) {
     const isEvaluationTab = isEvaluationTabSelected(selected)
 
     useEffect(() => {
+        dispatch(setIsLoading(true))
         loadMainPageData().then(() => {
             dispatch(setIsReloadNeeded({
                 isReloadHousesNeeded: true,
@@ -47,9 +48,10 @@ export default function Home({}: HomeProps) {
                 isReloadDataSetNeeded: false,
                 isReloadLoadingStationsNeeded: false,
             }))
-            dispatch(setIsLoading(false))
         }).catch((error: Error) => {
             console.error(error.message)
+        }).finally(() => {
+            dispatch(setIsLoading(false))
         })
     }, [dispatch]);
 

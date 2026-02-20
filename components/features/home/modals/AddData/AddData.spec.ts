@@ -23,7 +23,7 @@ type ReactElementLike = {
     type: unknown;
     props?: {
         children?: unknown;
-        onClick?: () => void;
+        onClick?: () => void | Promise<void>;
         onChange?: (...args: unknown[]) => void;
         disabled?: boolean;
         [key: string]: unknown;
@@ -293,7 +293,7 @@ describe("AddData component", () => {
         } = await buildComponent();
 
         const button = findElement(element, (currentElement) => currentElement.type === "button");
-        button?.props?.onClick?.();
+        await button?.props?.onClick?.();
 
         expect(parseIntegerOrNull).toHaveBeenCalledWith("120");
         expect(addDataSetToCollection).toHaveBeenCalledTimes(1);
@@ -320,7 +320,7 @@ describe("AddData component", () => {
         });
 
         const button = findElement(element, (currentElement) => currentElement.type === "button");
-        button?.props?.onClick?.();
+        await button?.props?.onClick?.();
 
         expect(globalThis.alert).toHaveBeenCalledWith("Invalid Data");
         expect(addDataSetToCollection).not.toHaveBeenCalled();
@@ -338,7 +338,7 @@ describe("AddData component", () => {
         });
 
         const button = findElement(element, (currentElement) => currentElement.type === "button");
-        button?.props?.onClick?.();
+        await button?.props?.onClick?.();
 
         expect(changeDataSetInCollection).toHaveBeenCalledWith(
             "Zoe",

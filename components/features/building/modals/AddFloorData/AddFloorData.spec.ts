@@ -113,6 +113,7 @@ async function buildComponent({
     });
 
     vi.doMock("@/store/hooks", () => ({
+        useAppDispatch: () => vi.fn(),
         useAppSelector: () => ({name: "House 1"})
     }));
     vi.doMock("@/components/shared/overlay/Modal", () => ({

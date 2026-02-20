@@ -69,7 +69,16 @@
   - AddData auch ohne Internet nutzbar machen.
   - Eintraege lokal zwischenspeichern und spaeter automatisch synchronisieren.
   - Datenverluste und stille Fehlschlaege bei Offline-Nutzung vermeiden.
+- Wichtige Vorbedingung:
+  - Bevor Offline-AddData umgesetzt wird, muss die App offline ueberhaupt nutzbar startbar sein
+    (App-Shell-Caching, gueltige lokal wiederherstellbare Session fuer bekannte Nutzer, lokal verfuegbare Basisdaten wie Cars/LoadingStations).
+  - Wenn diese Vorbedingung nicht erfuellt ist, ist Offline-AddData funktional nicht erreichbar.
 - Schrittweise Umsetzung:
+  - Schritt 0: Offline-Zugaenglichkeit der App sicherstellen
+    - PWA/App-Shell-Caching fuer Start ohne Netzwerk vorbereiten.
+    - Session-Restore-Strategie fuer Offline festlegen (nur bekannte, bereits verifizierte Sessions; keine Neulogins offline).
+    - Minimal notwendige Stammdaten lokal cachen, damit Kernmasken bedienbar sind.
+    - Klaren Fallback-Status definieren, wenn keine gueltige lokale Session/Datenbasis vorhanden ist.
   - Schritt 1: Outbox-Architektur definieren
     - Lokales Persistenzmodell fuer pending Eintraege festlegen (`IndexedDB` bevorzugt).
     - Felder fuer Idempotenz/Status definieren (`clientMutationId`, `pending/synced/failed/conflict`).

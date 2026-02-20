@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import { useAppDispatch } from "@/store/hooks";
+import { setIsLoading } from "@/store/reducer/isLoading";
 import {
   handleLoginInput,
   LoginAttemptResult,
@@ -36,8 +37,13 @@ export default function Login({}: LoginProps) {
       return;
     }
 
-    const result = await handleLoginInput({ input: normalizedInput, dispatch });
-    setLoginResult(result);
+    dispatch(setIsLoading(true));
+    try {
+      const result = await handleLoginInput({ input: normalizedInput, dispatch });
+      setLoginResult(result);
+    } finally {
+      dispatch(setIsLoading(false));
+    }
   };
 
   const focusPasswordInput = () => {

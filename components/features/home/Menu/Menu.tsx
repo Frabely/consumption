@@ -19,6 +19,7 @@ import {
   resolveSelectedCar,
 } from "@/components/features/home/Menu/Menu.logic";
 import { performAuthLogout } from "@/utils/authentication/flow/logout";
+import {setIsLoading} from "@/store/reducer/isLoading";
 
 /**
  * Renders the home action menu and coordinates menu-triggered state transitions.
@@ -69,6 +70,7 @@ export default function Menu({}: MenuProps) {
    * @returns No return value.
    */
   const onCarChangeHandler = (value: string) => {
+    dispatch(setIsLoading(true));
     ensureCarsLoaded({ getCarsFn: getCars })
       .then((loadedCars) => {
         if (loadedCars.length > 0) {
@@ -81,7 +83,8 @@ export default function Menu({}: MenuProps) {
       })
       .catch((error: Error) => {
         console.error(error.message);
-      });
+      })
+      .finally(() => dispatch(setIsLoading(false)));
   };
 
   /**
@@ -92,6 +95,7 @@ export default function Menu({}: MenuProps) {
     if (availableCars.length > 0) {
       return;
     }
+    dispatch(setIsLoading(true));
     ensureCarsLoaded({ getCarsFn: getCars })
       .then((loadedCars) => {
         if (loadedCars.length > 0) {
@@ -100,7 +104,8 @@ export default function Menu({}: MenuProps) {
       })
       .catch((error: Error) => {
         console.error(error.message);
-      });
+      })
+      .finally(() => dispatch(setIsLoading(false)));
   };
 
   /**

@@ -80,6 +80,7 @@ describe("Statistics logic", () => {
     it("renders selected car and kpi cards", async () => {
         vi.resetModules();
         vi.doMock("@/store/hooks", () => ({
+            useAppDispatch: () => vi.fn(),
             useAppSelector: () => "Zoe"
         }));
 
@@ -134,6 +135,7 @@ describe("Statistics logic", () => {
             };
         });
         vi.doMock("@/store/hooks", () => ({
+            useAppDispatch: () => vi.fn(),
             useAppSelector: () => "Zoe"
         }));
         vi.doMock("@/firebase/functions", () => ({
