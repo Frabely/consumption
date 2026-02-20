@@ -147,6 +147,29 @@
     - Performance-Smoke-Checks fuer Login/Start/Home.
     - Contract-Tests zwischen Service-Layer und erwarteten Datenformen.
 
+### 3.6 Reference-Data Cache Layer (Cars/LoadingStations/Houses)
+- Ziele:
+  - Wiederholte Stammdaten-Requests reduzieren und App-Start beschleunigen.
+  - Stabilere UX bei instabiler Verbindung durch lokal verfügbare Basisdaten.
+  - Definierte Invalidation statt verteilter Ad-hoc-Reloads.
+- Schrittweise Umsetzung:
+  - Schritt 1: Cache-Strategie definieren
+    - Read-through-Cache pro DomAene (`cars`, `loadingStations`, `houses`) mit TTL/Version festlegen.
+    - Speicherziel festlegen: in-memory + persistenter Cache (`IndexedDB` bevorzugt).
+    - Stale-while-revalidate-Regel definieren (sofort aus Cache anzeigen, im Hintergrund aktualisieren).
+  - Schritt 2: Cache-Service/Fassade einfuehren
+    - Zentrale API bereitstellen (`getCarsCached`, `invalidateCars`, analog fuer weitere DomAenen).
+    - Einheitliche Fehler-/Fallback-Pfade definieren (cache hit, stale hit, network fail).
+  - Schritt 3: Invalidation und Konsistenz absichern
+    - Nach Schreiboperationen gezielte Invalidation/Refresh-Trigger setzen.
+    - Versions-/Timestamp-Metadaten je Cache-Segment fuehren.
+  - Schritt 4: UI-Integration
+    - Home/Menu/AddData/Building auf Cache-Fassade umstellen.
+    - Ladezustaende klar trennen: `cached`, `refreshing`, `fresh`, `error`.
+  - Schritt 5: Tests und Monitoring
+    - Unit-/Integrationstests fuer Hit/Miss/Stale/Invalidate/Offline-Fallback.
+    - Telemetrie fuer Cache-Hit-Rate und veraltete DatenzustAende einfuehren.
+
 ## 4. Infrastructure
 - Test-Infrastruktur weiter haerten (weniger fragiles Hook-Mocking, mehr stabile Interaction-Tests).
 - Dedizierten E2E-Testserver einfÃ¼hren (Mock-Backend/Fixtures zentral, keine verteilten Service-Mocks im Produktivcode).
