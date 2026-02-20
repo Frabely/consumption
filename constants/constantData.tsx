@@ -1,6 +1,4 @@
-import {Car, House, LoadingStation, User} from "@/constants/types";
-import {getCars, getHouses, getLoadingStations} from "@/firebase/functions";
-import {CarNames} from "@/constants/enums";
+import {House, LoadingStation, User} from "@/constants/types";
 import {
     DB_BUILDING_CONSUMPTION,
     DB_CARS,
@@ -15,13 +13,23 @@ import {
     DB_ROOMS,
     DB_USER_COLLECTION_KEY
 } from "@/constants/db/collectionKeys";
+import {
+    cars,
+    DEFAULT_CAR,
+    houses,
+    loadingStations
+} from "@/reference-data/cache/referenceDataStore";
+import {
+    ensureCarsLoaded,
+    loadHouses as loadHousesFromReferenceData,
+    loadMainPageData
+} from "@/reference-data/services/referenceDataLoader";
+import type {GetCarsFn} from "@/reference-data/services/referenceDataLoader";
 
 export const DEFAULT_LOADING_STATION: LoadingStation = {
     id: '17498904',
     name: 'carport'
 }
-
-export let DEFAULT_CAR: Car;
 
 export let DEFAULT_HOUSE: House = {
     id: "",
@@ -45,74 +53,16 @@ export {
     DB_USER_COLLECTION_KEY
 }
 
-export let loadingStations: LoadingStation[] = []
-export let cars: Car[] = []
-export let houses: House[] = []
-
-export type GetCarsFn = () => Promise<Car[] | undefined>;
-
 /**
- * Ensures that car data is available in the in-memory cache.
- * @param params Optional dependency overrides for fetching cars.
- * @returns Cached car entries after the load attempt.
+ * Compatibility wrapper that keeps existing house-loading call sites stable.
+ * @returns Loaded houses array, or an empty array when loading fails.
  */
-export const ensureCarsLoaded = async ({
-    getCarsFn = getCars
-}: {
-    getCarsFn?: GetCarsFn;
-} = {}): Promise<Car[]> => {
-    if (cars.length > 0) {
-        return cars;
-    }
-
-    const resultCars = await getCarsFn().catch((error: Error) => {
-        console.error(error.message);
-        return undefined;
-    });
-
-    if (resultCars) {
-        cars = resultCars;
-    }
-
-    return cars;
+export const loadHouses = async (): Promise<House[]> => {
+    return (await loadHousesFromReferenceData()) ?? [];
 };
 
-export const loadMainPageData = async () => {
-    const resultStations = await getLoadingStations().catch((error: Error) => {
-        console.error(error.message)
-    })
-    if (resultStations)
-        loadingStations = resultStations
-
-    const resultCars = await getCars().catch((error: Error) => {
-        console.error(error.message)
-    })
-    if (resultCars) {
-        cars = resultCars
-        if (cars.length > 0) {
-            cars.map((car) => {
-                if (car.name === CarNames.Zoe)
-                    DEFAULT_CAR = {
-                        name: car.name,
-                        kilometer: car.kilometer,
-                        prevKilometer: car.prevKilometer,
-                    }
-            })
-            if (!DEFAULT_CAR)
-            DEFAULT_CAR = {
-                name: cars[0].name,
-                kilometer: cars[0].kilometer,
-                prevKilometer: cars[0].prevKilometer,
-            }
-        }
-    }
-}
-
-export const loadHouses = async () => {
-    return getHouses().then((housesResult) => {
-        return housesResult
-    })
-}
+export {cars, DEFAULT_CAR, ensureCarsLoaded, houses, loadingStations, loadMainPageData};
+export type {GetCarsFn};
 
 
 
