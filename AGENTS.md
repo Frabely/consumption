@@ -107,6 +107,18 @@ Ziel: konsistenter Code-Style, robuste Implementierungen und wenig Regressionen.
 - Fuer neue Features, Bugfixes und Refactorings sollen passende Tests erstellt oder bestehende Tests erweitert werden.
 - Bei Logik-Aenderungen mindestens die betroffenen Flows lokal pruefen.
 - Bevorzuge in Component-Tests reale Render-/Interaction-Tests (echte User-Pfade) statt starkem Hook-Mocking; Hook-Mocking nur gezielt und minimal einsetzen, wenn ein Flow anders nicht sinnvoll testbar ist.
+- Test-Ordnerstruktur verbindlich einhalten:
+  - `tests/unit/` fuer unit-nahe Domain/Utility/Service-Tests.
+  - `tests/integration/` fuer orchestrierende Flow-/Integrationstests.
+  - `tests/fixtures/` fuer zentrale Testdaten.
+  - `tests/factories/` fuer wiederverwendbare Test-Builder.
+  - `tests/helpers/` fuer gemeinsame Test-Hilfsfunktionen.
+  - `tests/mocks/server/` fuer zentralen Mock-Server/Testserver.
+- E2E-Tests ausschliesslich unter `e2e/` halten und nur mit Playwright (`npm run test:e2e`) ausfuehren; Vitest darf keine `e2e`-Specs ausfuehren.
+- Neue Integrations- oder Unit-Tests nicht mehr im alten Root `tests/` ohne Unterordner ablegen.
+- Branch-spezifische Ausfuehrungsregel: Auf `feature/tests-first-loading-data-architecture` duerfen Unit-, Integration- und E2E-Tests ohne Rueckfrage lokal ausgefuehrt werden.
+- E2E-Session-/Mock-Seeding zentral ueber `tests/helpers/e2e/authSessionSeed.ts` kapseln; keine verteilten LocalStorage-Key-Literale in einzelnen Specs.
+- Wiederverwendbare Testdaten bevorzugt unter `tests/fixtures/**` halten und Varianten ueber `tests/factories/**` bauen statt Inline-Objekte in vielen Tests zu duplizieren.
 - Vor Abschluss mindestens:
   - Type-Check/Lint erfolgreich
   - `npx tsc --noEmit` erfolgreich (keine TS-Fehler in App, Komponenten und Tests)

@@ -97,6 +97,33 @@
     - Integrationstests fuer Offline-Save, Reconnect-Sync, Duplicate-Schutz und Konflikte.
     - Rollout hinter Feature-Flag, danach stufenweise Aktivierung und Monitoring.
 
+### 3.4 Data/Loading Architecture Stabilization (Tests-First)
+- Ziele:
+  - Globales Loading-Verhalten deterministisch und wartbar machen.
+  - Verteilte mutable App-Daten (`cars`, `houses`, `loadingStations`) in klare, testbare Datenfluesse ueberfuehren.
+  - UI-Flows robuster gegen Race Conditions und inkonsistente Ladezustaende machen.
+- Vorgehen (tests-first):
+  - Schritt 1: Test-Sicherungsnetz vor Refactoring
+    - Integrationstests fuer kritische Flows erstellen/haerten:
+      - Login + Initial-Load
+      - Car-Wechsel + DataSet-Reload
+      - AddData/ChangeData + anschliessender UI-Refresh
+      - CSV-Downloads + Fehlerpfade
+    - Vor Refactoring den Ist-Zustand in diesen Flows absichern.
+  - Schritt 2: Loading-Orchestrierung zentralisieren
+    - Einheitliche Loading-Utility/Fassade einfuehren (z. B. `runWithLoading`).
+    - Direkte, verteilte `setIsLoading(true/false)`-Aufrufe schrittweise reduzieren.
+    - Einheitliche Regeln fuer Delay/Overlay/Abschluss definieren.
+  - Schritt 3: Datenquellen konsolidieren
+    - Mutable Modulvariablen durch expliziten Store-/Cache-Layer ersetzen.
+    - Definierte Refresh-/Invalidation-Pfade pro DomÃ¤ne (`cars`, `houses`, `loadingStations`, `dataSet`) einfuehren.
+  - Schritt 4: Komponenten entkoppeln
+    - Komponenten sollen keine Fetch-Orchestrierung enthalten.
+    - Service-/Facade-Hooks mit standardisiertem Statusmodell nutzen (`idle/loading/success/error`).
+  - Schritt 5: Regression & Rollout
+    - Relevante E2E-/Integrationstests pro Inkrement ausfuehren.
+    - In kleinen, nachvollziehbaren PR-Schritten mergen.
+
 ## 4. Infrastructure
 - Test-Infrastruktur weiter haerten (weniger fragiles Hook-Mocking, mehr stabile Interaction-Tests).
 - Dedizierten E2E-Testserver einfÃ¼hren (Mock-Backend/Fixtures zentral, keine verteilten Service-Mocks im Produktivcode).
