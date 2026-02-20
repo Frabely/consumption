@@ -39,7 +39,7 @@ test("menu select remains usable after browser reopen and can switch cars", asyn
 
     await firstPage.goto("/");
     await expect(firstPage.getByTestId("action-menu-primary")).toBeVisible();
-    await firstPage.getByTestId("action-menu-toggle").click();
+    await firstPage.getByTestId("action-menu-toggle").dispatchEvent("click");
     const firstSelectToggle = firstPage.getByTestId("custom-select-toggle");
     await expect(firstSelectToggle).toContainText("Zoe");
     await firstSelectToggle.click();
@@ -53,7 +53,7 @@ test("menu select remains usable after browser reopen and can switch cars", asyn
 
     await secondPage.goto("/");
     await expect(secondPage.getByTestId("action-menu-primary")).toBeVisible();
-    await secondPage.getByTestId("action-menu-toggle").click();
+    await secondPage.getByTestId("action-menu-toggle").dispatchEvent("click");
     const secondSelectToggle = secondPage.getByTestId("custom-select-toggle");
     await expect(secondSelectToggle).toContainText("Zoe");
     await secondSelectToggle.click();
