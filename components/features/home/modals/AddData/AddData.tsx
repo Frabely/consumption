@@ -133,7 +133,6 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         const kilometerValue = parseIntegerOrNull(kilometer)
         if (currentCar.kilometer !== undefined && currentCar.name && kilometerValue !== null && currentCar.kilometer < kilometerValue) {
             dispatch(setIsLoading(true))
-            let shouldKeepLoadingForDataRefresh = false
             const dateNow = new Date()
             dispatch(setDate(dateNow))
             const carKilometersPreUpdate = currentCar.kilometer
@@ -148,15 +147,12 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     loadingStation
                 })
                 await updateCarKilometer(currentCar.name, kilometerValue, carKilometersPreUpdate)
-                shouldKeepLoadingForDataRefresh = true
                 dispatch(setModalStateNone())
                 setModalToDefault()
             } catch (error) {
                 console.error(error)
             } finally {
-                if (!shouldKeepLoadingForDataRefresh) {
-                    dispatch(setIsLoading(false))
-                }
+                dispatch(setIsLoading(false))
             }
         } else
             alert('Invalid Data')
@@ -166,7 +162,6 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         const kilometerValue = parseIntegerOrNull(kilometer)
         if (currentCar.kilometer !== undefined && currentCar.name && currentCar.prevKilometer !== undefined && kilometerValue !== null && currentCar.prevKilometer < kilometerValue) {
             dispatch(setIsLoading(true))
-            let shouldKeepLoadingForDataRefresh = false
             dispatch(updateCarKilometers(kilometerValue))
             try {
                 await changeDataSetInCollection(currentCar.name,
@@ -177,15 +172,12 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     id
                 )
                 await updateCarKilometer(currentCar.name, kilometerValue)
-                shouldKeepLoadingForDataRefresh = true
                 dispatch(setModalStateNone())
                 setModalToDefault()
             } catch (error) {
                 console.error(error)
             } finally {
-                if (!shouldKeepLoadingForDataRefresh) {
-                    dispatch(setIsLoading(false))
-                }
+                dispatch(setIsLoading(false))
             }
         } else
             alert('Invalid Data')
