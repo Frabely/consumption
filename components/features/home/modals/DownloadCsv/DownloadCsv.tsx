@@ -11,6 +11,7 @@ import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentCar} from "@/store/selectors";
 import {parseYearMonthInput} from "@/utils/building/fieldValueMapping";
+import {setIsLoading} from "@/store/reducer/isLoading";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
     const currentCar = useAppSelector(selectCurrentCar)
@@ -60,6 +61,7 @@ export default function DownloadCsv({}: DownloadCsvProps) {
 
     const onDownloadCsvClickHandler = () => {
         dispatch(setModalStateNone())
+        dispatch(setIsLoading(true))
         if (currentCar.name) {
             getFullDataSet(currentCar.name, {
                 year: currentDateValue.year,
@@ -75,7 +77,9 @@ export default function DownloadCsv({}: DownloadCsvProps) {
                 } else {
                     alert(`${de.messages.noDataForFollowMonthAndYearAvailable}: ${currentDateValue.year} ${currentDateValue.month}`)
                 }
-            })
+            }).finally(() => dispatch(setIsLoading(false)))
+        } else {
+            dispatch(setIsLoading(false))
         }
     }
     return (

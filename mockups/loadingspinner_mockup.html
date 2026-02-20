@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loading Spinner Mockup</title>
+  <style>
+    :root {
+      --bg: #e6e6e6;
+      --text: #4b4b4b;
+      --accent: #ffd200;
+      --accent-soft: rgba(255, 210, 0, 0.42);
+      --ink: #1f2a26;
+      --car0: #2f7c72;
+      --car1: #3f9286;
+      --car2: #276a61;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+      font-family: "Gill Sans", "Trebuchet MS", sans-serif;
+      color: var(--text);
+    }
+
+    .scene {
+      position: relative;
+      width: min(88vmin, 620px);
+      aspect-ratio: 1 / 1;
+    }
+
+    .dot-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .dot {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      transform: translate(-50%, -50%);
+      border-radius: 6px;
+      background: linear-gradient(165deg, #fff6a1 0%, var(--accent) 55%, #ffb800 100%);
+      box-shadow:
+        0 10px 22px rgba(255, 210, 0, 0.16),
+        0 0 20px rgba(255, 210, 0, 0.18);
+      clip-path: polygon(45% 0, 70% 0, 58% 34%, 86% 34%, 32% 100%, 46% 60%, 18% 60%);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .dot::after {
+      content: "";
+      position: absolute;
+      inset: 3px 4px 10px 4px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.35);
+      filter: blur(.2px);
+    }
+
+    .dot--hidden {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.55);
+    }
+
+    .car {
+      position: absolute;
+      width: 132px;
+      height: 84px;
+      transform: translate(-50%, -50%);
+      will-change: transform, left, top;
+      filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.18));
+    }
+
+    .car__shadow {
+      position: absolute;
+      left: 28px;
+      bottom: 8px;
+      width: 74px;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.16);
+    }
+
+    .car__body {
+      position: absolute;
+      left: 16px;
+      top: 30px;
+      width: 98px;
+      height: 36px;
+      border: 4px solid var(--ink);
+      border-radius: 14px 18px 12px 14px;
+      background: linear-gradient(180deg, var(--car1) 0%, var(--car0) 64%, var(--car2) 100%);
+    }
+
+    .car__roof {
+      position: absolute;
+      left: 39px;
+      top: 14px;
+      width: 52px;
+      height: 22px;
+      border: 4px solid var(--ink);
+      border-bottom: none;
+      border-radius: 14px 14px 0 0;
+      background: #e9eeed;
+    }
+
+    .car__window-split {
+      position: absolute;
+      left: 63px;
+      top: 17px;
+      width: 4px;
+      height: 19px;
+      background: var(--ink);
+      border-radius: 2px;
+    }
+
+    .wheel {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--ink);
+      bottom: 10px;
+    }
+
+    .wheel::after {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border-radius: 50%;
+      background: #f2f2f2;
+    }
+
+    .wheel--left { left: 24px; }
+    .wheel--right { right: 24px; }
+  </style>
+</head>
+<body>
+  <main class="scene" aria-label="Loading Animation">
+    <div class="dot-layer" id="dotLayer"></div>
+    <div class="car" id="car">
+      <div class="car__shadow"></div>
+      <div class="car__roof"></div>
+      <div class="car__window-split"></div>
+      <div class="car__body"></div>
+      <div class="wheel wheel--left"></div>
+      <div class="wheel wheel--right"></div>
+    </div>
+  </main>
+
+  <script>
+    const scene = document.querySelector(".scene");
+    const dotLayer = document.getElementById("dotLayer");
+    const car = document.getElementById("car");
+
+    const SLOT_COUNT = 8;
+    const HALF_SLOTS = SLOT_COUNT / 2;
+    const EAT_THRESHOLD = 0.17;
+    const RESPAWN_DELAY_MS = 90;
+
+    let angle = Math.PI * 0.34;
+    const orbitSpeed = 3.6;
+    const slots = [];
+    let last = performance.now();
+
+    const center = () => ({ x: scene.clientWidth / 2, y: scene.clientHeight / 2 - 34 });
+    const radius = () => Math.min(scene.clientWidth, scene.clientHeight) * 0.31;
+
+    function pointAt(a, r = radius()) {
+      const c = center();
+      return { x: c.x + Math.cos(a) * r, y: c.y + Math.sin(a) * r };
+    }
+
+    function normalizeAngle(a) {
+      const full = Math.PI * 2;
+      let value = a % full;
+      if (value < 0) value += full;
+      return value;
+    }
+
+    function angularDistance(a, b) {
+      const full = Math.PI * 2;
+      let diff = Math.abs(normalizeAngle(a) - normalizeAngle(b));
+      if (diff > Math.PI) diff = full - diff;
+      return diff;
+    }
+
+    function placeSlot(slot) {
+      const p = pointAt(slot.angle);
+      slot.node.style.left = p.x + "px";
+      slot.node.style.top = p.y + "px";
+    }
+
+    function buildDots() {
+      dotLayer.innerHTML = "";
+      slots.length = 0;
+
+      for (let i = 0; i < SLOT_COUNT; i++) {
+        const node = document.createElement("span");
+        node.className = "dot";
+        const slotAngle = normalizeAngle(angle + (Math.PI * 2 * i) / SLOT_COUNT);
+        const stepsAhead = i;
+        const isInitiallyActive = stepsAhead > 0 && stepsAhead <= HALF_SLOTS + 1;
+
+        const slot = {
+          index: i,
+          node,
+          angle: slotAngle,
+          active: isInitiallyActive,
+          respawnAt: 0
+        };
+
+        placeSlot(slot);
+        if (!isInitiallyActive) {
+          node.classList.add("dot--hidden");
+        }
+
+        slots.push(slot);
+        dotLayer.appendChild(node);
+      }
+    }
+
+    function findRespawnTarget(startIndex) {
+      for (let step = 0; step < SLOT_COUNT; step++) {
+        const index = (startIndex + step) % SLOT_COUNT;
+        const candidate = slots[index];
+        if (!candidate.active) {
+          return candidate;
+        }
+      }
+      return null;
+    }
+
+    function renderCar() {
+      const p = pointAt(angle);
+      const heading = angle + Math.PI / 2;
+      car.style.left = p.x + "px";
+      car.style.top = p.y + "px";
+      car.style.transform = `translate(-50%, -50%) rotate(${heading}rad)`;
+    }
+
+    function updateDots(nowMs) {
+      for (const slot of slots) {
+        if (!slot.active && slot.respawnAt > 0 && nowMs >= slot.respawnAt) {
+          slot.active = true;
+          slot.respawnAt = 0;
+          slot.node.classList.remove("dot--hidden");
+        }
+
+        if (slot.active && angularDistance(slot.angle, angle) < EAT_THRESHOLD) {
+          slot.active = false;
+          slot.node.classList.add("dot--hidden");
+
+          const oppositeIndex = (slot.index + HALF_SLOTS) % SLOT_COUNT;
+          const respawnTarget = findRespawnTarget(oppositeIndex);
+          if (respawnTarget) {
+            respawnTarget.respawnAt = Math.max(respawnTarget.respawnAt, nowMs + RESPAWN_DELAY_MS);
+          }
+        }
+      }
+    }
+
+    function tick(now) {
+      const dt = Math.min((now - last) / 1000, 0.04);
+      last = now;
+
+      angle += orbitSpeed * dt;
+      renderCar();
+      updateDots(now);
+      requestAnimationFrame(tick);
+    }
+
+    buildDots();
+    renderCar();
+    requestAnimationFrame(tick);
+    addEventListener("resize", () => {
+      buildDots();
+      renderCar();
+    });
+  </script>
+</body>
+</html>

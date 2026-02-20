@@ -31,6 +31,7 @@ import {
     selectPower
 } from "@/store/selectors";
 import {isKilometerValid, isPowerValid, parseIntegerOrNull} from "@/utils/validation/carDataValidation";
+import {setIsLoading} from "@/store/reducer/isLoading";
 
 export default function AddData({prevKilometers}: AddDataModalProps) {
     const language: Language = de
@@ -128,50 +129,56 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         })
     }
 
-    const onAddDataClickHandler = () => {
+    const onAddDataClickHandler = async () => {
         const kilometerValue = parseIntegerOrNull(kilometer)
         if (currentCar.kilometer !== undefined && currentCar.name && kilometerValue !== null && currentCar.kilometer < kilometerValue) {
+            dispatch(setIsLoading(true))
             const dateNow = new Date()
             dispatch(setDate(dateNow))
             const carKilometersPreUpdate = currentCar.kilometer
             dispatch(updateCarPrevKilometers(carKilometersPreUpdate))
             dispatch(updateCarKilometers(kilometerValue))
-
-            addDataSetToCollection(currentCar.name, {
-                date: dateNow,
-                kilometer: kilometerValue,
-                power: parseFloat(power),
-                name: currentUser.name ? currentUser.name : '',
-                loadingStation
-            })
-            updateCarKilometer(currentCar.name, kilometerValue, carKilometersPreUpdate)
-                .catch((error: Error) => {
-                    console.error(error.message)
+            try {
+                await addDataSetToCollection(currentCar.name, {
+                    date: dateNow,
+                    kilometer: kilometerValue,
+                    power: parseFloat(power),
+                    name: currentUser.name ? currentUser.name : '',
+                    loadingStation
                 })
-
-            dispatch(setModalStateNone())
-            setModalToDefault()
+                await updateCarKilometer(currentCar.name, kilometerValue, carKilometersPreUpdate)
+                dispatch(setModalStateNone())
+                setModalToDefault()
+            } catch (error) {
+                console.error(error)
+            } finally {
+                dispatch(setIsLoading(false))
+            }
         } else
             alert('Invalid Data')
     }
 
-    const onChangeDataClickHandler = () => {
+    const onChangeDataClickHandler = async () => {
         const kilometerValue = parseIntegerOrNull(kilometer)
         if (currentCar.kilometer !== undefined && currentCar.name && currentCar.prevKilometer !== undefined && kilometerValue !== null && currentCar.prevKilometer < kilometerValue) {
+            dispatch(setIsLoading(true))
             dispatch(updateCarKilometers(kilometerValue))
-            changeDataSetInCollection(currentCar.name,
-                date,
-                parseFloat(power),
-                kilometerValue,
-                loadingStation,
-                id
-            )
-            updateCarKilometer(currentCar.name, kilometerValue)
-                .catch((error: Error) => {
-                    console.error(error.message)
-                })
-            dispatch(setModalStateNone())
-            setModalToDefault()
+            try {
+                await changeDataSetInCollection(currentCar.name,
+                    date,
+                    parseFloat(power),
+                    kilometerValue,
+                    loadingStation,
+                    id
+                )
+                await updateCarKilometer(currentCar.name, kilometerValue)
+                dispatch(setModalStateNone())
+                setModalToDefault()
+            } catch (error) {
+                console.error(error)
+            } finally {
+                dispatch(setIsLoading(false))
+            }
         } else
             alert('Invalid Data')
     }

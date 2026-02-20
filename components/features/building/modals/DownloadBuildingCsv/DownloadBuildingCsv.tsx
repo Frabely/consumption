@@ -11,6 +11,7 @@ import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentHouse} from "@/store/selectors";
 import {parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {buildDownloadBuildingCsvText} from "@/components/features/building/modals/DownloadBuildingCsv/DownloadBuildingCsv.logic";
+import {setIsLoading} from "@/store/reducer/isLoading";
 
 export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
     const currentHouse = useAppSelector(selectCurrentHouse)
@@ -40,6 +41,7 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
 
     const onDownloadCsvClickHandler = () => {
         dispatch(setModalStateNone())
+        dispatch(setIsLoading(true))
         if (currentHouse.name) {
             getFieldValuesForExport(currentDateValue.year, currentDateValue.month)
                 .then((fieldValuesForExport) => {
@@ -66,6 +68,9 @@ export default function DownloadBuildingCsv({}: DownloadBuildingCsvProps) {
                     alert(`${deJson.messages.noDataForFollowMonthAndYearAvailable}: ${currentDateValue.year} ${currentDateValue.month}`)
                 }
             })
+                .finally(() => dispatch(setIsLoading(false)))
+        } else {
+            dispatch(setIsLoading(false))
         }
     }
 
