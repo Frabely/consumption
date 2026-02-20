@@ -1,0 +1,214 @@
+name: Codex PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  codex-review:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Run AI code review
+        uses: actions/github-script@v7
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-4.1-mini' }}
+        with:
+          script: |
+            const marker = "<!-- codex-review -->";
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pull_number = context.payload.pull_request.number;
+
+            const upsertComment = async (body) => {
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner,
+                repo,
+                issue_number: pull_number,
+                per_page: 100
+              });
+              const existing = comments.find((comment) =>
+                comment.user?.type === "Bot" && comment.body?.includes(marker)
+              );
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner,
+                  repo,
+                  comment_id: existing.id,
+                  body
+                });
+                return;
+              }
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: pull_number,
+                body
+              });
+            };
+
+            if (!process.env.OPENAI_API_KEY) {
+              await upsertComment(
+                `${marker}
+            ## Codex Review
+            Skipped: \`OPENAI_API_KEY\` is not configured in repository secrets.`
+              );
+              core.warning("OPENAI_API_KEY missing. Skipping AI review.");
+              return;
+            }
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number,
+              per_page: 100
+            });
+
+            const MAX_PATCH_CHARS_PER_FILE = 4000;
+            const MAX_TOTAL_CHARS = 120000;
+            let totalChars = 0;
+            let truncated = false;
+            const relevant = [];
+
+            for (const file of files) {
+              const patch = file.patch ?? "";
+              const limitedPatch = patch.slice(0, MAX_PATCH_CHARS_PER_FILE);
+              const block =
+                `FILE: ${file.filename}\n` +
+                `STATUS: ${file.status}\n` +
+                `ADDITIONS: ${file.additions}, DELETIONS: ${file.deletions}\n` +
+                `PATCH:\n${limitedPatch}\n\n`;
+
+              if (totalChars + block.length > MAX_TOTAL_CHARS) {
+                truncated = true;
+                break;
+              }
+              relevant.push(block);
+              totalChars += block.length;
+            }
+
+            const diffForReview = relevant.join("");
+
+            const systemPrompt = [
+              "You are a strict senior software engineer performing a PR code review.",
+              "Focus on defects, regressions, security, data loss, and maintainability issues.",
+              "Use severity: P0 (critical), P1 (high), P2 (medium), P3 (low).",
+              "If there are no findings for a severity, return none for it in summaryCounts.",
+              "Return JSON only."
+            ].join(" ");
+
+            const userPrompt = `
+            PR Title: ${context.payload.pull_request.title}
+            Base: ${context.payload.pull_request.base.ref}
+            Head: ${context.payload.pull_request.head.ref}
+
+            Review this diff and return JSON with this exact structure:
+            {
+              "summary": "string",
+              "summaryCounts": {"P0": number, "P1": number, "P2": number, "P3": number},
+              "findings": [
+                {
+                  "severity": "P0|P1|P2|P3",
+                  "file": "path",
+                  "line": number,
+                  "title": "short title",
+                  "details": "why this matters",
+                  "recommendation": "specific fix"
+                }
+              ],
+              "testGaps": ["string"],
+              "verdict": {
+                "pass": boolean,
+                "reason": "string"
+              }
+            }
+
+            Rules:
+            - line must be best-effort from patch context; use 0 if unknown.
+            - Keep findings concise and actionable.
+            - verdict.pass must be false if any P0 or P1 exists.
+            - Do not include markdown, only JSON.
+
+            DIFF:
+            ${diffForReview}
+            `;
+
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+                temperature: 0.1,
+                response_format: { type: "json_object" },
+                messages: [
+                  { role: "system", content: systemPrompt },
+                  { role: "user", content: userPrompt }
+                ]
+              })
+            });
+
+            if (!response.ok) {
+              const errText = await response.text();
+              throw new Error(`OpenAI API failed (${response.status}): ${errText}`);
+            }
+
+            const payload = await response.json();
+            const content = payload?.choices?.[0]?.message?.content;
+            if (!content) {
+              throw new Error("OpenAI response did not include message content.");
+            }
+
+            let review;
+            try {
+              review = JSON.parse(content);
+            } catch (error) {
+              throw new Error(`Failed to parse OpenAI JSON: ${error.message}`);
+            }
+
+            const findings = Array.isArray(review.findings) ? review.findings : [];
+            const p0 = findings.filter((f) => f?.severity === "P0");
+            const p1 = findings.filter((f) => f?.severity === "P1");
+            const p2 = findings.filter((f) => f?.severity === "P2");
+            const p3 = findings.filter((f) => f?.severity === "P3");
+            const blocking = p0.length > 0 || p1.length > 0;
+
+            const renderFinding = (f) =>
+              `- **${f.severity}** \`${f.file}:${f.line ?? 0}\` - ${f.title}\n` +
+              `  ${f.details}\n` +
+              `  Fix: ${f.recommendation}`;
+
+            const testGaps = Array.isArray(review.testGaps) && review.testGaps.length > 0
+              ? review.testGaps.map((gap) => `- ${gap}`).join("\n")
+              : "- none";
+
+            const commentBody = `${marker}
+            ## Codex Review
+            **Model:** \`${process.env.OPENAI_MODEL || "gpt-4.1-mini"}\`
+            **Verdict:** ${blocking ? "FAIL (blocking P0/P1 findings)" : "PASS"}
+            **Summary:** ${review.summary || "No summary returned."}
+
+            **Findings**
+            - P0: ${p0.length}
+            - P1: ${p1.length}
+            - P2: ${p2.length}
+            - P3: ${p3.length}
+
+            ${findings.length > 0 ? findings.map(renderFinding).join("\n") : "- none"}
+
+            **Test Gaps**
+            ${testGaps}
+
+            ${truncated ? "_Note: Diff was truncated before review due to size limits._" : ""}`.trim();
+
+            await upsertComment(commentBody);
+
+            if (blocking) {
+              core.setFailed("Codex review found blocking P0/P1 issues.");
+            }
