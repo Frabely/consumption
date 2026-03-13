@@ -4,14 +4,21 @@ import {setIsChangingData} from "@/store/reducer/isChangingData";
 import type {LoadingStation} from "@/common/models";
 import type {Translations} from "@/i18n/types";
 import {getDateString} from "@/utils/date/formatDate";
-import {useAppDispatch} from "@/store/hooks";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBolt} from "@fortawesome/free-solid-svg-icons";
 import {dispatchChangeDataActions, isChangeCarDataAllowed} from "@/components/features/home/ListItem/ListItem.logic";
+import {selectCurrentUser} from "@/store/selectors";
 
+/**
+ * Renders a single consumption-data list item and opens edit mode on long press when allowed.
+ * @param props Visual and domain data required for the list row.
+ * @returns The rendered list item element.
+ */
 export default function ListItem({kilometer, name, power, date, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
     const language: Translations = de
     const dispatch = useAppDispatch()
+    const currentUser = useAppSelector(selectCurrentUser)
     const [localDate, localTime] = getDateString(date).split(" ")
     const loadingStationLabel =
         language.loadingStation[loadingStation.name as keyof typeof language.loadingStation] ?? loadingStation.name
@@ -19,7 +26,7 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
     const touchStart = () => {
         timeOut = setTimeout(() => {
             dispatch(setIsChangingData(true))
-            if (isChangeCarDataAllowed({isFirstElement, dataSetDate: date})) {
+            if (isChangeCarDataAllowed({isFirstElement, dataSetDate: date, currentUserRole: currentUser.role})) {
                 dispatchChangeDataActions({
                     dispatch,
                     date,
