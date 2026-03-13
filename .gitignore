@@ -1,5 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# ide
+.idea/
+*.iml
+/.serena/
+/.firebase/
+
 # dependencies
 /node_modules
 /.pnp
@@ -197,6 +203,3 @@ next-env.d.ts
 /_static/static/webpack/webpack.fbca23b989b58a8c.hot-update.js
 /_static/static/chunks/webpack.js
 /_static/server/webpack-runtime.js
-/.serena/
-/.firebase/
-/RESTRUCTURING_STATUS.md
