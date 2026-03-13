@@ -6,7 +6,7 @@ import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {setPower} from "@/store/reducer/modal/power";
 import {setModalState} from "@/store/reducer/modalState";
-import {ModalState} from "@/constants/enums";
+import {ModalState, Role} from "@/constants/enums";
 
 type ReactElementLike = {
     type: unknown;
@@ -54,10 +54,17 @@ describe("ListItem logic", () => {
         const oldDate = new Date("2026-02-18T11:58:00.000Z");
         const futureDate = new Date("2026-02-18T12:06:00.000Z");
 
-        expect(isChangeCarDataAllowed({isFirstElement: true, dataSetDate: recentDate, now})).toBe(true);
-        expect(isChangeCarDataAllowed({isFirstElement: false, dataSetDate: recentDate, now})).toBe(false);
-        expect(isChangeCarDataAllowed({isFirstElement: true, dataSetDate: oldDate, now})).toBe(false);
-        expect(isChangeCarDataAllowed({isFirstElement: true, dataSetDate: futureDate, now})).toBe(false);
+        expect(isChangeCarDataAllowed({isFirstElement: true, dataSetDate: recentDate, currentUserRole: Role.User, now})).toBe(true);
+        expect(isChangeCarDataAllowed({isFirstElement: false, dataSetDate: recentDate, currentUserRole: Role.User, now})).toBe(false);
+        expect(isChangeCarDataAllowed({isFirstElement: true, dataSetDate: oldDate, currentUserRole: Role.User, now})).toBe(false);
+        expect(isChangeCarDataAllowed({isFirstElement: true, dataSetDate: futureDate, currentUserRole: Role.User, now})).toBe(false);
+    });
+
+    it("allows admin users to edit older non-first entries", () => {
+        const now = new Date("2026-02-18T12:05:00.000Z");
+        const oldDate = new Date("2026-02-18T11:00:00.000Z");
+
+        expect(isChangeCarDataAllowed({isFirstElement: false, dataSetDate: oldDate, currentUserRole: Role.Admin, now})).toBe(true);
     });
 
     it("dispatches all change-data actions in the expected order", () => {
@@ -85,7 +92,8 @@ describe("ListItem logic", () => {
     it("renders list item values in the component", async () => {
         vi.resetModules();
         vi.doMock("@/store/hooks", () => ({
-            useAppDispatch: () => vi.fn()
+            useAppDispatch: () => vi.fn(),
+            useAppSelector: () => ({role: Role.User})
         }));
 
         const {createElement} = await import("react");
@@ -113,7 +121,8 @@ describe("ListItem logic", () => {
         const dispatch = vi.fn();
         const dispatchChangeDataActionsMock = vi.fn();
         vi.doMock("@/store/hooks", () => ({
-            useAppDispatch: () => dispatch
+            useAppDispatch: () => dispatch,
+            useAppSelector: () => ({role: Role.User})
         }));
         vi.doMock("@/components/features/home/ListItem/ListItem.logic", async () => {
             const actual = await vi.importActual<typeof import("./ListItem.logic")>("./ListItem.logic");
@@ -144,6 +153,52 @@ describe("ListItem logic", () => {
         root?.props?.onMouseUp?.();
         root?.props?.onTouchStart?.();
         root?.props?.onTouchEnd?.();
+        vi.useRealTimers();
+    });
+
+    it("triggers change actions for admin users even on older non-first entries", async () => {
+        vi.useFakeTimers();
+        vi.resetModules();
+        const dispatch = vi.fn();
+        const dispatchChangeDataActionsMock = vi.fn();
+        const isChangeCarDataAllowedMock = vi.fn().mockReturnValue(true);
+
+        vi.doMock("@/store/hooks", () => ({
+            useAppDispatch: () => dispatch,
+            useAppSelector: () => ({role: Role.Admin})
+        }));
+        vi.doMock("@/components/features/home/ListItem/ListItem.logic", async () => {
+            const actual = await vi.importActual<typeof import("./ListItem.logic")>("./ListItem.logic");
+            return {
+                ...actual,
+                isChangeCarDataAllowed: isChangeCarDataAllowedMock,
+                dispatchChangeDataActions: dispatchChangeDataActionsMock
+            };
+        });
+
+        const {default: ListItem} = await import("./ListItem");
+        const element = ListItem({
+            isLight: true,
+            date: new Date("2026-02-18T10:00:00.000Z"),
+            kilometer: 1234,
+            power: 45.6,
+            name: "Admin",
+            id: "id-2",
+            loadingStation: {id: "ls-1", name: "carport"},
+            isFirstElement: false
+        });
+        const root = findElement(element, (currentElement) => typeof currentElement.props?.onMouseDown === "function");
+
+        root?.props?.onMouseDown?.();
+        vi.advanceTimersByTime(501);
+
+        expect(isChangeCarDataAllowedMock).toHaveBeenCalledWith({
+            isFirstElement: false,
+            dataSetDate: new Date("2026-02-18T10:00:00.000Z"),
+            currentUserRole: Role.Admin
+        });
+        expect(dispatchChangeDataActionsMock).toHaveBeenCalled();
+
         vi.useRealTimers();
     });
 

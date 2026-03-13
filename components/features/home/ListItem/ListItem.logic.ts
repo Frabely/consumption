@@ -7,6 +7,7 @@ import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {setPower} from "@/store/reducer/modal/power";
 import {setModalState} from "@/store/reducer/modalState";
+import {Role} from "@/constants/enums";
 
 export type ListItemDispatchAction =
     | ReturnType<typeof setIsChangingData>
@@ -20,22 +21,43 @@ export type ListItemDispatchAction =
 export type ListItemDispatch = (action: ListItemDispatchAction) => void;
 
 const MILLISECONDS_TO_MINUTES = 60000;
+const CHANGE_CAR_DATA_TIME_WINDOW_MINUTES = 5;
 
+/**
+ * Returns whether the current user may edit the selected car-data entry.
+ * @param input Edit-permission context including role, age and list position.
+ * @returns True when the entry may be edited.
+ */
 export const isChangeCarDataAllowed = ({
     isFirstElement,
     dataSetDate,
+    currentUserRole,
     now = new Date()
 }: {
     isFirstElement: boolean;
     dataSetDate: Date;
+    currentUserRole?: Role;
     now?: Date;
 }): boolean => {
+    if (currentUserRole === Role.Admin) {
+        return true;
+    }
+
     const diffMinutes =
         Math.floor(now.getTime() / MILLISECONDS_TO_MINUTES) -
         Math.floor(dataSetDate.getTime() / MILLISECONDS_TO_MINUTES);
-    return isFirstElement && diffMinutes >= 0 && diffMinutes < 5;
+    return (
+        isFirstElement &&
+        diffMinutes >= 0 &&
+        diffMinutes < CHANGE_CAR_DATA_TIME_WINDOW_MINUTES
+    );
 };
 
+/**
+ * Dispatches the modal state required to edit an existing car-data entry.
+ * @param input Dispatch callback and entry payload to prefill the edit modal.
+ * @returns Nothing.
+ */
 export const dispatchChangeDataActions = ({
     dispatch,
     date,
