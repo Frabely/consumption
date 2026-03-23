@@ -16,7 +16,7 @@ type WallboxSessionApiResponse = {
   CardId: string;
 };
 
-const WALLBOX_API_BASE_URL = "http://f233.ahecht.de:65109";
+const WALLBOX_API_BASE_URL = "https://f233.ahecht.de";
 const MILLISECONDS_TIMESTAMP_THRESHOLD = 1_000_000_000_000;
 const MILLISECONDS_PER_SECOND = 1000;
 const WATT_HOURS_PER_KILOWATT_HOUR = 1000;
