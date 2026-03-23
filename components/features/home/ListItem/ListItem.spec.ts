@@ -1,5 +1,10 @@
 import {describe, expect, it, vi} from "vitest";
-import {dispatchChangeDataActions, formatListItemPower, isChangeCarDataAllowed} from "@/components/features/home/ListItem/ListItem.logic";
+import {
+    dispatchChangeDataActions,
+    formatLoadingSessionRange,
+    formatListItemPower,
+    isChangeCarDataAllowed
+} from "@/components/features/home/ListItem/ListItem.logic";
 import {setDate} from "@/store/reducer/modal/date";
 import {setId} from "@/store/reducer/modal/id";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
@@ -106,7 +111,9 @@ describe("ListItem logic", () => {
 
         const html = renderToStaticMarkup(createElement(ListItem, {
             isLight: true,
-            date: new Date("2026-02-18T12:00:00.000Z"),
+            date: new Date(2026, 1, 18, 12, 0),
+            started: new Date(2026, 1, 18, 8, 0),
+            ended: new Date(2026, 1, 18, 9, 0),
             kilometer: 1234,
             power: 45.6,
             name: "Tester",
@@ -118,11 +125,30 @@ describe("ListItem logic", () => {
         expect(html).toContain("Tester");
         expect(html).toContain("1234");
         expect(html).toContain("45.6000");
+        expect(html).toContain("18.02.2026 08:00 - 09:00");
     });
 
     it("formats legacy string power values without crashing", () => {
         expect(formatListItemPower("4.0896")).toBe("4.0896");
         expect(formatListItemPower("invalid")).toBe("0.0000");
+    });
+
+    it("formats loading-session ranges compactly for same-day and overnight charges", () => {
+        expect(
+            formatLoadingSessionRange(
+                new Date(2026, 2, 23, 15, 20),
+                new Date(2026, 2, 23, 17, 47),
+                "-"
+            )
+        ).toBe("23.03.2026 15:20 - 17:47");
+
+        expect(
+            formatLoadingSessionRange(
+                new Date(2026, 2, 22, 23, 40),
+                new Date(2026, 2, 23, 7, 15),
+                "-"
+            )
+        ).toBe("22.03.2026 23:40 - 23.03.2026 07:15");
     });
 
     it("triggers change actions on long press and clears timeout on release", async () => {

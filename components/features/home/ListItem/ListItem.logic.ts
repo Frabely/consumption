@@ -30,6 +30,40 @@ const CHANGE_CAR_DATA_TIME_WINDOW_MINUTES = 5;
 const LIST_ITEM_POWER_DECIMAL_PLACES = 4;
 
 /**
+ * Formats a date as local time only.
+ * @param date Date to format.
+ * @returns Local time string in HH:mm format.
+ */
+const getTimeString = (date: Date): string => {
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+};
+
+/**
+ * Formats a date as local date-time with zero-padded hours.
+ * @param date Date to format.
+ * @returns Local date-time string in dd.MM.yyyy HH:mm format.
+ */
+const getLocalDateTimeString = (date: Date): string => {
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}.${month}.${year} ${getTimeString(date)}`;
+};
+
+/**
+ * Returns whether two dates share the same local calendar date.
+ * @param left First date.
+ * @param right Second date.
+ * @returns True when both dates fall on the same local day.
+ */
+const isSameLocalDate = (left: Date, right: Date): boolean =>
+    left.getFullYear() === right.getFullYear() &&
+    left.getMonth() === right.getMonth() &&
+    left.getDate() === right.getDate();
+
+/**
  * Returns whether the current user may edit the selected car-data entry.
  * @param input Edit-permission context including role, age and list position.
  * @returns True when the entry may be edited.
@@ -101,6 +135,29 @@ export const dispatchChangeDataActions = ({
  */
 export const formatListItemDateTime = (date: Date | undefined, fallback: string): string =>
     date ? getDateString(date) : fallback;
+
+/**
+ * Formats the loading-session range for list-item rendering.
+ * @param started Loading-session start date.
+ * @param ended Loading-session end date.
+ * @param fallback Fallback text for missing values.
+ * @returns Compact loading-session range string or fallback.
+ */
+export const formatLoadingSessionRange = (
+    started: Date | undefined,
+    ended: Date | undefined,
+    fallback: string
+): string => {
+    if (!started || !ended) {
+        return fallback;
+    }
+
+    if (isSameLocalDate(started, ended)) {
+        return `${getLocalDateTimeString(started)} - ${getTimeString(ended)}`;
+    }
+
+    return `${getLocalDateTimeString(started)} - ${getLocalDateTimeString(ended)}`;
+};
 
 /**
  * Formats a power value for list-item rendering.

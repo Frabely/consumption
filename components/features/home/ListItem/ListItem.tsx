@@ -8,6 +8,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBolt} from "@fortawesome/free-solid-svg-icons";
 import {
     dispatchChangeDataActions,
+    formatLoadingSessionRange,
     formatListItemDateTime,
     formatListItemPower,
     isChangeCarDataAllowed
@@ -24,8 +25,7 @@ export default function ListItem({kilometer, name, power, date, started, ended, 
     const dispatch = useAppDispatch()
     const currentUser = useAppSelector(selectCurrentUser)
     const recordedAt = formatListItemDateTime(date, language.displayLabels.none)
-    const startedAt = formatListItemDateTime(started, language.displayLabels.none)
-    const endedAt = formatListItemDateTime(ended, language.displayLabels.none)
+    const loadingSessionRange = formatLoadingSessionRange(started, ended, language.displayLabels.none)
     const formattedPower = formatListItemPower(power)
     const loadingStationLabel =
         language.loadingStation[loadingStation.name as keyof typeof language.loadingStation] ?? loadingStation.name
@@ -70,6 +70,8 @@ export default function ListItem({kilometer, name, power, date, started, ended, 
                     <div className={styles.dateColumn}>
                         <div className={styles.primaryDate}>{language.displayLabels.recordedAt}</div>
                         <div className={styles.secondaryDate}>{recordedAt}</div>
+                        <div className={styles.primaryDate}>{language.displayLabels.loadingProcess}</div>
+                        <div className={styles.secondaryDate}>{loadingSessionRange}</div>
                     </div>
                 </div>
                 <div className={styles.valueColumn}>
@@ -80,16 +82,6 @@ export default function ListItem({kilometer, name, power, date, started, ended, 
             <div className={styles.bottomRow}>
                 <div className={styles.stationValue}>{language.displayLabels.loadingStation}: {loadingStationLabel}</div>
                 <div className={styles.nameValue}>{name}</div>
-            </div>
-            <div className={styles.metaGrid}>
-                <div className={styles.metaRow}>
-                    <span className={styles.metaLabel}>{language.displayLabels.startedAt}</span>
-                    <span className={styles.metaValue}>{startedAt}</span>
-                </div>
-                <div className={styles.metaRow}>
-                    <span className={styles.metaLabel}>{language.displayLabels.endedAt}</span>
-                    <span className={styles.metaValue}>{endedAt}</span>
-                </div>
             </div>
         </div>
     )

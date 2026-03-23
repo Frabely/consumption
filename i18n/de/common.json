@@ -25,6 +25,7 @@
                           "none":  "-",
                           "loading":  "Lädt",
                           "recordedAt":  "Erfassungsdatum",
+                          "loadingProcess":  "Ladevorgang",
                           "startedAt":  "Ladungsstart",
                           "endedAt":  "Ladungsende",
                           "backToLogin":  "Zurück zum Login",
