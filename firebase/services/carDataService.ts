@@ -4,11 +4,84 @@ import {
 } from "@/constants/constantData";
 import {DataSet, DataSetNoId, LoadingStation, YearMonth} from "@/common/models";
 import {addDoc, collection, doc, getDocs, orderBy, query, updateDoc} from "@firebase/firestore";
-import {Timestamp} from "firebase/firestore";
 import {db} from "@/firebase/db";
 import {getLoadingStations} from "@/firebase/services/loadingStationService";
 
-export const getFullDataSet = async (carName: string, passedDate?: YearMonth) => {
+type FirestoreTimestampLike = {
+    toDate: () => Date;
+};
+
+type ChangeDataSetInput = Pick<
+    DataSet,
+    "id" | "date" | "power" | "kilometer" | "loadingStation" | "started" | "ended"
+>;
+
+type ConsumptionDocumentData = Record<string, unknown> & {
+    power: number | string;
+    kilometer: number;
+    date?: Date;
+    started?: Date;
+    ended?: Date;
+};
+
+type ConsumptionDocumentBetweenMonths = {
+    year: string;
+    month: string;
+    id: string;
+    data: ConsumptionDocumentData;
+};
+
+/**
+ * Resolves an optional Firestore timestamp-like value to a Date instance.
+ * @param value Firestore field value or undefined.
+ * @returns Converted Date value when available.
+ */
+const resolveOptionalDate = (value: unknown): Date | undefined => {
+    if (value instanceof Date) {
+        return value;
+    }
+
+    if (
+        value &&
+        typeof value === "object" &&
+        "toDate" in value &&
+        typeof (value as FirestoreTimestampLike).toDate === "function"
+    ) {
+        return (value as FirestoreTimestampLike).toDate();
+    }
+
+    return undefined;
+};
+
+/**
+ * Maps a Firestore document to a typed dataset with optional session timestamps.
+ * @param dataSource Firestore document exposing `get`.
+ * @param id Document identifier.
+ * @param loadingStation Resolved loading station object.
+ * @returns Typed dataset for UI consumption.
+ */
+const mapFirestoreDocumentToDataSet = (
+    dataSource: {get: (field: string) => unknown},
+    id: string,
+    loadingStation: LoadingStation
+): DataSet => ({
+    id,
+    date: resolveOptionalDate(dataSource.get("date")) ?? new Date(0),
+    kilometer: dataSource.get("kilometer") as number,
+    power: dataSource.get("power") as number,
+    name: dataSource.get("name") as string,
+    started: resolveOptionalDate(dataSource.get("started")),
+    ended: resolveOptionalDate(dataSource.get("ended")),
+    loadingStation
+});
+
+/**
+ * Loads all dataset entries for a car within the requested month.
+ * @param carName Car name used as Firestore document id.
+ * @param passedDate Optional year-month filter for historic data.
+ * @returns Dataset entries with resolved loading stations or undefined when no documents exist.
+ */
+export const getFullDataSet = async (carName: string, passedDate?: YearMonth): Promise<DataSet[] | undefined> => {
     const dateNow = new Date();
     const year = dateNow.getFullYear().toString();
     const month = dateNow.getMonth() + 1;
@@ -29,32 +102,29 @@ export const getFullDataSet = async (carName: string, passedDate?: YearMonth) =>
 
     if (querySnapshot && !querySnapshot.empty) {
         querySnapshot.docs.map((docResult) => {
-            const ts: Timestamp = docResult.get("date");
             if (loadingStations) {
-                loadingStations.map((ls: LoadingStation) => {
-                    if (ls.id === docResult.get("loadingStationId")) {
-                        const oneDataSet: DataSet = {
-                            id: docResult.id,
-                            date: ts.toDate(),
-                            kilometer: docResult.get("kilometer"),
-                            power: docResult.get("power"),
-                            name: docResult.get("name"),
-                            loadingStation: ls
-                        };
-                        fullDataSet.push(oneDataSet);
-                    }
-                });
+                const loadingStation = loadingStations.find((ls: LoadingStation) => ls.id === docResult.get("loadingStationId"));
+                if (loadingStation) {
+                    fullDataSet.push(mapFirestoreDocumentToDataSet(docResult, docResult.id, loadingStation));
+                }
             }
         });
         return fullDataSet;
     }
 };
 
+/**
+ * Loads all consumption documents between two inclusive year-month values.
+ * @param from Start year-month.
+ * @param to End year-month.
+ * @param carName Car name used as Firestore document id.
+ * @returns Firestore documents sorted by kilometer with optional session timestamps resolved to Date.
+ */
 export const loadAllConsumptionDocsBetween = async (
     from: YearMonth,
     to: YearMonth,
     carName: string
-) => {
+): Promise<ConsumptionDocumentBetweenMonths[]> => {
     const yearMonths = monthsBetween(from, to);
 
     const perMonth = await Promise.all(
@@ -69,16 +139,27 @@ export const loadAllConsumptionDocsBetween = async (
                 year: yearMonth.year,
                 month: yearMonth.month,
                 id: d.id,
-                data: d.data() as DataSet
+                data: {
+                    ...(d.data() as ConsumptionDocumentData),
+                    date: resolveOptionalDate(d.get("date")),
+                    started: resolveOptionalDate(d.get("started")),
+                    ended: resolveOptionalDate(d.get("ended"))
+                } satisfies ConsumptionDocumentData
             }));
         })
     );
 
-    return perMonth.flat().sort((a, b) => a.data.kilometer - b.data.kilometer);
+    return perMonth.flat().sort((a, b) => Number(a.data.kilometer) - Number(b.data.kilometer));
 };
 
-export const addDataSetToCollection = async (carName: string, dataSet: DataSetNoId) => {
-    const {date, kilometer, power, name, loadingStation} = dataSet;
+/**
+ * Adds a dataset entry to the monthly Firestore collection for the selected car.
+ * @param carName Car name used as Firestore document id.
+ * @param dataSet Dataset payload to persist.
+ * @returns Promise that resolves when the document has been created.
+ */
+export const addDataSetToCollection = async (carName: string, dataSet: DataSetNoId): Promise<void> => {
+    const {date, kilometer, power, name, loadingStation, started, ended} = dataSet;
     const month = date.getMonth() + 1;
     const monthString = (month < 10 ? `0${month}` : month).toString();
     const consumptionDataRef = collection(db,
@@ -90,21 +171,26 @@ export const addDataSetToCollection = async (carName: string, dataSet: DataSetNo
         kilometer,
         power: decimalPower,
         name,
-        loadingStationId: loadingStation.id
+        loadingStationId: loadingStation.id,
+        ...(started ? {started} : {}),
+        ...(ended ? {ended} : {})
     }).catch((error: Error) => {
         console.error(error.message);
         throw error;
     });
 };
 
+/**
+ * Updates an existing dataset entry inside the monthly Firestore collection.
+ * @param carName Car name used as Firestore document id.
+ * @param dataSet Dataset update payload.
+ * @returns Promise that resolves when the document has been updated.
+ */
 export const changeDataSetInCollection = async (
     carName: string,
-    date: Date,
-    power: number,
-    kilometer: number,
-    loadingStation: LoadingStation,
-    id: string
-) => {
+    dataSet: ChangeDataSetInput
+): Promise<void> => {
+    const {date, power, kilometer, loadingStation, id, started, ended} = dataSet;
     const month = date.getMonth() + 1;
     const monthString = (month < 10 ? `0${month}` : month).toString();
     const consumptionDataRef = doc(db,
@@ -114,14 +200,23 @@ export const changeDataSetInCollection = async (
     await updateDoc(consumptionDataRef, {
         kilometer,
         power: decimalPower,
-        loadingStationId: loadingStation.id
+        loadingStationId: loadingStation.id,
+        ...(started ? {started} : {}),
+        ...(ended ? {ended} : {})
     }).catch((error: Error) => {
         console.error(error.message);
         throw error;
     });
 };
 
-export const updateCarKilometer = async (carName: string, kilometer: number, prevKilometer?: number) => {
+/**
+ * Updates the persisted kilometer value for a car.
+ * @param carName Car name used as Firestore document id.
+ * @param kilometer Current kilometer value.
+ * @param prevKilometer Optional previous kilometer value.
+ * @returns Promise that resolves when the document has been updated.
+ */
+export const updateCarKilometer = async (carName: string, kilometer: number, prevKilometer?: number): Promise<void> => {
     const carsRef = doc(db, `${DB_CARS}/${carName}`);
     await updateDoc(carsRef, prevKilometer ? {
         kilometer,

@@ -342,11 +342,13 @@ describe("AddData component", () => {
 
         expect(changeDataSetInCollection).toHaveBeenCalledWith(
             "Zoe",
-            new Date("2026-02-18T10:00:00.000Z"),
-            12.5,
-            121,
-            TEST_LOADING_STATIONS[0],
-            "id-1"
+            {
+                date: new Date("2026-02-18T10:00:00.000Z"),
+                power: 12.5,
+                kilometer: 121,
+                loadingStation: TEST_LOADING_STATIONS[0],
+                id: "id-1"
+            }
         );
         expect(updateCarKilometer).toHaveBeenCalledWith("Zoe", 121);
         expect(dispatch).toHaveBeenCalledWith({type: "updateCarKilometers", payload: 121});

@@ -6,6 +6,8 @@ export type DataSet = {
     power: number;
     name: string;
     date: Date;
+    started?: Date;
+    ended?: Date;
     loadingStation: LoadingStation;
 };
 
@@ -14,6 +16,8 @@ export type DataSetNoId = {
     power: number;
     name: string;
     date: Date;
+    started?: Date;
+    ended?: Date;
     loadingStation: LoadingStation;
 };
 

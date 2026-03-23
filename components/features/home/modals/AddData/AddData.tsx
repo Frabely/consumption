@@ -166,13 +166,13 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             dispatch(setIsLoading(true))
             dispatch(updateCarKilometers(kilometerValue))
             try {
-                await changeDataSetInCollection(currentCar.name,
+                await changeDataSetInCollection(currentCar.name, {
                     date,
-                    parseFloat(power),
-                    kilometerValue,
+                    power: parseFloat(power),
+                    kilometer: kilometerValue,
                     loadingStation,
                     id
-                )
+                })
                 await updateCarKilometer(currentCar.name, kilometerValue)
                 dispatch(setModalStateNone())
                 setModalToDefault()
