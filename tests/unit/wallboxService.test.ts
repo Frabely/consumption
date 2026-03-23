@@ -12,7 +12,7 @@ describe("wallboxService", () => {
       ok: true,
       json: async () => ({
         reportId: 102,
-        kWh: 4749.3,
+        kWh: 4089.6,
         started: 1774263256033,
         ended: 1774269951033,
         CardId: "047c337ada488000",
@@ -23,12 +23,12 @@ describe("wallboxService", () => {
     const result = await getLatestEntranceWallboxSession();
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "http://f233.ahecht.de:65109/api/v1/sessions/entrance/latest",
+      "https://f233.ahecht.de/api/v1/sessions/entrance/latest",
       { cache: "no-store" },
     );
     expect(result).toEqual({
       reportId: 102,
-      kWh: 4.7,
+      kWh: 4.0896,
       started: new Date(1774263256033),
       ended: new Date(1774269951033),
       CardId: "047c337ada488000",
@@ -51,10 +51,10 @@ describe("wallboxService", () => {
     const result = await getLatestCarportWallboxSession();
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "http://f233.ahecht.de:65109/api/v1/sessions/carport/latest",
+      "https://f233.ahecht.de/api/v1/sessions/carport/latest",
       { cache: "no-store" },
     );
-    expect(result.kWh).toBe(0);
+    expect(result.kWh).toBe(0.0125);
     expect(result.started).toEqual(new Date(1774260000 * 1000));
     expect(result.ended).toEqual(new Date(1774263600 * 1000));
   });
@@ -73,10 +73,10 @@ describe("wallboxService", () => {
 
   it("resolves absolute endpoint paths for each wallbox station", () => {
     expect(resolveWallboxSessionEndpoint("entrance")).toBe(
-      "http://f233.ahecht.de:65109/api/v1/sessions/entrance/latest",
+      "https://f233.ahecht.de/api/v1/sessions/entrance/latest",
     );
     expect(resolveWallboxSessionEndpoint("carport")).toBe(
-      "http://f233.ahecht.de:65109/api/v1/sessions/carport/latest",
+      "https://f233.ahecht.de/api/v1/sessions/carport/latest",
     );
   });
 });

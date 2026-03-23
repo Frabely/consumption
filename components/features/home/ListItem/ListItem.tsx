@@ -9,6 +9,7 @@ import {faBolt} from "@fortawesome/free-solid-svg-icons";
 import {
     dispatchChangeDataActions,
     formatListItemDateTime,
+    formatListItemPower,
     isChangeCarDataAllowed
 } from "@/components/features/home/ListItem/ListItem.logic";
 import {selectCurrentUser} from "@/store/selectors";
@@ -25,6 +26,7 @@ export default function ListItem({kilometer, name, power, date, started, ended, 
     const recordedAt = formatListItemDateTime(date, language.displayLabels.none)
     const startedAt = formatListItemDateTime(started, language.displayLabels.none)
     const endedAt = formatListItemDateTime(ended, language.displayLabels.none)
+    const formattedPower = formatListItemPower(power)
     const loadingStationLabel =
         language.loadingStation[loadingStation.name as keyof typeof language.loadingStation] ?? loadingStation.name
     let timeOut: ReturnType<typeof setTimeout> | undefined
@@ -72,7 +74,7 @@ export default function ListItem({kilometer, name, power, date, started, ended, 
                 </div>
                 <div className={styles.valueColumn}>
                     <div className={styles.kmValue}>{kilometer} {language.displayLabels.kilometerShort}</div>
-                    <div className={styles.powerValue}>{power} {language.displayLabels.powerShort}</div>
+                    <div className={styles.powerValue}>{formattedPower} {language.displayLabels.powerShort}</div>
                 </div>
             </div>
             <div className={styles.bottomRow}>

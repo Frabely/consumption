@@ -27,6 +27,7 @@ export type ListItemDispatch = (action: ListItemDispatchAction) => void;
 
 const MILLISECONDS_TO_MINUTES = 60000;
 const CHANGE_CAR_DATA_TIME_WINDOW_MINUTES = 5;
+const LIST_ITEM_POWER_DECIMAL_PLACES = 4;
 
 /**
  * Returns whether the current user may edit the selected car-data entry.
@@ -100,4 +101,19 @@ export const dispatchChangeDataActions = ({
  */
 export const formatListItemDateTime = (date: Date | undefined, fallback: string): string =>
     date ? getDateString(date) : fallback;
+
+/**
+ * Formats a power value for list-item rendering.
+ * @param power Power value in kWh as number or legacy string.
+ * @returns Power value with a stable decimal representation.
+ */
+export const formatListItemPower = (power: number | string): string => {
+    const normalizedPower = typeof power === "number" ? power : Number.parseFloat(power);
+
+    if (!Number.isFinite(normalizedPower)) {
+        return "0.0000";
+    }
+
+    return normalizedPower.toFixed(LIST_ITEM_POWER_DECIMAL_PLACES);
+};
 

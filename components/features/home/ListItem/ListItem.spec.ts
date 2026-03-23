@@ -1,5 +1,5 @@
 import {describe, expect, it, vi} from "vitest";
-import {dispatchChangeDataActions, isChangeCarDataAllowed} from "@/components/features/home/ListItem/ListItem.logic";
+import {dispatchChangeDataActions, formatListItemPower, isChangeCarDataAllowed} from "@/components/features/home/ListItem/ListItem.logic";
 import {setDate} from "@/store/reducer/modal/date";
 import {setId} from "@/store/reducer/modal/id";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
@@ -117,6 +117,12 @@ describe("ListItem logic", () => {
 
         expect(html).toContain("Tester");
         expect(html).toContain("1234");
+        expect(html).toContain("45.6000");
+    });
+
+    it("formats legacy string power values without crashing", () => {
+        expect(formatListItemPower("4.0896")).toBe("4.0896");
+        expect(formatListItemPower("invalid")).toBe("0.0000");
     });
 
     it("triggers change actions on long press and clears timeout on release", async () => {

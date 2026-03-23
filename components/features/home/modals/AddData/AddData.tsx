@@ -47,6 +47,8 @@ import {
     resolveWallboxPowerPrefill
 } from "@/components/features/home/modals/AddData/AddData.logic";
 
+const POWER_INPUT_STEP = 0.0001
+
 /**
  * Renders the add/change data modal and coordinates wallbox-based prefills.
  * @param props Modal props.
@@ -299,7 +301,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             alert('Invalid Data')
     }
 
-    const onKilometerChange = (e: ChangeEvent<HTMLInputElement>) => {
+const onKilometerChange = (e: ChangeEvent<HTMLInputElement>) => {
         const currentKilometerValue = parseIntegerOrNull(e.target.value)
         if (currentKilometerValue !== null && currentKilometerValue > 0)
             dispatch(setKilometer(currentKilometerValue.toString()))
@@ -398,7 +400,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                         type={"number"}
                         min={0.1}
                         max={99.9}
-                        step={0.1}
+                        step={POWER_INPUT_STEP}
                         placeholder={de.inputLabels.power}
                         onChange={powerOnChangeHandler}
                     />

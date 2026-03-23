@@ -453,7 +453,7 @@ describe("AddData component", () => {
         await flushAsyncUpdates();
         expect(dispatch).toHaveBeenCalledWith({type: "setLoadingStation", payload: TEST_LOADING_STATIONS[1]});
         expect(getLatestEntranceWallboxSession).toHaveBeenCalledTimes(1);
-        expect(dispatch).toHaveBeenCalledWith({type: "setPower", payload: "22.22"});
+        expect(dispatch).toHaveBeenCalledWith({type: "setPower", payload: "22.2200"});
         expect(dispatch).toHaveBeenCalledWith({type: "setStarted", payload: new Date("2026-02-18T08:00:00.000Z")});
         expect(dispatch).toHaveBeenCalledWith({type: "setEnded", payload: new Date("2026-02-18T09:00:00.000Z")});
 

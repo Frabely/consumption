@@ -20,7 +20,7 @@ const WALLBOX_API_BASE_URL = "https://f233.ahecht.de";
 const MILLISECONDS_TIMESTAMP_THRESHOLD = 1_000_000_000_000;
 const MILLISECONDS_PER_SECOND = 1000;
 const WATT_HOURS_PER_KILOWATT_HOUR = 1000;
-const WALLBOX_KILOWATT_HOURS_DECIMAL_PLACES = 1;
+const WALLBOX_KILOWATT_HOURS_DECIMAL_PLACES = 4;
 
 /**
  * Resolves the future endpoint path for a wallbox station.
