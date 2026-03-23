@@ -23,6 +23,7 @@ describe("userService", () => {
                 if (key === "name") return "Moritz";
                 if (key === "role") return Role.Admin;
                 if (key === "defaultCar") return "Zoe";
+                if (key === "defaultLoadingStationId") return "21819916";
                 return undefined;
             })
         };
@@ -35,7 +36,8 @@ describe("userService", () => {
             key: "1234",
             name: "Moritz",
             role: Role.Admin,
-            defaultCar: "Zoe"
+            defaultCar: "Zoe",
+            defaultLoadingStationId: "21819916"
         });
     });
 

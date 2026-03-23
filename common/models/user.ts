@@ -5,6 +5,7 @@ export type User = {
     key?: string;
     role?: Role;
     defaultCar?: string;
+    defaultLoadingStationId?: string;
 };
 
 

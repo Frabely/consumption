@@ -22,7 +22,8 @@ export const checkUserId = async (id: string): Promise<User | undefined> => {
                 key: result.docs[0].get("key"),
                 name: result.docs[0].get("name"),
                 role,
-                defaultCar: result.docs[0].get("defaultCar")
+                defaultCar: result.docs[0].get("defaultCar"),
+                defaultLoadingStationId: result.docs[0].get("defaultLoadingStationId")
             };
             return user;
         }

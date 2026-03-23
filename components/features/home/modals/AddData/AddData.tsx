@@ -9,7 +9,7 @@ import {addDataSetToCollection, changeDataSetInCollection, updateCarKilometer} f
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {ChangeEvent, useEffect, useState} from "react";
 import Modal from "@/components/shared/overlay/Modal";
-import {DEFAULT_LOADING_STATION, ensureCarsLoaded, loadingStations} from "@/constants/constantData";
+import {ensureCarsLoaded, loadingStations} from "@/constants/constantData";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import type {Translations} from "@/i18n/types";
 import {setCurrentCar, updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
@@ -32,6 +32,7 @@ import {
 } from "@/store/selectors";
 import {isKilometerValid, isPowerValid, parseIntegerOrNull} from "@/utils/validation/carDataValidation";
 import {setIsLoading} from "@/store/reducer/isLoading";
+import {resolveUserDefaultLoadingStation} from "@/utils/loadingStations/defaultLoadingStation";
 
 export default function AddData({prevKilometers}: AddDataModalProps) {
     const language: Translations = de
@@ -57,6 +58,10 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     const [disabled, setDisabled] = useState(true);
     const getLoadingStationLabel = (stationName: string): string =>
         language.loadingStation[stationName as keyof typeof language.loadingStation] ?? stationName;
+    const defaultLoadingStation = resolveUserDefaultLoadingStation({
+        user: currentUser,
+        availableLoadingStations: loadingStations
+    });
 
     useEffect(() => {
         const isAddOrChangeModal =
@@ -99,13 +104,13 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 dispatch(setKilometer(currentCar.kilometer.toString()));
             }
             dispatch(setIsChangingData(false));
-            dispatch(setLoadingStation(DEFAULT_LOADING_STATION));
+            dispatch(setLoadingStation(defaultLoadingStation));
             setIsInputValid({
                 kilometer: false,
                 power: false
             });
         }
-    }, [currentCar.kilometer, dispatch, modalState]);
+    }, [currentCar.kilometer, defaultLoadingStation, dispatch, modalState]);
 
     useEffect(() => {
         if (currentCar.kilometer !== undefined) {
@@ -124,7 +129,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         if (currentCar.kilometer !== undefined)
             dispatch(setKilometer(currentCar.kilometer.toString()))
         dispatch(setIsChangingData(false))
-        dispatch(setLoadingStation(DEFAULT_LOADING_STATION))
+        dispatch(setLoadingStation(defaultLoadingStation))
         setIsInputValid({
             kilometer: false,
             power: false
@@ -229,7 +234,10 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         if (!key) {
             return
         }
-        const selectedLoadingStation = loadingStations.filter((loadingStation => loadingStation.id === key))[0]
+        const selectedLoadingStation = loadingStations.find((candidateLoadingStation) => candidateLoadingStation.id === key)
+        if (!selectedLoadingStation) {
+            return
+        }
         dispatch(setLoadingStation(selectedLoadingStation))
     }
 
@@ -244,7 +252,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     <div className={styles.selectField}>
                         <CustomSelect
                             onChange={onLoadingStationChangeHandler}
-                            defaultValue={changingData ? getLoadingStationLabel(loadingStation.name) : getLoadingStationLabel(DEFAULT_LOADING_STATION.name)}
+                            defaultValue={changingData ? getLoadingStationLabel(loadingStation.name) : getLoadingStationLabel(defaultLoadingStation.name)}
                             options={loadingStations.map((item) => getLoadingStationLabel(item.name))}
                             keys={loadingStations.map((item) => item.id)}
                             style={{width: "100%"}}

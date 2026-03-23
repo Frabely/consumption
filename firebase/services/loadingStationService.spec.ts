@@ -16,7 +16,8 @@ describe("loadingStationService", () => {
     it("maps loading stations from firestore docs", async () => {
         const docs = [
             {id: "ls-1", get: vi.fn(() => "carport")},
-            {id: "ls-2", get: vi.fn(() => "official")}
+            {id: "21819916", get: vi.fn(() => "entrance")},
+            {id: "ls-3", get: vi.fn(() => "official")}
         ];
         firestoreMocks.getDocs.mockResolvedValue({empty: false, docs});
 
@@ -25,7 +26,8 @@ describe("loadingStationService", () => {
 
         expect(result).toEqual([
             {id: "ls-1", name: "carport"},
-            {id: "ls-2", name: "official"}
+            {id: "21819916", name: "entrance"},
+            {id: "ls-3", name: "official"}
         ]);
     });
 

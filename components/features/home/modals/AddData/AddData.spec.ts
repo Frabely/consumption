@@ -2,15 +2,16 @@
 import {ModalState} from "@/constants/enums";
 
 const TEST_LOADING_STATIONS = [
-    {id: "station-1", name: "carport"},
-    {id: "station-2", name: "garage"}
+    {id: "17498904", name: "carport"},
+    {id: "21819916", name: "entrance"},
+    {id: "station-3", name: "official"}
 ];
-const TEST_DEFAULT_LOADING_STATION = TEST_LOADING_STATIONS[0];
+const TEST_DEFAULT_LOADING_STATION = TEST_LOADING_STATIONS[1];
 
 type SelectorState = {
     modalState: ModalState;
     currentCar: { name: string; kilometer?: number; prevKilometer?: number };
-    currentUser: { name: string; defaultCar?: string };
+    currentUser: { name: string; defaultCar?: string; defaultLoadingStationId?: string };
     kilometer: string;
     power: string;
     loadingStation: { id: string; name: string };
@@ -244,6 +245,22 @@ describe("AddData component", () => {
         expect(setIsInputValid).toHaveBeenCalledWith({kilometer: false, power: false});
     });
 
+    it("uses the user default loading station when add mode opens", async () => {
+        const {dispatch, useEffect, ensureCarsLoaded, element, CustomSelectMock} = await buildComponent({
+            effectMode: "run",
+            selectorOverrides: {
+                currentUser: {name: "Tester", defaultLoadingStationId: TEST_LOADING_STATIONS[0].id}
+            }
+        });
+
+        const customSelect = findElement(element, (currentElement) => currentElement.type === CustomSelectMock);
+
+        expect(useEffect).toHaveBeenCalledTimes(4);
+        expect(ensureCarsLoaded).not.toHaveBeenCalled();
+        expect(dispatch).toHaveBeenCalledWith({type: "setLoadingStation", payload: TEST_LOADING_STATIONS[0]});
+        expect(customSelect?.props?.defaultValue).toBe("Carport");
+    });
+
     it("loads cars for add/change modal when current car is not hydrated", async () => {
         const {ensureCarsLoaded, dispatch} = await buildComponent({
             effectMode: "run",
@@ -378,11 +395,11 @@ describe("AddData component", () => {
         expect(dispatch).toHaveBeenCalledWith({type: "setPower", payload: "22.2"});
         expect(setIsInputValid).toHaveBeenCalledWith(expect.objectContaining({power: true}));
 
-        customSelect?.props?.onChange?.("Garage", TEST_LOADING_STATIONS[1].id);
+        customSelect?.props?.onChange?.("Eingang", TEST_LOADING_STATIONS[1].id);
         expect(dispatch).toHaveBeenCalledWith({type: "setLoadingStation", payload: TEST_LOADING_STATIONS[1]});
 
         const callCountBeforeNoKey = dispatch.mock.calls.length;
-        customSelect?.props?.onChange?.("Garage");
+        customSelect?.props?.onChange?.("Eingang");
         expect(dispatch.mock.calls.length).toBe(callCountBeforeNoKey);
     });
 });

@@ -77,7 +77,7 @@
                 },
     "loadingStation":  {
                            "carport":  "Carport",
-                           "frontDoor":  "Haustür",
+                           "entrance":  "Eingang",
                            "official":  "Öffentlich"
                        }
 }

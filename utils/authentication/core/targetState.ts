@@ -28,6 +28,7 @@ export type PersistedAuthSession = {
   userId: string;
   role: Role;
   defaultCar: string;
+  defaultLoadingStationId: string;
   expiresAt: number;
 };
 

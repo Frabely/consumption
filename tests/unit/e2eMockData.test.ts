@@ -44,7 +44,7 @@ describe("e2e mock data service", () => {
     const storage = new Map<string, string>();
     storage.set(
       "consumption.auth.session",
-      JSON.stringify({ defaultCar: "BMW" }),
+      JSON.stringify({ defaultCar: "BMW", defaultLoadingStationId: "17498904" }),
     );
 
     (globalThis as { window?: Window }).window = {
@@ -58,9 +58,10 @@ describe("e2e mock data service", () => {
 
     const user = createE2EMockUser("u-1");
     expect(user.defaultCar).toBe("BMW");
+    expect(user.defaultLoadingStationId).toBe("17498904");
   });
 
-  it("falls back to Zoe for missing or invalid persisted defaultCar", () => {
+  it("falls back to defaults for missing or invalid persisted session values", () => {
     process.env.NEXT_PUBLIC_E2E_MOCK_DATA = "0";
     const storage = new Map<string, string>();
     storage.set("consumption.auth.session", "not-json");
@@ -76,5 +77,6 @@ describe("e2e mock data service", () => {
 
     const user = createE2EMockUser("u-2");
     expect(user.defaultCar).toBe("Zoe");
+    expect(user.defaultLoadingStationId).toBe("21819916");
   });
 });

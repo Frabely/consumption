@@ -8,6 +8,7 @@ import {
 import { setCurrentUser } from "@/store/reducer/currentUser";
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import { setAuthStatusUnauthenticated } from "@/store/reducer/authStatus";
+import { ENTRANCE_LOADING_STATION_ID } from "@/utils/loadingStations/defaultLoadingStation";
 
 describe("authSessionValidation", () => {
   it("returns invalid when backend does not know the user", async () => {
@@ -72,9 +73,15 @@ describe("authSessionValidation", () => {
       userId: "1234",
       role: Role.Admin,
       defaultCar: "Zoe",
+      defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
       expiresAt: 2_000_000_000_000,
     });
-    const user = { key: "1234", role: Role.Admin, defaultCar: "Zoe" };
+    const user = {
+      key: "1234",
+      role: Role.Admin,
+      defaultCar: "Zoe",
+      defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
+    };
 
     applySessionValidationResult({
       result: { status: "valid", user },
@@ -93,7 +100,12 @@ describe("authSessionValidation", () => {
     const dispatch = vi.fn();
     const checkUserIdFn = vi
       .fn()
-      .mockResolvedValue({ key: "7777", role: Role.User, defaultCar: "BMW" });
+      .mockResolvedValue({
+        key: "7777",
+        role: Role.User,
+        defaultCar: "BMW",
+        defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
+      });
 
     const result = await validateAndApplyActiveSession({
       userId: "7777",
@@ -103,7 +115,12 @@ describe("authSessionValidation", () => {
 
     expect(result.status).toBe("valid");
     expect(dispatch).toHaveBeenCalledWith(
-      setCurrentUser({ key: "7777", role: Role.User, defaultCar: "BMW" }),
+      setCurrentUser({
+        key: "7777",
+        role: Role.User,
+        defaultCar: "BMW",
+        defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
+      }),
     );
   });
 });

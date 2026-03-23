@@ -14,6 +14,7 @@ export const AUTH_SESSION_CONTRACT_ISSUES = {
   INVALID_USER_ID: "invalid_user_id",
   INVALID_ROLE: "invalid_role",
   INVALID_DEFAULT_CAR: "invalid_default_car",
+  INVALID_DEFAULT_LOADING_STATION_ID: "invalid_default_loading_station_id",
   INVALID_EXPIRES_AT: "invalid_expires_at",
 } as const;
 
