@@ -16,12 +16,14 @@ import {
 } from "@/utils/authentication/session/startup";
 import { AuthSessionRestoreDecision } from "@/utils/authentication/session/startup";
 import { StorageLike } from "@/utils/authentication/session/sessionStorage";
+import { ENTRANCE_LOADING_STATION_ID } from "@/utils/loadingStations/defaultLoadingStation";
 
 const validSession = {
   schemaVersion: 1,
   userId: "1234",
   role: Role.Admin,
   defaultCar: "Zoe",
+  defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
   expiresAt: 2_000_000_000_000,
 };
 
@@ -36,6 +38,7 @@ describe("authStartup", () => {
         userId: "1234",
         role: Role.Admin,
         defaultCar: "Zoe",
+        defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
         expiresAt: 2_000_000_000_000,
       },
       shouldClearPersistedSession: false,
@@ -49,6 +52,7 @@ describe("authStartup", () => {
         key: "1234",
         role: Role.Admin,
         defaultCar: "Zoe",
+        defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
       }),
     );
     expect(dispatch).toHaveBeenNthCalledWith(2, setCurrentCar({ name: "Zoe" }));
@@ -82,6 +86,7 @@ describe("authStartup", () => {
         userId: "7777",
         role: Role.User,
         defaultCar: "BMW",
+        defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
         expiresAt: 2_100_000_000_000,
       },
       shouldClearPersistedSession: false,

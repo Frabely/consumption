@@ -5,6 +5,7 @@ import {
   createRollingExpiryTimestamp,
   PersistedAuthSession,
 } from "@/utils/authentication/core/targetState";
+import {resolveDefaultLoadingStationId} from "@/utils/loadingStations/defaultLoadingStation";
 
 export type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
@@ -44,6 +45,7 @@ export const buildPersistedAuthSession = (
     userId: user.key,
     role: user.role,
     defaultCar: user.defaultCar,
+    defaultLoadingStationId: resolveDefaultLoadingStationId(user),
     expiresAt: createRollingExpiryTimestamp(now),
   };
 };

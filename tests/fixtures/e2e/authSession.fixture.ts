@@ -10,6 +10,7 @@ export type E2EAuthSession = {
   userId: string;
   role: number;
   defaultCar: string;
+  defaultLoadingStationId: string;
   expiresAt: number;
 };
 
@@ -25,6 +26,7 @@ export const buildDefaultE2EAuthSession = (
   userId: "playwright-user",
   role: 2,
   defaultCar: "Zoe",
+  defaultLoadingStationId: "21819916",
   expiresAt: Date.now() + E2E_SESSION_DURATION_MS,
   ...overrides,
 });

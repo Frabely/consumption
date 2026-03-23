@@ -14,6 +14,7 @@ import {
   createAuthTelemetryEvent,
   emitAuthTelemetryEvent,
 } from "@/utils/authentication/telemetry/telemetry";
+import {withEffectiveDefaultLoadingStation} from "@/utils/loadingStations/defaultLoadingStation";
 
 export type SessionValidationResult =
   | { status: "valid"; user: User }
@@ -100,11 +101,12 @@ export const applySessionValidationResult = ({
   }
 
   if (result.status === "valid") {
-    dispatch(setCurrentUser(result.user));
-    if (result.user.defaultCar) {
-      dispatch(setCurrentCar({ name: result.user.defaultCar }));
+    const normalizedUser = withEffectiveDefaultLoadingStation(result.user);
+    dispatch(setCurrentUser(normalizedUser));
+    if (normalizedUser.defaultCar) {
+      dispatch(setCurrentCar({ name: normalizedUser.defaultCar }));
     }
-    const session = buildSessionFn(result.user);
+    const session = buildSessionFn(normalizedUser);
     if (session) {
       persistSessionFn({ session });
     }

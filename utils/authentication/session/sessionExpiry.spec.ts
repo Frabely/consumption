@@ -20,6 +20,7 @@ describe("authSessionExpiry", () => {
       userId: "1234",
       role: Role.Admin,
       defaultCar: "Zoe",
+      defaultLoadingStationId: "21819916",
       expiresAt: 100,
     });
 
@@ -42,6 +43,7 @@ describe("authSessionExpiry", () => {
       userId: "1234",
       role: Role.User,
       defaultCar: "BMW",
+      defaultLoadingStationId: "21819916",
       expiresAt: 1_000,
     });
     let now = 900;

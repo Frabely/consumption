@@ -1,4 +1,4 @@
-import {House, LoadingStation, User} from "@/common/models";
+import {House, User} from "@/common/models";
 import {
     DB_BUILDING_CONSUMPTION,
     DB_CARS,
@@ -25,11 +25,10 @@ import {
     loadMainPageData
 } from "@/reference-data/services/referenceDataLoader";
 import type {GetCarsFn} from "@/reference-data/services/referenceDataLoader";
-
-export const DEFAULT_LOADING_STATION: LoadingStation = {
-    id: '17498904',
-    name: 'carport'
-}
+export {
+    DEFAULT_LOADING_STATION,
+    ENTRANCE_LOADING_STATION_ID
+} from "@/utils/loadingStations/defaultLoadingStation";
 
 export let DEFAULT_HOUSE: House = {
     id: "",

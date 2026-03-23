@@ -6,6 +6,7 @@ import {
   parsePersistedAuthSession,
   validateAuthSessionContract,
 } from "@/utils/authentication/session/sessionContract";
+import { ENTRANCE_LOADING_STATION_ID } from "@/utils/loadingStations/defaultLoadingStation";
 
 describe("authSessionContract", () => {
   const validSession = {
@@ -13,6 +14,7 @@ describe("authSessionContract", () => {
     userId: "1234",
     role: Role.Admin,
     defaultCar: "Zoe",
+    defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
     expiresAt: 2_000_000_000_000,
   };
 
