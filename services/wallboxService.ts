@@ -8,62 +8,19 @@ export type WallboxSession = {
 
 export type WallboxApiStation = "entrance" | "carport";
 
-const STATION_REPORT_IDS: Record<WallboxApiStation, number> = {
-  entrance: 200,
-  carport: 100,
+type WallboxSessionApiResponse = {
+  reportId: number;
+  kWh: number;
+  started: number;
+  ended: number;
+  CardId: string;
 };
-const STATION_CARD_IDS: Record<WallboxApiStation, string> = {
-  entrance: "entrance0000000000",
-  carport: "ca598b0b00000000",
-};
-const MIN_END_OFFSET_MINUTES = 2;
-const MAX_END_OFFSET_MINUTES = 15;
-const MIN_CHARGING_DURATION_MINUTES = 20;
-const MAX_CHARGING_DURATION_MINUTES = 480;
-const MIN_CHARGING_POWER_KW = 2.3;
-const MAX_CHARGING_POWER_KW = 11;
-const MINUTES_PER_HOUR = 60;
-const SECONDS_PER_MINUTE = 60;
+
+const WALLBOX_API_BASE_URL = "http://f233.ahecht.de:65109";
+const MILLISECONDS_TIMESTAMP_THRESHOLD = 1_000_000_000_000;
 const MILLISECONDS_PER_SECOND = 1000;
 const WATT_HOURS_PER_KILOWATT_HOUR = 1000;
-const ENERGY_DECIMAL_PLACES = 2;
-
-/**
- * Returns a random integer within the inclusive range.
- * @param min The minimum allowed integer.
- * @param max The maximum allowed integer.
- * @returns A random integer between min and max.
- */
-const getRandomIntegerInRange = (min: number, max: number): number =>
-  Math.floor(Math.random() * (max - min + 1)) + min;
-
-/**
- * Returns a random decimal within the inclusive range.
- * @param min The minimum allowed value.
- * @param max The maximum allowed value.
- * @returns A random number between min and max.
- */
-const getRandomNumberInRange = (min: number, max: number): number =>
-  Math.random() * (max - min) + min;
-
-/**
- * Converts minutes to milliseconds.
- * @param minutes The amount of minutes to convert.
- * @returns The converted duration in milliseconds.
- */
-const minutesToMilliseconds = (minutes: number): number =>
-  minutes * SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
-
-/**
- * Rounds a numeric value to a fixed amount of decimal places.
- * @param value The number to round.
- * @param decimalPlaces The number of decimal places to keep.
- * @returns The rounded number.
- */
-const roundToDecimalPlaces = (value: number, decimalPlaces: number): number => {
-  const factor = 10 ** decimalPlaces;
-  return Math.round(value * factor) / factor;
-};
+const WALLBOX_KILOWATT_HOURS_DECIMAL_PLACES = 1;
 
 /**
  * Resolves the future endpoint path for a wallbox station.
@@ -72,54 +29,75 @@ const roundToDecimalPlaces = (value: number, decimalPlaces: number): number => {
  */
 export const resolveWallboxSessionEndpoint = (
   station: WallboxApiStation,
-): string => `/api/v1/sessions/${station}/latest`;
+): string => `${WALLBOX_API_BASE_URL}/api/v1/sessions/${station}/latest`;
 
 /**
- * Creates a plausible mock wallbox session payload for one station.
- * @param station Requested wallbox station.
- * @returns A mock wallbox session with recent timestamps and converted kWh.
+ * Converts a numeric API timestamp to a Date instance.
+ * @param timestamp Numeric timestamp in milliseconds or seconds.
+ * @returns Converted Date instance.
  */
-const createMockWallboxSession = (station: WallboxApiStation): WallboxSession => {
-  const endOffsetMinutes = getRandomIntegerInRange(
-    MIN_END_OFFSET_MINUTES,
-    MAX_END_OFFSET_MINUTES,
-  );
-  const chargingDurationMinutes = getRandomIntegerInRange(
-    MIN_CHARGING_DURATION_MINUTES,
-    MAX_CHARGING_DURATION_MINUTES,
-  );
-  const chargingPowerKw = getRandomNumberInRange(
-    MIN_CHARGING_POWER_KW,
-    MAX_CHARGING_POWER_KW,
-  );
+const convertApiTimestampToDate = (timestamp: number): Date => {
+  const normalizedTimestamp =
+    timestamp >= MILLISECONDS_TIMESTAMP_THRESHOLD
+      ? timestamp
+      : timestamp * MILLISECONDS_PER_SECOND;
+  return new Date(normalizedTimestamp);
+};
 
-  const endedTimestamp = Date.now() - minutesToMilliseconds(endOffsetMinutes);
-  const startedTimestamp =
-    endedTimestamp - minutesToMilliseconds(chargingDurationMinutes);
-  const chargingDurationHours = chargingDurationMinutes / MINUTES_PER_HOUR;
-  const energyWh =
-    chargingDurationHours * chargingPowerKw * WATT_HOURS_PER_KILOWATT_HOUR;
+/**
+ * Rounds a numeric value to the configured amount of decimal places.
+ * @param value Numeric value to round.
+ * @returns Rounded numeric value.
+ */
+const roundKilowattHours = (value: number): number =>
+  Number(value.toFixed(WALLBOX_KILOWATT_HOURS_DECIMAL_PLACES));
 
+/**
+ * Maps the raw wallbox API payload to the internal session model.
+ * @param response Raw wallbox API response.
+ * @returns Normalized wallbox session with Date values.
+ */
+const mapWallboxSessionResponse = (
+  response: WallboxSessionApiResponse,
+): WallboxSession => {
   return {
-    reportId: STATION_REPORT_IDS[station],
-    kWh: roundToDecimalPlaces(
-      energyWh / WATT_HOURS_PER_KILOWATT_HOUR,
-      ENERGY_DECIMAL_PLACES,
+    reportId: response.reportId,
+    kWh: roundKilowattHours(
+      response.kWh / WATT_HOURS_PER_KILOWATT_HOUR,
     ),
-    started: new Date(startedTimestamp),
-    ended: new Date(endedTimestamp),
-    CardId: STATION_CARD_IDS[station],
+    started: convertApiTimestampToDate(response.started),
+    ended: convertApiTimestampToDate(response.ended),
+    CardId: response.CardId,
   };
 };
 
 /**
- * Returns the latest wallbox session for the requested station.
- * @param station Requested wallbox station.
- * @returns The latest wallbox session payload.
+ * Fetches the latest wallbox session from a fully qualified endpoint.
+ * @param endpointUrl Fully qualified endpoint URL.
+ * @returns Normalized wallbox session payload.
  */
-export const getLatestWallboxSession = async (
-  station: WallboxApiStation,
+const fetchLatestWallboxSession = async (
+  endpointUrl: string,
 ): Promise<WallboxSession> => {
-  resolveWallboxSessionEndpoint(station);
-  return createMockWallboxSession(station);
+  const response = await fetch(endpointUrl, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`Wallbox session request failed with status ${response.status}`);
+  }
+
+  const payload = (await response.json()) as WallboxSessionApiResponse;
+  return mapWallboxSessionResponse(payload);
 };
+
+/**
+ * Returns the latest wallbox session for the entrance station.
+ * @returns The latest entrance wallbox session payload.
+ */
+export const getLatestEntranceWallboxSession = async (): Promise<WallboxSession> =>
+  fetchLatestWallboxSession(resolveWallboxSessionEndpoint("entrance"));
+
+/**
+ * Returns the latest wallbox session for the carport station.
+ * @returns The latest carport wallbox session payload.
+ */
+export const getLatestCarportWallboxSession = async (): Promise<WallboxSession> =>
+  fetchLatestWallboxSession(resolveWallboxSessionEndpoint("carport"));

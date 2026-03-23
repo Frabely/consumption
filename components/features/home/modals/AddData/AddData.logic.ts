@@ -1,7 +1,7 @@
 import type {LoadingStation} from "@/common/models";
 import type {WallboxApiStation, WallboxSession} from "@/services/wallboxService";
 
-const ENTRANCE_LOADING_STATION_NAME = "frontDoor";
+const ENTRANCE_LOADING_STATION_NAME = "entrance";
 const CARPORT_LOADING_STATION_NAME = "carport";
 const OFFICIAL_LOADING_STATION_NAME = "official";
 const WALLBOX_POWER_DECIMAL_PLACES = 2;

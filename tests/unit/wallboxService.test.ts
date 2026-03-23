@@ -1,77 +1,82 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { getLatestWallboxSession, resolveWallboxSessionEndpoint } from "@/services/wallboxService";
-
-const FIXED_NOW = new Date("2026-03-23T12:00:00.000Z");
-const MIN_END_OFFSET_MINUTES = 2;
-const MAX_END_OFFSET_MINUTES = 15;
-const MIN_CHARGING_DURATION_MINUTES = 20;
-const MAX_CHARGING_DURATION_MINUTES = 480;
-const MILLISECONDS_PER_MINUTE = 60 * 1000;
+import {
+  getLatestCarportWallboxSession,
+  getLatestEntranceWallboxSession,
+  resolveWallboxSessionEndpoint,
+} from "@/services/wallboxService";
 
 describe("wallboxService", () => {
-  it("returns a deterministic mock session when randomness is pinned to the minimum", async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(FIXED_NOW);
-
-    const randomSpy = vi
-      .spyOn(Math, "random")
-      .mockReturnValueOnce(0)
-      .mockReturnValueOnce(0)
-      .mockReturnValueOnce(0);
-
-    const result = await getLatestWallboxSession("carport");
-
-    expect(result).toEqual({
-      reportId: 100,
-      kWh: 0.77,
-      started: new Date(
-        FIXED_NOW.getTime() -
-          (MIN_END_OFFSET_MINUTES + MIN_CHARGING_DURATION_MINUTES) *
-            MILLISECONDS_PER_MINUTE,
-      ),
-      ended: new Date(
-        FIXED_NOW.getTime() - MIN_END_OFFSET_MINUTES * MILLISECONDS_PER_MINUTE,
-      ),
-      CardId: "ca598b0b00000000",
+  it("fetches the latest entrance session and converts millisecond timestamps to Date", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        reportId: 102,
+        kWh: 4749.3,
+        started: 1774263256033,
+        ended: 1774269951033,
+        CardId: "047c337ada488000",
+      }),
     });
+    vi.stubGlobal("fetch", fetchMock);
 
-    expect(randomSpy).toHaveBeenCalledTimes(3);
+    const result = await getLatestEntranceWallboxSession();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://f233.ahecht.de:65109/api/v1/sessions/entrance/latest",
+      { cache: "no-store" },
+    );
+    expect(result).toEqual({
+      reportId: 102,
+      kWh: 4.7,
+      started: new Date(1774263256033),
+      ended: new Date(1774269951033),
+      CardId: "047c337ada488000",
+    });
   });
 
-  it("returns a recent session with plausible timing and energy values", async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(FIXED_NOW);
+  it("fetches the latest carport session via the station-specific helper", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        reportId: 101,
+        kWh: 12.5,
+        started: 1774260000,
+        ended: 1774263600,
+        CardId: "carport-card",
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
 
-    const result = await getLatestWallboxSession("entrance");
-    const now = FIXED_NOW.getTime();
-    const endOffset = now - result.ended.getTime();
-    const chargingDuration = result.ended.getTime() - result.started.getTime();
+    const result = await getLatestCarportWallboxSession();
 
-    expect(result.reportId).toBe(200);
-    expect(result.CardId).toBe("entrance0000000000");
-    expect(result.started).toBeInstanceOf(Date);
-    expect(result.ended).toBeInstanceOf(Date);
-    expect(result.kWh).toBeGreaterThan(0);
-    expect(result.kWh).toBeLessThan(99.9);
-    expect(result.ended.getTime()).toBeLessThan(now);
-    expect(endOffset).toBeGreaterThanOrEqual(
-      MIN_END_OFFSET_MINUTES * MILLISECONDS_PER_MINUTE,
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://f233.ahecht.de:65109/api/v1/sessions/carport/latest",
+      { cache: "no-store" },
     );
-    expect(endOffset).toBeLessThanOrEqual(
-      MAX_END_OFFSET_MINUTES * MILLISECONDS_PER_MINUTE,
-    );
-    expect(result.started.getTime()).toBeLessThan(result.ended.getTime());
-    expect(chargingDuration).toBeGreaterThanOrEqual(
-      MIN_CHARGING_DURATION_MINUTES * MILLISECONDS_PER_MINUTE,
-    );
-    expect(chargingDuration).toBeLessThanOrEqual(
-      MAX_CHARGING_DURATION_MINUTES * MILLISECONDS_PER_MINUTE,
+    expect(result.kWh).toBe(0);
+    expect(result.started).toEqual(new Date(1774260000 * 1000));
+    expect(result.ended).toEqual(new Date(1774263600 * 1000));
+  });
+
+  it("throws when the wallbox API responds with a non-success status", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 503,
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(getLatestEntranceWallboxSession()).rejects.toThrow(
+      "Wallbox session request failed with status 503",
     );
   });
 
-  it("resolves future endpoint paths for each wallbox station", () => {
-    expect(resolveWallboxSessionEndpoint("entrance")).toBe("/api/v1/sessions/entrance/latest");
-    expect(resolveWallboxSessionEndpoint("carport")).toBe("/api/v1/sessions/carport/latest");
+  it("resolves absolute endpoint paths for each wallbox station", () => {
+    expect(resolveWallboxSessionEndpoint("entrance")).toBe(
+      "http://f233.ahecht.de:65109/api/v1/sessions/entrance/latest",
+    );
+    expect(resolveWallboxSessionEndpoint("carport")).toBe(
+      "http://f233.ahecht.de:65109/api/v1/sessions/carport/latest",
+    );
   });
 });

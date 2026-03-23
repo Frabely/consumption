@@ -36,7 +36,10 @@ import {
 } from "@/store/selectors";
 import {isKilometerValid, isPowerValid, parseIntegerOrNull} from "@/utils/validation/carDataValidation";
 import {setIsLoading} from "@/store/reducer/isLoading";
-import {getLatestWallboxSession} from "@/services/wallboxService";
+import {
+    getLatestCarportWallboxSession,
+    getLatestEntranceWallboxSession
+} from "@/services/wallboxService";
 import {
     resolveAddDataLoadingStations,
     resolveWallboxApiStation,
@@ -63,6 +66,10 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     const ended = useAppSelector(selectEnded)
     const changingData = useAppSelector(selectIsChangingData)
     const selectableStations = resolveAddDataLoadingStations(loadingStations)
+    const initialLoadingStation =
+        selectableStations.find(
+            (station) => station.id === currentUser.defaultLoadingStationId
+        ) ?? DEFAULT_LOADING_STATION
     const [isInputValid, setIsInputValid] = useState({
         kilometer: isKilometerValid({
             kilometer,
@@ -75,6 +82,19 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     const [disabled, setDisabled] = useState(true);
     const getLoadingStationLabel = (stationName: string): string =>
         language.loadingStation[stationName as keyof typeof language.loadingStation] ?? stationName;
+
+    /**
+     * Fetches the latest wallbox session for the selected station.
+     * @param wallboxStation Station slug supported by the wallbox API.
+     * @returns Latest wallbox session for the selected station.
+     */
+    const fetchWallboxSession = async (wallboxStation: "entrance" | "carport") => {
+        if (wallboxStation === "entrance") {
+            return getLatestEntranceWallboxSession()
+        }
+
+        return getLatestCarportWallboxSession()
+    }
 
     useEffect(() => {
         const isAddOrChangeModal =
@@ -116,7 +136,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 dispatch(setKilometer(currentCar.kilometer.toString()));
             }
             dispatch(setIsChangingData(false));
-            dispatch(setLoadingStation(DEFAULT_LOADING_STATION));
+            dispatch(setLoadingStation(initialLoadingStation));
             dispatch(setStarted(undefined))
             dispatch(setEnded(undefined))
             dispatch(setPower(""))
@@ -125,9 +145,14 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 power: false
             });
             const prefillDefaultWallbox = async (): Promise<void> => {
+                const defaultWallboxStation = resolveWallboxApiStation(initialLoadingStation)
+                if (!defaultWallboxStation) {
+                    return
+                }
+
                 dispatch(setIsLoading(true))
                 try {
-                    const latestSession = await getLatestWallboxSession("carport")
+                    const latestSession = await fetchWallboxSession(defaultWallboxStation)
                     dispatch(setPower(resolveWallboxPowerPrefill(latestSession)))
                     dispatch(setStarted(latestSession.started))
                     dispatch(setEnded(latestSession.ended))
@@ -146,7 +171,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 
             void prefillDefaultWallbox()
         }
-    }, [currentCar.kilometer, dispatch, modalState]);
+    }, [currentCar.kilometer, dispatch, initialLoadingStation, modalState]);
 
     useEffect(() => {
         if (currentCar.kilometer !== undefined) {
@@ -165,7 +190,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         if (currentCar.kilometer !== undefined)
             dispatch(setKilometer(currentCar.kilometer.toString()))
         dispatch(setIsChangingData(false))
-        dispatch(setLoadingStation(DEFAULT_LOADING_STATION))
+        dispatch(setLoadingStation(initialLoadingStation))
         dispatch(setStarted(undefined))
         dispatch(setEnded(undefined))
         setIsInputValid({
@@ -194,7 +219,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 
         dispatch(setIsLoading(true))
         try {
-            const latestSession = await getLatestWallboxSession(wallboxStation)
+            const latestSession = await fetchWallboxSession(wallboxStation)
             dispatch(setPower(resolveWallboxPowerPrefill(latestSession)))
             dispatch(setStarted(latestSession.started))
             dispatch(setEnded(latestSession.ended))

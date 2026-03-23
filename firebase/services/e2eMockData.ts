@@ -11,7 +11,7 @@ export const E2E_MOCK_CARS: Car[] = [
 
 export const E2E_MOCK_LOADING_STATIONS: LoadingStation[] = [
     {id: "station-1", name: "carport"},
-    {id: "station-2", name: "frontDoor"}
+    {id: "station-2", name: "entrance"}
 ];
 
 /**
