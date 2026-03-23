@@ -4,6 +4,7 @@ import {ENTRANCE_LOADING_STATION_ID} from "@/utils/loadingStations/defaultLoadin
 
 const E2E_MOCK_STORAGE_KEY = "consumption.e2e.mock-data";
 const AUTH_SESSION_STORAGE_KEY = "consumption.auth.session";
+const DEFAULT_E2E_LOADING_STATION_ID = ENTRANCE_LOADING_STATION_ID;
 
 export const E2E_MOCK_CARS: Car[] = [
     {name: "Zoe", kilometer: 12000, prevKilometer: 11900},
@@ -56,7 +57,7 @@ const resolveE2EDefaultCarFromSession = (): string | undefined => {
 
 /**
  * Resolves e2e default loading-station id from persisted auth session when available.
- * @returns Default loading-station id from persisted session or undefined.
+ * @returns Loading-station id from persisted session or undefined.
  */
 const resolveE2EDefaultLoadingStationIdFromSession = (): string | undefined => {
     if (typeof window === "undefined") {
@@ -70,7 +71,9 @@ const resolveE2EDefaultLoadingStationIdFromSession = (): string | undefined => {
 
     try {
         const parsed = JSON.parse(persistedSession) as { defaultLoadingStationId?: unknown };
-        return typeof parsed.defaultLoadingStationId === "string" ? parsed.defaultLoadingStationId : undefined;
+        return typeof parsed.defaultLoadingStationId === "string"
+            ? parsed.defaultLoadingStationId
+            : undefined;
     } catch {
         return undefined;
     }
@@ -86,6 +89,7 @@ export const createE2EMockUser = (userId: string): User => ({
     name: "Playwright User",
     role: Role.Admin,
     defaultCar: resolveE2EDefaultCarFromSession() ?? "Zoe",
-    defaultLoadingStationId: resolveE2EDefaultLoadingStationIdFromSession() ?? ENTRANCE_LOADING_STATION_ID
+    defaultLoadingStationId:
+        resolveE2EDefaultLoadingStationIdFromSession() ?? DEFAULT_E2E_LOADING_STATION_ID
 });
 

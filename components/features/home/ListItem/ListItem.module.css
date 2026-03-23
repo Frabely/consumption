@@ -93,6 +93,32 @@
     gap: 0.8rem;
 }
 
+.metaGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.28rem;
+    padding-top: 0.12rem;
+}
+
+.metaRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.metaLabel {
+    color: var(--text-color-muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.metaValue {
+    color: var(--text-color);
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-align: right;
+}
+
 .stationValue {
     color: var(--text-color-muted);
     font-size: 0.8rem;

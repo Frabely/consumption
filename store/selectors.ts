@@ -93,6 +93,22 @@ export const selectLoadingStation = (state: RootState) => state.loadingStation;
 export const selectDate = (state: RootState) => state.date;
 
 /**
+ * Selects optional modal started state.
+ * @param state Root redux state.
+ * @returns Optional modal started value.
+ */
+export const selectStarted = (state: RootState): Date | undefined =>
+  state.started ?? undefined;
+
+/**
+ * Selects optional modal ended state.
+ * @param state Root redux state.
+ * @returns Optional modal ended value.
+ */
+export const selectEnded = (state: RootState): Date | undefined =>
+  state.ended ?? undefined;
+
+/**
  * Selects modal id state.
  * @param state Root redux state.
  * @returns Modal identifier value.
