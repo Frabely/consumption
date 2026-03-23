@@ -7,7 +7,7 @@ import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
 import {addDataSetToCollection, changeDataSetInCollection, updateCarKilometer} from "@/firebase/functions";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useCallback, useEffect, useState} from "react";
 import Modal from "@/components/shared/overlay/Modal";
 import {DEFAULT_LOADING_STATION, ensureCarsLoaded, loadingStations} from "@/constants/constantData";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
@@ -82,6 +82,20 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     const [disabled, setDisabled] = useState(true);
     const getLoadingStationLabel = (stationName: string): string =>
         language.loadingStation[stationName as keyof typeof language.loadingStation] ?? stationName;
+
+    /**
+     * Clears wallbox-derived modal fields and keeps manual entry available.
+     * @returns No return value.
+     */
+    const resetWallboxPrefill = useCallback((): void => {
+        dispatch(setPower(''))
+        dispatch(setStarted(undefined))
+        dispatch(setEnded(undefined))
+        setIsInputValid((currentValidity) => ({
+            ...currentValidity,
+            power: false
+        }))
+    }, [dispatch])
 
     /**
      * Fetches the latest wallbox session for the selected station.
@@ -160,10 +174,8 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                         kilometer: false,
                         power: true
                     })
-                } catch (error) {
-                    dispatch(setStarted(undefined))
-                    dispatch(setEnded(undefined))
-                    console.error(error)
+                } catch {
+                    resetWallboxPrefill()
                 } finally {
                     dispatch(setIsLoading(false))
                 }
@@ -171,7 +183,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 
             void prefillDefaultWallbox()
         }
-    }, [currentCar.kilometer, dispatch, initialLoadingStation, modalState]);
+    }, [currentCar.kilometer, dispatch, initialLoadingStation, modalState, resetWallboxPrefill]);
 
     useEffect(() => {
         if (currentCar.kilometer !== undefined) {
@@ -207,13 +219,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     async function refreshWallboxPrefill(nextLoadingStation: typeof loadingStation): Promise<void> {
         const wallboxStation = resolveWallboxApiStation(nextLoadingStation)
         if (!wallboxStation) {
-            dispatch(setPower(''))
-            dispatch(setStarted(undefined))
-            dispatch(setEnded(undefined))
-            setIsInputValid({
-                ...isInputValid,
-                power: false
-            })
+            resetWallboxPrefill()
             return
         }
 
@@ -227,10 +233,8 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 ...isInputValid,
                 power: true
             })
-        } catch (error) {
-            dispatch(setStarted(undefined))
-            dispatch(setEnded(undefined))
-            console.error(error)
+        } catch {
+            resetWallboxPrefill()
         } finally {
             dispatch(setIsLoading(false))
         }
