@@ -78,8 +78,9 @@ const mapWallboxSessionResponse = (
  */
 const fetchLatestWallboxSession = async (
   endpointUrl: string,
+  signal?: AbortSignal,
 ): Promise<WallboxSession> => {
-  const response = await fetch(endpointUrl, { cache: "no-store" });
+  const response = await fetch(endpointUrl, { cache: "no-store", signal });
   if (!response.ok) {
     throw new Error(`Wallbox session request failed with status ${response.status}`);
   }
@@ -90,14 +91,20 @@ const fetchLatestWallboxSession = async (
 
 /**
  * Returns the latest wallbox session for the entrance station.
+ * @param signal Optional abort signal for request cancellation.
  * @returns The latest entrance wallbox session payload.
  */
-export const getLatestEntranceWallboxSession = async (): Promise<WallboxSession> =>
-  fetchLatestWallboxSession(resolveWallboxSessionEndpoint("entrance"));
+export const getLatestEntranceWallboxSession = async (
+  signal?: AbortSignal,
+): Promise<WallboxSession> =>
+  fetchLatestWallboxSession(resolveWallboxSessionEndpoint("entrance"), signal);
 
 /**
  * Returns the latest wallbox session for the carport station.
+ * @param signal Optional abort signal for request cancellation.
  * @returns The latest carport wallbox session payload.
  */
-export const getLatestCarportWallboxSession = async (): Promise<WallboxSession> =>
-  fetchLatestWallboxSession(resolveWallboxSessionEndpoint("carport"));
+export const getLatestCarportWallboxSession = async (
+  signal?: AbortSignal,
+): Promise<WallboxSession> =>
+  fetchLatestWallboxSession(resolveWallboxSessionEndpoint("carport"), signal);

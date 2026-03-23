@@ -148,7 +148,7 @@ describe("carDataService", () => {
         expect(result[1].data.ended).toBeUndefined();
     });
 
-    it("writes rounded power and optional session timestamps", async () => {
+    it("writes power with four decimal places and optional session timestamps", async () => {
         firestoreMocks.addDoc.mockResolvedValue({});
         firestoreMocks.updateDoc.mockResolvedValue(undefined);
         const started = new Date("2026-02-18T08:00:00.000Z");
@@ -178,7 +178,7 @@ describe("carDataService", () => {
         expect(firestoreMocks.addDoc).toHaveBeenCalledWith(
             expect.anything(),
             expect.objectContaining({
-                power: "15.6",
+                power: "15.5600",
                 started,
                 ended
             })
@@ -186,7 +186,7 @@ describe("carDataService", () => {
         expect(firestoreMocks.updateDoc).toHaveBeenCalledWith(
             expect.anything(),
             expect.objectContaining({
-                power: "22.3",
+                power: "22.3400",
                 started,
                 ended
             })

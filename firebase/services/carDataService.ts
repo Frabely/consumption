@@ -31,6 +31,16 @@ type ConsumptionDocumentBetweenMonths = {
     data: ConsumptionDocumentData;
 };
 
+const POWER_DECIMAL_PLACES = 4;
+
+/**
+ * Formats a persisted power value with a stable decimal precision.
+ * @param power Power value in kWh.
+ * @returns Stringified power value with configured decimal places.
+ */
+const formatPersistedPower = (power: number): string =>
+    power.toFixed(POWER_DECIMAL_PLACES);
+
 /**
  * Resolves an optional Firestore timestamp-like value to a Date instance.
  * @param value Firestore field value or undefined.
@@ -165,11 +175,10 @@ export const addDataSetToCollection = async (carName: string, dataSet: DataSetNo
     const consumptionDataRef = collection(db,
         `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}/${date.getFullYear().toString()}/${monthString}`
     );
-    const decimalPower = (Math.round(power * 100) / 100).toFixed(1);
     await addDoc(consumptionDataRef, {
         date,
         kilometer,
-        power: decimalPower,
+        power: formatPersistedPower(power),
         name,
         loadingStationId: loadingStation.id,
         ...(started ? {started} : {}),
@@ -196,10 +205,9 @@ export const changeDataSetInCollection = async (
     const consumptionDataRef = doc(db,
         `${DB_CARS}/${carName}/${DB_DATA_SET_COLLECTION_KEY}/${date.getFullYear().toString()}/${monthString}/${id}`
     );
-    const decimalPower = (Math.round(power * 100) / 100).toFixed(1);
     await updateDoc(consumptionDataRef, {
         kilometer,
-        power: decimalPower,
+        power: formatPersistedPower(power),
         loadingStationId: loadingStation.id,
         ...(started ? {started} : {}),
         ...(ended ? {ended} : {})

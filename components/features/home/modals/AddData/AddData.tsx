@@ -7,7 +7,7 @@ import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setPower} from "@/store/reducer/modal/power";
 import {addDataSetToCollection, changeDataSetInCollection, updateCarKilometer} from "@/firebase/functions";
 import {setIsChangingData} from "@/store/reducer/isChangingData";
-import {ChangeEvent, useCallback, useEffect, useState} from "react";
+import {ChangeEvent, useCallback, useEffect, useRef, useState} from "react";
 import Modal from "@/components/shared/overlay/Modal";
 import {ensureCarsLoaded, loadingStations} from "@/constants/constantData";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
@@ -83,35 +83,100 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         power: isPowerValid(power)
     })
     const [disabled, setDisabled] = useState(true);
+    const hasInitializedAddModalRef = useRef(false)
+    const activeWallboxRequestRef = useRef<AbortController | null>(null)
     const getLoadingStationLabel = (stationName: string): string =>
         language.loadingStation[stationName as keyof typeof language.loadingStation] ?? stationName;
+
+    /**
+     * Aborts the currently active wallbox request when present.
+     * @returns No return value.
+     */
+    const abortActiveWallboxRequest = useCallback((): void => {
+        if (activeWallboxRequestRef.current) {
+            activeWallboxRequestRef.current.abort()
+            activeWallboxRequestRef.current = null
+        }
+        dispatch(setIsLoading(false))
+    }, [dispatch])
 
     /**
      * Clears wallbox-derived modal fields and keeps manual entry available.
      * @returns No return value.
      */
     const resetWallboxPrefill = useCallback((): void => {
+        abortActiveWallboxRequest()
         dispatch(setPower(''))
         dispatch(setStarted(undefined))
         dispatch(setEnded(undefined))
+        dispatch(setIsLoading(false))
         setIsInputValid((currentValidity) => ({
             ...currentValidity,
             power: false
         }))
-    }, [dispatch])
+    }, [abortActiveWallboxRequest, dispatch])
 
     /**
      * Fetches the latest wallbox session for the selected station.
      * @param wallboxStation Station slug supported by the wallbox API.
      * @returns Latest wallbox session for the selected station.
      */
-    const fetchWallboxSession = async (wallboxStation: "entrance" | "carport") => {
+    const fetchWallboxSession = async (
+        wallboxStation: "entrance" | "carport",
+        signal?: AbortSignal
+    ) => {
         if (wallboxStation === "entrance") {
-            return getLatestEntranceWallboxSession()
+            return getLatestEntranceWallboxSession(signal)
         }
 
-        return getLatestCarportWallboxSession()
+        return getLatestCarportWallboxSession(signal)
     }
+
+    /**
+     * Fetches and applies the latest wallbox session for a loading station.
+     * @param nextLoadingStation Loading station used to resolve the wallbox endpoint.
+     * @returns Promise resolved when the prefill attempt is complete.
+     */
+    const runWallboxPrefill = useCallback(async (
+        nextLoadingStation: typeof loadingStation
+    ): Promise<void> => {
+        const wallboxStation = resolveWallboxApiStation(nextLoadingStation)
+        if (!wallboxStation) {
+            resetWallboxPrefill()
+            return
+        }
+
+        abortActiveWallboxRequest()
+        const abortController = new AbortController()
+        activeWallboxRequestRef.current = abortController
+        dispatch(setIsLoading(true))
+
+        try {
+            const latestSession = await fetchWallboxSession(wallboxStation, abortController.signal)
+            if (activeWallboxRequestRef.current !== abortController) {
+                return
+            }
+
+            dispatch(setPower(resolveWallboxPowerPrefill(latestSession)))
+            dispatch(setStarted(latestSession.started))
+            dispatch(setEnded(latestSession.ended))
+            setIsInputValid((currentValidity) => ({
+                ...currentValidity,
+                power: true
+            }))
+        } catch (error) {
+            if (abortController.signal.aborted) {
+                return
+            }
+
+            resetWallboxPrefill()
+        } finally {
+            if (activeWallboxRequestRef.current === abortController) {
+                activeWallboxRequestRef.current = null
+                dispatch(setIsLoading(false))
+            }
+        }
+    }, [abortActiveWallboxRequest, dispatch, resetWallboxPrefill])
 
     useEffect(() => {
         const isAddOrChangeModal =
@@ -148,45 +213,31 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     }, [currentCar.kilometer, currentCar.name, currentUser.defaultCar, dispatch, modalState])
 
     useEffect(() => {
-        if (modalState === ModalState.AddCarData) {
-            if (currentCar.kilometer !== undefined) {
-                dispatch(setKilometer(currentCar.kilometer.toString()));
-            }
-            dispatch(setIsChangingData(false));
-            dispatch(setLoadingStation(initialLoadingStation));
-            dispatch(setStarted(undefined))
-            dispatch(setEnded(undefined))
-            dispatch(setPower(""))
-            setIsInputValid({
-                kilometer: false,
-                power: false
-            });
-            const prefillDefaultWallbox = async (): Promise<void> => {
-                const defaultWallboxStation = resolveWallboxApiStation(initialLoadingStation)
-                if (!defaultWallboxStation) {
-                    return
-                }
-
-                dispatch(setIsLoading(true))
-                try {
-                    const latestSession = await fetchWallboxSession(defaultWallboxStation)
-                    dispatch(setPower(resolveWallboxPowerPrefill(latestSession)))
-                    dispatch(setStarted(latestSession.started))
-                    dispatch(setEnded(latestSession.ended))
-                    setIsInputValid({
-                        kilometer: false,
-                        power: true
-                    })
-                } catch {
-                    resetWallboxPrefill()
-                } finally {
-                    dispatch(setIsLoading(false))
-                }
-            }
-
-            void prefillDefaultWallbox()
+        if (modalState !== ModalState.AddCarData) {
+            hasInitializedAddModalRef.current = false
+            abortActiveWallboxRequest()
+            return
         }
-    }, [currentCar.kilometer, dispatch, initialLoadingStation, modalState, resetWallboxPrefill]);
+
+        if (hasInitializedAddModalRef.current) {
+            return
+        }
+        hasInitializedAddModalRef.current = true
+
+        if (currentCar.kilometer !== undefined) {
+            dispatch(setKilometer(currentCar.kilometer.toString()));
+        }
+        dispatch(setIsChangingData(false));
+        dispatch(setLoadingStation(initialLoadingStation));
+        dispatch(setStarted(undefined))
+        dispatch(setEnded(undefined))
+        dispatch(setPower(""))
+        setIsInputValid({
+            kilometer: false,
+            power: false
+        });
+        void runWallboxPrefill(initialLoadingStation)
+    }, [abortActiveWallboxRequest, currentCar.kilometer, dispatch, initialLoadingStation, modalState, runWallboxPrefill]);
 
     useEffect(() => {
         if (currentCar.kilometer !== undefined) {
@@ -220,26 +271,10 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
      * @returns Promise resolved when the prefill attempt is complete.
      */
     async function refreshWallboxPrefill(nextLoadingStation: typeof loadingStation): Promise<void> {
-        const wallboxStation = resolveWallboxApiStation(nextLoadingStation)
-        if (!wallboxStation) {
-            resetWallboxPrefill()
-            return
-        }
-
-        dispatch(setIsLoading(true))
         try {
-            const latestSession = await fetchWallboxSession(wallboxStation)
-            dispatch(setPower(resolveWallboxPowerPrefill(latestSession)))
-            dispatch(setStarted(latestSession.started))
-            dispatch(setEnded(latestSession.ended))
-            setIsInputValid({
-                ...isInputValid,
-                power: true
-            })
+            await runWallboxPrefill(nextLoadingStation)
         } catch {
-            resetWallboxPrefill()
-        } finally {
-            dispatch(setIsLoading(false))
+            // Request errors already reset the prefill state; keep the dialog usable.
         }
     }
 

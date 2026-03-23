@@ -143,6 +143,7 @@ async function buildComponent({
             ...actual,
             useCallback: (callback: (...args: unknown[]) => unknown) => callback,
             useEffect,
+            useRef: (initialValue: unknown) => ({current: initialValue}),
             useState: (initialValue: unknown) => {
                 useStateCalls += 1;
                 if (useStateCalls === 1) {
