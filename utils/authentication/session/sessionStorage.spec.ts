@@ -12,6 +12,7 @@ import {
   readPersistedAuthSession,
   StorageLike,
 } from "@/utils/authentication/session/sessionStorage";
+import { ENTRANCE_LOADING_STATION_ID } from "@/utils/loadingStations/defaultLoadingStation";
 
 const createMemoryStorage = (): StorageLike => {
   const store = new Map<string, string>();
@@ -32,6 +33,7 @@ describe("authSessionStorage", () => {
       key: "1234",
       role: Role.Admin,
       defaultCar: "Zoe",
+      defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
     };
     const now = 1_700_000_000_000;
 
@@ -42,6 +44,7 @@ describe("authSessionStorage", () => {
       userId: "1234",
       role: Role.Admin,
       defaultCar: "Zoe",
+      defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
       expiresAt: now + AUTH_SESSION_TTL_MS,
     });
   });
@@ -63,6 +66,7 @@ describe("authSessionStorage", () => {
       userId: "7777",
       role: Role.User,
       defaultCar: "BMW",
+      defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
       expiresAt: 1_900_000_000_000,
     };
 

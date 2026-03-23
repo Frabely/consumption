@@ -14,6 +14,7 @@ import {
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import { setCurrentUser } from "@/store/reducer/currentUser";
 import { setAuthStatusAuthenticated } from "@/store/reducer/authStatus";
+import { ENTRANCE_LOADING_STATION_ID } from "@/utils/loadingStations/defaultLoadingStation";
 
 type ElementLike = {
   type: unknown;
@@ -130,6 +131,7 @@ describe("login", () => {
       name: "Test",
       role: Role.User,
       defaultCar: CarNames.BMW,
+      defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
     };
     const dispatch = vi.fn();
     const checkUserIdFn = vi.fn().mockResolvedValue(user);
@@ -164,6 +166,7 @@ describe("login", () => {
       name: "Test",
       role: Role.User,
       defaultCar: CarNames.BMW,
+      defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
     };
     const dispatch = vi.fn();
     const checkUserIdFn = vi.fn().mockResolvedValue(user);
@@ -191,7 +194,12 @@ describe("login", () => {
 
   it("does not persist session if build function returns null", async () => {
     const dispatch = vi.fn();
-    const user: User = { key: "1234", name: "Test", defaultCar: CarNames.BMW };
+    const user: User = {
+      key: "1234",
+      name: "Test",
+      defaultCar: CarNames.BMW,
+      defaultLoadingStationId: ENTRANCE_LOADING_STATION_ID,
+    };
     const checkUserIdFn = vi.fn().mockResolvedValue(user);
     const buildPersistedAuthSessionFn = vi.fn().mockReturnValue(null);
     const persistAuthSessionFn = vi.fn();

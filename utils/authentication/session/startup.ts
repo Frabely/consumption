@@ -132,6 +132,7 @@ export const applyAuthStartupDecision = ({
         key: decision.session.userId,
         role: decision.session.role,
         defaultCar: decision.session.defaultCar,
+        defaultLoadingStationId: decision.session.defaultLoadingStationId,
       }),
     );
     dispatch(setCurrentCar({ name: decision.session.defaultCar }));

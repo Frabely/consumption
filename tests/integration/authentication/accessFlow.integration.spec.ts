@@ -33,6 +33,7 @@ describe("auth access flow integration", () => {
         userId: "admin-1",
         role: Role.Admin,
         defaultCar: "Zoe",
+        defaultLoadingStationId: "21819916",
         expiresAt: now + 60_000,
       }),
     );
@@ -51,6 +52,7 @@ describe("auth access flow integration", () => {
         key: "admin-1",
         role: Role.Admin,
         defaultCar: "Zoe",
+        defaultLoadingStationId: "21819916",
       }),
     );
     expect(dispatch).toHaveBeenCalledWith(setCurrentCar({ name: "Zoe" }));
@@ -75,6 +77,7 @@ describe("auth access flow integration", () => {
         userId: "user-1",
         role: Role.User,
         defaultCar: "BMW",
+        defaultLoadingStationId: "21819916",
         expiresAt: now + 60_000,
       }),
     );
@@ -101,6 +104,7 @@ describe("auth access flow integration", () => {
         userId: "user-1",
         role: Role.Admin,
         defaultCar: "Zoe",
+        defaultLoadingStationId: "21819916",
         expiresAt: now - 1,
       }),
     );

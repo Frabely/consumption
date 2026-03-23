@@ -55,6 +55,14 @@ const hasValidBaseFields = (
     issues.push(AUTH_SESSION_CONTRACT_ISSUES.INVALID_DEFAULT_CAR);
   }
   if (
+    typeof session.defaultLoadingStationId !== "string" ||
+    session.defaultLoadingStationId.trim().length === 0
+  ) {
+    issues.push(
+      AUTH_SESSION_CONTRACT_ISSUES.INVALID_DEFAULT_LOADING_STATION_ID,
+    );
+  }
+  if (
     typeof session.expiresAt !== "number" ||
     !Number.isFinite(session.expiresAt) ||
     session.expiresAt <= 0

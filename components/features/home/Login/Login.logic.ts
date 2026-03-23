@@ -14,6 +14,7 @@ import {
   createAuthTelemetryEvent,
   emitAuthTelemetryEvent,
 } from "@/utils/authentication/telemetry/telemetry";
+import {withEffectiveDefaultLoadingStation} from "@/utils/loadingStations/defaultLoadingStation";
 
 export type LoginDispatchAction =
   | ReturnType<typeof setCurrentCar>
@@ -151,10 +152,10 @@ export const handleLoginInput = async ({
     dispatch(setCurrentCar(car));
   }
 
-  const sessionUser: User = {
+  const sessionUser = withEffectiveDefaultLoadingStation({
     ...user,
     defaultCar: car?.name ?? user.defaultCar,
-  };
+  });
   const session = buildPersistedAuthSessionFn(sessionUser);
   if (session) {
     persistAuthSessionFn({ session });
