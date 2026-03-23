@@ -41,6 +41,8 @@ export default function Display({}: DisplayProps) {
                             <ListItem key={dataSet.id}
                                       kilometer={dataSet.kilometer}
                                       date={dataSet.date}
+                                      started={dataSet.started}
+                                      ended={dataSet.ended}
                                       name={dataSet.name}
                                       power={dataSet.power}
                                       id={dataSet.id}

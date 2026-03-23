@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { getCurrentWallboxSession } from "@/services/wallboxService";
+import { getLatestWallboxSession, resolveWallboxSessionEndpoint } from "@/services/wallboxService";
 
 const FIXED_NOW = new Date("2026-03-23T12:00:00.000Z");
 const MIN_END_OFFSET_MINUTES = 2;
@@ -20,7 +20,7 @@ describe("wallboxService", () => {
       .mockReturnValueOnce(0)
       .mockReturnValueOnce(0);
 
-    const result = await getCurrentWallboxSession();
+    const result = await getLatestWallboxSession("carport");
 
     expect(result).toEqual({
       reportId: 100,
@@ -43,13 +43,13 @@ describe("wallboxService", () => {
     vi.useFakeTimers();
     vi.setSystemTime(FIXED_NOW);
 
-    const result = await getCurrentWallboxSession();
+    const result = await getLatestWallboxSession("entrance");
     const now = FIXED_NOW.getTime();
     const endOffset = now - result.ended.getTime();
     const chargingDuration = result.ended.getTime() - result.started.getTime();
 
-    expect(result.reportId).toBe(100);
-    expect(result.CardId).toBe("ca598b0b00000000");
+    expect(result.reportId).toBe(200);
+    expect(result.CardId).toBe("entrance0000000000");
     expect(result.started).toBeInstanceOf(Date);
     expect(result.ended).toBeInstanceOf(Date);
     expect(result.kWh).toBeGreaterThan(0);
@@ -68,5 +68,10 @@ describe("wallboxService", () => {
     expect(chargingDuration).toBeLessThanOrEqual(
       MAX_CHARGING_DURATION_MINUTES * MILLISECONDS_PER_MINUTE,
     );
+  });
+
+  it("resolves future endpoint paths for each wallbox station", () => {
+    expect(resolveWallboxSessionEndpoint("entrance")).toBe("/api/v1/sessions/entrance/latest");
+    expect(resolveWallboxSessionEndpoint("carport")).toBe("/api/v1/sessions/carport/latest");
   });
 });

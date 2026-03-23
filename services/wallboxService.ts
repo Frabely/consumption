@@ -6,8 +6,16 @@ export type WallboxSession = {
   CardId: string;
 };
 
-const FIXED_REPORT_ID = 100;
-const FIXED_CARD_ID = "ca598b0b00000000";
+export type WallboxApiStation = "entrance" | "carport";
+
+const STATION_REPORT_IDS: Record<WallboxApiStation, number> = {
+  entrance: 200,
+  carport: 100,
+};
+const STATION_CARD_IDS: Record<WallboxApiStation, string> = {
+  entrance: "entrance0000000000",
+  carport: "ca598b0b00000000",
+};
 const MIN_END_OFFSET_MINUTES = 2;
 const MAX_END_OFFSET_MINUTES = 15;
 const MIN_CHARGING_DURATION_MINUTES = 20;
@@ -58,12 +66,20 @@ const roundToDecimalPlaces = (value: number, decimalPlaces: number): number => {
 };
 
 /**
- * Creates a plausible mock wallbox session payload.
- * The upstream timestamp shape uses Unix milliseconds, so the service converts
- * those values immediately into Date instances.
+ * Resolves the future endpoint path for a wallbox station.
+ * @param station Requested wallbox station.
+ * @returns Endpoint path segment for the station.
+ */
+export const resolveWallboxSessionEndpoint = (
+  station: WallboxApiStation,
+): string => `/api/v1/sessions/${station}/latest`;
+
+/**
+ * Creates a plausible mock wallbox session payload for one station.
+ * @param station Requested wallbox station.
  * @returns A mock wallbox session with recent timestamps and converted kWh.
  */
-const createMockWallboxSession = (): WallboxSession => {
+const createMockWallboxSession = (station: WallboxApiStation): WallboxSession => {
   const endOffsetMinutes = getRandomIntegerInRange(
     MIN_END_OFFSET_MINUTES,
     MAX_END_OFFSET_MINUTES,
@@ -85,20 +101,25 @@ const createMockWallboxSession = (): WallboxSession => {
     chargingDurationHours * chargingPowerKw * WATT_HOURS_PER_KILOWATT_HOUR;
 
   return {
-    reportId: FIXED_REPORT_ID,
+    reportId: STATION_REPORT_IDS[station],
     kWh: roundToDecimalPlaces(
       energyWh / WATT_HOURS_PER_KILOWATT_HOUR,
       ENERGY_DECIMAL_PLACES,
     ),
     started: new Date(startedTimestamp),
     ended: new Date(endedTimestamp),
-    CardId: FIXED_CARD_ID,
+    CardId: STATION_CARD_IDS[station],
   };
 };
 
 /**
- * Returns the current mock wallbox session.
- * @returns The current mock wallbox session payload.
+ * Returns the latest wallbox session for the requested station.
+ * @param station Requested wallbox station.
+ * @returns The latest wallbox session payload.
  */
-export const getCurrentWallboxSession = async (): Promise<WallboxSession> =>
-  createMockWallboxSession();
+export const getLatestWallboxSession = async (
+  station: WallboxApiStation,
+): Promise<WallboxSession> => {
+  resolveWallboxSessionEndpoint(station);
+  return createMockWallboxSession(station);
+};

@@ -5,6 +5,8 @@ import {setId} from "@/store/reducer/modal/id";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {setPower} from "@/store/reducer/modal/power";
+import {setStarted} from "@/store/reducer/modal/started";
+import {setEnded} from "@/store/reducer/modal/ended";
 import {setModalState} from "@/store/reducer/modalState";
 import {ModalState, Role} from "@/constants/enums";
 
@@ -83,10 +85,12 @@ describe("ListItem logic", () => {
 
         expect(dispatch).toHaveBeenNthCalledWith(1, setModalState(ModalState.ChangeCarData));
         expect(dispatch).toHaveBeenNthCalledWith(2, setDate(date));
-        expect(dispatch).toHaveBeenNthCalledWith(3, setKilometer("1234"));
-        expect(dispatch).toHaveBeenNthCalledWith(4, setPower("56"));
-        expect(dispatch).toHaveBeenNthCalledWith(5, setId("id-1"));
-        expect(dispatch).toHaveBeenNthCalledWith(6, setLoadingStation(loadingStation));
+        expect(dispatch).toHaveBeenNthCalledWith(3, setStarted(undefined));
+        expect(dispatch).toHaveBeenNthCalledWith(4, setEnded(undefined));
+        expect(dispatch).toHaveBeenNthCalledWith(5, setKilometer("1234"));
+        expect(dispatch).toHaveBeenNthCalledWith(6, setPower("56"));
+        expect(dispatch).toHaveBeenNthCalledWith(7, setId("id-1"));
+        expect(dispatch).toHaveBeenNthCalledWith(8, setLoadingStation(loadingStation));
     });
 
     it("renders list item values in the component", async () => {

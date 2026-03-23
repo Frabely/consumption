@@ -11,6 +11,8 @@ import {ChangeEvent, useEffect, useState} from "react";
 import Modal from "@/components/shared/overlay/Modal";
 import {DEFAULT_LOADING_STATION, ensureCarsLoaded, loadingStations} from "@/constants/constantData";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
+import {setStarted} from "@/store/reducer/modal/started";
+import {setEnded} from "@/store/reducer/modal/ended";
 import type {Translations} from "@/i18n/types";
 import {setCurrentCar, updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
 import {setDate} from "@/store/reducer/modal/date";
@@ -23,16 +25,29 @@ import {
     selectCurrentCar,
     selectCurrentUser,
     selectDate,
+    selectEnded,
     selectId,
     selectIsChangingData,
     selectKilometer,
     selectLoadingStation,
     selectModalState,
-    selectPower
+    selectPower,
+    selectStarted
 } from "@/store/selectors";
 import {isKilometerValid, isPowerValid, parseIntegerOrNull} from "@/utils/validation/carDataValidation";
 import {setIsLoading} from "@/store/reducer/isLoading";
+import {getLatestWallboxSession} from "@/services/wallboxService";
+import {
+    resolveAddDataLoadingStations,
+    resolveWallboxApiStation,
+    resolveWallboxPowerPrefill
+} from "@/components/features/home/modals/AddData/AddData.logic";
 
+/**
+ * Renders the add/change data modal and coordinates wallbox-based prefills.
+ * @param props Modal props.
+ * @returns Rendered add/change data modal.
+ */
 export default function AddData({prevKilometers}: AddDataModalProps) {
     const language: Translations = de
     const dispatch = useAppDispatch()
@@ -44,7 +59,10 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     const loadingStation = useAppSelector(selectLoadingStation)
     const id = useAppSelector(selectId)
     const date = useAppSelector(selectDate)
+    const started = useAppSelector(selectStarted)
+    const ended = useAppSelector(selectEnded)
     const changingData = useAppSelector(selectIsChangingData)
+    const selectableStations = resolveAddDataLoadingStations(loadingStations)
     const [isInputValid, setIsInputValid] = useState({
         kilometer: isKilometerValid({
             kilometer,
@@ -94,16 +112,39 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
 
     useEffect(() => {
         if (modalState === ModalState.AddCarData) {
-            dispatch(setPower(""));
             if (currentCar.kilometer !== undefined) {
                 dispatch(setKilometer(currentCar.kilometer.toString()));
             }
             dispatch(setIsChangingData(false));
             dispatch(setLoadingStation(DEFAULT_LOADING_STATION));
+            dispatch(setStarted(undefined))
+            dispatch(setEnded(undefined))
+            dispatch(setPower(""))
             setIsInputValid({
                 kilometer: false,
                 power: false
             });
+            const prefillDefaultWallbox = async (): Promise<void> => {
+                dispatch(setIsLoading(true))
+                try {
+                    const latestSession = await getLatestWallboxSession("carport")
+                    dispatch(setPower(resolveWallboxPowerPrefill(latestSession)))
+                    dispatch(setStarted(latestSession.started))
+                    dispatch(setEnded(latestSession.ended))
+                    setIsInputValid({
+                        kilometer: false,
+                        power: true
+                    })
+                } catch (error) {
+                    dispatch(setStarted(undefined))
+                    dispatch(setEnded(undefined))
+                    console.error(error)
+                } finally {
+                    dispatch(setIsLoading(false))
+                }
+            }
+
+            void prefillDefaultWallbox()
         }
     }, [currentCar.kilometer, dispatch, modalState]);
 
@@ -125,10 +166,49 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             dispatch(setKilometer(currentCar.kilometer.toString()))
         dispatch(setIsChangingData(false))
         dispatch(setLoadingStation(DEFAULT_LOADING_STATION))
+        dispatch(setStarted(undefined))
+        dispatch(setEnded(undefined))
         setIsInputValid({
             kilometer: false,
             power: false
         })
+    }
+
+    /**
+     * Refreshes wallbox-derived modal values for the selected station.
+     * @param nextLoadingStation Newly selected loading station.
+     * @returns Promise resolved when the prefill attempt is complete.
+     */
+    async function refreshWallboxPrefill(nextLoadingStation: typeof loadingStation): Promise<void> {
+        const wallboxStation = resolveWallboxApiStation(nextLoadingStation)
+        if (!wallboxStation) {
+            dispatch(setPower(''))
+            dispatch(setStarted(undefined))
+            dispatch(setEnded(undefined))
+            setIsInputValid({
+                ...isInputValid,
+                power: false
+            })
+            return
+        }
+
+        dispatch(setIsLoading(true))
+        try {
+            const latestSession = await getLatestWallboxSession(wallboxStation)
+            dispatch(setPower(resolveWallboxPowerPrefill(latestSession)))
+            dispatch(setStarted(latestSession.started))
+            dispatch(setEnded(latestSession.ended))
+            setIsInputValid({
+                ...isInputValid,
+                power: true
+            })
+        } catch (error) {
+            dispatch(setStarted(undefined))
+            dispatch(setEnded(undefined))
+            console.error(error)
+        } finally {
+            dispatch(setIsLoading(false))
+        }
     }
 
     const onAddDataClickHandler = async () => {
@@ -146,7 +226,9 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     kilometer: kilometerValue,
                     power: parseFloat(power),
                     name: currentUser.name ? currentUser.name : '',
-                    loadingStation
+                    loadingStation,
+                    started,
+                    ended
                 })
                 await updateCarKilometer(currentCar.name, kilometerValue, carKilometersPreUpdate)
                 dispatch(setModalStateNone())
@@ -171,7 +253,9 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     power: parseFloat(power),
                     kilometer: kilometerValue,
                     loadingStation,
-                    id
+                    id,
+                    started,
+                    ended
                 })
                 await updateCarKilometer(currentCar.name, kilometerValue)
                 dispatch(setModalStateNone())
@@ -229,8 +313,14 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         if (!key) {
             return
         }
-        const selectedLoadingStation = loadingStations.filter((loadingStation => loadingStation.id === key))[0]
+        const selectedLoadingStation = selectableStations.filter((loadingStation => loadingStation.id === key))[0]
+        if (!selectedLoadingStation) {
+            return
+        }
         dispatch(setLoadingStation(selectedLoadingStation))
+        if (!changingData) {
+            void refreshWallboxPrefill(selectedLoadingStation)
+        }
     }
 
     return (
@@ -244,9 +334,9 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     <div className={styles.selectField}>
                         <CustomSelect
                             onChange={onLoadingStationChangeHandler}
-                            defaultValue={changingData ? getLoadingStationLabel(loadingStation.name) : getLoadingStationLabel(DEFAULT_LOADING_STATION.name)}
-                            options={loadingStations.map((item) => getLoadingStationLabel(item.name))}
-                            keys={loadingStations.map((item) => item.id)}
+                            defaultValue={getLoadingStationLabel(loadingStation.name)}
+                            options={selectableStations.map((item) => getLoadingStationLabel(item.name))}
+                            keys={selectableStations.map((item) => item.id)}
                             style={{width: "100%"}}
                         />
                     </div>

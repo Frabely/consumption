@@ -9,6 +9,8 @@ import CurrentUserSlice from "@/store/reducer/currentUser";
 import LoadingStationSlice from "@/store/reducer/modal/loadingStationId";
 import CurrentCarSlice from "@/store/reducer/currentCar";
 import DateSlice from "@/store/reducer/modal/date";
+import StartedSlice from "@/store/reducer/modal/started";
+import EndedSlice from "@/store/reducer/modal/ended";
 import dimensionSlice from "@/store/reducer/dimension";
 import CurrentHouseSlice from "@/store/reducer/currentHouse";
 import isReloadDataNeededSlice from "@/store/reducer/isReloadDataNeeded";
@@ -23,6 +25,8 @@ export const store = configureStore({
         [KilometerSlice.name]: KilometerSlice.reducer,
         [PowerSlice.name]: PowerSlice.reducer,
         [DateSlice.name]: DateSlice.reducer,
+        [StartedSlice.name]: StartedSlice.reducer,
+        [EndedSlice.name]: EndedSlice.reducer,
         [isChangingDataSlice.name]: isChangingDataSlice.reducer,
         [IdSlice.name]: IdSlice.reducer,
         [CurrentUserSlice.name]: CurrentUserSlice.reducer,

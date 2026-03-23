@@ -24,6 +24,9 @@
                           "selectedRoom":  "Ausgewählter Raum",
                           "none":  "-",
                           "loading":  "Lädt",
+                          "recordedAt":  "Erfassungsdatum",
+                          "startedAt":  "Ladungsstart",
+                          "endedAt":  "Ladungsende",
                           "backToLogin":  "Zurück zum Login",
                           "back":  "Zurück",
                           "enterNewName":  "Neuen Name eingeben",
@@ -45,6 +48,7 @@
                         "fieldName":  "Zählername",
                         "placeholderValue":  "Wert",
                         "priceMultiplier":  "Preismultiplikator",
+                        "wallbox":  "Wallbox",
                         "currentSelectedCar":  "Ausgewähltes Auto",
                         "from":  "Von",
                         "to":  "Bis"
@@ -53,6 +57,7 @@
                          "addData":  "Daten hinzufügen",
                          "add":  "Hinzufügen",
                          "addFloor":  "Wohnung hinzufügen",
+                         "confirmWallbox":  "Wallbox übernehmen",
                          "save":  "Speichern",
                          "addRoom":  "Raum hinzufügen",
                          "changeData":  "Daten ändern",
@@ -77,7 +82,7 @@
                 },
     "loadingStation":  {
                            "carport":  "Carport",
-                           "frontDoor":  "Haustür",
+                           "frontDoor":  "Eingang",
                            "official":  "Öffentlich"
                        }
 }

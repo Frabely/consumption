@@ -3,11 +3,14 @@ import de from "@/i18n"
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import type {LoadingStation} from "@/common/models";
 import type {Translations} from "@/i18n/types";
-import {getDateString} from "@/utils/date/formatDate";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBolt} from "@fortawesome/free-solid-svg-icons";
-import {dispatchChangeDataActions, isChangeCarDataAllowed} from "@/components/features/home/ListItem/ListItem.logic";
+import {
+    dispatchChangeDataActions,
+    formatListItemDateTime,
+    isChangeCarDataAllowed
+} from "@/components/features/home/ListItem/ListItem.logic";
 import {selectCurrentUser} from "@/store/selectors";
 
 /**
@@ -15,11 +18,13 @@ import {selectCurrentUser} from "@/store/selectors";
  * @param props Visual and domain data required for the list row.
  * @returns The rendered list item element.
  */
-export default function ListItem({kilometer, name, power, date, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
+export default function ListItem({kilometer, name, power, date, started, ended, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
     const language: Translations = de
     const dispatch = useAppDispatch()
     const currentUser = useAppSelector(selectCurrentUser)
-    const [localDate, localTime] = getDateString(date).split(" ")
+    const recordedAt = formatListItemDateTime(date, language.displayLabels.none)
+    const startedAt = formatListItemDateTime(started, language.displayLabels.none)
+    const endedAt = formatListItemDateTime(ended, language.displayLabels.none)
     const loadingStationLabel =
         language.loadingStation[loadingStation.name as keyof typeof language.loadingStation] ?? loadingStation.name
     let timeOut: ReturnType<typeof setTimeout> | undefined
@@ -30,6 +35,8 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
                 dispatchChangeDataActions({
                     dispatch,
                     date,
+                    started,
+                    ended,
                     kilometer,
                     power,
                     id,
@@ -59,8 +66,8 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
                         <FontAwesomeIcon icon={faBolt} className={styles.icon}/>
                     </div>
                     <div className={styles.dateColumn}>
-                        <div className={styles.primaryDate}>{localDate}</div>
-                        <div className={styles.secondaryDate}>{localTime}</div>
+                        <div className={styles.primaryDate}>{language.displayLabels.recordedAt}</div>
+                        <div className={styles.secondaryDate}>{recordedAt}</div>
                     </div>
                 </div>
                 <div className={styles.valueColumn}>
@@ -72,6 +79,16 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
                 <div className={styles.stationValue}>{language.displayLabels.loadingStation}: {loadingStationLabel}</div>
                 <div className={styles.nameValue}>{name}</div>
             </div>
+            <div className={styles.metaGrid}>
+                <div className={styles.metaRow}>
+                    <span className={styles.metaLabel}>{language.displayLabels.startedAt}</span>
+                    <span className={styles.metaValue}>{startedAt}</span>
+                </div>
+                <div className={styles.metaRow}>
+                    <span className={styles.metaLabel}>{language.displayLabels.endedAt}</span>
+                    <span className={styles.metaValue}>{endedAt}</span>
+                </div>
+            </div>
         </div>
     )
 }
@@ -79,6 +96,8 @@ export default function ListItem({kilometer, name, power, date, id, isLight, loa
 export type ListItemProps = {
     isLight: boolean
     date: Date,
+    started?: Date,
+    ended?: Date,
     kilometer: number,
     power: number,
     name: string,

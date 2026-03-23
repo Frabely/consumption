@@ -6,8 +6,11 @@ import {setId} from "@/store/reducer/modal/id";
 import {setKilometer} from "@/store/reducer/modal/kilometer";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {setPower} from "@/store/reducer/modal/power";
+import {setStarted} from "@/store/reducer/modal/started";
+import {setEnded} from "@/store/reducer/modal/ended";
 import {setModalState} from "@/store/reducer/modalState";
 import {Role} from "@/constants/enums";
+import {getDateString} from "@/utils/date/formatDate";
 
 export type ListItemDispatchAction =
     | ReturnType<typeof setIsChangingData>
@@ -15,6 +18,8 @@ export type ListItemDispatchAction =
     | ReturnType<typeof setDate>
     | ReturnType<typeof setKilometer>
     | ReturnType<typeof setPower>
+    | ReturnType<typeof setStarted>
+    | ReturnType<typeof setEnded>
     | ReturnType<typeof setId>
     | ReturnType<typeof setLoadingStation>;
 
@@ -61,6 +66,8 @@ export const isChangeCarDataAllowed = ({
 export const dispatchChangeDataActions = ({
     dispatch,
     date,
+    started,
+    ended,
     kilometer,
     power,
     id,
@@ -68,6 +75,8 @@ export const dispatchChangeDataActions = ({
 }: {
     dispatch: ListItemDispatch;
     date: Date;
+    started?: Date;
+    ended?: Date;
     kilometer: number;
     power: number;
     id: string;
@@ -75,9 +84,20 @@ export const dispatchChangeDataActions = ({
 }): void => {
     dispatch(setModalState(ModalState.ChangeCarData));
     dispatch(setDate(date));
+    dispatch(setStarted(started));
+    dispatch(setEnded(ended));
     dispatch(setKilometer(kilometer.toString()));
     dispatch(setPower(power.toString()));
     dispatch(setId(id));
     dispatch(setLoadingStation(loadingStation));
 };
+
+/**
+ * Formats an optional date-time value for list-item rendering.
+ * @param date Date value to format.
+ * @param fallback Fallback text for missing values.
+ * @returns Formatted local date-time string or fallback.
+ */
+export const formatListItemDateTime = (date: Date | undefined, fallback: string): string =>
+    date ? getDateString(date) : fallback;
 
