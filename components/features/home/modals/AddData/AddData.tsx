@@ -9,7 +9,7 @@ import {addDataSetToCollection, changeDataSetInCollection, updateCarKilometer} f
 import {setIsChangingData} from "@/store/reducer/isChangingData";
 import {ChangeEvent, useCallback, useEffect, useState} from "react";
 import Modal from "@/components/shared/overlay/Modal";
-import {DEFAULT_LOADING_STATION, ensureCarsLoaded, loadingStations} from "@/constants/constantData";
+import {ensureCarsLoaded, loadingStations} from "@/constants/constantData";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {setStarted} from "@/store/reducer/modal/started";
 import {setEnded} from "@/store/reducer/modal/ended";
@@ -40,6 +40,7 @@ import {
     getLatestCarportWallboxSession,
     getLatestEntranceWallboxSession
 } from "@/services/wallboxService";
+import {resolveUserDefaultLoadingStation} from "@/utils/loadingStations/defaultLoadingStation";
 import {
     resolveAddDataLoadingStations,
     resolveWallboxApiStation,
@@ -66,10 +67,10 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     const ended = useAppSelector(selectEnded)
     const changingData = useAppSelector(selectIsChangingData)
     const selectableStations = resolveAddDataLoadingStations(loadingStations)
-    const initialLoadingStation =
-        selectableStations.find(
-            (station) => station.id === currentUser.defaultLoadingStationId
-        ) ?? DEFAULT_LOADING_STATION
+    const initialLoadingStation = resolveUserDefaultLoadingStation({
+        user: currentUser,
+        availableLoadingStations: selectableStations
+    })
     const [isInputValid, setIsInputValid] = useState({
         kilometer: isKilometerValid({
             kilometer,

@@ -2,11 +2,11 @@
 import {ModalState} from "@/constants/enums";
 
 const TEST_LOADING_STATIONS = [
-    {id: "station-1", name: "carport"},
-    {id: "station-2", name: "entrance"},
+    {id: "17498904", name: "carport"},
+    {id: "21819916", name: "entrance"},
     {id: "station-3", name: "official"}
 ];
-const TEST_DEFAULT_LOADING_STATION = TEST_LOADING_STATIONS[0];
+const TEST_DEFAULT_LOADING_STATION = TEST_LOADING_STATIONS[1];
 
 type SelectorState = {
     modalState: ModalState;
@@ -75,6 +75,11 @@ function findElements(node: unknown, predicate: (element: ReactElementLike) => b
     return [...ownMatch, ...findElements(node.props?.children, predicate)];
 }
 
+async function flushAsyncUpdates(): Promise<void> {
+    await Promise.resolve();
+    await Promise.resolve();
+}
+
 async function buildComponent({
     selectorOverrides = {},
     effectMode = "skip",
@@ -136,6 +141,7 @@ async function buildComponent({
         let useStateCalls = 0;
         return {
             ...actual,
+            useCallback: (callback: (...args: unknown[]) => unknown) => callback,
             useEffect,
             useState: (initialValue: unknown) => {
                 useStateCalls += 1;
@@ -153,7 +159,7 @@ async function buildComponent({
         currentUser: {name: "Tester"},
         kilometer: "120",
         power: "12.5",
-        loadingStation: TEST_LOADING_STATIONS[0],
+        loadingStation: TEST_DEFAULT_LOADING_STATION,
         id: "id-1",
         date: new Date("2026-02-18T10:00:00.000Z"),
         started: undefined,
@@ -203,6 +209,18 @@ async function buildComponent({
         DEFAULT_LOADING_STATION: TEST_DEFAULT_LOADING_STATION,
         loadingStations: TEST_LOADING_STATIONS,
         ensureCarsLoaded
+    }));
+    vi.doMock("@/utils/loadingStations/defaultLoadingStation", () => ({
+        resolveUserDefaultLoadingStation: ({
+            user,
+            availableLoadingStations
+        }: {
+            user?: { defaultLoadingStationId?: string };
+            availableLoadingStations: typeof TEST_LOADING_STATIONS;
+        }) =>
+            availableLoadingStations.find(
+                (station) => station.id === user?.defaultLoadingStationId
+            ) ?? TEST_DEFAULT_LOADING_STATION
     }));
     vi.doMock("@/utils/validation/carDataValidation", () => ({
         isKilometerValid,
@@ -262,14 +280,20 @@ describe("AddData component", () => {
     });
 
     it("resets modal state via effect when AddCarData modal is active", async () => {
-        const {dispatch, useEffect, setIsInputValid, ensureCarsLoaded, getLatestCarportWallboxSession} = await buildComponent({effectMode: "run"});
+        const {
+            dispatch,
+            useEffect,
+            setIsInputValid,
+            ensureCarsLoaded,
+            getLatestEntranceWallboxSession
+        } = await buildComponent({effectMode: "run"});
 
         expect(useEffect).toHaveBeenCalledTimes(4);
         expect(ensureCarsLoaded).not.toHaveBeenCalled();
         expect(dispatch).toHaveBeenCalledWith({type: "setKilometer", payload: "100"});
         expect(dispatch).toHaveBeenCalledWith({type: "setIsChangingData", payload: false});
         expect(dispatch).toHaveBeenCalledWith({type: "setLoadingStation", payload: TEST_DEFAULT_LOADING_STATION});
-        expect(getLatestCarportWallboxSession).toHaveBeenCalledTimes(1);
+        expect(getLatestEntranceWallboxSession).toHaveBeenCalledTimes(1);
         expect(setIsInputValid).toHaveBeenNthCalledWith(1, {kilometer: false, power: false});
     });
 
@@ -277,13 +301,13 @@ describe("AddData component", () => {
         const {dispatch, getLatestEntranceWallboxSession, getLatestCarportWallboxSession} = await buildComponent({
             effectMode: "run",
             selectorOverrides: {
-                currentUser: {name: "Tester", defaultLoadingStationId: TEST_LOADING_STATIONS[1].id}
+                currentUser: {name: "Tester", defaultLoadingStationId: TEST_LOADING_STATIONS[0].id}
             }
         });
 
-        expect(dispatch).toHaveBeenCalledWith({type: "setLoadingStation", payload: TEST_LOADING_STATIONS[1]});
-        expect(getLatestEntranceWallboxSession).toHaveBeenCalledTimes(1);
-        expect(getLatestCarportWallboxSession).not.toHaveBeenCalled();
+        expect(dispatch).toHaveBeenCalledWith({type: "setLoadingStation", payload: TEST_LOADING_STATIONS[0]});
+        expect(getLatestCarportWallboxSession).toHaveBeenCalledTimes(1);
+        expect(getLatestEntranceWallboxSession).not.toHaveBeenCalled();
     });
 
     it("loads cars for add/change modal when current car is not hydrated", async () => {
@@ -345,7 +369,7 @@ describe("AddData component", () => {
                 kilometer: 120,
                 power: 12.5,
                 name: "Tester",
-                loadingStation: TEST_LOADING_STATIONS[0],
+                loadingStation: TEST_DEFAULT_LOADING_STATION,
                 date: expect.any(Date)
             })
         );
@@ -390,7 +414,7 @@ describe("AddData component", () => {
                 ended: undefined,
                 power: 12.5,
                 kilometer: 121,
-                loadingStation: TEST_LOADING_STATIONS[0],
+                loadingStation: TEST_DEFAULT_LOADING_STATION,
                 id: "id-1"
             }
         );
@@ -426,7 +450,7 @@ describe("AddData component", () => {
         expect(setIsInputValid).toHaveBeenCalledWith(expect.objectContaining({power: true}));
 
         customSelect?.props?.onChange?.("Eingang", TEST_LOADING_STATIONS[1].id);
-        await Promise.resolve();
+        await flushAsyncUpdates();
         expect(dispatch).toHaveBeenCalledWith({type: "setLoadingStation", payload: TEST_LOADING_STATIONS[1]});
         expect(getLatestEntranceWallboxSession).toHaveBeenCalledTimes(1);
         expect(dispatch).toHaveBeenCalledWith({type: "setPower", payload: "22.22"});
@@ -451,13 +475,15 @@ describe("AddData component", () => {
         const customSelect = findElement(element, (currentElement) => currentElement.type === CustomSelectMock);
 
         customSelect?.props?.onChange?.("Öffentlich", TEST_LOADING_STATIONS[2].id);
-        await Promise.resolve();
+        await flushAsyncUpdates();
 
         expect(dispatch).toHaveBeenCalledWith({type: "setLoadingStation", payload: TEST_LOADING_STATIONS[2]});
         expect(dispatch).toHaveBeenCalledWith({type: "setPower", payload: ""});
         expect(dispatch).toHaveBeenCalledWith({type: "setStarted", payload: undefined});
         expect(dispatch).toHaveBeenCalledWith({type: "setEnded", payload: undefined});
-        expect(setIsInputValid).toHaveBeenCalledWith(expect.objectContaining({power: false}));
+        const powerResetUpdater = setIsInputValid.mock.calls[0]?.[0];
+        expect(typeof powerResetUpdater).toBe("function");
+        expect(powerResetUpdater({kilometer: true, power: true})).toEqual({kilometer: true, power: false});
         expect(getLatestEntranceWallboxSession).not.toHaveBeenCalled();
         expect(getLatestCarportWallboxSession).not.toHaveBeenCalled();
     });
