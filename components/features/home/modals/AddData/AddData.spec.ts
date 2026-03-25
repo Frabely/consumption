@@ -381,6 +381,58 @@ describe("AddData component", () => {
         expect(setIsInputValid).toHaveBeenCalledWith({kilometer: false, power: false});
     });
 
+    it("drops wallbox timestamps when the saved power no longer matches the fetched value", async () => {
+        const sessionStarted = new Date("2026-02-18T08:00:00.000Z");
+        const sessionEnded = new Date("2026-02-18T09:00:00.000Z");
+        const {element, addDataSetToCollection} = await buildComponent({
+            effectMode: "run",
+            selectorOverrides: {
+                power: "12.5",
+                started: sessionStarted,
+                ended: sessionEnded
+            }
+        });
+
+        await flushAsyncUpdates();
+        const button = findElement(element, (currentElement) => currentElement.type === "button");
+        await button?.props?.onClick?.();
+
+        expect(addDataSetToCollection).toHaveBeenCalledWith(
+            "Zoe",
+            expect.objectContaining({
+                power: 12.5,
+                started: undefined,
+                ended: undefined
+            })
+        );
+    });
+
+    it("keeps wallbox timestamps when the saved power still matches the fetched value", async () => {
+        const sessionStarted = new Date("2026-02-18T08:00:00.000Z");
+        const sessionEnded = new Date("2026-02-18T09:00:00.000Z");
+        const {element, addDataSetToCollection} = await buildComponent({
+            effectMode: "run",
+            selectorOverrides: {
+                power: "22.2200",
+                started: sessionStarted,
+                ended: sessionEnded
+            }
+        });
+
+        await flushAsyncUpdates();
+        const button = findElement(element, (currentElement) => currentElement.type === "button");
+        await button?.props?.onClick?.();
+
+        expect(addDataSetToCollection).toHaveBeenCalledWith(
+            "Zoe",
+            expect.objectContaining({
+                power: 22.22,
+                started: sessionStarted,
+                ended: sessionEnded
+            })
+        );
+    });
+
     it("shows alert when add mode contains invalid data", async () => {
         const {element, addDataSetToCollection, updateCarKilometer} = await buildComponent({
             selectorOverrides: {kilometer: "99"}

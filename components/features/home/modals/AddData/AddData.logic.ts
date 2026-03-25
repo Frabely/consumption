@@ -6,6 +6,11 @@ const CARPORT_LOADING_STATION_NAME = "carport";
 const OFFICIAL_LOADING_STATION_NAME = "official";
 const WALLBOX_POWER_DECIMAL_PLACES = 4;
 
+type LoadingSessionRange = {
+    started?: Date;
+    ended?: Date;
+};
+
 /**
  * Returns whether the given loading station supports wallbox prefill.
  * @param loadingStation Loading station to inspect.
@@ -44,6 +49,32 @@ export const resolveWallboxApiStation = (
  */
 export const resolveWallboxPowerPrefill = (session: WallboxSession): string =>
     session.kWh.toFixed(WALLBOX_POWER_DECIMAL_PLACES);
+
+/**
+ * Resolves whether wallbox session timestamps can be persisted with the current power input.
+ * @param params Current input power, remembered wallbox power and optional timestamps.
+ * @returns Existing timestamps when the remembered and current power strings match; otherwise undefined timestamps.
+ */
+export const resolvePersistedLoadingSessionRange = ({
+    rememberedPower,
+    currentPower,
+    started,
+    ended
+}: {
+    rememberedPower?: string;
+    currentPower: string;
+    started?: Date;
+    ended?: Date;
+}): LoadingSessionRange => {
+    if (rememberedPower === currentPower) {
+        return {started, ended};
+    }
+
+    return {
+        started: undefined,
+        ended: undefined
+    };
+};
 
 /**
  * Orders loading stations for add-data flows and keeps only the supported choices.

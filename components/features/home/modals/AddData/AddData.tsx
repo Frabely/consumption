@@ -43,6 +43,7 @@ import {
 import {resolveUserDefaultLoadingStation} from "@/utils/loadingStations/defaultLoadingStation";
 import {
     resolveAddDataLoadingStations,
+    resolvePersistedLoadingSessionRange,
     resolveWallboxApiStation,
     resolveWallboxPowerPrefill
 } from "@/components/features/home/modals/AddData/AddData.logic";
@@ -85,6 +86,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     const [disabled, setDisabled] = useState(true);
     const hasInitializedAddModalRef = useRef(false)
     const activeWallboxRequestRef = useRef<AbortController | null>(null)
+    const rememberedWallboxPowerRef = useRef<string | undefined>(undefined)
     const getLoadingStationLabel = (stationName: string): string =>
         language.loadingStation[stationName as keyof typeof language.loadingStation] ?? stationName;
 
@@ -101,11 +103,20 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     }, [dispatch])
 
     /**
+     * Clears the remembered wallbox power value used for timestamp validation.
+     * @returns No return value.
+     */
+    const clearRememberedWallboxPower = useCallback((): void => {
+        rememberedWallboxPowerRef.current = undefined
+    }, [])
+
+    /**
      * Clears wallbox-derived modal fields and keeps manual entry available.
      * @returns No return value.
      */
     const resetWallboxPrefill = useCallback((): void => {
         abortActiveWallboxRequest()
+        clearRememberedWallboxPower()
         dispatch(setPower(''))
         dispatch(setStarted(undefined))
         dispatch(setEnded(undefined))
@@ -114,7 +125,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             ...currentValidity,
             power: false
         }))
-    }, [abortActiveWallboxRequest, dispatch])
+    }, [abortActiveWallboxRequest, clearRememberedWallboxPower, dispatch])
 
     /**
      * Fetches the latest wallbox session for the selected station.
@@ -157,7 +168,9 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 return
             }
 
-            dispatch(setPower(resolveWallboxPowerPrefill(latestSession)))
+            const nextPrefilledPower = resolveWallboxPowerPrefill(latestSession)
+            rememberedWallboxPowerRef.current = nextPrefilledPower
+            dispatch(setPower(nextPrefilledPower))
             dispatch(setStarted(latestSession.started))
             dispatch(setEnded(latestSession.ended))
             setIsInputValid((currentValidity) => ({
@@ -215,6 +228,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     useEffect(() => {
         if (modalState !== ModalState.AddCarData) {
             hasInitializedAddModalRef.current = false
+            clearRememberedWallboxPower()
             abortActiveWallboxRequest()
             return
         }
@@ -224,6 +238,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         }
         hasInitializedAddModalRef.current = true
 
+        clearRememberedWallboxPower()
         if (currentCar.kilometer !== undefined) {
             dispatch(setKilometer(currentCar.kilometer.toString()));
         }
@@ -237,7 +252,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             power: false
         });
         void runWallboxPrefill(initialLoadingStation)
-    }, [abortActiveWallboxRequest, currentCar.kilometer, dispatch, initialLoadingStation, modalState, runWallboxPrefill]);
+    }, [abortActiveWallboxRequest, clearRememberedWallboxPower, currentCar.kilometer, dispatch, initialLoadingStation, modalState, runWallboxPrefill]);
 
     useEffect(() => {
         if (currentCar.kilometer !== undefined) {
@@ -251,7 +266,12 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         } else setDisabled(true);
     }, [isInputValid])
 
-    const setModalToDefault = () => {
+    /**
+     * Restores the modal state to its default add-data values.
+     * @returns No return value.
+     */
+    const setModalToDefault = (): void => {
+        clearRememberedWallboxPower()
         dispatch(setPower(''))
         if (currentCar.kilometer !== undefined)
             dispatch(setKilometer(currentCar.kilometer.toString()))
@@ -278,9 +298,19 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         }
     }
 
+    /**
+     * Persists a new charging data set for the current car.
+     * @returns Promise resolved when the add flow completes.
+     */
     const onAddDataClickHandler = async () => {
         const kilometerValue = parseIntegerOrNull(kilometer)
         if (currentCar.kilometer !== undefined && currentCar.name && kilometerValue !== null && currentCar.kilometer < kilometerValue) {
+            const loadingSessionRange = resolvePersistedLoadingSessionRange({
+                rememberedPower: rememberedWallboxPowerRef.current,
+                currentPower: power,
+                started,
+                ended
+            })
             dispatch(setIsLoading(true))
             const dateNow = new Date()
             dispatch(setDate(dateNow))
@@ -294,8 +324,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     power: parseFloat(power),
                     name: currentUser.name ? currentUser.name : '',
                     loadingStation,
-                    started,
-                    ended
+                    ...loadingSessionRange
                 })
                 await updateCarKilometer(currentCar.name, kilometerValue, carKilometersPreUpdate)
                 dispatch(setModalStateNone())
@@ -309,9 +338,19 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             alert('Invalid Data')
     }
 
+    /**
+     * Persists changes for an existing charging data set.
+     * @returns Promise resolved when the change flow completes.
+     */
     const onChangeDataClickHandler = async () => {
         const kilometerValue = parseIntegerOrNull(kilometer)
         if (currentCar.kilometer !== undefined && currentCar.name && currentCar.prevKilometer !== undefined && kilometerValue !== null && currentCar.prevKilometer < kilometerValue) {
+            const loadingSessionRange = resolvePersistedLoadingSessionRange({
+                rememberedPower: rememberedWallboxPowerRef.current,
+                currentPower: power,
+                started,
+                ended
+            })
             dispatch(setIsLoading(true))
             dispatch(updateCarKilometers(kilometerValue))
             try {
@@ -321,8 +360,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                     kilometer: kilometerValue,
                     loadingStation,
                     id,
-                    started,
-                    ended
+                    ...loadingSessionRange
                 })
                 await updateCarKilometer(currentCar.name, kilometerValue)
                 dispatch(setModalStateNone())
