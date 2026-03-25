@@ -19,6 +19,7 @@ describe("Display domain", () => {
             power: 20,
             name: "A",
             date: new Date("2026-01-01T00:00:00.000Z"),
+            cardId: "card-1",
             loadingStation: {id: "ls-1", name: "carport"}
         },
         {
@@ -42,6 +43,7 @@ describe("Display domain", () => {
 
         expect(result[0].isLight).toBe(true);
         expect(result[0].isFirstElement).toBe(true);
+        expect(result[0].cardId).toBe("card-1");
         expect(result[1].isLight).toBe(false);
         expect(result[1].isFirstElement).toBe(false);
     });

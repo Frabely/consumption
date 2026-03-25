@@ -19,6 +19,7 @@ type SelectorState = {
     date: Date;
     started?: Date;
     ended?: Date;
+    cardId?: string;
     changingData: boolean;
 };
 
@@ -104,14 +105,14 @@ async function buildComponent({
         kWh: 22.22,
         started: new Date("2026-02-18T08:00:00.000Z"),
         ended: new Date("2026-02-18T09:00:00.000Z"),
-        CardId: "card"
+        cardId: "card"
     });
     const getLatestCarportWallboxSession = vi.fn().mockResolvedValue({
         reportId: 100,
         kWh: 22.22,
         started: new Date("2026-02-18T08:00:00.000Z"),
         ended: new Date("2026-02-18T09:00:00.000Z"),
-        CardId: "card"
+        cardId: "card"
     });
     const isKilometerValid = vi.fn().mockReturnValue(isKilometerValidValue);
     const isPowerValid = vi.fn().mockReturnValue(isPowerValidValue);
@@ -165,6 +166,7 @@ async function buildComponent({
         date: new Date("2026-02-18T10:00:00.000Z"),
         started: undefined,
         ended: undefined,
+        cardId: undefined,
         changingData: false,
         ...selectorOverrides
     };
@@ -181,6 +183,7 @@ async function buildComponent({
             selectorState.date,
             selectorState.started,
             selectorState.ended,
+            selectorState.cardId,
             selectorState.changingData
         ];
         return {
@@ -235,6 +238,7 @@ async function buildComponent({
     vi.doMock("@/store/reducer/modal/loadingStationId", () => ({setLoadingStation: createAction("setLoadingStation")}));
     vi.doMock("@/store/reducer/modal/started", () => ({setStarted: createAction("setStarted")}));
     vi.doMock("@/store/reducer/modal/ended", () => ({setEnded: createAction("setEnded")}));
+    vi.doMock("@/store/reducer/modal/cardId", () => ({setCardId: createAction("setCardId")}));
     vi.doMock("@/store/reducer/currentCar", () => ({
         setCurrentCar: createAction("setCurrentCar"),
         updateCarKilometers: createAction("updateCarKilometers"),
@@ -289,12 +293,14 @@ describe("AddData component", () => {
             getLatestEntranceWallboxSession
         } = await buildComponent({effectMode: "run"});
 
+        await flushAsyncUpdates();
         expect(useEffect).toHaveBeenCalledTimes(4);
         expect(ensureCarsLoaded).not.toHaveBeenCalled();
         expect(dispatch).toHaveBeenCalledWith({type: "setKilometer", payload: "100"});
         expect(dispatch).toHaveBeenCalledWith({type: "setIsChangingData", payload: false});
         expect(dispatch).toHaveBeenCalledWith({type: "setLoadingStation", payload: TEST_DEFAULT_LOADING_STATION});
         expect(getLatestEntranceWallboxSession).toHaveBeenCalledTimes(1);
+        expect(dispatch).toHaveBeenCalledWith({type: "setCardId", payload: "card"});
         expect(setIsInputValid).toHaveBeenNthCalledWith(1, {kilometer: false, power: false});
     });
 
@@ -389,7 +395,8 @@ describe("AddData component", () => {
             selectorOverrides: {
                 power: "12.5",
                 started: sessionStarted,
-                ended: sessionEnded
+                ended: sessionEnded,
+                cardId: "card"
             }
         });
 
@@ -402,7 +409,8 @@ describe("AddData component", () => {
             expect.objectContaining({
                 power: 12.5,
                 started: undefined,
-                ended: undefined
+                ended: undefined,
+                cardId: undefined
             })
         );
     });
@@ -415,7 +423,8 @@ describe("AddData component", () => {
             selectorOverrides: {
                 power: "22.2200",
                 started: sessionStarted,
-                ended: sessionEnded
+                ended: sessionEnded,
+                cardId: "card"
             }
         });
 
@@ -428,7 +437,8 @@ describe("AddData component", () => {
             expect.objectContaining({
                 power: 22.22,
                 started: sessionStarted,
-                ended: sessionEnded
+                ended: sessionEnded,
+                cardId: "card"
             })
         );
     });
@@ -465,6 +475,7 @@ describe("AddData component", () => {
                 date: new Date("2026-02-18T10:00:00.000Z"),
                 started: undefined,
                 ended: undefined,
+                cardId: undefined,
                 power: 12.5,
                 kilometer: 121,
                 loadingStation: TEST_DEFAULT_LOADING_STATION,
@@ -509,6 +520,7 @@ describe("AddData component", () => {
         expect(dispatch).toHaveBeenCalledWith({type: "setPower", payload: "22.2200"});
         expect(dispatch).toHaveBeenCalledWith({type: "setStarted", payload: new Date("2026-02-18T08:00:00.000Z")});
         expect(dispatch).toHaveBeenCalledWith({type: "setEnded", payload: new Date("2026-02-18T09:00:00.000Z")});
+        expect(dispatch).toHaveBeenCalledWith({type: "setCardId", payload: "card"});
 
         const callCountBeforeNoKey = dispatch.mock.calls.length;
         customSelect?.props?.onChange?.("Eingang");
@@ -534,6 +546,7 @@ describe("AddData component", () => {
         expect(dispatch).toHaveBeenCalledWith({type: "setPower", payload: ""});
         expect(dispatch).toHaveBeenCalledWith({type: "setStarted", payload: undefined});
         expect(dispatch).toHaveBeenCalledWith({type: "setEnded", payload: undefined});
+        expect(dispatch).toHaveBeenCalledWith({type: "setCardId", payload: undefined});
         const powerResetUpdater = setIsInputValid.mock.calls[0]?.[0];
         expect(typeof powerResetUpdater).toBe("function");
         expect(powerResetUpdater({kilometer: true, power: true})).toEqual({kilometer: true, power: false});

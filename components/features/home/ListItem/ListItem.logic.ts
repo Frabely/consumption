@@ -8,6 +8,7 @@ import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {setPower} from "@/store/reducer/modal/power";
 import {setStarted} from "@/store/reducer/modal/started";
 import {setEnded} from "@/store/reducer/modal/ended";
+import {setCardId} from "@/store/reducer/modal/cardId";
 import {setModalState} from "@/store/reducer/modalState";
 import {Role} from "@/constants/enums";
 import {getDateString} from "@/utils/date/formatDate";
@@ -20,6 +21,7 @@ export type ListItemDispatchAction =
     | ReturnType<typeof setPower>
     | ReturnType<typeof setStarted>
     | ReturnType<typeof setEnded>
+    | ReturnType<typeof setCardId>
     | ReturnType<typeof setId>
     | ReturnType<typeof setLoadingStation>;
 
@@ -103,6 +105,7 @@ export const dispatchChangeDataActions = ({
     date,
     started,
     ended,
+    cardId,
     kilometer,
     power,
     id,
@@ -112,6 +115,7 @@ export const dispatchChangeDataActions = ({
     date: Date;
     started?: Date;
     ended?: Date;
+    cardId?: string;
     kilometer: number;
     power: number;
     id: string;
@@ -121,6 +125,7 @@ export const dispatchChangeDataActions = ({
     dispatch(setDate(date));
     dispatch(setStarted(started));
     dispatch(setEnded(ended));
+    dispatch(setCardId(cardId));
     dispatch(setKilometer(kilometer.toString()));
     dispatch(setPower(power.toString()));
     dispatch(setId(id));

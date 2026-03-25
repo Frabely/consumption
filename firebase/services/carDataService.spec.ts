@@ -30,7 +30,7 @@ describe("carDataService", () => {
         firestoreMocks.query.mockImplementation((value: unknown) => value);
     });
 
-    it("maps full data set with loading station objects and optional session timestamps", async () => {
+    it("maps full data set with loading station objects and optional session metadata", async () => {
         const {getLoadingStations} = await import("@/firebase/services/loadingStationService");
         vi.mocked(getLoadingStations).mockResolvedValue([
             {id: "ls-1", name: "carport"}
@@ -38,6 +38,7 @@ describe("carDataService", () => {
         const tsDate = new Date("2026-02-18T10:00:00.000Z");
         const started = new Date("2026-02-18T09:00:00.000Z");
         const ended = new Date("2026-02-18T09:45:00.000Z");
+        const cardId = "card-1";
         firestoreMocks.getDocs.mockResolvedValue({
             empty: false,
             docs: [
@@ -51,6 +52,7 @@ describe("carDataService", () => {
                         if (key === "loadingStationId") return "ls-1";
                         if (key === "started") return {toDate: () => started};
                         if (key === "ended") return {toDate: () => ended};
+                        if (key === "cardId") return cardId;
                         return undefined;
                     })
                 }
@@ -69,12 +71,13 @@ describe("carDataService", () => {
                 name: "Tester",
                 started,
                 ended,
+                cardId,
                 loadingStation: {id: "ls-1", name: "carport"}
             }
         ]);
     });
 
-    it("returns undefined optional timestamps when firestore fields are missing", async () => {
+    it("returns undefined optional session metadata when firestore fields are missing", async () => {
         const {getLoadingStations} = await import("@/firebase/services/loadingStationService");
         vi.mocked(getLoadingStations).mockResolvedValue([
             {id: "ls-1", name: "carport"}
@@ -102,13 +105,15 @@ describe("carDataService", () => {
 
         expect(result?.[0].started).toBeUndefined();
         expect(result?.[0].ended).toBeUndefined();
+        expect(result?.[0].cardId).toBeUndefined();
     });
 
-    it("loads all docs between months, maps optional timestamps and sorts by kilometer", async () => {
+    it("loads all docs between months, maps optional session metadata and sorts by kilometer", async () => {
         const firstDate = new Date("2026-01-15T10:00:00.000Z");
         const secondDate = new Date("2026-02-16T10:00:00.000Z");
         const secondStarted = new Date("2026-02-16T08:30:00.000Z");
         const secondEnded = new Date("2026-02-16T09:10:00.000Z");
+        const secondCardId = "card-2";
 
         firestoreMocks.getDocs
             .mockResolvedValueOnce({
@@ -129,6 +134,7 @@ describe("carDataService", () => {
                         if (key === "date") return {toDate: () => secondDate};
                         if (key === "started") return {toDate: () => secondStarted};
                         if (key === "ended") return {toDate: () => secondEnded};
+                        if (key === "cardId") return secondCardId;
                         return undefined;
                     })
                 }]
@@ -144,15 +150,18 @@ describe("carDataService", () => {
         expect(result.map((item) => item.id)).toEqual(["b", "a"]);
         expect(result[0].data.started).toEqual(secondStarted);
         expect(result[0].data.ended).toEqual(secondEnded);
+        expect(result[0].data.cardId).toBe(secondCardId);
         expect(result[1].data.started).toBeUndefined();
         expect(result[1].data.ended).toBeUndefined();
+        expect(result[1].data.cardId).toBeUndefined();
     });
 
-    it("writes power with four decimal places and optional session timestamps", async () => {
+    it("writes power with four decimal places and optional session metadata", async () => {
         firestoreMocks.addDoc.mockResolvedValue({});
         firestoreMocks.updateDoc.mockResolvedValue(undefined);
         const started = new Date("2026-02-18T08:00:00.000Z");
         const ended = new Date("2026-02-18T09:00:00.000Z");
+        const cardId = "card-3";
 
         const {addDataSetToCollection, changeDataSetInCollection, updateCarKilometer} = await import("./carDataService");
         await addDataSetToCollection("Zoe", {
@@ -162,7 +171,8 @@ describe("carDataService", () => {
             name: "Tester",
             loadingStation: {id: "ls-1", name: "carport"},
             started,
-            ended
+            ended,
+            cardId
         });
         await changeDataSetInCollection("Zoe", {
             id: "doc-1",
@@ -171,7 +181,8 @@ describe("carDataService", () => {
             kilometer: 2222,
             loadingStation: {id: "ls-2", name: "official"},
             started,
-            ended
+            ended,
+            cardId
         });
         await updateCarKilometer("Zoe", 3333, 3000);
 
@@ -180,7 +191,8 @@ describe("carDataService", () => {
             expect.objectContaining({
                 power: "15.5600",
                 started,
-                ended
+                ended,
+                cardId
             })
         );
         expect(firestoreMocks.updateDoc).toHaveBeenCalledWith(
@@ -188,12 +200,13 @@ describe("carDataService", () => {
             expect.objectContaining({
                 power: "22.3400",
                 started,
-                ended
+                ended,
+                cardId
             })
         );
     });
 
-    it("omits optional session timestamps when they are not provided", async () => {
+    it("omits optional session metadata when it is not provided", async () => {
         firestoreMocks.addDoc.mockResolvedValue({});
         firestoreMocks.updateDoc.mockResolvedValue(undefined);
 
@@ -217,14 +230,16 @@ describe("carDataService", () => {
             expect.anything(),
             expect.not.objectContaining({
                 started: expect.anything(),
-                ended: expect.anything()
+                ended: expect.anything(),
+                cardId: expect.anything()
             })
         );
         expect(firestoreMocks.updateDoc).toHaveBeenCalledWith(
             expect.anything(),
             expect.not.objectContaining({
                 started: expect.anything(),
-                ended: expect.anything()
+                ended: expect.anything(),
+                cardId: expect.anything()
             })
         );
     });

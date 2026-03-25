@@ -12,6 +12,7 @@ import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {setPower} from "@/store/reducer/modal/power";
 import {setStarted} from "@/store/reducer/modal/started";
 import {setEnded} from "@/store/reducer/modal/ended";
+import {setCardId} from "@/store/reducer/modal/cardId";
 import {setModalState} from "@/store/reducer/modalState";
 import {ModalState, Role} from "@/constants/enums";
 
@@ -82,6 +83,7 @@ describe("ListItem logic", () => {
         dispatchChangeDataActions({
             dispatch,
             date,
+            cardId: "card-1",
             kilometer: 1234,
             power: 56,
             id: "id-1",
@@ -92,10 +94,11 @@ describe("ListItem logic", () => {
         expect(dispatch).toHaveBeenNthCalledWith(2, setDate(date));
         expect(dispatch).toHaveBeenNthCalledWith(3, setStarted(undefined));
         expect(dispatch).toHaveBeenNthCalledWith(4, setEnded(undefined));
-        expect(dispatch).toHaveBeenNthCalledWith(5, setKilometer("1234"));
-        expect(dispatch).toHaveBeenNthCalledWith(6, setPower("56"));
-        expect(dispatch).toHaveBeenNthCalledWith(7, setId("id-1"));
-        expect(dispatch).toHaveBeenNthCalledWith(8, setLoadingStation(loadingStation));
+        expect(dispatch).toHaveBeenNthCalledWith(5, setCardId("card-1"));
+        expect(dispatch).toHaveBeenNthCalledWith(6, setKilometer("1234"));
+        expect(dispatch).toHaveBeenNthCalledWith(7, setPower("56"));
+        expect(dispatch).toHaveBeenNthCalledWith(8, setId("id-1"));
+        expect(dispatch).toHaveBeenNthCalledWith(9, setLoadingStation(loadingStation));
     });
 
     it("renders list item values in the component", async () => {
@@ -114,6 +117,7 @@ describe("ListItem logic", () => {
             date: new Date(2026, 1, 18, 12, 0),
             started: new Date(2026, 1, 18, 8, 0),
             ended: new Date(2026, 1, 18, 9, 0),
+            cardId: "card-1",
             kilometer: 1234,
             power: 45.6,
             name: "Tester",
@@ -173,6 +177,7 @@ describe("ListItem logic", () => {
         const element = ListItem({
             isLight: true,
             date: new Date("2026-02-18T12:00:00.000Z"),
+            cardId: "card-1",
             kilometer: 1234,
             power: 45.6,
             name: "Tester",
@@ -184,7 +189,7 @@ describe("ListItem logic", () => {
         root?.props?.onMouseDown?.();
         vi.advanceTimersByTime(501);
         expect(dispatch).toHaveBeenCalledWith({type: "isChangingData/setIsChangingData", payload: true});
-        expect(dispatchChangeDataActionsMock).toHaveBeenCalled();
+        expect(dispatchChangeDataActionsMock).toHaveBeenCalledWith(expect.objectContaining({cardId: "card-1"}));
 
         root?.props?.onMouseUp?.();
         root?.props?.onTouchStart?.();
@@ -216,6 +221,7 @@ describe("ListItem logic", () => {
         const element = ListItem({
             isLight: true,
             date: new Date("2026-02-18T10:00:00.000Z"),
+            cardId: "card-admin",
             kilometer: 1234,
             power: 45.6,
             name: "Admin",

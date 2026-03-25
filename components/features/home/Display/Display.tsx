@@ -43,6 +43,7 @@ export default function Display({}: DisplayProps) {
                                       date={dataSet.date}
                                       started={dataSet.started}
                                       ended={dataSet.ended}
+                                      cardId={dataSet.cardId}
                                       name={dataSet.name}
                                       power={dataSet.power}
                                       id={dataSet.id}

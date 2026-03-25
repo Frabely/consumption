@@ -31,7 +31,7 @@ describe("wallboxService", () => {
       kWh: 4.0896,
       started: new Date(1774263256033),
       ended: new Date(1774269951033),
-      CardId: "047c337ada488000",
+      cardId: "047c337ada488000",
     });
   });
 
@@ -57,6 +57,7 @@ describe("wallboxService", () => {
     expect(result.kWh).toBe(0.0125);
     expect(result.started).toEqual(new Date(1774260000 * 1000));
     expect(result.ended).toEqual(new Date(1774263600 * 1000));
+    expect(result.cardId).toBe("carport-card");
   });
 
   it("throws when the wallbox API responds with a non-success status", async () => {

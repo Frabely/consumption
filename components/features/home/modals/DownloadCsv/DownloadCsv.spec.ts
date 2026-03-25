@@ -1,4 +1,5 @@
 ﻿import {describe, expect, it, vi} from "vitest";
+import {buildDownloadCsvText} from "@/components/features/home/modals/DownloadCsv/DownloadCsv.logic";
 
 type ReactElementLike = {
     type: unknown;
@@ -134,6 +135,47 @@ async function buildComponent({
 }
 
 describe("DownloadCsv component", () => {
+    it("builds semicolon-separated csv rows including session metadata", () => {
+        const text = buildDownloadCsvText(
+            [
+                {
+                    id: "data-1",
+                    date: new Date("2026-02-10T10:15:00.000Z"),
+                    started: new Date("2026-02-10T08:00:00.000Z"),
+                    ended: new Date("2026-02-10T09:00:00.000Z"),
+                    cardId: "card-1",
+                    kilometer: 12345,
+                    power: 18.5,
+                    name: "Tester",
+                    loadingStation: {id: "station-1", name: "carport"}
+                }
+            ],
+            {
+                loadingStationId: "Station",
+                date: "Date",
+                time: "Time",
+                utcDate: "UTC Date",
+                utcTime: "UTC Time",
+                kilometer: "Kilometer",
+                power: "Power",
+                name: "Name",
+                startedAt: "Started",
+                endedAt: "Ended",
+                cardId: "Card ID"
+            }
+        );
+
+        const [, firstRow] = text.trim().split("\n");
+        const firstRowColumns = firstRow.split(";");
+
+        expect(text).toContain("Station;Date;Time;UTC Date;UTC Time;Kilometer;Power;Name;Started;Ended;Card ID");
+        expect(firstRowColumns).toHaveLength(11);
+        expect(firstRowColumns[7]).toBe("Tester");
+        expect(firstRowColumns[8]).not.toBe("");
+        expect(firstRowColumns[9]).not.toBe("");
+        expect(firstRowColumns[10]).toBe("card-1");
+    });
+
     it("aborts modal, parses date input and downloads csv", async () => {
         const {
             element,

@@ -3,7 +3,7 @@ export type WallboxSession = {
   kWh: number;
   started: Date;
   ended: Date;
-  CardId: string;
+  cardId: string;
 };
 
 export type WallboxApiStation = "entrance" | "carport";
@@ -67,13 +67,14 @@ const mapWallboxSessionResponse = (
     ),
     started: convertApiTimestampToDate(response.started),
     ended: convertApiTimestampToDate(response.ended),
-    CardId: response.CardId,
+    cardId: response.CardId,
   };
 };
 
 /**
  * Fetches the latest wallbox session from a fully qualified endpoint.
  * @param endpointUrl Fully qualified endpoint URL.
+ * @param signal Optional abort signal for request cancellation.
  * @returns Normalized wallbox session payload.
  */
 const fetchLatestWallboxSession = async (

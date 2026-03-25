@@ -109,6 +109,14 @@ export const selectEnded = (state: RootState): Date | undefined =>
   state.ended ?? undefined;
 
 /**
+ * Selects optional modal card id state.
+ * @param state Root redux state.
+ * @returns Optional modal card id value.
+ */
+export const selectCardId = (state: RootState): string | undefined =>
+  state.cardId ?? undefined;
+
+/**
  * Selects modal id state.
  * @param state Root redux state.
  * @returns Modal identifier value.

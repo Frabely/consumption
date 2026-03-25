@@ -79,7 +79,10 @@
                     "utcTime":  "UTC Uhrzeit",
                     "kilometer":  "km",
                     "power":  "kW/h",
-                    "name":  "Name"
+                    "name":  "Name",
+                    "startedAt":  "Ladungsstart",
+                    "endedAt":  "Ladungsende",
+                    "cardId":  "Card ID"
                 },
     "loadingStation":  {
                            "carport":  "Carport",

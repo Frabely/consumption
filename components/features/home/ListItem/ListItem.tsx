@@ -20,7 +20,7 @@ import {selectCurrentUser} from "@/store/selectors";
  * @param props Visual and domain data required for the list row.
  * @returns The rendered list item element.
  */
-export default function ListItem({kilometer, name, power, date, started, ended, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
+export default function ListItem({kilometer, name, power, date, started, ended, cardId, id, isLight, loadingStation, isFirstElement}: ListItemProps) {
     const language: Translations = de
     const dispatch = useAppDispatch()
     const currentUser = useAppSelector(selectCurrentUser)
@@ -39,6 +39,7 @@ export default function ListItem({kilometer, name, power, date, started, ended, 
                     date,
                     started,
                     ended,
+                    cardId,
                     kilometer,
                     power,
                     id,
@@ -92,6 +93,7 @@ export type ListItemProps = {
     date: Date,
     started?: Date,
     ended?: Date,
+    cardId?: string,
     kilometer: number,
     power: number,
     name: string,

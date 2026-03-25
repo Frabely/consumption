@@ -4,15 +4,14 @@ import Modal from "@/components/shared/overlay/Modal";
 import {ChangeEvent, useState} from "react";
 import deJson from '@/i18n'
 import {getFullDataSet} from "@/firebase/functions";
-import type {DataSet} from "@/common/models";
 import type {Translations} from "@/i18n/types";
-import {getDateString, getUTCDateString} from "@/utils/date/formatDate";
 import {setModalStateNone} from "@/store/reducer/modalState";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentCar} from "@/store/selectors";
 import {parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {setIsLoading} from "@/store/reducer/isLoading";
+import {buildDownloadCsvText} from "@/components/features/home/modals/DownloadCsv/DownloadCsv.logic";
 
 export default function DownloadCsv({}: DownloadCsvProps) {
     const currentCar = useAppSelector(selectCurrentCar)
@@ -42,24 +41,6 @@ export default function DownloadCsv({}: DownloadCsvProps) {
         }
     }
 
-    const dataSetArrayToTxt = (dataSetArray: DataSet[]): string => {
-        let txtContent: string =
-            `${de.dataSet.loadingStationId};${de.dataSet.date};` +
-            `${de.dataSet.time};${de.dataSet.utcDate};${de.dataSet.utcTime};${de.dataSet.kilometer};` +
-            `${de.dataSet.power};${de.dataSet.name}\n`
-        dataSetArray.forEach((dataSet: DataSet) => {
-            const yearMonthDay: string = getDateString(dataSet.date).split(' ')[0]
-            const hoursMinutes: string = getDateString(dataSet.date).split(' ')[1]
-            const utcYearMonthDay: string = getUTCDateString(dataSet.date).split(' ')[0]
-            const utcHoursMinutes: string = getUTCDateString(dataSet.date).split(' ')[1]
-            txtContent +=
-                `${dataSet.loadingStation.id};${yearMonthDay};` +
-                `${hoursMinutes};${utcYearMonthDay};${utcHoursMinutes};${dataSet.kilometer};` +
-                `${dataSet.power.toString().replace('.', ',')};${dataSet.name} \n`
-        })
-        return txtContent
-    }
-
     const onDownloadCsvClickHandler = () => {
         dispatch(setModalStateNone())
         dispatch(setIsLoading(true))
@@ -69,7 +50,19 @@ export default function DownloadCsv({}: DownloadCsvProps) {
                 month: currentDateValue.month
             }).then((dataSetArray) => {
                 if (dataSetArray) {
-                    const blob = new Blob([dataSetArrayToTxt(dataSetArray)], {type: "text/plain"});
+                    const blob = new Blob([buildDownloadCsvText(dataSetArray, {
+                        loadingStationId: de.dataSet.loadingStationId,
+                        date: de.dataSet.date,
+                        time: de.dataSet.time,
+                        utcDate: de.dataSet.utcDate,
+                        utcTime: de.dataSet.utcTime,
+                        kilometer: de.dataSet.kilometer,
+                        power: de.dataSet.power,
+                        name: de.dataSet.name,
+                        startedAt: de.dataSet.startedAt,
+                        endedAt: de.dataSet.endedAt,
+                        cardId: de.dataSet.cardId
+                    })], {type: "text/plain"});
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement("a");
                     link.download = `${currentDateValue.year}-${currentDateValue.month}.csv`;

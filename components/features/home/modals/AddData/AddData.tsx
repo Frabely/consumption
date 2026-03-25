@@ -13,6 +13,7 @@ import {ensureCarsLoaded, loadingStations} from "@/constants/constantData";
 import {setLoadingStation} from "@/store/reducer/modal/loadingStationId";
 import {setStarted} from "@/store/reducer/modal/started";
 import {setEnded} from "@/store/reducer/modal/ended";
+import {setCardId} from "@/store/reducer/modal/cardId";
 import type {Translations} from "@/i18n/types";
 import {setCurrentCar, updateCarKilometers, updateCarPrevKilometers} from "@/store/reducer/currentCar";
 import {setDate} from "@/store/reducer/modal/date";
@@ -24,6 +25,7 @@ import {faBolt, faCarSide} from "@fortawesome/free-solid-svg-icons";
 import {
     selectCurrentCar,
     selectCurrentUser,
+    selectCardId,
     selectDate,
     selectEnded,
     selectId,
@@ -68,6 +70,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     const date = useAppSelector(selectDate)
     const started = useAppSelector(selectStarted)
     const ended = useAppSelector(selectEnded)
+    const cardId = useAppSelector(selectCardId)
     const changingData = useAppSelector(selectIsChangingData)
     const selectableStations = resolveAddDataLoadingStations(loadingStations)
     const initialLoadingStation = resolveUserDefaultLoadingStation({
@@ -120,6 +123,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         dispatch(setPower(''))
         dispatch(setStarted(undefined))
         dispatch(setEnded(undefined))
+        dispatch(setCardId(undefined))
         dispatch(setIsLoading(false))
         setIsInputValid((currentValidity) => ({
             ...currentValidity,
@@ -130,6 +134,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
     /**
      * Fetches the latest wallbox session for the selected station.
      * @param wallboxStation Station slug supported by the wallbox API.
+     * @param signal Optional abort signal used to cancel the request.
      * @returns Latest wallbox session for the selected station.
      */
     const fetchWallboxSession = async (
@@ -173,6 +178,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
             dispatch(setPower(nextPrefilledPower))
             dispatch(setStarted(latestSession.started))
             dispatch(setEnded(latestSession.ended))
+            dispatch(setCardId(latestSession.cardId))
             setIsInputValid((currentValidity) => ({
                 ...currentValidity,
                 power: true
@@ -246,6 +252,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         dispatch(setLoadingStation(initialLoadingStation));
         dispatch(setStarted(undefined))
         dispatch(setEnded(undefined))
+        dispatch(setCardId(undefined))
         dispatch(setPower(""))
         setIsInputValid({
             kilometer: false,
@@ -279,6 +286,7 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
         dispatch(setLoadingStation(initialLoadingStation))
         dispatch(setStarted(undefined))
         dispatch(setEnded(undefined))
+        dispatch(setCardId(undefined))
         setIsInputValid({
             kilometer: false,
             power: false
@@ -309,7 +317,8 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 rememberedPower: rememberedWallboxPowerRef.current,
                 currentPower: power,
                 started,
-                ended
+                ended,
+                cardId
             })
             dispatch(setIsLoading(true))
             const dateNow = new Date()
@@ -349,7 +358,8 @@ export default function AddData({prevKilometers}: AddDataModalProps) {
                 rememberedPower: rememberedWallboxPowerRef.current,
                 currentPower: power,
                 started,
-                ended
+                ended,
+                cardId
             })
             dispatch(setIsLoading(true))
             dispatch(updateCarKilometers(kilometerValue))

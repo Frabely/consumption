@@ -8,6 +8,7 @@ export type DataSet = {
     date: Date;
     started?: Date;
     ended?: Date;
+    cardId?: string;
     loadingStation: LoadingStation;
 };
 
@@ -18,6 +19,7 @@ export type DataSetNoId = {
     date: Date;
     started?: Date;
     ended?: Date;
+    cardId?: string;
     loadingStation: LoadingStation;
 };
 

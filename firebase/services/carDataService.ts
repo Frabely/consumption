@@ -13,7 +13,7 @@ type FirestoreTimestampLike = {
 
 type ChangeDataSetInput = Pick<
     DataSet,
-    "id" | "date" | "power" | "kilometer" | "loadingStation" | "started" | "ended"
+    "id" | "date" | "power" | "kilometer" | "loadingStation" | "started" | "ended" | "cardId"
 >;
 
 type ConsumptionDocumentData = Record<string, unknown> & {
@@ -22,6 +22,7 @@ type ConsumptionDocumentData = Record<string, unknown> & {
     date?: Date;
     started?: Date;
     ended?: Date;
+    cardId?: string;
 };
 
 type ConsumptionDocumentBetweenMonths = {
@@ -64,6 +65,14 @@ const resolveOptionalDate = (value: unknown): Date | undefined => {
 };
 
 /**
+ * Resolves an optional string value.
+ * @param value Unknown field value.
+ * @returns String value when the input is a string.
+ */
+const resolveOptionalString = (value: unknown): string | undefined =>
+    typeof value === "string" ? value : undefined;
+
+/**
  * Maps a Firestore document to a typed dataset with optional session timestamps.
  * @param dataSource Firestore document exposing `get`.
  * @param id Document identifier.
@@ -82,6 +91,7 @@ const mapFirestoreDocumentToDataSet = (
     name: dataSource.get("name") as string,
     started: resolveOptionalDate(dataSource.get("started")),
     ended: resolveOptionalDate(dataSource.get("ended")),
+    cardId: resolveOptionalString(dataSource.get("cardId")),
     loadingStation
 });
 
@@ -153,7 +163,8 @@ export const loadAllConsumptionDocsBetween = async (
                     ...(d.data() as ConsumptionDocumentData),
                     date: resolveOptionalDate(d.get("date")),
                     started: resolveOptionalDate(d.get("started")),
-                    ended: resolveOptionalDate(d.get("ended"))
+                    ended: resolveOptionalDate(d.get("ended")),
+                    cardId: resolveOptionalString(d.get("cardId"))
                 } satisfies ConsumptionDocumentData
             }));
         })
@@ -169,7 +180,7 @@ export const loadAllConsumptionDocsBetween = async (
  * @returns Promise that resolves when the document has been created.
  */
 export const addDataSetToCollection = async (carName: string, dataSet: DataSetNoId): Promise<void> => {
-    const {date, kilometer, power, name, loadingStation, started, ended} = dataSet;
+    const {date, kilometer, power, name, loadingStation, started, ended, cardId} = dataSet;
     const month = date.getMonth() + 1;
     const monthString = (month < 10 ? `0${month}` : month).toString();
     const consumptionDataRef = collection(db,
@@ -182,7 +193,8 @@ export const addDataSetToCollection = async (carName: string, dataSet: DataSetNo
         name,
         loadingStationId: loadingStation.id,
         ...(started ? {started} : {}),
-        ...(ended ? {ended} : {})
+        ...(ended ? {ended} : {}),
+        ...(cardId ? {cardId} : {})
     }).catch((error: Error) => {
         console.error(error.message);
         throw error;
@@ -199,7 +211,7 @@ export const changeDataSetInCollection = async (
     carName: string,
     dataSet: ChangeDataSetInput
 ): Promise<void> => {
-    const {date, power, kilometer, loadingStation, id, started, ended} = dataSet;
+    const {date, power, kilometer, loadingStation, id, started, ended, cardId} = dataSet;
     const month = date.getMonth() + 1;
     const monthString = (month < 10 ? `0${month}` : month).toString();
     const consumptionDataRef = doc(db,
@@ -210,7 +222,8 @@ export const changeDataSetInCollection = async (
         power: formatPersistedPower(power),
         loadingStationId: loadingStation.id,
         ...(started ? {started} : {}),
-        ...(ended ? {ended} : {})
+        ...(ended ? {ended} : {}),
+        ...(cardId ? {cardId} : {})
     }).catch((error: Error) => {
         console.error(error.message);
         throw error;

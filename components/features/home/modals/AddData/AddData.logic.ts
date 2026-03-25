@@ -9,6 +9,7 @@ const WALLBOX_POWER_DECIMAL_PLACES = 4;
 type LoadingSessionRange = {
     started?: Date;
     ended?: Date;
+    cardId?: string;
 };
 
 /**
@@ -51,28 +52,31 @@ export const resolveWallboxPowerPrefill = (session: WallboxSession): string =>
     session.kWh.toFixed(WALLBOX_POWER_DECIMAL_PLACES);
 
 /**
- * Resolves whether wallbox session timestamps can be persisted with the current power input.
- * @param params Current input power, remembered wallbox power and optional timestamps.
- * @returns Existing timestamps when the remembered and current power strings match; otherwise undefined timestamps.
+ * Resolves whether wallbox session metadata can be persisted with the current power input.
+ * @param params Current input power, remembered wallbox power and optional session metadata.
+ * @returns Existing session metadata when the remembered and current power strings match; otherwise undefined metadata.
  */
 export const resolvePersistedLoadingSessionRange = ({
     rememberedPower,
     currentPower,
     started,
-    ended
+    ended,
+    cardId
 }: {
     rememberedPower?: string;
     currentPower: string;
     started?: Date;
     ended?: Date;
+    cardId?: string;
 }): LoadingSessionRange => {
     if (rememberedPower === currentPower) {
-        return {started, ended};
+        return {started, ended, cardId};
     }
 
     return {
         started: undefined,
-        ended: undefined
+        ended: undefined,
+        cardId: undefined
     };
 };
 

@@ -20,6 +20,7 @@ export type DisplayListItemData = {
     date: Date;
     started?: Date;
     ended?: Date;
+    cardId?: string;
     name: string;
     power: number;
     loadingStation: DataSet["loadingStation"];
@@ -43,6 +44,7 @@ export const mapDataSetToListItems = (dataSet: DataSet[]): DisplayListItemData[]
         date: item.date,
         started: item.started,
         ended: item.ended,
+        cardId: item.cardId,
         name: item.name,
         power: item.power,
         loadingStation: item.loadingStation,
