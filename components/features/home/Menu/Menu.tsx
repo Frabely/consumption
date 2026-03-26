@@ -5,7 +5,7 @@ import { setModalState, setModalStateNone } from "@/store/reducer/modalState";
 import { setIsChangingData } from "@/store/reducer/isChangingData";
 import { cars, ensureCarsLoaded } from "@/constants/constantData";
 import { RootState } from "@/store/store";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { setCurrentCar } from "@/store/reducer/currentCar";
 import { setPage } from "@/store/reducer/currentPage";
 import { getCars } from "@/firebase/functions";
@@ -13,6 +13,7 @@ import { ModalState, Page, Role } from "@/constants/enums";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import de from "@/i18n";
 import ActionMenu from "@/components/shared/navigation/ActionMenu";
+import { Car } from "@/common/models";
 import {
   buildHomeMenuActions,
   resolveDefaultCarName,
@@ -29,13 +30,58 @@ import {setIsLoading} from "@/store/reducer/isLoading";
 export default function Menu({}: MenuProps) {
   const language = de;
   const dispatch = useAppDispatch();
-  const [availableCars, setAvailableCars] = useState(cars);
+  const [availableCars, setAvailableCars] = useState<Car[]>(() => [...cars]);
+  const currentUserKey: string | undefined = useAppSelector(
+    (state: RootState) => state.currentUser.key,
+  );
   const currentUserRole: Role | undefined = useAppSelector(
     (state: RootState) => state.currentUser.role,
   );
   const currentCarName: string | undefined = useAppSelector(
     (state: RootState) => state.currentCar.name,
   );
+
+  /**
+   * Loads available cars into local menu state from cache or backend.
+   * @returns Promise resolved with the latest available cars.
+   */
+  const loadAvailableCars = async (): Promise<Car[]> => {
+    dispatch(setIsLoading(true));
+    try {
+      const loadedCars = await ensureCarsLoaded({ getCarsFn: getCars });
+      if (loadedCars.length > 0) {
+        const nextAvailableCars = [...loadedCars];
+        setAvailableCars(nextAvailableCars);
+        return nextAvailableCars;
+      }
+      return [];
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+      return [];
+    } finally {
+      dispatch(setIsLoading(false));
+    }
+  };
+
+  useEffect(() => {
+    if (!currentUserKey || availableCars.length > 0) {
+      return;
+    }
+
+    dispatch(setIsLoading(true));
+    ensureCarsLoaded({ getCarsFn: getCars })
+      .then((loadedCars) => {
+        if (loadedCars.length > 0) {
+          setAvailableCars([...loadedCars]);
+        }
+      })
+      .catch((error: Error) => {
+        console.error(error.message);
+      })
+      .finally(() => dispatch(setIsLoading(false)));
+  }, [availableCars.length, currentUserKey, dispatch]);
 
   /**
    * Opens the add-data modal in non-edit mode.
@@ -70,21 +116,14 @@ export default function Menu({}: MenuProps) {
    * @returns No return value.
    */
   const onCarChangeHandler = (value: string) => {
-    dispatch(setIsLoading(true));
-    ensureCarsLoaded({ getCarsFn: getCars })
+    loadAvailableCars()
       .then((loadedCars) => {
-        if (loadedCars.length > 0) {
-          setAvailableCars([...loadedCars]);
-        }
         const selectedCar = resolveSelectedCar(loadedCars, value);
         if (selectedCar) {
           dispatch(setCurrentCar(selectedCar));
         }
       })
-      .catch((error: Error) => {
-        console.error(error.message);
-      })
-      .finally(() => dispatch(setIsLoading(false)));
+      .catch(() => undefined);
   };
 
   /**
@@ -95,17 +134,7 @@ export default function Menu({}: MenuProps) {
     if (availableCars.length > 0) {
       return;
     }
-    dispatch(setIsLoading(true));
-    ensureCarsLoaded({ getCarsFn: getCars })
-      .then((loadedCars) => {
-        if (loadedCars.length > 0) {
-          setAvailableCars([...loadedCars]);
-        }
-      })
-      .catch((error: Error) => {
-        console.error(error.message);
-      })
-      .finally(() => dispatch(setIsLoading(false)));
+    void loadAvailableCars();
   };
 
   /**

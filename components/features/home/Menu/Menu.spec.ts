@@ -54,7 +54,7 @@ describe("Menu logic", () => {
     it("renders action labels for admin users", async () => {
         vi.resetModules();
         vi.doMock("@/store/hooks", () => {
-            const values = [Role.Admin, "Zoe"];
+            const values = [undefined, Role.Admin, "Zoe"];
             return {
                 useAppDispatch: () => vi.fn(),
                 useAppSelector: () => values.shift()
@@ -75,6 +75,59 @@ describe("Menu logic", () => {
         expect(html).toContain("buildingConsumption");
     });
 
+    it("loads cars after session restore when only the current car name is hydrated", async () => {
+        vi.resetModules();
+        const dispatch = vi.fn();
+        const setAvailableCars = vi.fn();
+        const getCars = vi.fn();
+        const ensureCarsLoaded = vi.fn().mockResolvedValue([{name: "Zoe"}, {name: "BMW"}]);
+        let capturedProps: {
+            selectConfig: { options: string[] };
+        } | undefined;
+
+        vi.doMock("react", async () => {
+            const actual = await vi.importActual<typeof import("react")>("react");
+            return {
+                ...actual,
+                useEffect: (callback: () => void | Promise<void>) => {
+                    void callback();
+                },
+                useState: () => [[], setAvailableCars]
+            };
+        });
+        vi.doMock("@/store/hooks", () => ({
+            useAppDispatch: () => dispatch,
+            useAppSelector: (
+                selector: (state: { currentUser: { key?: string; role: Role }; currentCar: { name: string } }) => unknown
+            ) => selector({currentUser: {key: "u-1", role: Role.User}, currentCar: {name: "Zoe"}})
+        }));
+        vi.doMock("@/firebase/functions", () => ({
+            getCars
+        }));
+        vi.doMock("@/components/shared/navigation/ActionMenu", () => ({
+            default: (props: typeof capturedProps) => {
+                capturedProps = props;
+                return null;
+            }
+        }));
+        vi.doMock("@/constants/constantData", () => ({
+            EMPTY_USER: {name: "", role: Role.None},
+            cars: [],
+            ensureCarsLoaded
+        }));
+
+        const {createElement} = await import("react");
+        const {renderToStaticMarkup} = await import("react-dom/server");
+        const {default: Menu} = await import("./Menu");
+        renderToStaticMarkup(createElement(Menu));
+        await Promise.resolve();
+        await Promise.resolve();
+
+        expect(ensureCarsLoaded).toHaveBeenCalledWith({getCarsFn: getCars});
+        expect(setAvailableCars).toHaveBeenCalledWith([{name: "Zoe"}, {name: "BMW"}]);
+        expect(dispatch).toHaveBeenCalledWith({type: "isLoading/setIsLoading", payload: true});
+    });
+
     it("wires menu callbacks to dispatch and car loading", async () => {
         vi.resetModules();
         const dispatch = vi.fn();
@@ -89,8 +142,9 @@ describe("Menu logic", () => {
 
         vi.doMock("@/store/hooks", () => ({
             useAppDispatch: () => dispatch,
-            useAppSelector: (selector: (state: { currentUser: { role: Role }; currentCar: { name: string } }) => unknown) =>
-                selector({currentUser: {role: Role.Admin}, currentCar: {name: "Zoe"}})
+            useAppSelector: (
+                selector: (state: { currentUser: { key?: string; role: Role }; currentCar: { name: string } }) => unknown
+            ) => selector({currentUser: {role: Role.Admin}, currentCar: {name: "Zoe"}})
         }));
         vi.doMock("@/firebase/functions", () => ({
             getCars
@@ -151,9 +205,11 @@ describe("Menu logic", () => {
 
         capturedProps?.onMenuOpen?.();
         await Promise.resolve();
+        await Promise.resolve();
         expect(ensureCarsLoaded).toHaveBeenCalledWith({getCarsFn: getCars});
 
         capturedProps?.selectConfig.onChange?.("BMW");
+        await Promise.resolve();
         await Promise.resolve();
         expect(ensureCarsLoaded).toHaveBeenCalledWith({getCarsFn: getCars});
         expect(dispatch).toHaveBeenCalledWith({type: "setCurrentCar", payload: {name: "BMW"}});
