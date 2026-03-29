@@ -64,6 +64,7 @@
                          "changeData":  "Daten ändern",
                          "changeFloor":  "Wohnung bearbeiten",
                          "abort":  "Abbrechen",
+                         "importDachsValues":  "Dachs-Werte importieren",
                          "downloadCsv":  "Csv herunterladen",
                          "logout":  "Logout",
                          "buildingConsumption":  "Gebäude",

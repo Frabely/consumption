@@ -130,6 +130,51 @@ describe("fieldValueService", () => {
         expect(firestoreMocks.updateDoc).toHaveBeenCalledTimes(1);
     });
 
+    it("persists multiple field values in one batch call", async () => {
+        firestoreMocks.getDoc
+            .mockResolvedValueOnce({ref: {path: "field/ref/1"}})
+            .mockResolvedValueOnce({ref: {path: "field/ref/2"}});
+        firestoreMocks.getDocs
+            .mockResolvedValueOnce({empty: true, docs: []})
+            .mockResolvedValueOnce({empty: false, docs: [{ref: {id: "value-doc-2"}}]});
+        firestoreMocks.addDoc.mockResolvedValue({id: "created"});
+        firestoreMocks.updateDoc.mockResolvedValue(undefined);
+
+        const {setFieldValues} = await import("./fieldValueService");
+        await setFieldValues(
+            "Haus",
+            {id: "flat-1", name: "Flat", rooms: [], position: 0},
+            {id: "room-1", name: "Room", fields: [], position: 0},
+            "2026",
+            "02",
+            [
+                {field: {id: "field-1", name: "Water", position: 0}, value: 88},
+                {field: {id: "field-2", name: "Heat", position: 1}, value: 55}
+            ]
+        );
+
+        expect(firestoreMocks.addDoc).toHaveBeenCalledTimes(1);
+        expect(firestoreMocks.updateDoc).toHaveBeenCalledTimes(1);
+    });
+
+    it("ignores invalid numeric values in batch persistence", async () => {
+        const {setFieldValues} = await import("./fieldValueService");
+        await setFieldValues(
+            "Haus",
+            {id: "flat-1", name: "Flat", rooms: [], position: 0},
+            {id: "room-1", name: "Room", fields: [], position: 0},
+            "2026",
+            "02",
+            [
+                {field: {id: "field-1", name: "Water", position: 0}, value: Number.NaN}
+            ]
+        );
+
+        expect(firestoreMocks.getDoc).not.toHaveBeenCalled();
+        expect(firestoreMocks.addDoc).not.toHaveBeenCalled();
+        expect(firestoreMocks.updateDoc).not.toHaveBeenCalled();
+    });
+
     it("adds a new field value when no entry exists yet", async () => {
         firestoreMocks.getDoc.mockResolvedValue({
             ref: {path: "field/ref"}

@@ -82,4 +82,31 @@ describe("fieldValueService", () => {
         expect(firestoreMocks.updateDoc).toHaveBeenCalledTimes(1);
         expect(firestoreMocks.addDoc).not.toHaveBeenCalled();
     });
+
+    it("writes multiple field values in a single logical operation", async () => {
+        firestoreMocks.getDoc
+            .mockResolvedValueOnce({ref: {path: "field/ref/1"}})
+            .mockResolvedValueOnce({ref: {path: "field/ref/2"}});
+        firestoreMocks.getDocs
+            .mockResolvedValueOnce({empty: true, docs: []})
+            .mockResolvedValueOnce({empty: false, docs: [{ref: {id: "value-doc"}}]});
+        firestoreMocks.addDoc.mockResolvedValue({id: "created"});
+        firestoreMocks.updateDoc.mockResolvedValue(undefined);
+
+        const {setFieldValues} = await import("@/firebase/services/fieldValueService");
+        await setFieldValues(
+            "Haus",
+            {id: "flat-1", name: "Flat", rooms: [], position: 0},
+            {id: "room-1", name: "Room", fields: [], position: 0},
+            "2026",
+            "02",
+            [
+                {field: {id: "field-1", name: "Field", position: 0}, value: 42},
+                {field: {id: "field-2", name: "Field 2", position: 1}, value: 17}
+            ]
+        );
+
+        expect(firestoreMocks.addDoc).toHaveBeenCalledTimes(1);
+        expect(firestoreMocks.updateDoc).toHaveBeenCalledTimes(1);
+    });
 });

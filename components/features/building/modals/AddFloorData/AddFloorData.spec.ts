@@ -1,9 +1,14 @@
 import {describe, expect, it, vi} from "vitest";
-import {
-    isFieldValueValid,
-    resolveRoomByName
-} from "@/components/features/building/modals/AddFloorData/AddFloorData.logic";
 import de from "@/i18n";
+import {
+    formatImportedFieldValueList,
+    isCurrentMonthSelected,
+    isFieldValueValid,
+    mapDachsValuesToFieldValues,
+    mergeRoomFieldValues,
+    resolveRoomByName,
+    shouldShowDachsAutofill
+} from "@/components/features/building/modals/AddFloorData/AddFloorData.logic";
 
 type ReactElementLike = {
     type: unknown;
@@ -12,6 +17,32 @@ type ReactElementLike = {
         onClick?: (...args: unknown[]) => void;
         onChange?: (...args: unknown[]) => void;
         [key: string]: unknown;
+    };
+};
+
+type BuildComponentOptions = {
+    currentHouseName?: string;
+    currentDateValue?: {year: string; month: string};
+    currentFieldValues?: Array<{
+        field: {id: string; name: string; position: number};
+        value: string | null;
+    }>;
+    flatName?: string;
+    confirmResult?: boolean;
+    rooms?: Array<{
+        id: string;
+        name: string;
+        position: number;
+        fields: Array<{id: string; name: string; position: number}>;
+    }>;
+    dachsValues?: {
+        bh?: number;
+        starts?: number;
+        electricityInternal?: number;
+        heat?: number;
+        maintenance?: number;
+        buderusBh?: number;
+        buderusStarts?: number;
     };
 };
 
@@ -56,29 +87,50 @@ function findElements(node: unknown, predicate: (element: ReactElementLike) => b
 }
 
 async function buildComponent({
-    fieldValue = "42.5",
-    isValueValid = true
-}: {
-    fieldValue?: string | null;
-    isValueValid?: boolean;
-} = {}) {
+    currentHouseName = "House 1",
+    currentDateValue = {
+        year: new Date().getFullYear().toString(),
+        month: (new Date().getMonth() + 1).toString().padStart(2, "0")
+    },
+    currentFieldValues = [{field: {id: "f1", name: "Wasser", position: 0}, value: "42.5"}],
+    flatName = "Flat 1",
+    confirmResult = true,
+    rooms,
+    dachsValues = {
+        bh: 111,
+        starts: 222,
+        electricityInternal: 333,
+        heat: 444,
+        maintenance: 555,
+        buderusBh: 666,
+        buderusStarts: 777
+    }
+}: BuildComponentOptions = {}) {
     vi.resetModules();
     vi.restoreAllMocks();
-    vi.stubGlobal("alert", vi.fn());
 
+    const alert = vi.fn();
+    const confirm = vi.fn(() => confirmResult);
+    vi.stubGlobal("alert", alert);
+    vi.stubGlobal("window", {confirm});
+
+    const defaultRooms = rooms ?? [
+        {id: "r1", name: "Kueche", position: 0, fields: [{id: "f1", name: "Wasser", position: 0}]},
+        {id: "r2", name: "Bad", position: 1, fields: [{id: "f2", name: "Strom", position: 0}]}
+    ];
     const flat = {
         id: "flat-1",
-        name: "Flat 1",
+        name: flatName,
         position: 0,
-        rooms: [
-            {id: "r1", name: "Kueche", position: 0, fields: [{id: "f1", name: "Wasser", position: 0}]},
-            {id: "r2", name: "Bad", position: 1, fields: [{id: "f2", name: "Strom", position: 0}]}
-        ]
+        rooms: defaultRooms
     };
 
+    const dispatch = vi.fn();
     const setFieldValue = vi.fn().mockResolvedValue(undefined);
+    const setFieldValues = vi.fn().mockResolvedValue(undefined);
     const deleteFieldValue = vi.fn().mockResolvedValue(undefined);
     const getFieldValues = vi.fn().mockResolvedValue([]);
+    const getDachsAutofillValues = vi.fn().mockResolvedValue(dachsValues);
     const setCurrentDateValue = vi.fn();
     const setCurrentRoom = vi.fn();
     const setAllFieldValues = vi.fn();
@@ -87,6 +139,9 @@ async function buildComponent({
         return null;
     };
     const FieldInputMock = function FieldInputMock() {
+        return null;
+    };
+    const CustomButtonMock = function CustomButtonMock() {
         return null;
     };
 
@@ -102,19 +157,19 @@ async function buildComponent({
                     return [flat.rooms[0], setCurrentRoom] as const;
                 }
                 if (stateCall === 2) {
-                    return [{year: "2026", month: "02"}, setCurrentDateValue] as const;
+                    return [currentDateValue, setCurrentDateValue] as const;
                 }
                 if (stateCall === 3) {
-                    return [[], setAllFieldValues] as const;
+                    return [currentFieldValues, setAllFieldValues] as const;
                 }
-                return [[{field: flat.rooms[0].fields[0], value: fieldValue}], setCurrentFieldValues] as const;
+                return [currentFieldValues, setCurrentFieldValues] as const;
             }
         };
     });
 
     vi.doMock("@/store/hooks", () => ({
-        useAppDispatch: () => vi.fn(),
-        useAppSelector: () => ({name: "House 1"})
+        useAppDispatch: () => dispatch,
+        useAppSelector: () => ({name: currentHouseName})
     }));
     vi.doMock("@/components/shared/overlay/Modal", () => ({
         default: function ModalMock() {
@@ -127,18 +182,18 @@ async function buildComponent({
     vi.doMock("@/components/shared/forms/FieldInput", () => ({
         default: FieldInputMock
     }));
+    vi.doMock("@/components/shared/ui/CustomButton", () => ({
+        default: CustomButtonMock
+    }));
     vi.doMock("@/firebase/functions", () => ({
         getFieldValues,
         setFieldValue,
+        setFieldValues,
         deleteFieldValue
     }));
-    vi.doMock("@/components/features/building/modals/AddFloorData/AddFloorData.logic", async () => {
-        const actual = await vi.importActual<typeof import("./AddFloorData.logic")>("./AddFloorData.logic");
-        return {
-            ...actual,
-            isFieldValueValid: () => isValueValid
-        };
-    });
+    vi.doMock("@/components/features/building/modals/AddFloorData/AddFloorData.dachsService", () => ({
+        getDachsAutofillValues
+    }));
     vi.doMock("@/utils/building/fieldValueMapping", async () => {
         const actual = await vi.importActual<typeof import("@/utils/building/fieldValueMapping")>("@/utils/building/fieldValueMapping");
         return {
@@ -149,7 +204,7 @@ async function buildComponent({
                 }
                 return undefined;
             }),
-            filterFieldValuesByRoom: vi.fn(() => [{field: flat.rooms[1].fields[0], value: "17"}])
+            filterFieldValuesByRoom: vi.fn(() => currentFieldValues)
         };
     });
 
@@ -157,15 +212,22 @@ async function buildComponent({
     const element = AddFloorData({flat});
 
     return {
+        alert,
+        confirm,
+        dispatch,
         element,
         setFieldValue,
+        setFieldValues,
         deleteFieldValue,
         getFieldValues,
+        getDachsAutofillValues,
         setCurrentDateValue,
         setCurrentRoom,
+        setAllFieldValues,
         setCurrentFieldValues,
         CustomSelectMock,
         FieldInputMock,
+        CustomButtonMock,
         flat
     };
 }
@@ -174,6 +236,7 @@ describe("AddFloorData logic", () => {
     it("validates numeric field values", () => {
         expect(isFieldValueValid("12")).toBe(true);
         expect(isFieldValueValid("12.5")).toBe(true);
+        expect(isFieldValueValid(12)).toBe(true);
         expect(isFieldValueValid("abc")).toBe(false);
         expect(isFieldValueValid("")).toBe(false);
         expect(isFieldValueValid(null)).toBe(false);
@@ -189,7 +252,65 @@ describe("AddFloorData logic", () => {
         expect(resolveRoomByName(rooms, "Flur")).toBeUndefined();
     });
 
-    it("loads field values and reacts to date/room/field actions", async () => {
+    it("matches Dachs autofill visibility only for the supported target room", () => {
+        const room = {
+            id: "room-1",
+            name: "Dachs F233",
+            position: 0,
+            fields: [{id: "field-1", name: "BH", position: 0}]
+        };
+
+        expect(shouldShowDachsAutofill("F233", "Haus", room)).toBe(true);
+        expect(shouldShowDachsAutofill("F233", "Wohnung", room)).toBe(false);
+        expect(shouldShowDachsAutofill("F999", "Haus", room)).toBe(false);
+    });
+
+    it("detects the current month and maps imported Dachs values without clearing unmatched fields", () => {
+        const now = new Date("2026-03-29T12:00:00.000Z");
+        expect(isCurrentMonthSelected({year: "2026", month: "03"}, now)).toBe(true);
+        expect(isCurrentMonthSelected({year: "2026", month: "02"}, now)).toBe(false);
+
+        const mapped = mapDachsValuesToFieldValues(
+            [
+                {field: {id: "1", name: "BH", position: 0}, value: null},
+                {field: {id: "2", name: "Strom extern", position: 1}, value: "17"}
+            ],
+            {bh: 123}
+        );
+
+        expect(mapped.updatedFieldValues).toEqual([
+            {field: {id: "1", name: "BH", position: 0}, value: "123"},
+            {field: {id: "2", name: "Strom extern", position: 1}, value: "17"}
+        ]);
+        expect(mapped.importedFieldValues).toEqual([
+            {field: {id: "1", name: "BH", position: 0}, value: "123"}
+        ]);
+    });
+
+    it("merges current room values back into the cached flat values", () => {
+        const merged = mergeRoomFieldValues(
+            [
+                {field: {id: "1", name: "BH", position: 0}, value: "1"},
+                {field: {id: "2", name: "Other", position: 1}, value: "2"}
+            ],
+            [{field: {id: "1", name: "BH", position: 0}, value: "9"}],
+            {id: "room-1", name: "Dachs F233", position: 0, fields: [{id: "1", name: "BH", position: 0}]}
+        );
+
+        expect(merged).toEqual([
+            {field: {id: "2", name: "Other", position: 1}, value: "2"},
+            {field: {id: "1", name: "BH", position: 0}, value: "9"}
+        ]);
+    });
+
+    it("formats the imported field values as a confirmation list", () => {
+        expect(formatImportedFieldValueList([
+            {field: {id: "1", name: "BH", position: 0}, value: "10"},
+            {field: {id: "2", name: "Starts", position: 1}, value: "20"}
+        ])).toBe("BH: 10\nStarts: 20");
+    });
+
+    it("loads field values and reacts to date, room, save and delete actions", async () => {
         const {
             element,
             setFieldValue,
@@ -198,11 +319,16 @@ describe("AddFloorData logic", () => {
             setCurrentDateValue,
             setCurrentRoom,
             setCurrentFieldValues,
+            setAllFieldValues,
             CustomSelectMock,
             FieldInputMock
         } = await buildComponent();
 
-        expect(getFieldValues).toHaveBeenCalledWith("2026", "02", expect.objectContaining({id: "flat-1"}));
+        expect(getFieldValues).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.any(String),
+            expect.objectContaining({id: "flat-1"})
+        );
 
         const monthInput = findElement(element, (currentElement) => currentElement.type === "input" && currentElement.props?.type === "month");
         monthInput?.props?.onChange?.({preventDefault: vi.fn(), target: {value: "2025-11"}});
@@ -216,6 +342,7 @@ describe("AddFloorData logic", () => {
         const fieldInput = findElement(element, (currentElement) => currentElement.type === FieldInputMock);
         fieldInput?.props?.onChange?.({target: {value: "99"}});
         expect(setCurrentFieldValues).toHaveBeenCalled();
+        expect(setAllFieldValues).toHaveBeenCalled();
 
         const actionButtons = findElements(element, (currentElement) => {
             const className = currentElement.props?.className;
@@ -229,8 +356,8 @@ describe("AddFloorData logic", () => {
             expect.objectContaining({id: "flat-1"}),
             expect.objectContaining({id: "r1"}),
             expect.objectContaining({id: "f1"}),
-            "2026",
-            "02",
+            expect.any(String),
+            expect.any(String),
             99
         );
         expect(deleteFieldValue).toHaveBeenCalled();
@@ -238,8 +365,7 @@ describe("AddFloorData logic", () => {
 
     it("does not persist invalid field values", async () => {
         const {element, setFieldValue, deleteFieldValue} = await buildComponent({
-            fieldValue: "abc",
-            isValueValid: false
+            currentFieldValues: [{field: {id: "f1", name: "Wasser", position: 0}, value: "abc"}]
         });
         const actionButtons = findElements(element, (currentElement) => {
             const className = currentElement.props?.className;
@@ -253,7 +379,9 @@ describe("AddFloorData logic", () => {
     });
 
     it("alerts with translated message after saving field value", async () => {
-        const {element} = await buildComponent({fieldValue: "15"});
+        const {element, alert} = await buildComponent({
+            currentFieldValues: [{field: {id: "f1", name: "Wasser", position: 0}, value: "15"}]
+        });
         const actionButtons = findElements(element, (currentElement) => {
             const className = currentElement.props?.className;
             return typeof className === "string" && className.includes("actionIconButton");
@@ -261,12 +389,129 @@ describe("AddFloorData logic", () => {
         await actionButtons[0]?.props?.onClick?.();
         await Promise.resolve();
 
-        expect(globalThis.alert).toHaveBeenCalledWith(
+        expect(alert).toHaveBeenCalledWith(
             de.messages.fieldSaved
                 .replace("{valueFieldName}", "Wasser")
                 .replace("{valueNumber}", "15")
         );
     });
+
+    it("shows the Dachs import button only in the supported target and saves imported values in batch", async () => {
+        const {
+            element,
+            confirm,
+            setFieldValues,
+            getDachsAutofillValues,
+            CustomButtonMock
+        } = await buildComponent({
+            currentHouseName: "F233",
+            flatName: "Haus",
+            rooms: [
+                {
+                    id: "r1",
+                    name: "Dachs F233",
+                    position: 0,
+                    fields: [
+                        {id: "f1", name: "BH", position: 0},
+                        {id: "f2", name: "Starts", position: 1},
+                        {id: "f3", name: "Strom intern", position: 2},
+                        {id: "f4", name: "Strom extern", position: 3}
+                    ]
+                }
+            ],
+            currentFieldValues: [
+                {field: {id: "f1", name: "BH", position: 0}, value: null},
+                {field: {id: "f2", name: "Starts", position: 1}, value: null},
+                {field: {id: "f3", name: "Strom intern", position: 2}, value: null},
+                {field: {id: "f4", name: "Strom extern", position: 3}, value: "17"}
+            ],
+            dachsValues: {
+                bh: 10,
+                starts: 20,
+                electricityInternal: 30
+            }
+        });
+
+        const autofillButton = findElement(element, (currentElement) => currentElement.type === CustomButtonMock);
+        expect(autofillButton).toBeDefined();
+
+        await autofillButton?.props?.onClick?.();
+
+        expect(getDachsAutofillValues).toHaveBeenCalled();
+        expect(confirm).toHaveBeenCalledWith(
+            de.messages.dachsAutofillSaveConfirmation.replace(
+                "{fieldValueList}",
+                "BH: 10\nStarts: 20\nStrom intern: 30"
+            )
+        );
+        expect(setFieldValues).toHaveBeenCalledWith(
+            "F233",
+            expect.objectContaining({name: "Haus"}),
+            expect.objectContaining({name: "Dachs F233"}),
+            expect.any(String),
+            expect.any(String),
+            [
+                {field: {id: "f1", name: "BH", position: 0}, value: 10},
+                {field: {id: "f2", name: "Starts", position: 1}, value: 20},
+                {field: {id: "f3", name: "Strom intern", position: 2}, value: 30}
+            ]
+        );
+    });
+
+    it("blocks Dachs import outside the current month", async () => {
+        const {element, alert, getDachsAutofillValues, setFieldValues, CustomButtonMock} = await buildComponent({
+            currentHouseName: "F233",
+            flatName: "Haus",
+            currentDateValue: {year: "2025", month: "01"},
+            rooms: [
+                {
+                    id: "r1",
+                    name: "Dachs F233",
+                    position: 0,
+                    fields: [{id: "f1", name: "BH", position: 0}]
+                }
+            ],
+            currentFieldValues: [{field: {id: "f1", name: "BH", position: 0}, value: null}]
+        });
+
+        const autofillButton = findElement(element, (currentElement) => currentElement.type === CustomButtonMock);
+        await autofillButton?.props?.onClick?.();
+
+        expect(alert).toHaveBeenCalledWith(de.messages.dachsAutofillCurrentMonthOnly);
+        expect(getDachsAutofillValues).not.toHaveBeenCalled();
+        expect(setFieldValues).not.toHaveBeenCalled();
+    });
+
+    it("keeps imported values in the form when saving is declined", async () => {
+        const {
+            element,
+            confirm,
+            setFieldValues,
+            setCurrentFieldValues,
+            CustomButtonMock
+        } = await buildComponent({
+            currentHouseName: "F233",
+            flatName: "Haus",
+            confirmResult: false,
+            rooms: [
+                {
+                    id: "r1",
+                    name: "Dachs F233",
+                    position: 0,
+                    fields: [{id: "f1", name: "BH", position: 0}]
+                }
+            ],
+            currentFieldValues: [{field: {id: "f1", name: "BH", position: 0}, value: null}],
+            dachsValues: {bh: 15}
+        });
+
+        const autofillButton = findElement(element, (currentElement) => currentElement.type === CustomButtonMock);
+        await autofillButton?.props?.onClick?.();
+
+        expect(confirm).toHaveBeenCalled();
+        expect(setCurrentFieldValues).toHaveBeenCalledWith([
+            {field: {id: "f1", name: "BH", position: 0}, value: "15"}
+        ]);
+        expect(setFieldValues).not.toHaveBeenCalled();
+    });
 });
-
-
