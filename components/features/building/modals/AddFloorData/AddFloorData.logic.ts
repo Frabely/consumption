@@ -112,13 +112,4 @@ export const mergeRoomFieldValues = (
     return [...otherFieldValues, ...roomFieldValues];
 };
 
-/**
- * Builds a readable confirmation list for imported field values.
- * @param importedFieldValues Imported field values that are about to be saved.
- * @returns Multiline string in the format "Field: Value".
- */
-export const formatImportedFieldValueList = (importedFieldValues: FieldValue[]): string =>
-    importedFieldValues
-        .map((fieldValue) => `${fieldValue.field.name}: ${fieldValue.value ?? "-"}`)
-        .join("\n");
 

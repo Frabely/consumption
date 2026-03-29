@@ -1,7 +1,6 @@
 import {describe, expect, it, vi} from "vitest";
 import de from "@/i18n";
 import {
-    formatImportedFieldValueList,
     isCurrentMonthSelected,
     isFieldValueValid,
     mapDachsValuesToFieldValues,
@@ -27,8 +26,9 @@ type BuildComponentOptions = {
         field: {id: string; name: string; position: number};
         value: string | null;
     }>;
+    pendingImportedFieldIds?: string[];
+    isAutofillNoticeVisible?: boolean;
     flatName?: string;
-    confirmResult?: boolean;
     rooms?: Array<{
         id: string;
         name: string;
@@ -93,8 +93,9 @@ async function buildComponent({
         month: (new Date().getMonth() + 1).toString().padStart(2, "0")
     },
     currentFieldValues = [{field: {id: "f1", name: "Wasser", position: 0}, value: "42.5"}],
+    pendingImportedFieldIds = [],
+    isAutofillNoticeVisible = false,
     flatName = "Flat 1",
-    confirmResult = true,
     rooms,
     dachsValues = {
         bh: 111,
@@ -110,9 +111,7 @@ async function buildComponent({
     vi.restoreAllMocks();
 
     const alert = vi.fn();
-    const confirm = vi.fn(() => confirmResult);
     vi.stubGlobal("alert", alert);
-    vi.stubGlobal("window", {confirm});
 
     const defaultRooms = rooms ?? [
         {id: "r1", name: "Kueche", position: 0, fields: [{id: "f1", name: "Wasser", position: 0}]},
@@ -135,6 +134,8 @@ async function buildComponent({
     const setCurrentRoom = vi.fn();
     const setAllFieldValues = vi.fn();
     const setCurrentFieldValues = vi.fn();
+    const setPendingImportedFieldIds = vi.fn();
+    const setIsAutofillNoticeVisible = vi.fn();
     const CustomSelectMock = function CustomSelectMock() {
         return null;
     };
@@ -162,7 +163,13 @@ async function buildComponent({
                 if (stateCall === 3) {
                     return [currentFieldValues, setAllFieldValues] as const;
                 }
-                return [currentFieldValues, setCurrentFieldValues] as const;
+                if (stateCall === 4) {
+                    return [currentFieldValues, setCurrentFieldValues] as const;
+                }
+                if (stateCall === 5) {
+                    return [pendingImportedFieldIds, setPendingImportedFieldIds] as const;
+                }
+                return [isAutofillNoticeVisible, setIsAutofillNoticeVisible] as const;
             }
         };
     });
@@ -213,7 +220,6 @@ async function buildComponent({
 
     return {
         alert,
-        confirm,
         dispatch,
         element,
         setFieldValue,
@@ -225,6 +231,8 @@ async function buildComponent({
         setCurrentRoom,
         setAllFieldValues,
         setCurrentFieldValues,
+        setPendingImportedFieldIds,
+        setIsAutofillNoticeVisible,
         CustomSelectMock,
         FieldInputMock,
         CustomButtonMock,
@@ -301,13 +309,6 @@ describe("AddFloorData logic", () => {
             {field: {id: "2", name: "Other", position: 1}, value: "2"},
             {field: {id: "1", name: "BH", position: 0}, value: "9"}
         ]);
-    });
-
-    it("formats the imported field values as a confirmation list", () => {
-        expect(formatImportedFieldValueList([
-            {field: {id: "1", name: "BH", position: 0}, value: "10"},
-            {field: {id: "2", name: "Starts", position: 1}, value: "20"}
-        ])).toBe("BH: 10\nStarts: 20");
     });
 
     it("loads field values and reacts to date, room, save and delete actions", async () => {
@@ -399,9 +400,9 @@ describe("AddFloorData logic", () => {
     it("shows the Dachs import button only in the supported target and saves imported values in batch", async () => {
         const {
             element,
-            confirm,
-            setFieldValues,
             getDachsAutofillValues,
+            setPendingImportedFieldIds,
+            setIsAutofillNoticeVisible,
             CustomButtonMock
         } = await buildComponent({
             currentHouseName: "F233",
@@ -438,24 +439,8 @@ describe("AddFloorData logic", () => {
         await autofillButton?.props?.onClick?.();
 
         expect(getDachsAutofillValues).toHaveBeenCalled();
-        expect(confirm).toHaveBeenCalledWith(
-            de.messages.dachsAutofillSaveConfirmation.replace(
-                "{fieldValueList}",
-                "BH: 10\nStarts: 20\nStrom intern: 30"
-            )
-        );
-        expect(setFieldValues).toHaveBeenCalledWith(
-            "F233",
-            expect.objectContaining({name: "Haus"}),
-            expect.objectContaining({name: "Dachs F233"}),
-            expect.any(String),
-            expect.any(String),
-            [
-                {field: {id: "f1", name: "BH", position: 0}, value: 10},
-                {field: {id: "f2", name: "Starts", position: 1}, value: 20},
-                {field: {id: "f3", name: "Strom intern", position: 2}, value: 30}
-            ]
-        );
+        expect(setPendingImportedFieldIds).toHaveBeenCalledWith(["f1", "f2", "f3"]);
+        expect(setIsAutofillNoticeVisible).toHaveBeenCalledWith(true);
     });
 
     it("blocks Dachs import outside the current month", async () => {
@@ -482,17 +467,15 @@ describe("AddFloorData logic", () => {
         expect(setFieldValues).not.toHaveBeenCalled();
     });
 
-    it("keeps imported values in the form when saving is declined", async () => {
+    it("keeps imported values in the form and does not save immediately after import", async () => {
         const {
             element,
-            confirm,
             setFieldValues,
             setCurrentFieldValues,
             CustomButtonMock
         } = await buildComponent({
             currentHouseName: "F233",
             flatName: "Haus",
-            confirmResult: false,
             rooms: [
                 {
                     id: "r1",
@@ -508,10 +491,90 @@ describe("AddFloorData logic", () => {
         const autofillButton = findElement(element, (currentElement) => currentElement.type === CustomButtonMock);
         await autofillButton?.props?.onClick?.();
 
-        expect(confirm).toHaveBeenCalled();
         expect(setCurrentFieldValues).toHaveBeenCalledWith([
             {field: {id: "f1", name: "BH", position: 0}, value: "15"}
         ]);
         expect(setFieldValues).not.toHaveBeenCalled();
+    });
+
+    it("renders the autofill notice actions when pending imported values exist", async () => {
+        const {element, CustomButtonMock} = await buildComponent({
+            isAutofillNoticeVisible: true,
+            pendingImportedFieldIds: ["f1"]
+        });
+
+        const saveAllButton = findElement(element, (currentElement) =>
+            currentElement.type === CustomButtonMock &&
+            currentElement.props?.label === de.buttonLabels.saveAllValues);
+        const saveLaterButton = findElement(element, (currentElement) =>
+            currentElement.type === "button" &&
+            currentElement.props?.children === de.buttonLabels.saveLaterIndividually);
+
+        expect(saveAllButton).toBeDefined();
+        expect(saveLaterButton).toBeDefined();
+    });
+
+    it("saves imported values from the current dialog state via the primary notice action", async () => {
+        const {
+            element,
+            setFieldValues,
+            setPendingImportedFieldIds,
+            setIsAutofillNoticeVisible,
+            CustomButtonMock
+        } = await buildComponent({
+            currentHouseName: "F233",
+            flatName: "Haus",
+            isAutofillNoticeVisible: true,
+            pendingImportedFieldIds: ["f1", "f2"],
+            rooms: [
+                {
+                    id: "r1",
+                    name: "Dachs F233",
+                    position: 0,
+                    fields: [
+                        {id: "f1", name: "BH", position: 0},
+                        {id: "f2", name: "Starts", position: 1}
+                    ]
+                }
+            ],
+            currentFieldValues: [
+                {field: {id: "f1", name: "BH", position: 0}, value: "44"},
+                {field: {id: "f2", name: "Starts", position: 1}, value: "55"}
+            ]
+        });
+
+        const saveAllButton = findElement(element, (currentElement) =>
+            currentElement.type === CustomButtonMock &&
+            currentElement.props?.label === de.buttonLabels.saveAllValues);
+        await saveAllButton?.props?.onClick?.();
+
+        expect(setFieldValues).toHaveBeenCalledWith(
+            "F233",
+            expect.objectContaining({name: "Haus"}),
+            expect.objectContaining({name: "Dachs F233"}),
+            expect.any(String),
+            expect.any(String),
+            [
+                {field: {id: "f1", name: "BH", position: 0}, value: 44},
+                {field: {id: "f2", name: "Starts", position: 1}, value: 55}
+            ]
+        );
+        expect(setPendingImportedFieldIds).toHaveBeenCalledWith([]);
+        expect(setIsAutofillNoticeVisible).toHaveBeenCalledWith(false);
+    });
+
+    it("dismisses the notice without saving via the secondary action", async () => {
+        const {element, setFieldValues, setIsAutofillNoticeVisible} = await buildComponent({
+            isAutofillNoticeVisible: true,
+            pendingImportedFieldIds: ["f1"]
+        });
+
+        const saveLaterButton = findElement(element, (currentElement) =>
+            currentElement.type === "button" &&
+            currentElement.props?.children === de.buttonLabels.saveLaterIndividually);
+        await saveLaterButton?.props?.onClick?.();
+
+        expect(setFieldValues).not.toHaveBeenCalled();
+        expect(setIsAutofillNoticeVisible).toHaveBeenCalledWith(false);
     });
 });

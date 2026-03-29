@@ -16,7 +16,6 @@ import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {selectCurrentHouse} from "@/store/selectors";
 import {filterFieldValuesByRoom, parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {
-    formatImportedFieldValueList,
     isFieldValueValid,
     isCurrentMonthSelected,
     mapDachsValuesToFieldValues,
@@ -47,6 +46,8 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     })
     const [allFieldValues, setAllFieldValues] = useState<FieldValue[]>([])
     const [currentFieldValues, setCurrentFieldValues] = useState<FieldValue[]>([])
+    const [pendingImportedFieldIds, setPendingImportedFieldIds] = useState<string[]>([])
+    const [isAutofillNoticeVisible, setIsAutofillNoticeVisible] = useState(false)
     const isDachsAutofillVisible = shouldShowDachsAutofill(currentHouse.name, flat.name, currentRoom)
 
     useEffect(() => {
@@ -65,6 +66,11 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
             dispatch(setIsLoading(false))
         })
     }, [currentDateValue, currentRoom, dispatch, flat]);
+
+    useEffect(() => {
+        setPendingImportedFieldIds([])
+        setIsAutofillNoticeVisible(false)
+    }, [currentDateValue, currentRoom])
 
     const synchronizeRoomFieldValues = (nextFieldValues: FieldValue[]) => {
         setCurrentFieldValues(nextFieldValues)
@@ -98,6 +104,44 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
             } finally {
                 dispatch(setIsLoading(false))
             }
+        }
+    }
+
+    const onDismissAutofillNoticeClickHandler = () => {
+        setIsAutofillNoticeVisible(false)
+    }
+
+    const onSaveImportedFieldValuesClickHandler = async () => {
+        const importedFieldValuesToSave = currentFieldValues.filter((fieldValue) =>
+            pendingImportedFieldIds.includes(fieldValue.field.id) && isFieldValueValid(fieldValue.value))
+        if (importedFieldValuesToSave.length === 0) {
+            setPendingImportedFieldIds([])
+            setIsAutofillNoticeVisible(false)
+            return
+        }
+
+        dispatch(setIsLoading(true))
+        try {
+            await setFieldValues(
+                currentHouse.name,
+                flat,
+                currentRoom,
+                currentDateValue.year,
+                currentDateValue.month,
+                importedFieldValuesToSave.map((fieldValue) => ({
+                    field: fieldValue.field,
+                    value: Number(fieldValue.value)
+                }))
+            )
+            setPendingImportedFieldIds([])
+            setIsAutofillNoticeVisible(false)
+            alert(de.messages.dachsAutofillSaved
+                .replace("{valueCount}", importedFieldValuesToSave.length.toString()))
+        } catch (error) {
+            console.error(error)
+            alert(de.messages.dachsAutofillFailed)
+        } finally {
+            dispatch(setIsLoading(false))
         }
     }
 
@@ -140,30 +184,13 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
             synchronizeRoomFieldValues(updatedFieldValues)
 
             if (importedFieldValues.length === 0) {
+                setPendingImportedFieldIds([])
+                setIsAutofillNoticeVisible(false)
                 return
             }
 
-            const confirmationMessage = de.messages.dachsAutofillSaveConfirmation
-                .replace("{fieldValueList}", formatImportedFieldValueList(importedFieldValues))
-
-            if (!window.confirm(confirmationMessage)) {
-                return
-            }
-
-            await setFieldValues(
-                currentHouse.name,
-                flat,
-                currentRoom,
-                currentDateValue.year,
-                currentDateValue.month,
-                importedFieldValues.map((fieldValue) => ({
-                    field: fieldValue.field,
-                    value: Number(fieldValue.value)
-                }))
-            )
-
-            alert(de.messages.dachsAutofillSaved
-                .replace("{valueCount}", importedFieldValues.length.toString()))
+            setPendingImportedFieldIds(importedFieldValues.map((fieldValue) => fieldValue.field.id))
+            setIsAutofillNoticeVisible(true)
         } catch (error) {
             console.error(error)
             alert(de.messages.dachsAutofillFailed)
@@ -212,6 +239,26 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                             label={de.buttonLabels.importDachsValues}
                             style={{width: "100%"}}
                         />
+                    </div>
+                ) : null}
+                {isAutofillNoticeVisible ? (
+                    <div className={styles.autofillNotice}>
+                        <p className={styles.autofillNoticeTitle}>{de.messages.dachsAutofillPending}</p>
+                        <p className={styles.autofillNoticeText}>{de.messages.dachsAutofillPendingHint}</p>
+                        <div className={styles.autofillNoticeActions}>
+                            <CustomButton
+                                type={"button"}
+                                onClick={onSaveImportedFieldValuesClickHandler}
+                                label={de.buttonLabels.saveAllValues}
+                            />
+                            <button
+                                type={"button"}
+                                className={styles.autofillSecondaryButton}
+                                onClick={onDismissAutofillNoticeClickHandler}
+                            >
+                                {de.buttonLabels.saveLaterIndividually}
+                            </button>
+                        </div>
                     </div>
                 ) : null}
                 {currentFieldValues.map((fieldValue, index: number) => {
