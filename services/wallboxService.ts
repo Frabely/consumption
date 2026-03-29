@@ -1,3 +1,5 @@
+import {API_BASE_URL} from "@/constants/api";
+
 export type WallboxSession = {
   reportId: number;
   kWh: number;
@@ -16,7 +18,6 @@ type WallboxSessionApiResponse = {
   CardId: string;
 };
 
-const WALLBOX_API_BASE_URL = "https://f233.ahecht.de";
 const MILLISECONDS_TIMESTAMP_THRESHOLD = 1_000_000_000_000;
 const MILLISECONDS_PER_SECOND = 1000;
 const WATT_HOURS_PER_KILOWATT_HOUR = 1000;
@@ -29,7 +30,7 @@ const WALLBOX_KILOWATT_HOURS_DECIMAL_PLACES = 4;
  */
 export const resolveWallboxSessionEndpoint = (
   station: WallboxApiStation,
-): string => `${WALLBOX_API_BASE_URL}/api/v1/sessions/${station}/latest`;
+): string => `${API_BASE_URL}/sessions/${station}/latest`;
 
 /**
  * Converts a numeric API timestamp to a Date instance.

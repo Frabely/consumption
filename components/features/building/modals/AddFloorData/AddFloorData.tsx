@@ -2,14 +2,14 @@
 
 import de from '@/i18n'
 import Modal from "@/components/shared/overlay/Modal";
-import {FieldValue, Flat, Room} from "@/common/models";
+import {FieldValue, Flat, Room, YearMonth} from "@/common/models";
 import styles from "./AddFloorData.module.css";
 import globalStyles from "@/styles/GlobalStyles.module.css";
 import {ChangeEvent, CSSProperties, useEffect, useState} from "react";
 import {faSave, faBan} from "@fortawesome/free-solid-svg-icons";
 import {CSSVariables, FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import FieldInput from "@/components/shared/forms/FieldInput";
-import {deleteFieldValue, getFieldValues, setFieldValue} from "@/firebase/functions";
+import {deleteFieldValue, getFieldValues, setFieldValue, setFieldValues} from "@/firebase/functions";
 import CustomSelect from "@/components/shared/forms/CustomSelect";
 import {ModalState} from "@/constants/enums";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
@@ -17,10 +17,21 @@ import {selectCurrentHouse} from "@/store/selectors";
 import {filterFieldValuesByRoom, parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {
     isFieldValueValid,
-    resolveRoomByName
+    isCurrentMonthSelected,
+    mapDachsValuesToFieldValues,
+    mergeRoomFieldValues,
+    resolveRoomByName,
+    shouldShowDachsAutofill
 } from "@/components/features/building/modals/AddFloorData/AddFloorData.logic";
 import {setIsLoading} from "@/store/reducer/isLoading";
+import {getDachsAutofillValues} from "@/components/features/building/modals/AddFloorData/AddFloorData.dachsService";
+import CustomButton from "@/components/shared/ui/CustomButton";
 
+/**
+ * Renders the building field value dialog for one flat and supports Dachs autofill for F233.
+ * @param flat Selected flat whose room values are being managed.
+ * @returns Building consumption modal for the selected flat.
+ */
 export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const currentHouse = useAppSelector(selectCurrentHouse)
     const dispatch = useAppDispatch()
@@ -29,12 +40,15 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const month = date.getMonth() + 1
     const monthString: string = month < 10 ? `0` + month : month.toString()
     const [currentRoom, setCurrentRoom] = useState<Room>(flat.rooms[0])
-    const [currentDateValue, setCurrentDateValue] = useState({
+    const [currentDateValue, setCurrentDateValue] = useState<YearMonth>({
         year: year.toString(),
         month: monthString
     })
     const [allFieldValues, setAllFieldValues] = useState<FieldValue[]>([])
     const [currentFieldValues, setCurrentFieldValues] = useState<FieldValue[]>([])
+    const [pendingImportedFieldIds, setPendingImportedFieldIds] = useState<string[]>([])
+    const [isAutofillNoticeVisible, setIsAutofillNoticeVisible] = useState(false)
+    const isDachsAutofillVisible = shouldShowDachsAutofill(currentHouse.name, flat.name, currentRoom)
 
     useEffect(() => {
         dispatch(setIsLoading(true))
@@ -53,57 +67,135 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
         })
     }, [currentDateValue, currentRoom, dispatch, flat]);
 
+    useEffect(() => {
+        setPendingImportedFieldIds([])
+        setIsAutofillNoticeVisible(false)
+    }, [currentDateValue, currentRoom])
+
+    const synchronizeRoomFieldValues = (nextFieldValues: FieldValue[]) => {
+        setCurrentFieldValues(nextFieldValues)
+        setAllFieldValues((previousFieldValues) =>
+            mergeRoomFieldValues(previousFieldValues, nextFieldValues, currentRoom))
+    }
+
     const onFieldPairValueChange = (value: string, id: string) => {
-        const fieldValues = [...currentFieldValues]
-        fieldValues.map((fieldValue) => {
-            if (fieldValue.field.id === id) {
-                fieldValue.value = value
-            }
-        })
-        setCurrentFieldValues(fieldValues)
+        const nextFieldValues = currentFieldValues.map((fieldValue) =>
+            fieldValue.field.id === id
+                ? {...fieldValue, value}
+                : fieldValue)
+        synchronizeRoomFieldValues(nextFieldValues)
     }
 
     const onSaveFieldClickHandler = async (fieldValue: FieldValue) => {
         if (fieldValue.value && !isNaN(Number(fieldValue.value))) {
             dispatch(setIsLoading(true))
-            setFieldValue(
+            try {
+                await setFieldValue(
+                    currentHouse.name,
+                    flat,
+                    currentRoom,
+                    fieldValue.field,
+                    currentDateValue.year,
+                    currentDateValue.month,
+                    Number(fieldValue.value))
+                alert(de.messages.fieldSaved
+                    .replace("{valueFieldName}", fieldValue.field.name)
+                    .replace("{valueNumber}", fieldValue.value ? fieldValue.value.toString() : "undefined"))
+            } finally {
+                dispatch(setIsLoading(false))
+            }
+        }
+    }
+
+    const onDismissAutofillNoticeClickHandler = () => {
+        setIsAutofillNoticeVisible(false)
+    }
+
+    const onSaveImportedFieldValuesClickHandler = async () => {
+        const importedFieldValuesToSave = currentFieldValues.filter((fieldValue) =>
+            pendingImportedFieldIds.includes(fieldValue.field.id) && isFieldValueValid(fieldValue.value))
+        if (importedFieldValuesToSave.length === 0) {
+            setPendingImportedFieldIds([])
+            setIsAutofillNoticeVisible(false)
+            return
+        }
+
+        dispatch(setIsLoading(true))
+        try {
+            await setFieldValues(
                 currentHouse.name,
                 flat,
                 currentRoom,
-                fieldValue.field,
                 currentDateValue.year,
                 currentDateValue.month,
-                Number(fieldValue.value))
-                .then(() => {
-                    alert(de.messages.fieldSaved
-                        .replace("{valueFieldName}", fieldValue.field.name)
-                        .replace("{valueNumber}", fieldValue.value ? fieldValue.value.toString() : "undefined"))
-                })
-                .finally(() => {
-                    dispatch(setIsLoading(false))
-                })
+                importedFieldValuesToSave.map((fieldValue) => ({
+                    field: fieldValue.field,
+                    value: Number(fieldValue.value)
+                }))
+            )
+            setPendingImportedFieldIds([])
+            setIsAutofillNoticeVisible(false)
+            alert(de.messages.dachsAutofillSaved
+                .replace("{valueCount}", importedFieldValuesToSave.length.toString()))
+        } catch (error) {
+            console.error(error)
+            alert(de.messages.dachsAutofillFailed)
+        } finally {
+            dispatch(setIsLoading(false))
         }
     }
 
     const onDeleteFieldClickHandler = async (fieldValueToDelete: FieldValue) => {
         if (fieldValueToDelete.value !== null) {
             dispatch(setIsLoading(true))
-            const fieldValues = [...currentFieldValues]
-            fieldValues.map((field) => {
-                if (field.field.id === fieldValueToDelete.field.id) {
-                    fieldValueToDelete.value = null
-                }
-            })
-            setCurrentFieldValues(fieldValues)
-            deleteFieldValue(
-                currentHouse.name,
-                flat,
-                currentRoom,
-                fieldValueToDelete.field,
-                currentDateValue.year,
-                currentDateValue.month)
-                .catch((ex) => console.error(ex))
-                .finally(() => dispatch(setIsLoading(false)))
+            const nextFieldValues = currentFieldValues.map((fieldValue) =>
+                fieldValue.field.id === fieldValueToDelete.field.id
+                    ? {...fieldValue, value: null}
+                    : fieldValue)
+            synchronizeRoomFieldValues(nextFieldValues)
+            try {
+                await deleteFieldValue(
+                    currentHouse.name,
+                    flat,
+                    currentRoom,
+                    fieldValueToDelete.field,
+                    currentDateValue.year,
+                    currentDateValue.month)
+            } catch (ex) {
+                console.error(ex)
+            } finally {
+                dispatch(setIsLoading(false))
+            }
+        }
+    }
+
+    const onDachsAutofillClickHandler = async () => {
+        if (!isCurrentMonthSelected(currentDateValue)) {
+            alert(de.messages.dachsAutofillCurrentMonthOnly)
+            return
+        }
+
+        dispatch(setIsLoading(true))
+        try {
+            const dachsValues = await getDachsAutofillValues()
+            const {updatedFieldValues, importedFieldValues} =
+                mapDachsValuesToFieldValues(currentFieldValues, dachsValues)
+
+            synchronizeRoomFieldValues(updatedFieldValues)
+
+            if (importedFieldValues.length === 0) {
+                setPendingImportedFieldIds([])
+                setIsAutofillNoticeVisible(false)
+                return
+            }
+
+            setPendingImportedFieldIds(importedFieldValues.map((fieldValue) => fieldValue.field.id))
+            setIsAutofillNoticeVisible(true)
+        } catch (error) {
+            console.error(error)
+            alert(de.messages.dachsAutofillFailed)
+        } finally {
+            dispatch(setIsLoading(false))
         }
     }
 
@@ -139,6 +231,36 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
                     options={flat.rooms.map((room) => room.name)}
                     style={{width: "100%"}}
                 />
+                {isDachsAutofillVisible ? (
+                    <div className={styles.autofillButtonContainer}>
+                        <CustomButton
+                            type={"button"}
+                            onClick={onDachsAutofillClickHandler}
+                            label={de.buttonLabels.importDachsValues}
+                            style={{width: "100%"}}
+                        />
+                    </div>
+                ) : null}
+                {isAutofillNoticeVisible ? (
+                    <div className={styles.autofillNotice}>
+                        <p className={styles.autofillNoticeTitle}>{de.messages.dachsAutofillPending}</p>
+                        <p className={styles.autofillNoticeText}>{de.messages.dachsAutofillPendingHint}</p>
+                        <div className={styles.autofillNoticeActions}>
+                            <CustomButton
+                                type={"button"}
+                                onClick={onSaveImportedFieldValuesClickHandler}
+                                label={de.buttonLabels.saveAllValues}
+                            />
+                            <button
+                                type={"button"}
+                                className={styles.autofillSecondaryButton}
+                                onClick={onDismissAutofillNoticeClickHandler}
+                            >
+                                {de.buttonLabels.saveLaterIndividually}
+                            </button>
+                        </div>
+                    </div>
+                ) : null}
                 {currentFieldValues.map((fieldValue, index: number) => {
                     const isValueValid = isFieldValueValid(fieldValue.value)
                     return (
