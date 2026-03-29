@@ -20,7 +20,8 @@ export {
     deleteFieldValue,
     getFieldValues,
     getFieldValuesForExport,
-    setFieldValue
+    setFieldValue,
+    setFieldValues
 } from "@/firebase/services/fieldValueService";
 export {getLoadingStations} from "@/firebase/services/loadingStationService";
 export {checkUserId} from "@/firebase/services/userService";

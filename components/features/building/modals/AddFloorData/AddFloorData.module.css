@@ -10,6 +10,59 @@
     font-weight: 700;
 }
 
+.autofillButtonContainer {
+    display: flex;
+    width: 100%;
+}
+
+.autofillNotice {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--primary-color) 12%, var(--surface-strong));
+    border: 1px solid color-mix(in srgb, var(--primary-color) 35%, var(--border-color));
+}
+
+.autofillNoticeTitle {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 0.98rem;
+    font-weight: 700;
+}
+
+.autofillNoticeText {
+    margin: 0;
+    color: var(--text-color-muted);
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+.autofillNoticeActions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.autofillSecondaryButton {
+    min-height: 2.85rem;
+    padding: 0.58rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    background: var(--surface-soft);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.18s ease, transform 0.18s ease;
+}
+
+.autofillSecondaryButton:hover {
+    filter: brightness(0.98);
+    transform: translateY(-1px);
+}
+
 .inputContainer {
     display: flex;
     flex-direction: column;
@@ -72,5 +125,9 @@
 @media (min-width: 640px) {
     .mainContainer {
         padding: 0.58rem;
+    }
+
+    .autofillNoticeActions {
+        flex-direction: row;
     }
 }
