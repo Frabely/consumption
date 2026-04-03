@@ -125,6 +125,33 @@ describe("DownloadBuildingCsv logic", () => {
         expect(text).toContain("House;Flat;Room;Water;12,3;3;");
     });
 
+    it("formats only numeric field values and keeps dots in labels unchanged", () => {
+        const text = buildDownloadBuildingCsvText(
+            [
+                {
+                    house: {id: "h1", name: "House A.1", flats: []},
+                    flat: {id: "f1", name: "Flat B.2", rooms: []},
+                    room: {id: "r1", name: "Room C.3", fields: []},
+                    fieldValue: {
+                        field: {id: "x", name: "Water D.4"},
+                        value: "12.3",
+                        day: new Date("2026-02-03T00:00:00.000Z")
+                    }
+                }
+            ],
+            {
+                house: "House",
+                flat: "Flat",
+                room: "Room",
+                fieldName: "Field",
+                fieldValue: "Value",
+                day: "Day"
+            }
+        );
+
+        expect(text).toContain("House A.1;Flat B.2;Room C.3;Water D.4;12,3;3;");
+    });
+
     it("handles abort/date/download and no-data paths", async () => {
         const {
             element,

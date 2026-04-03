@@ -17,7 +17,6 @@ import {selectCurrentHouse} from "@/store/selectors";
 import {filterFieldValuesByRoom, parseYearMonthInput} from "@/utils/building/fieldValueMapping";
 import {
     isFieldValueValid,
-    isCurrentMonthSelected,
     mapDachsValuesToFieldValues,
     mergeRoomFieldValues,
     resolveRoomByName,
@@ -170,11 +169,6 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     }
 
     const onDachsAutofillClickHandler = async () => {
-        if (!isCurrentMonthSelected(currentDateValue)) {
-            alert(de.messages.dachsAutofillCurrentMonthOnly)
-            return
-        }
-
         dispatch(setIsLoading(true))
         try {
             const dachsValues = await getDachsAutofillValues()

@@ -43,18 +43,6 @@ export const shouldShowDachsAutofill = (
     room.fields.some((field) => field.name in DACHS_AUTOFILL_FIELD_MAPPING);
 
 /**
- * Checks whether the selected year and month equal the current calendar month.
- * @param value Selected year-month value from the dialog.
- * @param now Current date used for comparison.
- * @returns True when the selected month matches the current month.
- */
-export const isCurrentMonthSelected = (value: YearMonth, now: Date = new Date()): boolean => {
-    const currentMonth = (now.getMonth() + MONTH_NUMBER_OFFSET).toString().padStart(2, "0");
-
-    return value.year === now.getFullYear().toString() && value.month === currentMonth;
-};
-
-/**
  * Maps normalized Dachs values onto the current field list without clearing unmatched entries.
  * @param currentFieldValues Current room field values shown in the dialog.
  * @param dachsValues Normalized Dachs values from the import service.

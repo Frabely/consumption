@@ -25,10 +25,10 @@ export const buildDownloadBuildingCsvText = (
             `${row.flat.name};` +
             `${row.room.name};` +
             `${row.fieldValue.field.name};` +
-            `${row.fieldValue.value};` +
+            `${row.fieldValue.value ? row.fieldValue.value.toString().replace(".", ",") : ""};` +
             `${row.fieldValue.day ? row.fieldValue.day.getUTCDate().toString() : "-"};\n`;
     });
 
-    return txtContent.replace(".", ",");
+    return txtContent;
 };
 

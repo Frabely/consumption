@@ -1,7 +1,6 @@
 import {describe, expect, it, vi} from "vitest";
 import de from "@/i18n";
 import {
-    isCurrentMonthSelected,
     isFieldValueValid,
     mapDachsValuesToFieldValues,
     mergeRoomFieldValues,
@@ -273,11 +272,7 @@ describe("AddFloorData logic", () => {
         expect(shouldShowDachsAutofill("F999", "Haus", room)).toBe(false);
     });
 
-    it("detects the current month and maps imported Dachs values without clearing unmatched fields", () => {
-        const now = new Date("2026-03-29T12:00:00.000Z");
-        expect(isCurrentMonthSelected({year: "2026", month: "03"}, now)).toBe(true);
-        expect(isCurrentMonthSelected({year: "2026", month: "02"}, now)).toBe(false);
-
+    it("maps imported Dachs values without clearing unmatched fields", () => {
         const mapped = mapDachsValuesToFieldValues(
             [
                 {field: {id: "1", name: "BH", position: 0}, value: null},
@@ -443,8 +438,16 @@ describe("AddFloorData logic", () => {
         expect(setIsAutofillNoticeVisible).toHaveBeenCalledWith(true);
     });
 
-    it("blocks Dachs import outside the current month", async () => {
-        const {element, alert, getDachsAutofillValues, setFieldValues, CustomButtonMock} = await buildComponent({
+    it("allows Dachs import outside the current month", async () => {
+        const {
+            element,
+            alert,
+            getDachsAutofillValues,
+            setCurrentFieldValues,
+            setPendingImportedFieldIds,
+            setIsAutofillNoticeVisible,
+            CustomButtonMock
+        } = await buildComponent({
             currentHouseName: "F233",
             flatName: "Haus",
             currentDateValue: {year: "2025", month: "01"},
@@ -462,9 +465,13 @@ describe("AddFloorData logic", () => {
         const autofillButton = findElement(element, (currentElement) => currentElement.type === CustomButtonMock);
         await autofillButton?.props?.onClick?.();
 
-        expect(alert).toHaveBeenCalledWith(de.messages.dachsAutofillCurrentMonthOnly);
-        expect(getDachsAutofillValues).not.toHaveBeenCalled();
-        expect(setFieldValues).not.toHaveBeenCalled();
+        expect(alert).not.toHaveBeenCalledWith(de.messages.dachsAutofillCurrentMonthOnly);
+        expect(getDachsAutofillValues).toHaveBeenCalled();
+        expect(setCurrentFieldValues).toHaveBeenCalledWith([
+            {field: {id: "f1", name: "BH", position: 0}, value: "111"}
+        ]);
+        expect(setPendingImportedFieldIds).toHaveBeenCalledWith(["f1"]);
+        expect(setIsAutofillNoticeVisible).toHaveBeenCalledWith(true);
     });
 
     it("keeps imported values in the form and does not save immediately after import", async () => {
