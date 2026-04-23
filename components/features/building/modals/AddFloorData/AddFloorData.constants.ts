@@ -1,6 +1,4 @@
-export const DACHS_TARGET_HOUSE_NAME = "F233";
 export const DACHS_TARGET_FLAT_NAME = "Haus";
-export const DACHS_TARGET_ROOM_NAME = "Dachs F233";
 
 export const DACHS_AUTOFILL_FIELD_MAPPING = {
     "BH": "bh",

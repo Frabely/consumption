@@ -1,12 +1,12 @@
-import type {FieldValue, Room, YearMonth} from "@/common/models";
-import type {DachsAutofillValues} from "@/components/features/building/modals/AddFloorData/AddFloorData.dachsService";
+import type {FieldValue, Room} from "@/common/models";
+import type {DachsAutofillBaseDto, DachsAutofillResponseDto} from "@/common/dto";
 import {
     DACHS_AUTOFILL_FIELD_MAPPING,
-    DACHS_TARGET_FLAT_NAME,
-    DACHS_TARGET_HOUSE_NAME,
-    DACHS_TARGET_ROOM_NAME,
-    MONTH_NUMBER_OFFSET
+    DACHS_TARGET_FLAT_NAME
 } from "@/components/features/building/modals/AddFloorData/AddFloorData.constants";
+import {
+    getDachsTargetRoomName
+} from "@/common/dachs/dachsHouseConfig";
 
 /**
  * Validates whether a field value can be persisted as a number.
@@ -37,22 +37,9 @@ export const shouldShowDachsAutofill = (
     flatName: string,
     room: Room
 ): boolean =>
-    houseName === DACHS_TARGET_HOUSE_NAME &&
     flatName === DACHS_TARGET_FLAT_NAME &&
-    room.name === DACHS_TARGET_ROOM_NAME &&
+    room.name === getDachsTargetRoomName(houseName) &&
     room.fields.some((field) => field.name in DACHS_AUTOFILL_FIELD_MAPPING);
-
-/**
- * Checks whether the selected year and month equal the current calendar month.
- * @param value Selected year-month value from the dialog.
- * @param now Current date used for comparison.
- * @returns True when the selected month matches the current month.
- */
-export const isCurrentMonthSelected = (value: YearMonth, now: Date = new Date()): boolean => {
-    const currentMonth = (now.getMonth() + MONTH_NUMBER_OFFSET).toString().padStart(2, "0");
-
-    return value.year === now.getFullYear().toString() && value.month === currentMonth;
-};
 
 /**
  * Maps normalized Dachs values onto the current field list without clearing unmatched entries.
@@ -62,7 +49,7 @@ export const isCurrentMonthSelected = (value: YearMonth, now: Date = new Date())
  */
 export const mapDachsValuesToFieldValues = (
     currentFieldValues: FieldValue[],
-    dachsValues: DachsAutofillValues
+    dachsValues: DachsAutofillResponseDto
 ): {
     updatedFieldValues: FieldValue[];
     importedFieldValues: FieldValue[];
@@ -75,7 +62,7 @@ export const mapDachsValuesToFieldValues = (
             return fieldValue;
         }
 
-        const importedValue = dachsValues[mappedKey];
+        const importedValue = getMappedDachsValue(dachsValues, mappedKey);
         if (importedValue === undefined) {
             return fieldValue;
         }
@@ -92,6 +79,26 @@ export const mapDachsValuesToFieldValues = (
         updatedFieldValues,
         importedFieldValues
     };
+};
+
+/**
+ * Resolves a mapped Dachs value from a supported response DTO.
+ * @param dachsValues Dachs API response for F233 or F235.
+ * @param mappedKey Internal normalized field key.
+ * @returns The mapped numeric value or undefined when the key is not present.
+ */
+const getMappedDachsValue = (
+    dachsValues: DachsAutofillResponseDto,
+    mappedKey: (typeof DACHS_AUTOFILL_FIELD_MAPPING)[keyof typeof DACHS_AUTOFILL_FIELD_MAPPING]
+): number | undefined => {
+    switch (mappedKey) {
+        case "bh":
+            return "bh" in dachsValues ? dachsValues.bh : undefined;
+        case "buderusStarts":
+            return "buderusStarts" in dachsValues ? dachsValues.buderusStarts : undefined;
+        default:
+            return dachsValues[mappedKey as keyof DachsAutofillBaseDto];
+    }
 };
 
 /**
