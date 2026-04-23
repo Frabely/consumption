@@ -115,7 +115,7 @@ async function buildComponent({
         position: 0,
         rooms: defaultRooms
     };
-    const resolvedDachsValues: DachsF233AutofillApiResponseDto | DachsF235AutofillApiResponseDto = currentHouseName === "F235"
+    const resolvedDachsValues: DachsF233AutofillApiResponseDto | DachsF235AutofillApiResponseDto = defaultRooms[0]?.name === "Dachs F235"
         ? {
             starts: dachsValues.starts ?? 222,
             electricityInternal: dachsValues.electricityInternal ?? 333,
@@ -277,10 +277,10 @@ describe("AddFloorData logic", () => {
             fields: [{id: "field-1", name: "BH", position: 0}]
         };
 
-        expect(shouldShowDachsAutofill("F233", "Haus", room)).toBe(true);
-        expect(shouldShowDachsAutofill("F235", "Haus", {...room, name: "Dachs F235"})).toBe(true);
-        expect(shouldShowDachsAutofill("F233", "Wohnung", room)).toBe(false);
-        expect(shouldShowDachsAutofill("F999", "Haus", room)).toBe(false);
+        expect(shouldShowDachsAutofill(room)).toBe(true);
+        expect(shouldShowDachsAutofill({...room, fields: []})).toBe(true);
+        expect(shouldShowDachsAutofill({...room, name: "Dachs F235"})).toBe(true);
+        expect(shouldShowDachsAutofill({...room, name: "Other Room"})).toBe(false);
     });
 
     it("maps imported Dachs values without clearing unmatched fields", () => {
@@ -527,7 +527,7 @@ describe("AddFloorData logic", () => {
 
         await autofillButton?.props?.onClick?.();
 
-        expect(getDachsAutofillValues).toHaveBeenCalledWith("F235");
+        expect(getDachsAutofillValues).toHaveBeenCalledWith("Dachs F235");
         expect(setCurrentFieldValues).toHaveBeenCalledWith([
             {field: {id: "f1", name: "Starts", position: 0}, value: "12"},
             {field: {id: "f2", name: "Strom intern", position: 1}, value: "34"},

@@ -26,7 +26,7 @@ import {MONTH_NUMBER_OFFSET} from "@/components/features/building/modals/AddFloo
 import {setIsLoading} from "@/store/reducer/isLoading";
 import {getDachsAutofillValues} from "@/services/dachsService";
 import CustomButton from "@/components/shared/ui/CustomButton";
-import {isSupportedDachsHouseName} from "@/common/dachs/dachsHouseConfig";
+import {isSupportedDachsRoomName} from "@/common/dachs/dachsHouseConfig";
 
 /**
  * Renders the building field value dialog for one flat and supports Dachs autofill for F233 and F235.
@@ -49,8 +49,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const [currentFieldValues, setCurrentFieldValues] = useState<FieldValue[]>([])
     const [pendingImportedFieldIds, setPendingImportedFieldIds] = useState<string[]>([])
     const [isAutofillNoticeVisible, setIsAutofillNoticeVisible] = useState(false)
-    const isDachsAutofillVisible = shouldShowDachsAutofill(currentHouse.name, flat.name, currentRoom)
-    const supportedDachsHouseName = isSupportedDachsHouseName(currentHouse.name) ? currentHouse.name : undefined
+    const isDachsAutofillVisible = shouldShowDachsAutofill(currentRoom)
 
     useEffect(() => {
         dispatch(setIsLoading(true))
@@ -172,12 +171,12 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     }
 
     const onDachsAutofillClickHandler = async () => {
-        if (!supportedDachsHouseName) {
+        if (!isSupportedDachsRoomName(currentRoom.name)) {
             return
         }
         dispatch(setIsLoading(true))
         try {
-            const dachsValues = await getDachsAutofillValues(supportedDachsHouseName)
+            const dachsValues = await getDachsAutofillValues(currentRoom.name)
             const {updatedFieldValues, importedFieldValues} =
                 mapDachsValuesToFieldValues(currentFieldValues, dachsValues)
 

@@ -1,11 +1,10 @@
 import type {FieldValue, Room} from "@/common/models";
 import type {DachsAutofillBaseDto, DachsAutofillResponseDto} from "@/common/dto";
 import {
-    DACHS_AUTOFILL_FIELD_MAPPING,
-    DACHS_TARGET_FLAT_NAME
+    DACHS_AUTOFILL_FIELD_MAPPING
 } from "@/components/features/building/modals/AddFloorData/AddFloorData.constants";
 import {
-    getDachsTargetRoomName
+    isSupportedDachsRoomName
 } from "@/common/dachs/dachsHouseConfig";
 
 /**
@@ -27,19 +26,13 @@ export const resolveRoomByName = (rooms: Room[], value: string): Room | undefine
 
 /**
  * Checks whether the Dachs autofill action should be shown for the current context.
- * @param houseName Selected house name.
- * @param flatName Selected flat name.
  * @param room Active room in the dialog.
- * @returns True when the dialog matches the supported Dachs target and has mappable fields.
+ * @returns True when the dialog matches one of the supported Dachs target rooms.
  */
 export const shouldShowDachsAutofill = (
-    houseName: string,
-    flatName: string,
     room: Room
 ): boolean =>
-    flatName === DACHS_TARGET_FLAT_NAME &&
-    room.name === getDachsTargetRoomName(houseName) &&
-    room.fields.some((field) => field.name in DACHS_AUTOFILL_FIELD_MAPPING);
+    isSupportedDachsRoomName(room.name);
 
 /**
  * Maps normalized Dachs values onto the current field list without clearing unmatched entries.

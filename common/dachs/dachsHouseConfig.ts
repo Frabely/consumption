@@ -11,18 +11,21 @@ export const DACHS_HOUSE_CONFIG = {
 
 export type DachsHouseName = keyof typeof DACHS_HOUSE_CONFIG;
 
-/**
- * Checks whether a house name is supported by the Dachs autofill flow.
- * @param houseName House name from the current application context.
- * @returns True when the house name is part of the configured Dachs houses.
- */
-export const isSupportedDachsHouseName = (houseName: string): houseName is DachsHouseName =>
-    houseName in DACHS_HOUSE_CONFIG;
+export type DachsRoomName = (typeof DACHS_HOUSE_CONFIG)[DachsHouseName]["roomName"];
 
 /**
- * Resolves the configured Dachs room name for a house.
- * @param houseName House name from the current application context.
- * @returns The target room name or undefined when the house is not supported.
+ * Checks whether a room name is supported by the Dachs autofill flow.
+ * @param roomName Room name from the current application context.
+ * @returns True when the room name is part of the configured Dachs rooms.
  */
-export const getDachsTargetRoomName = (houseName: string): string | undefined =>
-    isSupportedDachsHouseName(houseName) ? DACHS_HOUSE_CONFIG[houseName].roomName : undefined;
+export const isSupportedDachsRoomName = (roomName: string): roomName is DachsRoomName =>
+    Object.values(DACHS_HOUSE_CONFIG).some((config) => config.roomName === roomName);
+
+/**
+ * Resolves the configured Dachs house name for a room name.
+ * @param roomName Room name from the current application context.
+ * @returns The house name or undefined when the room is not supported.
+ */
+export const getDachsHouseNameByRoomName = (roomName: string): DachsHouseName | undefined =>
+    (Object.entries(DACHS_HOUSE_CONFIG) as Array<[DachsHouseName, (typeof DACHS_HOUSE_CONFIG)[DachsHouseName]]>)
+        .find(([, config]) => config.roomName === roomName)?.[0];

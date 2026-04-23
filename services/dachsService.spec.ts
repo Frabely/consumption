@@ -20,7 +20,7 @@ describe("AddFloorData dachs service", () => {
         }));
 
         const {getDachsAutofillValues} = await import("./dachsService");
-        const result = await getDachsAutofillValues("F233");
+        const result = await getDachsAutofillValues("Dachs F233");
 
         expect(fetch).toHaveBeenCalledWith(
             expect.stringContaining("/dachs/f233/status"),
@@ -43,7 +43,7 @@ describe("AddFloorData dachs service", () => {
 
         const {getDachsAutofillValues} = await import("./dachsService");
 
-        const result = await getDachsAutofillValues("F235");
+        const result = await getDachsAutofillValues("Dachs F235");
 
         expect(fetch).toHaveBeenCalledWith(
             expect.stringContaining("/dachs/f235/status"),

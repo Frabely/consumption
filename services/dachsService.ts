@@ -1,5 +1,5 @@
 import type {DachsAutofillResponseDtoByHouse} from "@/common/dto";
-import {DACHS_HOUSE_CONFIG, DachsHouseName} from "@/common/dachs/dachsHouseConfig";
+import {DACHS_HOUSE_CONFIG, getDachsHouseNameByRoomName, DachsHouseName, DachsRoomName} from "@/common/dachs/dachsHouseConfig";
 import {API_BASE_URL} from "@/constants/api";
 
 /**
@@ -29,16 +29,21 @@ const fetchDachsStatusApiResponse = async <TResponseDto>(
 };
 
 /**
- * Loads the Dachs API response for a supported house name.
- * @param houseName Supported Dachs house name.
+ * Loads the Dachs API response for a supported room name.
+ * @param roomName Supported Dachs room name.
  * @param signal Optional abort signal for request cancellation.
- * @returns Dachs API response DTO for the selected house.
+ * @returns Dachs API response DTO for the selected room.
  */
-export async function getDachsAutofillValues<THouse extends DachsHouseName>(
-    houseName: THouse,
+export async function getDachsAutofillValues(
+    roomName: DachsRoomName,
     signal?: AbortSignal
-): Promise<DachsAutofillResponseDtoByHouse[THouse]> {
-    return await fetchDachsStatusApiResponse<DachsAutofillResponseDtoByHouse[THouse]>(
+): Promise<DachsAutofillResponseDtoByHouse[keyof DachsAutofillResponseDtoByHouse]> {
+    const houseName = getDachsHouseNameByRoomName(roomName);
+    if (!houseName) {
+        throw new Error(`Unsupported Dachs room name: ${roomName}`);
+    }
+
+    return await fetchDachsStatusApiResponse<DachsAutofillResponseDtoByHouse[typeof houseName]>(
         resolveDachsStatusEndpoint(houseName),
         signal
     );
