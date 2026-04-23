@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import de from '@/i18n'
 import Modal from "@/components/shared/overlay/Modal";
@@ -22,12 +22,14 @@ import {
     resolveRoomByName,
     shouldShowDachsAutofill
 } from "@/components/features/building/modals/AddFloorData/AddFloorData.logic";
+import {MONTH_NUMBER_OFFSET} from "@/components/features/building/modals/AddFloorData/AddFloorData.constants";
 import {setIsLoading} from "@/store/reducer/isLoading";
-import {getDachsAutofillValues} from "@/components/features/building/modals/AddFloorData/AddFloorData.dachsService";
+import {getDachsAutofillValues} from "@/services/dachsService";
 import CustomButton from "@/components/shared/ui/CustomButton";
+import {isSupportedDachsRoomName} from "@/common/dachs/dachsHouseConfig";
 
 /**
- * Renders the building field value dialog for one flat and supports Dachs autofill for F233.
+ * Renders the building field value dialog for one flat and supports Dachs autofill for F233 and F235.
  * @param flat Selected flat whose room values are being managed.
  * @returns Building consumption modal for the selected flat.
  */
@@ -36,7 +38,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const dispatch = useAppDispatch()
     const date = new Date()
     const year = date.getFullYear()
-    const month = date.getMonth() + 1
+    const month = date.getMonth() + MONTH_NUMBER_OFFSET
     const monthString: string = month < 10 ? `0` + month : month.toString()
     const [currentRoom, setCurrentRoom] = useState<Room>(flat.rooms[0])
     const [currentDateValue, setCurrentDateValue] = useState<YearMonth>({
@@ -47,7 +49,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     const [currentFieldValues, setCurrentFieldValues] = useState<FieldValue[]>([])
     const [pendingImportedFieldIds, setPendingImportedFieldIds] = useState<string[]>([])
     const [isAutofillNoticeVisible, setIsAutofillNoticeVisible] = useState(false)
-    const isDachsAutofillVisible = shouldShowDachsAutofill(currentHouse.name, flat.name, currentRoom)
+    const isDachsAutofillVisible = shouldShowDachsAutofill(currentRoom)
 
     useEffect(() => {
         dispatch(setIsLoading(true))
@@ -169,9 +171,12 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
     }
 
     const onDachsAutofillClickHandler = async () => {
+        if (!isSupportedDachsRoomName(currentRoom.name)) {
+            return
+        }
         dispatch(setIsLoading(true))
         try {
-            const dachsValues = await getDachsAutofillValues()
+            const dachsValues = await getDachsAutofillValues(currentRoom.name)
             const {updatedFieldValues, importedFieldValues} =
                 mapDachsValuesToFieldValues(currentFieldValues, dachsValues)
 
@@ -321,6 +326,7 @@ export default function AddFloorData({flat}: AddFloorDataModalProps) {
 export type AddFloorDataModalProps = {
     flat: Flat
 }
+
 
 
 
